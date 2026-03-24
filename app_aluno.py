@@ -1,0 +1,555 @@
+# =============================================================================
+# APP_ALUNO.PY — Router completo do App do Aluno
+# O diferencial do AurumSci — aluno autônomo com IA
+#
+# Endpoints:
+# POST /app-aluno/onboarding          — anamnese inicial completa
+# POST /app-aluno/bioimpedancia       — registra medidas
+# POST /app-aluno/postural            — análise postural com 3 fotos + IA
+# GET  /app-aluno/treino-hoje         — treino do dia com exercícios
+# POST /app-aluno/presenca            — registra presença
+# GET  /app-aluno/dashboard           — evolução completa
+# GET  /app-aluno/reavaliacao         — verifica se está na hora de reavaliar
+# POST /app-aluno/chat                — chatbot AURI focado no aluno
+# =============================================================================
+
+from datetime import datetime, date, timedelta
+from typing import Optional, List
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from sqlalchemy.orm import Session
+from pydantic import BaseModel
+from app.database import get_db
+from app.models import Aluno
+from app.routers.portal_aluno import get_aluno_logado
+
+router = APIRouter(prefix="/app-aluno", tags=["App do Aluno"])
+
+
+# ── Schemas ───────────────────────────────────────────────────────────────────
+
+class OnboardingSchema(BaseModel):
+    objetivo: str                          # hipertrofia, emagrecimento, etc
+    nivel_experiencia: str                 # iniciante, intermediario, avancado
+    dias_disponiveis: int                  # 2 a 6
+    restricoes_medicas: Optional[str] = None
+    historico_lesoes: Optional[str] = None
+    peso: Optional[float] = None
+    estatura: Optional[float] = None
+    idade: Optional[int] = None
+    sexo: Optional[str] = None
+
+
+class BioimpedanciaSchema(BaseModel):
+    peso: float
+    percentual_gordura: float
+    massa_gorda_kg: Optional[float] = None
+    massa_magra_kg: Optional[float] = None
+    agua_corporal: Optional[float] = None
+    massa_ossea: Optional[float] = None
+    metabolismo_basal: Optional[float] = None
+
+
+class PresencaSchema(BaseModel):
+    sessao_id: Optional[int] = None
+    duracao_minutos: Optional[int] = None
+    observacao: Optional[str] = None
+
+
+class ChatSchema(BaseModel):
+    mensagem: str
+    historico: Optional[List[dict]] = []
+
+
+# ── Endpoints ─────────────────────────────────────────────────────────────────
+
+@router.post("/onboarding")
+async def onboarding(
+    dados: OnboardingSchema,
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """
+    Onboarding completo do aluno:
+    1. Salva anamnese
+    2. Gera periodização automática baseada no objetivo
+    3. Cria plano de treino com exercícios
+    """
+    from app.motor.periodizacao import gerar_periodizacao, periodizacao_to_dict
+    from app.routers.anamnese import Anamnese
+    from app.routers.treino import PlanoTreino, SessaoTreino
+
+    # Salva anamnese
+    anamnese = db.query(Anamnese).filter(Anamnese.aluno_id == aluno.id).first()
+    if not anamnese:
+        anamnese = Anamnese(
+            aluno_id=aluno.id,
+            objetivo_principal=dados.objetivo,
+            nivel_atividade=dados.nivel_experiencia,
+            restricoes_medicas=dados.restricoes_medicas or "",
+            historico_lesoes=dados.historico_lesoes or "",
+            data_anamnese=date.today()
+        )
+        db.add(anamnese)
+    else:
+        anamnese.objetivo_principal = dados.objetivo
+        anamnese.nivel_atividade    = dados.nivel_experiencia
+
+    # Gera periodização automática
+    periodizacao = gerar_periodizacao(
+        objetivo=dados.objetivo,
+        nivel=dados.nivel_experiencia,
+        dias_semana=dados.dias_disponiveis,
+        semanas_total=12,
+        data_inicio=date.today()
+    )
+    periodo_dict = periodizacao_to_dict(periodizacao)
+
+    # Cria plano de treino
+    plano_existente = db.query(PlanoTreino).filter(
+        PlanoTreino.aluno_id == aluno.id,
+        PlanoTreino.ativo == True
+    ).first()
+    if plano_existente:
+        plano_existente.ativo = False
+
+    import json
+    plano = PlanoTreino(
+        aluno_id=aluno.id,
+        personal_id=aluno.personal_id if hasattr(aluno, 'personal_id') else 1,
+        nome=f"Plano {dados.objetivo.capitalize()} — {dados.nivel_experiencia.capitalize()}",
+        objetivo=dados.objetivo,
+        nivel=dados.nivel_experiencia,
+        dias_semana=dados.dias_disponiveis,
+        semanas_total=12,
+        data_inicio=date.today(),
+        ativo=True,
+        periodizacao=json.dumps(periodo_dict, ensure_ascii=False)
+    )
+    db.add(plano)
+    db.flush()
+
+    # Cria sessões baseadas na divisão
+    for i, sessao_nome in enumerate(periodizacao.divisao_sessoes):
+        sessao = SessaoTreino(
+            plano_id=plano.id,
+            nome=sessao_nome,
+            dia_semana=i,
+            ordem=i + 1
+        )
+        db.add(sessao)
+
+    db.commit()
+
+    return {
+        "mensagem": f"Bem-vindo ao AurumSci, {aluno.nome.split()[0]}!",
+        "plano": {
+            "nome": plano.nome,
+            "objetivo": dados.objetivo,
+            "dias_semana": dados.dias_disponiveis,
+            "semanas": 12,
+            "divisao": periodizacao.divisao_nome,
+            "sessoes": periodizacao.divisao_sessoes,
+        },
+        "proxima_etapa": "Complete sua bioimpedância e análise postural para personalizar ainda mais seu treino!"
+    }
+
+
+@router.post("/bioimpedancia")
+async def registrar_bioimpedancia(
+    dados: BioimpedanciaSchema,
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """Registra medidas de bioimpedância e calcula composição corporal."""
+    from app.motor.calculos import bioimpedancia, calcular_massas, calcular_imc
+    from app.routers.avaliacao import AvaliacaoFisica
+
+    resultado = bioimpedancia(
+        percentual_gordura=dados.percentual_gordura,
+        peso=dados.peso,
+        massa_gorda_kg=dados.massa_gorda_kg,
+        massa_magra_kg=dados.massa_magra_kg
+    )
+    resultado = calcular_massas(resultado, dados.peso)
+
+    # Busca última avaliação ou cria nova
+    aval = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno.id
+    ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+
+    hoje = date.today()
+    if not aval or aval.data_avaliacao != hoje:
+        aval = AvaliacaoFisica(
+            aluno_id=aluno.id,
+            personal_id=1,
+            data_avaliacao=hoje,
+            protocolo_composicao="bioimpedancia"
+        )
+        db.add(aval)
+
+    aval.peso               = dados.peso
+    aval.percentual_gordura = resultado.percentual_gordura
+    aval.massa_gorda_kg     = resultado.massa_gorda_kg
+    aval.massa_magra_kg     = resultado.massa_magra_kg
+    aval.classificacao_gordura = resultado.classificacao_gordura
+
+    if hasattr(aval, 'estatura') and aval.estatura:
+        imc, cls_imc = calcular_imc(dados.peso, aval.estatura)
+        aval.imc = imc
+        aval.classificacao_imc = cls_imc
+
+    db.commit()
+
+    return {
+        "mensagem": "Bioimpedância registrada!",
+        "composicao": {
+            "peso": dados.peso,
+            "percentual_gordura": resultado.percentual_gordura,
+            "classificacao": resultado.classificacao_gordura,
+            "massa_gorda_kg": resultado.massa_gorda_kg,
+            "massa_magra_kg": resultado.massa_magra_kg,
+        }
+    }
+
+
+@router.post("/postural")
+async def analise_postural(
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db),
+    foto_frente: Optional[UploadFile] = File(None),
+    foto_lado: Optional[UploadFile] = File(None),
+    foto_costas: Optional[UploadFile] = File(None),
+):
+    """
+    Análise postural com IA — 3 fotos → Claude Vision → desvios automáticos
+    Resultado é salvo na avaliação e usado para personalizar exercícios
+    """
+    import base64
+    from app.motor.ia_postural import analisar_postural
+    from app.routers.avaliacao import AvaliacaoFisica
+
+    # Lê as fotos
+    foto_frente_b64  = base64.b64encode(await foto_frente.read()).decode()  if foto_frente  else None
+    foto_lado_b64    = base64.b64encode(await foto_lado.read()).decode()    if foto_lado    else None
+    foto_costas_b64  = base64.b64encode(await foto_costas.read()).decode()  if foto_costas  else None
+
+    # Analisa com IA
+    resultado = await analisar_postural(foto_frente_b64, foto_lado_b64, foto_costas_b64)
+
+    if resultado.erro:
+        raise HTTPException(status_code=500, detail=resultado.erro)
+
+    # Salva na avaliação
+    aval = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno.id
+    ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+
+    if not aval:
+        aval = AvaliacaoFisica(
+            aluno_id=aluno.id,
+            personal_id=1,
+            data_avaliacao=date.today()
+        )
+        db.add(aval)
+
+    aval.postura_cabeca       = resultado.cabeca
+    aval.postura_ombros       = resultado.ombros
+    aval.postura_coluna       = resultado.coluna
+    aval.postura_quadril      = resultado.quadril
+    aval.postura_joelhos      = resultado.joelhos
+    aval.postura_pes          = resultado.pes
+    aval.postura_observacoes  = resultado.observacoes
+    db.commit()
+
+    return {
+        "mensagem": "Análise postural concluída!",
+        "desvios": {
+            "cabeca":   resultado.cabeca,
+            "ombros":   resultado.ombros,
+            "coluna":   resultado.coluna,
+            "quadril":  resultado.quadril,
+            "joelhos":  resultado.joelhos,
+            "pes":      resultado.pes,
+        },
+        "observacoes":    resultado.observacoes,
+        "achados":        resultado.achados,
+        "recomendacoes":  resultado.recomendacoes,
+        "proxima_etapa":  "Seus exercícios foram personalizados com base nos desvios encontrados!"
+    }
+
+
+@router.get("/treino-hoje")
+async def treino_hoje(
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """Retorna o treino do dia com exercícios detalhados."""
+    from app.routers.treino import PlanoTreino, SessaoTreino, ExercicioSessao
+
+    plano = db.query(PlanoTreino).filter(
+        PlanoTreino.aluno_id == aluno.id,
+        PlanoTreino.ativo == True
+    ).first()
+
+    if not plano:
+        return {"mensagem": "Nenhum plano ativo. Faça o onboarding primeiro!"}
+
+    dia_semana = date.today().weekday()
+    sessao = db.query(SessaoTreino).filter(
+        SessaoTreino.plano_id == plano.id,
+        SessaoTreino.dia_semana == dia_semana
+    ).first()
+
+    if not sessao:
+        return {
+            "mensagem": "Hoje é dia de descanso! Recuperação também é treino.",
+            "dica": "Aproveite para fazer mobilidade ou caminhada leve."
+        }
+
+    exercicios = db.query(ExercicioSessao).filter(
+        ExercicioSessao.sessao_id == sessao.id
+    ).order_by(ExercicioSessao.ordem).all()
+
+    return {
+        "sessao": sessao.nome,
+        "data": str(date.today()),
+        "exercicios": [{
+            "ordem":       e.ordem,
+            "nome":        e.exercicio.nome if e.exercicio else "",
+            "series":      e.series,
+            "repeticoes":  e.repeticoes,
+            "carga":       e.carga_sugerida,
+            "descanso":    e.descanso_segundos,
+            "observacao":  e.observacao,
+        } for e in exercicios],
+        "total_exercicios": len(exercicios)
+    }
+
+
+@router.post("/presenca")
+async def registrar_presenca(
+    dados: PresencaSchema,
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """Registra presença do aluno no treino."""
+    from app.routers.treino import RegistroPresenca, PlanoTreino
+
+    plano = db.query(PlanoTreino).filter(
+        PlanoTreino.aluno_id == aluno.id,
+        PlanoTreino.ativo == True
+    ).first()
+
+    presenca = RegistroPresenca(
+        aluno_id=aluno.id,
+        personal_id=1,
+        plano_id=plano.id if plano else None,
+        sessao_id=dados.sessao_id,
+        data_presenca=date.today(),
+        presente=True,
+        duracao_minutos=dados.duracao_minutos,
+        observacao=dados.observacao
+    )
+    db.add(presenca)
+    db.commit()
+
+    return {
+        "mensagem": "Presença registrada! Continue assim!",
+        "data": str(date.today()),
+        "sequencia": _calcular_sequencia(aluno.id, db)
+    }
+
+
+@router.get("/dashboard")
+async def dashboard(
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """
+    Dashboard completo de evolução do aluno:
+    - Composição corporal ao longo do tempo
+    - Frequência de treinos
+    - Evolução postural
+    - Próxima reavaliação
+    """
+    from app.routers.avaliacao import AvaliacaoFisica
+    from app.routers.treino import RegistroPresenca
+
+    # Avaliações ordenadas por data
+    avals = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno.id
+    ).order_by(AvaliacaoFisica.data_avaliacao).all()
+
+    # Evolução composição corporal
+    evolucao = [{
+        "data":              str(a.data_avaliacao),
+        "peso":              a.peso,
+        "percentual_gordura": a.percentual_gordura,
+        "massa_magra_kg":    a.massa_magra_kg,
+        "imc":               a.imc,
+    } for a in avals if a.peso]
+
+    # Frequência últimos 30 dias
+    trinta_dias  = date.today() - timedelta(days=30)
+    presencas_30 = db.query(RegistroPresenca).filter(
+        RegistroPresenca.aluno_id == aluno.id,
+        RegistroPresenca.data_presenca >= trinta_dias,
+        RegistroPresenca.presente == True
+    ).count()
+
+    # Última avaliação
+    ultima_aval = avals[-1] if avals else None
+    dias_ultima = (date.today() - ultima_aval.data_avaliacao).days if ultima_aval else None
+
+    # Próxima reavaliação
+    proxima_reavaliacao = None
+    alerta_reavaliacao  = False
+    if ultima_aval:
+        proxima = ultima_aval.data_avaliacao + timedelta(days=60)
+        proxima_reavaliacao = str(proxima)
+        alerta_reavaliacao  = date.today() >= proxima
+
+    return {
+        "aluno": {
+            "nome":    aluno.nome,
+            "objetivo": aluno.objetivo.value if aluno.objetivo else None,
+        },
+        "resumo": {
+            "total_avaliacoes":   len(avals),
+            "presencas_30_dias":  presencas_30,
+            "dias_ultima_aval":   dias_ultima,
+            "alerta_reavaliacao": alerta_reavaliacao,
+            "proxima_reavaliacao": proxima_reavaliacao,
+        },
+        "evolucao_composicao": evolucao,
+        "ultima_avaliacao": {
+            "data":               str(ultima_aval.data_avaliacao) if ultima_aval else None,
+            "peso":               ultima_aval.peso if ultima_aval else None,
+            "percentual_gordura": ultima_aval.percentual_gordura if ultima_aval else None,
+            "massa_magra_kg":     ultima_aval.massa_magra_kg if ultima_aval else None,
+            "classificacao":      ultima_aval.classificacao_gordura if ultima_aval else None,
+        } if ultima_aval else None,
+        "postura": {
+            "cabeca":  ultima_aval.postura_cabeca if ultima_aval else None,
+            "ombros":  ultima_aval.postura_ombros if ultima_aval else None,
+            "coluna":  ultima_aval.postura_coluna if ultima_aval else None,
+        } if ultima_aval else None,
+    }
+
+
+@router.get("/reavaliacao")
+async def verificar_reavaliacao(
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """Verifica se o aluno está na hora de reavaliar (a cada 60 dias)."""
+    from app.routers.avaliacao import AvaliacaoFisica
+
+    ultima = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno.id
+    ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+
+    if not ultima:
+        return {
+            "precisa_reavaliar": True,
+            "mensagem": "Faça sua primeira avaliação para começarmos a acompanhar sua evolução!"
+        }
+
+    dias = (date.today() - ultima.data_avaliacao).days
+    proxima = ultima.data_avaliacao + timedelta(days=60)
+    faltam  = (proxima - date.today()).days
+
+    if dias >= 60:
+        return {
+            "precisa_reavaliar": True,
+            "dias_desde_ultima": dias,
+            "mensagem": f"Já faz {dias} dias desde sua última avaliação! Hora de ver sua evolução!"
+        }
+
+    return {
+        "precisa_reavaliar": False,
+        "dias_desde_ultima": dias,
+        "faltam_dias": faltam,
+        "proxima_data": str(proxima),
+        "mensagem": f"Próxima reavaliação em {faltam} dias ({proxima.strftime('%d/%m/%Y')})"
+    }
+
+
+@router.post("/chat")
+async def chat_aluno(
+    dados: ChatSchema,
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """Chatbot AURI focado no aluno — responde dúvidas sobre treino e evolução."""
+    from app.motor.ia_chatbot import montar_contexto, responder_chatbot, resposta_rapida
+    from app.routers.avaliacao import AvaliacaoFisica
+    from app.routers.treino import PlanoTreino, RegistroPresenca
+
+    # Resposta rápida para saudações
+    rapida = resposta_rapida(dados.mensagem, {"nome": aluno.nome})
+    if rapida:
+        return {"resposta": rapida}
+
+    # Monta contexto rico do aluno
+    avals    = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno.id
+    ).order_by(AvaliacaoFisica.data_avaliacao.desc()).limit(3).all()
+
+    plano = db.query(PlanoTreino).filter(
+        PlanoTreino.aluno_id == aluno.id,
+        PlanoTreino.ativo == True
+    ).first()
+
+    presencas_30 = db.query(RegistroPresenca).filter(
+        RegistroPresenca.aluno_id == aluno.id,
+        RegistroPresenca.data_presenca >= date.today() - timedelta(days=30),
+        RegistroPresenca.presente == True
+    ).count()
+
+    aluno_dict = {
+        "nome":    aluno.nome,
+        "objetivo": aluno.objetivo.value if aluno.objetivo else "hipertrofia",
+        "nivel":   aluno.nivel_experiencia.value if aluno.nivel_experiencia else "iniciante",
+    }
+
+    avals_dict = [{"data": str(a.data_avaliacao), "peso": a.peso,
+                   "percentual_gordura": a.percentual_gordura} for a in avals]
+
+    treino_dict = {"nome": plano.nome, "objetivo": plano.objetivo} if plano else {}
+
+    presencas_dict = {"frequencia_pct": round(presencas_30 / 30 * 100, 1)}
+
+    contexto = montar_contexto(aluno_dict, avals_dict, treino_dict, {}, presencas_dict)
+
+    resposta = await responder_chatbot(
+        mensagem=dados.mensagem,
+        historico=dados.historico or [],
+        contexto=contexto,
+        nome_personal="seu programa"
+    )
+
+    return {"resposta": resposta}
+
+
+# ── Helper ────────────────────────────────────────────────────────────────────
+
+def _calcular_sequencia(aluno_id: int, db: Session) -> int:
+    """Calcula sequência de dias consecutivos de treino."""
+    from app.routers.treino import RegistroPresenca
+    presencas = db.query(RegistroPresenca).filter(
+        RegistroPresenca.aluno_id == aluno_id,
+        RegistroPresenca.presente == True
+    ).order_by(RegistroPresenca.data_presenca.desc()).limit(30).all()
+
+    if not presencas:
+        return 1
+
+    sequencia = 1
+    for i in range(len(presencas) - 1):
+        diff = (presencas[i].data_presenca - presencas[i+1].data_presenca).days
+        if diff == 1:
+            sequencia += 1
+        else:
+            break
+    return sequencia

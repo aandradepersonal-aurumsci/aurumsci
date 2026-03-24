@@ -1,0 +1,60 @@
+# ══════════════════════════════════════════════════════════════
+# AurumSci — .gitignore
+# Protege arquivos sensíveis do repositório
+# ══════════════════════════════════════════════════════════════
+
+# ── Ambiente e Segredos ───────────────────────────────────────
+.env
+.env.local
+.env.production
+.env.staging
+*.pem
+*.key
+*.crt
+secrets/
+
+# ── Banco de dados ────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Python ───────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ── Ambiente virtual ──────────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── Uploads de usuários ───────────────────────────────────────
+uploads/
+static/uploads/
+
+# ── Logs ─────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── IDE ───────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# ── Testes e Coverage ─────────────────────────────────────────
+.coverage
+htmlcov/
+.pytest_cache/
+
+# ── Backups ───────────────────────────────────────────────────
+*.bak
+*.backup

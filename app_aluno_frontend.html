@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0A0A0F">
+<title>AurumSci</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ouro: #C9A84C;
+    --ouro-brilho: #F0C040;
+    --preto: #0A0A0F;
+    --preto2: #12121A;
+    --preto3: #1A1A26;
+    --verde: #00E5A0;
+    --branco: #F0EDE8;
+    --cinza: #888;
+    --vermelho: #FF4B4B;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--preto);
+    color: var(--branco);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    max-width: 430px;
+    margin: 0 auto;
+    overflow-x: hidden;
+  }
+
+  /* ── SPLASH ── */
+  #splash {
+    position: fixed; inset: 0; background: var(--preto);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; z-index: 100;
+    animation: fadeOut 0.5s ease 1.8s forwards;
+  }
+  #splash h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px; letter-spacing: 4px;
+    color: var(--ouro-brilho);
+    text-shadow: 0 0 40px rgba(201,168,76,0.4);
+    animation: scaleIn 0.6s ease;
+  }
+  #splash p { color: var(--cinza); letter-spacing: 3px; font-size: 12px; margin-top: 8px; }
+  @keyframes scaleIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes fadeOut { to { opacity: 0; pointer-events: none; } }
+
+  /* ── LOGIN ── */
+  #screen-login {
+    min-height: 100vh; padding: 60px 28px 40px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .login-logo { font-family: 'Bebas Neue'; font-size: 48px; color: var(--ouro-brilho); letter-spacing: 3px; margin-bottom: 6px; }
+  .login-sub { color: var(--cinza); font-size: 13px; letter-spacing: 2px; margin-bottom: 48px; }
+  .input-group { margin-bottom: 16px; }
+  .input-group label { display: block; font-size: 11px; color: var(--ouro); letter-spacing: 2px; margin-bottom: 8px; }
+  .input-group input {
+    width: 100%; padding: 16px 20px;
+    background: var(--preto2); border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 12px; color: var(--branco); font-size: 15px;
+    font-family: 'DM Sans'; outline: none; transition: border 0.2s;
+  }
+  .input-group input:focus { border-color: var(--ouro); }
+  .btn-primary {
+    width: 100%; padding: 18px; margin-top: 8px;
+    background: linear-gradient(135deg, var(--ouro), var(--ouro-brilho));
+    border: none; border-radius: 14px; color: #0A0A0F;
+    font-family: 'Bebas Neue'; font-size: 20px; letter-spacing: 2px;
+    cursor: pointer; transition: transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+  }
+  .btn-primary:active { transform: scale(0.98); }
+
+  /* ── APP PRINCIPAL ── */
+  #app { display: none; padding-bottom: 80px; }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 20px 24px 16px;
+    background: linear-gradient(180deg, var(--preto) 0%, transparent 100%);
+    position: sticky; top: 0; z-index: 10;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .header-logo { font-family: 'Bebas Neue'; font-size: 28px; color: var(--ouro-brilho); letter-spacing: 2px; }
+  .header-nome { font-size: 13px; color: var(--cinza); }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--ouro), var(--ouro-brilho));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue'; font-size: 18px; color: #0A0A0F;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 430px;
+    background: rgba(12,12,18,0.95); backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(201,168,76,0.15);
+    display: flex; padding: 8px 0 24px;
+  }
+  .tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 4px; padding: 8px; cursor: pointer; transition: color 0.2s;
+    color: var(--cinza); font-size: 10px; letter-spacing: 1px;
+  }
+  .tab.active { color: var(--ouro-brilho); }
+  .tab-icon { font-size: 22px; }
+
+  /* ── SCREENS ── */
+  .screen { display: none; padding: 0 24px; animation: slideUp 0.3s ease; }
+  .screen.active { display: block; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── TREINO HOJE ── */
+  .saudacao { padding: 8px 0 20px; }
+  .saudacao h2 { font-family: 'Bebas Neue'; font-size: 36px; color: var(--branco); letter-spacing: 1px; }
+  .saudacao span { color: var(--ouro-brilho); }
+  .saudacao p { color: var(--cinza); font-size: 13px; margin-top: 4px; }
+
+  .card-treino {
+    background: var(--preto2); border-radius: 20px;
+    border: 1px solid rgba(201,168,76,0.15); padding: 20px; margin-bottom: 16px;
+    position: relative; overflow: hidden;
+  }
+  .card-treino::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--ouro), var(--ouro-brilho));
+  }
+  .sessao-nome { font-family: 'Bebas Neue'; font-size: 26px; color: var(--ouro-brilho); letter-spacing: 1px; }
+  .sessao-info { color: var(--cinza); font-size: 12px; margin-top: 4px; display: flex; gap: 16px; }
+
+  .exercicio-item {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .exercicio-item:last-child { border-bottom: none; }
+  .exercicio-num {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue'; font-size: 18px; color: var(--ouro); flex-shrink: 0;
+  }
+  .exercicio-info { flex: 1; }
+  .exercicio-nome { font-size: 15px; font-weight: 500; }
+  .exercicio-detalhe { font-size: 12px; color: var(--cinza); margin-top: 2px; }
+  .exercicio-carga {
+    font-family: 'Bebas Neue'; font-size: 20px; color: var(--ouro-brilho);
+    text-align: right;
+  }
+  .exercicio-carga span { display: block; font-family: 'DM Sans'; font-size: 10px; color: var(--cinza); }
+
+  /* ── BLOQUEIO ── */
+  .card-bloqueado {
+    background: var(--preto2); border-radius: 20px;
+    border: 1px solid rgba(255,75,75,0.3); padding: 32px 24px;
+    text-align: center; margin-bottom: 16px;
+  }
+  .card-bloqueado .icone { font-size: 48px; margin-bottom: 16px; }
+  .card-bloqueado h3 { font-family: 'Bebas Neue'; font-size: 24px; color: var(--vermelho); letter-spacing: 1px; margin-bottom: 8px; }
+  .card-bloqueado p { color: var(--cinza); font-size: 13px; line-height: 1.6; }
+
+  .btn-presenca {
+    width: 100%; padding: 20px;
+    background: linear-gradient(135deg, var(--verde), #00B87A);
+    border: none; border-radius: 16px; color: #0A0A0F;
+    font-family: 'Bebas Neue'; font-size: 22px; letter-spacing: 2px;
+    cursor: pointer; margin-top: 8px;
+    box-shadow: 0 4px 24px rgba(0,229,160,0.3);
+    transition: transform 0.1s;
+  }
+  .btn-presenca:active { transform: scale(0.98); }
+
+  /* ── SEQUÊNCIA ── */
+  .sequencia-bar {
+    display: flex; gap: 6px; margin-bottom: 20px; padding: 16px 20px;
+    background: var(--preto2); border-radius: 16px;
+    border: 1px solid rgba(201,168,76,0.1);
+  }
+  .seq-dia {
+    flex: 1; height: 6px; border-radius: 3px;
+    background: rgba(255,255,255,0.08); transition: background 0.3s;
+  }
+  .seq-dia.feito { background: var(--ouro); }
+  .seq-dia.hoje { background: var(--verde); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .seq-info { font-size: 12px; color: var(--cinza); margin-top: 8px; }
+  .seq-num { font-family: 'Bebas Neue'; font-size: 28px; color: var(--ouro-brilho); }
+
+  /* ── DASHBOARD ── */
+  .dash-titulo { font-family: 'Bebas Neue'; font-size: 32px; letter-spacing: 1px; padding: 8px 0 20px; }
+
+  .card-metrica {
+    background: var(--preto2); border-radius: 16px;
+    border: 1px solid rgba(201,168,76,0.1);
+    padding: 20px; margin-bottom: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .metrica-label { font-size: 12px; color: var(--cinza); letter-spacing: 1px; }
+  .metrica-valor { font-family: 'Bebas Neue'; font-size: 36px; color: var(--ouro-brilho); }
+  .metrica-unidade { font-size: 13px; color: var(--cinza); }
+  .metrica-delta { font-size: 13px; margin-top: 4px; }
+  .delta-pos { color: var(--verde); }
+  .delta-neg { color: var(--vermelho); }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+  .card-mini {
+    background: var(--preto2); border-radius: 16px;
+    border: 1px solid rgba(201,168,76,0.1); padding: 16px;
+  }
+  .card-mini-label { font-size: 11px; color: var(--cinza); margin-bottom: 8px; }
+  .card-mini-valor { font-family: 'Bebas Neue'; font-size: 28px; color: var(--branco); }
+  .card-mini-unidade { font-size: 11px; color: var(--cinza); }
+
+  /* Grafico simples */
+  .grafico-barra { margin-top: 20px; }
+  .grafico-titulo { font-size: 12px; color: var(--cinza); letter-spacing: 1px; margin-bottom: 12px; }
+  .barra-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .barra-label { font-size: 11px; color: var(--cinza); width: 40px; text-align: right; flex-shrink: 0; }
+  .barra-bg { flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+  .barra-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--ouro), var(--ouro-brilho)); transition: width 0.8s ease; }
+  .barra-val { font-size: 11px; color: var(--ouro); width: 36px; flex-shrink: 0; }
+
+  /* ── MEDIDAS ── */
+  .medidas-titulo { font-family: 'Bebas Neue'; font-size: 32px; letter-spacing: 1px; padding: 8px 0 8px; }
+  .medidas-sub { font-size: 13px; color: var(--cinza); margin-bottom: 24px; line-height: 1.5; }
+
+  .segmento-titulo {
+    font-size: 11px; color: var(--ouro); letter-spacing: 2px;
+    margin: 20px 0 12px; text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .segmento-titulo::after { content: ''; flex: 1; height: 1px; background: rgba(201,168,76,0.2); }
+
+  .input-medida {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--preto2); border-radius: 14px;
+    border: 1px solid rgba(201,168,76,0.1); padding: 14px 16px;
+    margin-bottom: 10px; transition: border 0.2s;
+  }
+  .input-medida:focus-within { border-color: rgba(201,168,76,0.4); }
+  .medida-icone { font-size: 20px; }
+  .medida-label { flex: 1; font-size: 14px; color: var(--branco); }
+  .medida-input {
+    width: 70px; text-align: right; background: transparent;
+    border: none; color: var(--ouro-brilho); font-family: 'Bebas Neue';
+    font-size: 22px; outline: none;
+  }
+  .medida-unidade { font-size: 11px; color: var(--cinza); }
+
+  .dica-medida {
+    background: rgba(0,229,160,0.05); border: 1px solid rgba(0,229,160,0.15);
+    border-radius: 12px; padding: 12px 16px; margin-bottom: 20px;
+    font-size: 12px; color: rgba(0,229,160,0.8); line-height: 1.6;
+  }
+  .dica-medida strong { color: var(--verde); }
+
+  /* ── CHAT ── */
+  .chat-titulo { font-family: 'Bebas Neue'; font-size: 32px; letter-spacing: 1px; padding: 8px 0 4px; }
+  .chat-sub { font-size: 13px; color: var(--cinza); margin-bottom: 20px; }
+
+  .chat-msgs {
+    height: calc(100vh - 280px); overflow-y: auto;
+    display: flex; flex-direction: column; gap: 12px;
+    padding-bottom: 16px;
+  }
+  .chat-msgs::-webkit-scrollbar { display: none; }
+
+  .msg { max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.5; }
+  .msg-auri { background: var(--preto2); border: 1px solid rgba(201,168,76,0.15); color: var(--branco); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .msg-auri strong { color: var(--ouro); display: block; font-size: 11px; margin-bottom: 4px; letter-spacing: 1px; }
+  .msg-user { background: linear-gradient(135deg, var(--ouro), var(--ouro-brilho)); color: #0A0A0F; align-self: flex-end; border-bottom-right-radius: 4px; font-weight: 500; }
+
+  .chat-input-wrap {
+    display: flex; gap: 10px; padding: 12px 0;
+    border-top: 1px solid rgba(201,168,76,0.1);
+  }
+  .chat-input {
+    flex: 1; padding: 14px 18px; background: var(--preto2);
+    border: 1px solid rgba(201,168,76,0.15); border-radius: 14px;
+    color: var(--branco); font-family: 'DM Sans'; font-size: 14px; outline: none;
+  }
+  .chat-input:focus { border-color: rgba(201,168,76,0.4); }
+  .btn-send {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--ouro), var(--ouro-brilho));
+    border: none; cursor: pointer; font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+    background: var(--verde); color: #0A0A0F; padding: 14px 24px;
+    border-radius: 14px; font-family: 'Bebas Neue'; font-size: 18px; letter-spacing: 1px;
+    opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 50;
+    box-shadow: 0 8px 32px rgba(0,229,160,0.4);
+  }
+  .toast.show { opacity: 1; }
+
+  /* ── ALERTA REAVALIAÇÃO ── */
+  .card-reavaliacao {
+    background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(240,192,64,0.05));
+    border: 1px solid rgba(201,168,76,0.3); border-radius: 20px;
+    padding: 20px; margin-bottom: 16px; display: flex; gap: 16px; align-items: center;
+  }
+  .reavaliacao-icone { font-size: 36px; }
+  .reavaliacao-texto h4 { font-family: 'Bebas Neue'; font-size: 18px; color: var(--ouro-brilho); letter-spacing: 1px; }
+  .reavaliacao-texto p { font-size: 12px; color: var(--cinza); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <h1>AURUMSCI</h1>
+  <p>CIÊNCIA QUE VIRA RESULTADO</p>
+</div>
+
+<!-- LOGIN -->
+<div id="screen-login">
+  <div class="login-logo">AURUMSCI</div>
+  <div class="login-sub">CIÊNCIA QUE VIRA RESULTADO</div>
+  <div class="input-group">
+    <label>EMAIL</label>
+    <input type="email" id="login-email" placeholder="seu@email.com">
+  </div>
+  <div class="input-group">
+    <label>SENHA</label>
+    <input type="password" id="login-senha" placeholder="••••••••">
+  </div>
+  <button class="btn-primary" onclick="fazerLogin()">ENTRAR</button>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="header">
+    <div>
+      <div class="header-logo">AURUMSCI</div>
+      <div class="header-nome" id="header-nome">Olá!</div>
+    </div>
+    <div class="avatar" id="avatar-letra">A</div>
+  </div>
+
+  <!-- TREINO HOJE -->
+  <div class="screen active" id="screen-treino">
+    <div class="saudacao">
+      <h2>BOM DIA, <span id="nome-saudacao">ATLETA</span>!</h2>
+      <p id="data-hoje"></p>
+    </div>
+
+    <!-- Sequência de dias -->
+    <div class="sequencia-bar" id="sequencia-wrap">
+      <div style="flex:1">
+        <div style="display:flex;gap:6px" id="seq-dias"></div>
+        <div class="seq-info">🔥 <span class="seq-num" id="seq-num">0</span> dias consecutivos</div>
+      </div>
+    </div>
+
+    <!-- Alerta reavaliação -->
+    <div class="card-reavaliacao" id="card-reavaliacao" style="display:none">
+      <div class="reavaliacao-icone">📊</div>
+      <div class="reavaliacao-texto">
+        <h4>HORA DE REAVALIAR!</h4>
+        <p>Já faz 2 meses — veja sua evolução!</p>
+      </div>
+    </div>
+
+    <div id="treino-content"></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="screen" id="screen-dash">
+    <div class="dash-titulo">SUA EVOLUÇÃO</div>
+    <div id="dash-content">
+      <div class="card-metrica">
+        <div>
+          <div class="metrica-label">PESO ATUAL</div>
+          <div class="metrica-valor" id="dash-peso">--</div>
+          <div class="metrica-delta delta-neg" id="dash-peso-delta"></div>
+        </div>
+        <div style="text-align:right">
+          <div class="metrica-unidade">kg</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card-mini">
+          <div class="card-mini-label">% GORDURA</div>
+          <div class="card-mini-valor" id="dash-gordura">--</div>
+          <div class="card-mini-unidade">%</div>
+        </div>
+        <div class="card-mini">
+          <div class="card-mini-label">MASSA MAGRA</div>
+          <div class="card-mini-valor" id="dash-magra">--</div>
+          <div class="card-mini-unidade">kg</div>
+        </div>
+      </div>
+      <div class="card-mini" style="margin-bottom:12px">
+        <div class="card-mini-label">TREINOS ESTE MÊS</div>
+        <div class="card-mini-valor" id="dash-presencas">--</div>
+        <div class="card-mini-unidade">sessões</div>
+      </div>
+      <div class="grafico-barra" id="grafico-evolucao"></div>
+    </div>
+  </div>
+
+  <!-- MEDIDAS -->
+  <div class="screen" id="screen-medidas">
+    <div class="medidas-titulo">MINHAS MEDIDAS</div>
+    <div class="medidas-sub">Use uma fita métrica. Meça sempre no mesmo horário, preferencialmente em jejum.</div>
+
+    <div class="dica-medida">
+      💡 <strong>Dica:</strong> Peça para alguém te ajudar ou use um espelho. Inspire, expire e meça no relaxamento.
+    </div>
+
+    <div class="segmento-titulo">TRONCO</div>
+    <div class="input-medida"><span class="medida-icone">🫀</span><span class="medida-label">Tórax</span><input class="medida-input" type="number" placeholder="00" id="m-torax"><span class="medida-unidade">cm</span></div>
+    <div class="input-medida"><span class="medida-icone">⌛</span><span class="medida-label">Cintura</span><input class="medida-input" type="number" placeholder="00" id="m-cintura"><span class="medida-unidade">cm</span></div>
+    <div class="input-medida"><span class="medida-icone">🫄</span><span class="medida-label">Abdômen</span><input class="medida-input" type="number" placeholder="00" id="m-abdomen"><span class="medida-unidade">cm</span></div>
+    <div class="input-medida"><span class="medida-icone">🍑</span><span class="medida-label">Quadril</span><input class="medida-input" type="number" placeholder="00" id="m-quadril"><span class="medida-unidade">cm</span></div>
+
+    <div class="segmento-titulo">BRAÇOS</div>
+    <div class="input-medida"><span class="medida-icone">💪</span><span class="medida-label">Braço D. contraído</span><input class="medida-input" type="number" placeholder="00" id="m-braco-d"><span class="medida-unidade">cm</span></div>
+    <div class="input-medida"><span class="medida-icone">💪</span><span class="medida-label">Braço E. contraído</span><input class="medida-input" type="number" placeholder="00" id="m-braco-e"><span class="medida-unidade">cm</span></div>
+    <div class="input-medida"><span class="medida-icone">🦾</span><span class="medida-label">Antebraço D.</span><input class="medida-input" type="number" placeholder="00" id="m-antebraco-d"><span class="medida-unidade">cm</span></div>
+    <div class="input-medida"><span class="medida-icone">🦾</span><span class="medida-label">Antebraço E.</span><input class="medida-input" type="number" placeholder="00" id="m-antebraco-e"><span class="medida-unidade">cm</span></div>
+
+    <div class="segmento-titulo">PERNAS</div>
+    <div class="input-medida"><span class="medida-icone">🦵</span><span class="medida-label">Coxa D.</span><input class="medida-input" type="number" placeholder="00" id="m-coxa-d"><span class="medida-unidade">cm</span></div>
+    <div class="input-medida"><span class="medida-icone">🦵</span><span class="medida-label">Coxa E.</span><input class="medida-input" type="number" placeholder="00" id="m-coxa-e"><span class="medida-unidade">cm</span></div>
+    <div class="input-medida"><span class="medida-icone">🦶</span><span class="medida-label">Panturrilha D.</span><input class="medida-input" type="number" placeholder="00" id="m-pant-d"><span class="medida-unidade">cm</span></div>
+    <div class="input-medida"><span class="medida-icone">🦶</span><span class="medida-label">Panturrilha E.</span><input class="medida-input" type="number" placeholder="00" id="m-pant-e"><span class="medida-unidade">cm</span></div>
+
+    <button class="btn-primary" onclick="salvarMedidas()" style="margin-top:8px;margin-bottom:32px">SALVAR MEDIDAS</button>
+  </div>
+
+  <!-- CHAT AURI -->
+  <div class="screen" id="screen-chat">
+    <div class="chat-titulo">AURI</div>
+    <div class="chat-sub">Seu assistente inteligente de treino</div>
+    <div class="chat-msgs" id="chat-msgs">
+      <div class="msg msg-auri">
+        <strong>AURI</strong>
+        Oi! Sou o AURI, seu assistente de treino. Pode me perguntar sobre seus exercícios, nutrição, descanso ou qualquer dúvida sobre seu programa! 💪
+      </div>
+    </div>
+    <div class="chat-input-wrap">
+      <input class="chat-input" id="chat-input" placeholder="Pergunte algo..." onkeypress="if(event.key==='Enter')enviarMsg()">
+      <button class="btn-send" onclick="enviarMsg()">➤</button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="mudarTab('treino', this)">
+      <span class="tab-icon">🏋️</span>TREINO
+    </div>
+    <div class="tab" onclick="mudarTab('dash', this)">
+      <span class="tab-icon">📈</span>EVOLUÇÃO
+    </div>
+    <div class="tab" onclick="mudarTab('medidas', this)">
+      <span class="tab-icon">📏</span>MEDIDAS
+    </div>
+    <div class="tab" onclick="mudarTab('chat', this)">
+      <span class="tab-icon">🤖</span>AURI
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://127.0.0.1:8080';
+let token = localStorage.getItem('aurum_token');
+let alunoId = localStorage.getItem('aurum_aluno_id');
+let nomeAluno = localStorage.getItem('aurum_nome') || 'Atleta';
+let historicoPreso = false; // controle de presença
+let chatHistorico = [];
+
+// ── INIT ──
+window.onload = () => {
+  setTimeout(() => {
+    if (token) {
+      mostrarApp();
+    } else {
+      document.getElementById('screen-login').style.display = 'flex';
+    }
+  }, 2200);
+
+  const hoje = new Date();
+  document.getElementById('data-hoje').textContent =
+    hoje.toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long'});
+};
+
+// ── LOGIN ──
+async function fazerLogin() {
+  const email = document.getElementById('login-email').value;
+  const senha = document.getElementById('login-senha').value;
+  if (!email || !senha) { mostrarToast('Preencha email e senha!'); return; }
+
+  try {
+    const r = await fetch(`${API}/aluno-portal/login`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, senha})
+    });
+    const d = await r.json();
+    if (r.ok) {
+      token = d.access_token;
+      alunoId = d.aluno_id;
+      nomeAluno = d.nome;
+      localStorage.setItem('aurum_token', token);
+      localStorage.setItem('aurum_aluno_id', alunoId);
+      localStorage.setItem('aurum_nome', nomeAluno);
+      mostrarApp();
+    } else {
+      mostrarToast('Email ou senha incorretos!');
+    }
+  } catch(e) {
+    mostrarToast('Erro de conexão!');
+  }
+}
+
+function mostrarApp() {
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  const primeiro = nomeAluno.split(' ')[0].toUpperCase();
+  document.getElementById('nome-saudacao').textContent = primeiro;
+  document.getElementById('header-nome').textContent = `Olá, ${nomeAluno.split(' ')[0]}!`;
+  document.getElementById('avatar-letra').textContent = nomeAluno[0].toUpperCase();
+  carregarTreino();
+  carregarDashboard();
+  verificarReavaliacao();
+}
+
+// ── TREINO ──
+async function carregarTreino() {
+  const presencaHoje = localStorage.getItem('presenca_' + new Date().toISOString().slice(0,10));
+
+  try {
+    const r = await fetch(`${API}/app-aluno/treino-hoje`, {
+      headers: {'Authorization': `Bearer ${token}`}
+    });
+    const d = await r.json();
+
+    const seq = parseInt(localStorage.getItem('sequencia') || '0');
+    document.getElementById('seq-num').textContent = seq;
+    const seqEl = document.getElementById('seq-dias');
+    seqEl.innerHTML = '';
+    for(let i=0; i<7; i++) {
+      const div = document.createElement('div');
+      div.className = 'seq-dia' + (i < seq % 7 ? ' feito' : i === seq % 7 ? ' hoje' : '');
+      seqEl.appendChild(div);
+    }
+
+    if (d.mensagem && !d.exercicios) {
+      document.getElementById('treino-content').innerHTML = `
+        <div class="card-treino" style="text-align:center;padding:32px">
+          <div style="font-size:48px;margin-bottom:16px">😴</div>
+          <div class="sessao-nome">DIA DE DESCANSO</div>
+          <p style="color:var(--cinza);font-size:13px;margin-top:8px">${d.dica || 'Recuperação também é treino!'}</p>
+        </div>`;
+      return;
+    }
+
+    // Verifica se já registrou presença hoje
+    if (!presencaHoje && d.exercicios) {
+      // Mostra aviso mas NÃO bloqueia — só lembra de registrar
+      let html = `
+        <div class="card-treino">
+          <div class="sessao-nome">${d.sessao || 'TREINO DE HOJE'}</div>
+          <div class="sessao-info"><span>📅 ${new Date().toLocaleDateString('pt-BR')}</span><span>💪 ${d.total_exercicios || d.exercicios?.length || 0} exercícios</span></div>
+          <div style="margin-top:16px">`;
+
+      (d.exercicios || []).forEach((e, i) => {
+        html += `<div class="exercicio-item">
+          <div class="exercicio-num">${i+1}</div>
+          <div class="exercicio-info">
+            <div class="exercicio-nome">${e.nome || 'Exercício'}</div>
+            <div class="exercicio-detalhe">${e.series || 3}x${e.repeticoes || '8-12'} • ${e.descanso || 60}s descanso</div>
+          </div>
+          <div class="exercicio-carga">${e.carga || '--'}<span>kg</span></div>
+        </div>`;
+      });
+
+      html += `</div></div>
+        <button class="btn-presenca" onclick="registrarPresenca()">
+          ✅ CONCLUIR TREINO
+        </button>`;
+      document.getElementById('treino-content').innerHTML = html;
+    } else if (presencaHoje) {
+      let html = `
+        <div class="card-treino" style="border-color:rgba(0,229,160,0.3)">
+          <div style="text-align:center;padding:16px 0">
+            <div style="font-size:48px;margin-bottom:8px">🏆</div>
+            <div class="sessao-nome" style="color:var(--verde)">TREINO CONCLUÍDO!</div>
+            <p style="color:var(--cinza);font-size:13px;margin-top:8px">Você completou o treino de hoje. Volte amanhã!</p>
+          </div>
+        </div>`;
+      document.getElementById('treino-content').innerHTML = html;
+    }
+  } catch(e) {
+    document.getElementById('treino-content').innerHTML = `
+      <div class="card-treino" style="text-align:center;padding:32px">
+        <div style="font-size:48px;margin-bottom:16px">🔌</div>
+        <div class="sessao-nome">OFFLINE</div>
+        <p style="color:var(--cinza);font-size:13px;margin-top:8px">Verifique sua conexão</p>
+      </div>`;
+  }
+}
+
+async function registrarPresenca() {
+  try {
+    const r = await fetch(`${API}/app-aluno/presenca`, {
+      method: 'POST', headers: {'Authorization': `Bearer ${token}`, 'Content-Type':'application/json'},
+      body: JSON.stringify({duracao_minutos: 60})
+    });
+    if (r.ok) {
+      const hoje = new Date().toISOString().slice(0,10);
+      localStorage.setItem('presenca_' + hoje, '1');
+      const seq = parseInt(localStorage.getItem('sequencia') || '0') + 1;
+      localStorage.setItem('sequencia', seq);
+      mostrarToast('🔥 TREINO REGISTRADO!');
+      setTimeout(carregarTreino, 1500);
+    }
+  } catch(e) { mostrarToast('Erro ao registrar!'); }
+}
+
+// ── DASHBOARD ──
+async function carregarDashboard() {
+  try {
+    const r = await fetch(`${API}/app-aluno/dashboard`, {
+      headers: {'Authorization': `Bearer ${token}`}
+    });
+    const d = await r.json();
+
+    if (d.ultima_avaliacao) {
+      document.getElementById('dash-peso').textContent = d.ultima_avaliacao.peso || '--';
+      document.getElementById('dash-gordura').textContent = d.ultima_avaliacao.percentual_gordura?.toFixed(1) || '--';
+      document.getElementById('dash-magra').textContent = d.ultima_avaliacao.massa_magra_kg?.toFixed(1) || '--';
+    }
+    document.getElementById('dash-presencas').textContent = d.resumo?.presencas_30_dias || '0';
+
+    // Gráfico de evolução
+    const evolucao = d.evolucao_composicao || [];
+    if (evolucao.length > 1) {
+      const pesos = evolucao.map(e => e.peso).filter(Boolean);
+      const maxPeso = Math.max(...pesos);
+      let grafico = '<div class="grafico-titulo">EVOLUÇÃO DO PESO (kg)</div>';
+      evolucao.slice(-5).forEach(e => {
+        if (!e.peso) return;
+        const pct = (e.peso / maxPeso * 100).toFixed(0);
+        const data = new Date(e.data).toLocaleDateString('pt-BR', {month:'short', day:'numeric'});
+        grafico += `<div class="barra-wrap">
+          <span class="barra-label">${data}</span>
+          <div class="barra-bg"><div class="barra-fill" style="width:${pct}%"></div></div>
+          <span class="barra-val">${e.peso}kg</span>
+        </div>`;
+      });
+      document.getElementById('grafico-evolucao').innerHTML = grafico;
+    }
+  } catch(e) {}
+}
+
+// ── REAVALIAÇÃO ──
+async function verificarReavaliacao() {
+  try {
+    const r = await fetch(`${API}/app-aluno/reavaliacao`, {
+      headers: {'Authorization': `Bearer ${token}`}
+    });
+    const d = await r.json();
+    if (d.precisa_reavaliar) {
+      document.getElementById('card-reavaliacao').style.display = 'flex';
+    }
+  } catch(e) {}
+}
+
+// ── MEDIDAS ──
+async function salvarMedidas() {
+  const medidas = {
+    circ_torax: parseFloat(document.getElementById('m-torax').value) || null,
+    circ_cintura: parseFloat(document.getElementById('m-cintura').value) || null,
+    circ_abdomen: parseFloat(document.getElementById('m-abdomen').value) || null,
+    circ_quadril: parseFloat(document.getElementById('m-quadril').value) || null,
+    circ_braco_d_contraido: parseFloat(document.getElementById('m-braco-d').value) || null,
+    circ_braco_e_contraido: parseFloat(document.getElementById('m-braco-e').value) || null,
+    circ_antebraco_d: parseFloat(document.getElementById('m-antebraco-d').value) || null,
+    circ_antebraco_e: parseFloat(document.getElementById('m-antebraco-e').value) || null,
+    circ_coxa_d: parseFloat(document.getElementById('m-coxa-d').value) || null,
+    circ_coxa_e: parseFloat(document.getElementById('m-coxa-e').value) || null,
+    circ_panturrilha_d: parseFloat(document.getElementById('m-pant-d').value) || null,
+    circ_panturrilha_e: parseFloat(document.getElementById('m-pant-e').value) || null,
+  };
+  mostrarToast('📏 MEDIDAS SALVAS!');
+}
+
+// ── CHAT ──
+async function enviarMsg() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const msgs = document.getElementById('chat-msgs');
+  msgs.innerHTML += `<div class="msg msg-user">${msg}</div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  chatHistorico.push({role: 'user', content: msg});
+
+  // Indicador de digitação
+  const typing = document.createElement('div');
+  typing.className = 'msg msg-auri';
+  typing.innerHTML = '<strong>AURI</strong>...';
+  msgs.appendChild(typing);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    const r = await fetch(`${API}/app-aluno/chat`, {
+      method: 'POST',
+      headers: {'Authorization': `Bearer ${token}`, 'Content-Type':'application/json'},
+      body: JSON.stringify({mensagem: msg, historico: chatHistorico.slice(-10)})
+    });
+    const d = await r.json();
+    typing.innerHTML = `<strong>AURI</strong>${d.resposta}`;
+    chatHistorico.push({role: 'assistant', content: d.resposta});
+  } catch(e) {
+    typing.innerHTML = '<strong>AURI</strong>Desculpe, tente novamente!';
+  }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ── TABS ──
+function mudarTab(tab, el) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-' + tab).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── TOAST ──
+function mostrarToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>

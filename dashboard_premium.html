@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PT Gestão Premium</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+[data-theme="dark"]{--bg:#0a0a0a;--bg2:#111111;--bg3:#1a1a1a;--bg4:#222222;--gold:#C9A84C;--gold2:#E8C97A;--gold3:#8B6914;--text:#F0EDE8;--text2:#A09888;--text3:#6B6358;--border:#2A2520;--border2:#3A3228;--green:#1D9E75;--red:#E24B4A;--blue:#378ADD;--input-bg:#1a1a1a}
+[data-theme="light"]{--bg:#F5F3EE;--bg2:#FFFFFF;--bg3:#F0EDE8;--bg4:#E8E4DC;--gold:#8B6914;--gold2:#6B5010;--gold3:#C9A84C;--text:#1A1610;--text2:#5A5040;--text3:#8B8070;--border:#D8D0C0;--border2:#C8C0B0;--green:#0F6E56;--red:#C03030;--blue:#185FA5;--input-bg:#F5F3EE}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;transition:background 0.2s,color 0.2s}
+.theme-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 12px;border-radius:20px;border:0.5px solid var(--border2);background:var(--bg3);user-select:none}
+.theme-toggle:hover{border-color:var(--gold)}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center}
+.login-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:14px;padding:40px;width:400px}
+.login-logo{text-align:center;margin-bottom:24px}
+.login-icon{width:52px;height:52px;background:var(--gold3);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.login-icon svg{width:26px;height:26px;stroke:var(--bg);fill:none;stroke-width:2}
+.login-title{font-size:20px;font-weight:700;color:var(--gold)}
+.login-sub{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.form-group{margin-bottom:14px}
+.form-group label{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 12px;background:var(--input-bg);border:0.5px solid var(--border2);border-radius:6px;color:var(--text);font-size:13px;outline:none;font-family:inherit}
+.form-group input:focus,.form-group select:focus{border-color:var(--gold)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.btn{padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;border:0.5px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:inherit;transition:all 0.1s}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-gold{background:var(--gold3);border-color:var(--gold);color:var(--bg)}
+.btn-gold:hover{opacity:0.85}
+.btn-info{background:transparent;border:0.5px solid var(--blue);color:var(--blue);font-size:11px;padding:4px 10px;border-radius:5px;cursor:pointer;font-family:inherit}
+.btn-info:hover{background:rgba(55,138,221,0.1)}
+.err{color:var(--red);font-size:12px;margin-top:6px;display:none}
+.app{display:none;flex-direction:column;min-height:100vh}
+.sidebar{width:230px;background:var(--bg2);border-right:0.5px solid var(--border2);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0}
+.logo-area{padding:22px 18px 16px;border-bottom:0.5px solid var(--border2)}
+.logo-icon{width:32px;height:32px;background:var(--gold3);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.logo-icon svg{width:17px;height:17px;stroke:var(--bg);fill:none;stroke-width:2}
+.logo-title{font-size:15px;font-weight:700;color:var(--gold)}
+.logo-sub{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.nav{padding:8px 0;flex:1;overflow-y:auto}
+.nav-section{padding:4px 16px 2px;font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:var(--text2);font-size:13px;border-left:2px solid transparent;transition:all 0.1s}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--bg3);color:var(--gold);border-left-color:var(--gold)}
+.nav-item svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+.nav-footer{padding:12px 16px;border-top:0.5px solid var(--border2)}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--gold3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--bg);flex-shrink:0}
+.main{margin-left:230px;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--bg2);border-bottom:0.5px solid var(--border2);padding:13px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.page-title{font-size:16px;font-weight:600;color:var(--text)}
+.content{padding:24px;flex:1}
+.page{display:none}.page.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:22px}
+.stat-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;padding:14px}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px}
+.stat-value{font-size:22px;font-weight:700;color:var(--gold)}
+.card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;margin-bottom:18px}
+.card-head{padding:13px 18px;border-bottom:0.5px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:600;color:var(--gold)}
+.card-body{padding:18px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;color:var(--text3);border-bottom:0.5px solid var(--border2);text-transform:uppercase;letter-spacing:0.5px;background:var(--bg3)}
+td{padding:10px 12px;border-bottom:0.5px solid var(--border);color:var(--text2)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.bg{background:#0A1F17;color:#1D9E75}.br{background:#1F0A0A;color:#E24B4A}.bo{background:#2A200A;color:#C9A84C}.bb{background:#0A1525;color:#378ADD}
+[data-theme="light"] .bg{background:#D0F0E8;color:#0F6E56}[data-theme="light"] .br{background:#FFE0E0;color:#C03030}[data-theme="light"] .bo{background:#FFF0D0;color:#8B6914}[data-theme="light"] .bb{background:#D0E8FF;color:#185FA5}
+.mini-avatar{width:26px;height:26px;border-radius:50%;background:var(--gold3);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--bg);margin-right:8px;vertical-align:middle}
+.modal-wrap{display:none;min-height:400px;background:rgba(0,0,0,0.65);align-items:center;justify-content:center;position:fixed;top:0;left:0;right:0;bottom:0;z-index:200}
+.modal-wrap.open{display:flex}
+.modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:26px;width:500px;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:15px;font-weight:600;color:var(--gold);margin-bottom:16px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;padding-top:12px;border-top:0.5px solid var(--border2)}
+.search-inp{padding:7px 12px;background:var(--input-bg);border:0.5px solid var(--border2);border-radius:6px;color:var(--text);font-size:13px;font-family:inherit;width:220px;outline:none}
+.search-inp:focus{border-color:var(--gold)}
+.api-dot{width:7px;height:7px;border-radius:50%;background:#1D9E75;display:inline-block;margin-right:5px}
+.api-dot.off{background:#E24B4A}
+.metodo-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:18px}
+.metodo-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center;transition:all 0.15s}
+.metodo-card:hover{border-color:var(--gold3)}
+.metodo-card.selected{border-color:var(--gold);background:var(--bg3)}
+.metodo-icon{width:34px;height:34px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;margin:0 auto 7px}
+.metodo-card.selected .metodo-icon{background:var(--gold3)}
+.metodo-icon svg{width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2}
+.metodo-card.selected .metodo-icon svg{stroke:var(--bg)}
+.metodo-title{font-size:11px;font-weight:600;color:var(--text);margin-bottom:2px}
+.metodo-desc{font-size:10px;color:var(--text3)}
+.metodo-form{display:none}.metodo-form.active{display:block}
+.secao-titulo{font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px;padding-bottom:5px;border-bottom:0.5px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.info-box{background:var(--bg3);border:0.5px solid var(--border2);border-left:2px solid var(--blue);border-radius:8px;padding:14px;margin-bottom:14px;font-size:12px;color:var(--text2);line-height:1.6;display:none}
+.info-box.open{display:block}
+.info-box h4{font-size:12px;font-weight:600;color:var(--gold);margin-bottom:8px}
+.info-box ul{padding-left:16px}.info-box ul li{margin-bottom:4px}
+.ponto{display:flex;gap:8px;margin-bottom:6px;align-items:flex-start}
+.ponto-nome{font-weight:600;color:var(--text);min-width:130px;font-size:11px;flex-shrink:0}
+.ponto-desc{font-size:11px;color:var(--text2)}
+.vo2-tabs{display:flex;gap:0;margin-bottom:14px;border:0.5px solid var(--border2);border-radius:8px;overflow:hidden}
+.vo2-tab{flex:1;padding:8px;text-align:center;font-size:12px;cursor:pointer;color:var(--text3);background:var(--bg3);border-right:0.5px solid var(--border2);transition:all 0.1s}
+.vo2-tab:last-child{border-right:none}
+.vo2-tab.active{background:var(--gold3);color:var(--bg);font-weight:600}
+.vo2-form{display:none}.vo2-form.active{display:block}
+.resultado-box{background:var(--bg3);border:0.5px solid var(--gold3);border-radius:8px;padding:14px;margin-top:12px;display:none}
+.resultado-box.show{display:block}
+.resultado-valor{font-size:24px;font-weight:700;color:var(--gold)}
+.resultado-cls{font-size:12px;color:var(--text2);margin-top:4px}
+.hint{background:var(--bg3);border-radius:7px;padding:10px;margin-bottom:12px;font-size:11px;color:var(--text2)}
+
+/* Fotos posturais */
+.foto-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+.foto-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;text-align:center}
+.foto-box{position:relative;height:180px;border-radius:8px;overflow:hidden;cursor:pointer;border:1px dashed var(--border2);background:var(--bg3);transition:border-color 0.15s}
+.foto-box:hover{border-color:var(--gold3)}
+.foto-grid-bg{position:absolute;top:0;left:0;right:0;bottom:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:20px 20px}
+[data-theme="light"] .foto-grid-bg{background-image:linear-gradient(rgba(0,0,0,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.06) 1px,transparent 1px);background-size:20px 20px}
+.foto-placeholder{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:2}
+.foto-placeholder svg{width:28px;height:28px;stroke:var(--text3);fill:none;stroke-width:1.5;margin-bottom:6px}
+.foto-placeholder span{display:block;font-size:11px;color:var(--text3)}
+.foto-preview{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:3;display:none}
+.foto-remover{position:absolute;top:6px;right:6px;z-index:4;background:rgba(0,0,0,0.6);border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;color:white;font-size:14px;display:none;align-items:center;justify-content:center;line-height:1}
+
+/* Lojinha */
+.loja-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.loja-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;padding:18px;transition:border-color 0.15s}
+.loja-card:hover{border-color:var(--gold3)}
+.loja-icon{width:44px;height:44px;background:var(--gold3);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.loja-icon svg{width:22px;height:22px;stroke:var(--bg);fill:none;stroke-width:2}
+.loja-nome{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.loja-desc{font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5}
+.loja-preco{font-size:11px;color:var(--text3);margin-bottom:12px}
+.loja-preco span{color:var(--green);font-weight:600;font-size:13px}
+.loja-btns{display:flex;gap:8px}
+.btn-loja-ml{background:#FFF159;border:none;border-radius:6px;padding:7px 12px;font-size:11px;font-weight:700;color:#333;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}
+.btn-loja-az{background:#FF9900;border:none;border-radius:6px;padding:7px 12px;font-size:11px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}
+.loja-destaque{border-color:var(--gold);position:relative}
+.loja-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold3);border:0.5px solid var(--gold);color:var(--bg);font-size:10px;padding:3px 12px;border-radius:20px;white-space:nowrap;font-weight:700}
+</style>
+</head>
+<body>
+
+<div id="loginWrap" class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <div class="login-title">PT Gestão</div>
+      <div class="login-sub">Sistema Premium</div>
+    </div>
+    <div style="display:flex;justify-content:center;margin-bottom:18px">
+      <div class="theme-toggle" onclick="toggleTema()"><span id="themeIcon">🌙</span><span style="font-size:12px;color:var(--text2)" id="themeLabel">Tema escuro</span></div>
+    </div>
+    <div class="form-group"><label>E-mail</label><input type="email" id="lEmail" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')login()"/></div>
+    <div class="form-group"><label>Senha</label><input type="password" id="lSenha" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()"/></div>
+    <div class="err" id="lErr"></div>
+    <button class="btn btn-gold" style="width:100%;margin-top:10px;padding:10px" onclick="login()">Entrar</button>
+    <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--text3)"><span class="api-dot" id="aDot"></span><span id="aStatus">Verificando...</span></div>
+  </div>
+</div>
+
+<div id="appWrap" class="app">
+  <div class="sidebar">
+    <div class="logo-area">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <div class="logo-title">PT Gestão</div><div class="logo-sub">Sistema Premium</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Principal</div>
+      <div class="nav-item active" onclick="goPage('dashboard',this)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</div>
+      <div class="nav-section">Alunos</div>
+      <div class="nav-item" onclick="goPage('alunos',this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Alunos</div>
+      <div class="nav-item" onclick="goPage('avaliacao',this)"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Avaliação Física</div>
+      <div class="nav-section">Treino</div>
+      <div class="nav-item" onclick="goPage('treinos',this)"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>Treinos</div>
+      <div class="nav-section">Financeiro</div>
+      <div class="nav-item" onclick="goPage('financeiro',this)"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Pagamentos</div>
+      <div class="nav-section">Loja</div>
+      <div class="nav-item" onclick="goPage('loja',this)"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Loja de Equipamentos</div>
+    </nav>
+    <div class="nav-footer">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div class="avatar" id="sAvatar">AA</div>
+        <div><div style="font-size:13px;font-weight:500;color:var(--text)" id="sNome">Personal</div><div style="font-size:11px;color:var(--gold)" id="sCref"></div></div>
+      </div>
+      <div class="theme-toggle" onclick="toggleTema()" style="margin-bottom:8px;width:100%"><span id="themeIcon2">🌙</span><span style="font-size:12px;color:var(--text2)" id="themeLabel2">Tema escuro</span></div>
+      <button class="btn" style="width:100%;font-size:12px" onclick="sair()">Sair</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title" id="pageTitle">Dashboard</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:12px;color:var(--text3)" id="dataHoje"></span>
+        <button class="btn btn-gold" id="topBtn" style="display:none" onclick="abrirModalAluno()">+ Novo aluno</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Dashboard -->
+      <div id="pgDashboard" class="page active">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Alunos Ativos</div><div class="stat-value" id="dAtivos">—</div></div>
+          <div class="stat-card"><div class="stat-label">Total Alunos</div><div class="stat-value" id="dTotal">—</div></div>
+          <div class="stat-card"><div class="stat-label">Recebido Mês</div><div class="stat-value" id="dRecebido">—</div></div>
+          <div class="stat-card"><div class="stat-label">Em Aberto</div><div class="stat-value" id="dAberto">—</div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Alunos recentes</span><button class="btn" onclick="goPage('alunos',document.querySelectorAll('.nav-item')[1])">Ver todos</button></div>
+          <table><thead><tr><th>Aluno</th><th>Objetivo</th><th>Nível</th><th>Status</th></tr></thead><tbody id="dTabela"></tbody></table>
+        </div>
+      </div>
+
+      <!-- Alunos -->
+      <div id="pgAlunos" class="page">
+        <div style="display:flex;gap:10px;margin-bottom:18px">
+          <input class="search-inp" placeholder="Buscar aluno..." oninput="buscar(this.value)"/>
+          <button class="btn btn-gold" onclick="abrirModalAluno()">+ Novo aluno</button>
+        </div>
+        <div class="card"><table><thead><tr><th>Aluno</th><th>Contato</th><th>Objetivo</th><th>Nível</th><th>Idade</th><th></th></tr></thead><tbody id="aTabela"></tbody></table></div>
+      </div>
+
+      <!-- Avaliação Física -->
+      <div id="pgAvaliacao" class="page">
+        <div class="card"><div class="card-head"><span class="card-title">Nova Avaliação Física</span></div><div class="card-body">
+          <div class="form-group" style="max-width:280px;margin-bottom:20px"><label>Aluno *</label><select id="avAluno"><option value="">Selecione o aluno</option></select></div>
+
+          <div class="secao-titulo">Método de avaliação da composição corporal</div>
+          <div class="metodo-grid">
+            <div class="metodo-card selected" onclick="selecionarMetodo('pollock3',this)"><div class="metodo-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></svg></div><div class="metodo-title">Pollock 3</div><div class="metodo-desc">Clássico</div></div>
+            <div class="metodo-card" onclick="selecionarMetodo('pollock7',this)"><div class="metodo-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="metodo-title">Pollock 7</div><div class="metodo-desc">Alta precisão</div></div>
+            <div class="metodo-card" onclick="selecionarMetodo('bioimpedancia',this)"><div class="metodo-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="metodo-title">Bioimpedância</div><div class="metodo-desc">Aparelho</div></div>
+            <div class="metodo-card" onclick="selecionarMetodo('ultrassom9',this)"><div class="metodo-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div><div class="metodo-title">Ultrassom 9pts</div><div class="metodo-desc">Portátil</div></div>
+            <div class="metodo-card" onclick="selecionarMetodo('outro',this)"><div class="metodo-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4"/></svg></div><div class="metodo-title">Outro</div><div class="metodo-desc">DEXA, BOD POD</div></div>
+          </div>
+
+          <!-- Pollock 3 -->
+          <div id="formPollock3" class="metodo-form active">
+            <div class="secao-titulo">Pollock 3 Dobras <button class="btn-info" onclick="toggleInfo('iP3')">? Como medir</button></div>
+            <div id="iP3" class="info-box"><h4>Protocolo Pollock 3 Dobras</h4><p style="margin-bottom:8px">Medidas no lado direito. Pinçar 1cm acima do local. Realizar 3 medidas e usar a média.</p><div class="ponto"><span class="ponto-nome">♂ Peitoral</span><span class="ponto-desc">Diagonal entre axila anterior e mamilo, na metade da linha.</span></div><div class="ponto"><span class="ponto-nome">♂ Abdominal</span><span class="ponto-desc">Vertical, 2cm lateralmente à direita da cicatriz umbilical.</span></div><div class="ponto"><span class="ponto-nome">♀ Triciptal</span><span class="ponto-desc">Vertical, face posterior do braço, ponto médio entre acrômio e olécrano.</span></div><div class="ponto"><span class="ponto-nome">♀ Suprailíaca</span><span class="ponto-desc">Diagonal, logo acima da crista ilíaca na linha axilar anterior.</span></div><div class="ponto"><span class="ponto-nome">♂♀ Coxa</span><span class="ponto-desc">Vertical, face anterior da coxa, ponto médio entre prega inguinal e borda da patela.</span></div></div>
+            <div class="hint"><strong style="color:var(--gold)">♂ Masculino:</strong> Peitoral + Abdominal + Coxa &nbsp;|&nbsp; <strong style="color:var(--gold)">♀ Feminino:</strong> Triciptal + Suprailíaca + Coxa</div>
+            <div class="form-row-3"><div class="form-group"><label>Peitoral (mm) ♂</label><input type="number" step="0.1" id="p3_peit" placeholder="ex: 12"/></div><div class="form-group"><label>Abdominal (mm) ♂</label><input type="number" step="0.1" id="p3_abdo" placeholder="ex: 22"/></div><div class="form-group"><label>Triciptal (mm) ♀</label><input type="number" step="0.1" id="p3_tric" placeholder="ex: 15"/></div></div>
+            <div class="form-row-3"><div class="form-group"><label>Suprailíaca (mm) ♀</label><input type="number" step="0.1" id="p3_supra" placeholder="ex: 18"/></div><div class="form-group"><label>Coxa (mm) ♂♀</label><input type="number" step="0.1" id="p3_coxa" placeholder="ex: 18"/></div><div class="form-group"><label>Peso (kg)</label><input type="number" step="0.1" id="p3_peso"/></div></div>
+            <div class="form-row-3"><div class="form-group"><label>Estatura (cm)</label><input type="number" id="p3_estat"/></div></div>
+          </div>
+
+          <!-- Pollock 7 -->
+          <div id="formPollock7" class="metodo-form">
+            <div class="secao-titulo">Pollock 7 Dobras <button class="btn-info" onclick="toggleInfo('iP7')">? Como medir</button></div>
+            <div id="iP7" class="info-box"><h4>Protocolo Pollock 7 Dobras</h4><div class="ponto"><span class="ponto-nome">1. Peitoral</span><span class="ponto-desc">Diagonal entre axila anterior e mamilo.</span></div><div class="ponto"><span class="ponto-nome">2. Axilar Média</span><span class="ponto-desc">Horizontal, linha axilar média, nível do processo xifóide.</span></div><div class="ponto"><span class="ponto-nome">3. Tríceps</span><span class="ponto-desc">Vertical, face posterior do braço, ponto médio acrômio-olécrano.</span></div><div class="ponto"><span class="ponto-nome">4. Subescapular</span><span class="ponto-desc">Diagonal 45°, 1-2cm abaixo do ângulo inferior da escápula.</span></div><div class="ponto"><span class="ponto-nome">5. Abdominal</span><span class="ponto-desc">Vertical, 2cm à direita da cicatriz umbilical.</span></div><div class="ponto"><span class="ponto-nome">6. Suprailíaca</span><span class="ponto-desc">Diagonal, logo acima da crista ilíaca na linha axilar anterior.</span></div><div class="ponto"><span class="ponto-nome">7. Coxa</span><span class="ponto-desc">Vertical, face anterior da coxa, ponto médio entre prega inguinal e patela.</span></div></div>
+            <div class="form-row-3"><div class="form-group"><label>Peitoral (mm)</label><input type="number" step="0.1" id="p7_peit"/></div><div class="form-group"><label>Axilar Média (mm)</label><input type="number" step="0.1" id="p7_axil"/></div><div class="form-group"><label>Tríceps (mm)</label><input type="number" step="0.1" id="p7_tric"/></div></div>
+            <div class="form-row-3"><div class="form-group"><label>Subescapular (mm)</label><input type="number" step="0.1" id="p7_sub"/></div><div class="form-group"><label>Abdominal (mm)</label><input type="number" step="0.1" id="p7_abdo"/></div><div class="form-group"><label>Suprailíaca (mm)</label><input type="number" step="0.1" id="p7_supra"/></div></div>
+            <div class="form-row-3"><div class="form-group"><label>Coxa (mm)</label><input type="number" step="0.1" id="p7_coxa"/></div><div class="form-group"><label>Peso (kg)</label><input type="number" step="0.1" id="p7_peso"/></div><div class="form-group"><label>Estatura (cm)</label><input type="number" id="p7_estat"/></div></div>
+          </div>
+
+          <!-- Bioimpedância -->
+          <div id="formBioimpedancia" class="metodo-form">
+            <div class="secao-titulo">Bioimpedância <button class="btn-info" onclick="toggleInfo('iBio')">? Como usar</button></div>
+            <div id="iBio" class="info-box"><h4>Condições para Bioimpedância</h4><ul><li>Jejum de 4h (mínimo 2h após refeição leve)</li><li>Sem exercício intenso nas 12h anteriores</li><li>Urinar 30 min antes do teste</li><li>Sem álcool nas 48h anteriores</li><li>Mulheres: evitar no período menstrual</li></ul></div>
+            <div class="form-row-3"><div class="form-group"><label>% Gordura *</label><input type="number" step="0.1" id="bio_gord" placeholder="ex: 18.5"/></div><div class="form-group"><label>Massa Gorda (kg)</label><input type="number" step="0.1" id="bio_mg"/></div><div class="form-group"><label>Massa Magra (kg)</label><input type="number" step="0.1" id="bio_mm"/></div></div>
+            <div class="form-row-3"><div class="form-group"><label>Água Corporal (%)</label><input type="number" step="0.1" id="bio_agua"/></div><div class="form-group"><label>Massa Óssea (kg)</label><input type="number" step="0.1" id="bio_ossea"/></div><div class="form-group"><label>Metabolismo Basal (kcal)</label><input type="number" id="bio_tmb"/></div></div>
+            <div class="form-row-3"><div class="form-group"><label>Peso (kg)</label><input type="number" step="0.1" id="bio_peso"/></div><div class="form-group"><label>Estatura (cm)</label><input type="number" id="bio_estat"/></div><div class="form-group"><label>Aparelho/Marca</label><input id="bio_aparelho" placeholder="ex: InBody 270"/></div></div>
+          </div>
+
+          <!-- Ultrassom 9 pontos -->
+          <div id="formUltrassom9" class="metodo-form">
+            <div class="secao-titulo">Ultrassom Portátil — 9 Pontos <button class="btn-info" onclick="toggleInfo('iUs9')">? Protocolo</button></div>
+            <div id="iUs9" class="info-box"><h4>Avaliação por Ultrassom Portátil — 9 Pontos Anatômicos</h4><p style="margin-bottom:8px">O ultrassom portátil mede a espessura do tecido adiposo subcutâneo com alta precisão. Não requer preparo especial — não sofre interferência por hidratação ou atividade física recente.</p><div class="ponto"><span class="ponto-nome">1. Peitoral</span><span class="ponto-desc">Face anterior do tórax, entre axila e mamilo.</span></div><div class="ponto"><span class="ponto-nome">2. Axilar Média</span><span class="ponto-desc">Linha axilar média, nível do processo xifóide.</span></div><div class="ponto"><span class="ponto-nome">3. Subescapular</span><span class="ponto-desc">2cm abaixo do ângulo inferior da escápula, diagonal 45°.</span></div><div class="ponto"><span class="ponto-nome">4. Abdominal</span><span class="ponto-desc">2cm à direita da cicatriz umbilical, vertical.</span></div><div class="ponto"><span class="ponto-nome">5. Suprailíaca</span><span class="ponto-desc">Logo acima da crista ilíaca, linha axilar anterior.</span></div><div class="ponto"><span class="ponto-nome">6. Bíceps</span><span class="ponto-desc">Face anterior do braço, ponto médio entre acrômio e fossa cubital.</span></div><div class="ponto"><span class="ponto-nome">7. Tríceps</span><span class="ponto-desc">Face posterior do braço, ponto médio entre acrômio e olécrano.</span></div><div class="ponto"><span class="ponto-nome">8. Coxa</span><span class="ponto-desc">Face anterior da coxa, ponto médio entre prega inguinal e patela.</span></div><div class="ponto"><span class="ponto-nome">9. Perna</span><span class="ponto-desc">Face medial da panturrilha, ponto de maior circunferência.</span></div><p style="margin-top:8px;color:var(--gold);font-size:11px">O % de gordura é calculado automaticamente pelo aparelho. Insira o resultado abaixo.</p></div>
+            <div class="hint"><strong style="color:var(--gold)">Como usar:</strong> Posicione o transdutor perpendicularmente à pele em cada ponto. Aguarde a leitura estabilizar. Inserir valores em mm fornecidos pelo aparelho.</div>
+            <div class="form-row-3"><div class="form-group"><label>1. Peitoral (mm)</label><input type="number" step="0.1" id="us9_peit" placeholder="mm"/></div><div class="form-group"><label>2. Axilar Média (mm)</label><input type="number" step="0.1" id="us9_axil" placeholder="mm"/></div><div class="form-group"><label>3. Subescapular (mm)</label><input type="number" step="0.1" id="us9_sub" placeholder="mm"/></div></div>
+            <div class="form-row-3"><div class="form-group"><label>4. Abdominal (mm)</label><input type="number" step="0.1" id="us9_abdo" placeholder="mm"/></div><div class="form-group"><label>5. Suprailíaca (mm)</label><input type="number" step="0.1" id="us9_supra" placeholder="mm"/></div><div class="form-group"><label>6. Bíceps (mm)</label><input type="number" step="0.1" id="us9_bic" placeholder="mm"/></div></div>
+            <div class="form-row-3"><div class="form-group"><label>7. Tríceps (mm)</label><input type="number" step="0.1" id="us9_tric" placeholder="mm"/></div><div class="form-group"><label>8. Coxa (mm)</label><input type="number" step="0.1" id="us9_coxa" placeholder="mm"/></div><div class="form-group"><label>9. Perna (mm)</label><input type="number" step="0.1" id="us9_perna" placeholder="mm"/></div></div>
+            <div class="form-row-3"><div class="form-group"><label>% Gordura (aparelho) *</label><input type="number" step="0.1" id="us9_gord" placeholder="ex: 18.5"/></div><div class="form-group"><label>Peso (kg)</label><input type="number" step="0.1" id="us9_peso"/></div><div class="form-group"><label>Estatura (cm)</label><input type="number" id="us9_estat"/></div></div>
+            <div class="form-group" style="max-width:280px"><label>Marca do aparelho</label><input id="us9_marca" placeholder="ex: Ultrassom portátil"/></div>
+          </div>
+
+          <!-- Outro -->
+          <div id="formOutro" class="metodo-form">
+            <div class="secao-titulo">Outro Método <button class="btn-info" onclick="toggleInfo('iOutro')">? Saiba mais</button></div>
+            <div id="iOutro" class="info-box"><h4>Outros métodos aceitos</h4><div class="ponto"><span class="ponto-nome">DEXA</span><span class="ponto-desc">Raios-X de dupla energia. Padrão ouro para composição corporal.</span></div><div class="ponto"><span class="ponto-nome">Hidrostática</span><span class="ponto-desc">Pesagem subaquática. Baseada no princípio de Arquimedes.</span></div><div class="ponto"><span class="ponto-nome">BOD POD</span><span class="ponto-desc">Deslocamento de ar. Muito preciso e confortável.</span></div></div>
+            <div class="form-row-3"><div class="form-group"><label>% Gordura *</label><input type="number" step="0.1" id="outro_gord" placeholder="ex: 18.5"/></div><div class="form-group"><label>Peso (kg)</label><input type="number" step="0.1" id="outro_peso"/></div><div class="form-group"><label>Estatura (cm)</label><input type="number" id="outro_estat"/></div></div>
+            <div class="form-group" style="max-width:380px"><label>Método utilizado</label><input id="outro_metodo" placeholder="ex: DEXA, Hidrostática, BOD POD..."/></div>
+          </div>
+
+          <!-- Circunferências -->
+          <div class="secao-titulo">Circunferências (cm) <button class="btn-info" onclick="toggleInfo('iCirc')">? Como medir</button></div>
+          <div id="iCirc" class="info-box"><h4>Protocolo de Medição de Circunferências</h4><p style="margin-bottom:8px;color:var(--text3);font-size:11px">Use fita métrica inextensível. Posicionar horizontalmente, sem comprimir a pele. Mínimo 2 medidas, usar a média. Sempre no mesmo horário para comparações.</p><div class="ponto"><span class="ponto-nome">Cintura</span><span class="ponto-desc">Menor circunferência entre as costelas e a crista ilíaca. Medir ao final da expiração normal, sem sugar a barriga. Principal referência para risco cardiovascular.</span></div><div class="ponto"><span class="ponto-nome">Abdômen</span><span class="ponto-desc">Ao nível da cicatriz umbilical, ao final da expiração. Diferente da cintura — registra a circunferência abdominal total.</span></div><div class="ponto"><span class="ponto-nome">Quadril</span><span class="ponto-desc">Maior circunferência ao redor dos glúteos com os pés juntos. Usada na relação cintura/quadril (RCQ) para risco cardiovascular.</span></div><div class="ponto"><span class="ponto-nome">Braço Contraído</span><span class="ponto-desc">Maior circunferência do bíceps com cotovelo flexionado a 90° e músculo contraído. Reflete ganho de massa muscular.</span></div><div class="ponto"><span class="ponto-nome">Coxa</span><span class="ponto-desc">1cm abaixo da prega glútea, peso distribuído em ambas as pernas. Posição ereta, pés paralelos.</span></div><div class="ponto"><span class="ponto-nome">Panturrilha</span><span class="ponto-desc">Maior circunferência da panturrilha com joelho levemente flexionado. Importante indicador de massa muscular em idosos.</span></div><p style="margin-top:8px;font-size:11px;color:var(--gold)">RCQ: Risco alto quando cintura/quadril &gt; 0,90 em homens ou &gt; 0,85 em mulheres.</p></div>
+          <div class="form-row-3"><div class="form-group"><label>Cintura</label><input type="number" step="0.1" id="c_cintura" placeholder="cm"/></div><div class="form-group"><label>Quadril</label><input type="number" step="0.1" id="c_quadril" placeholder="cm"/></div><div class="form-group"><label>Abdômen</label><input type="number" step="0.1" id="c_abdomen" placeholder="cm"/></div></div>
+          <div class="form-row-3"><div class="form-group"><label>Braço D. Contraído</label><input type="number" step="0.1" id="c_braco_d" placeholder="cm"/></div><div class="form-group"><label>Coxa D.</label><input type="number" step="0.1" id="c_coxa_d" placeholder="cm"/></div><div class="form-group"><label>Panturrilha D.</label><input type="number" step="0.1" id="c_pant_d" placeholder="cm"/></div></div>
+
+          <!-- Testes físicos -->
+          <div class="secao-titulo">Flexibilidade e Força <button class="btn-info" onclick="toggleInfo('iTestes')">? Protocolos</button></div>
+          <div id="iTestes" class="info-box"><h4>Protocolos dos Testes Físicos</h4><div class="ponto"><span class="ponto-nome">Wells (Flexibilidade)</span><span class="ponto-desc">Aluno sentado no banco, joelhos completamente estendidos, pés apoiados na caixa. Mãos sobrepostas, empurrar a fita lentamente sem solavancos. 3 tentativas com 30s de intervalo. Registrar a maior. Mede flexibilidade da cadeia posterior (isquiotibiais e lombar).</span></div><div class="ponto"><span class="ponto-nome">Flexão de Braço (1 min)</span><span class="ponto-desc">♂ Homens: apoio nas mãos e pontas dos pés, corpo reto como prancha. ♀ Mulheres: apoio nos joelhos (teste modificado). Descer até o peito quase tocar o chão. Contar todas as repetições completas em 1 minuto. Mede resistência muscular de membros superiores.</span></div><div class="ponto"><span class="ponto-nome">Barra Fixa</span><span class="ponto-desc">Partida com braços completamente estendidos (pegada pronada ou supinada). Subir até o queixo ultrapassar a barra. Sem balanço ou impulso do corpo. Sem limite de tempo — máximo de repetições completas. Mede força relativa de membros superiores.</span></div><p style="margin-top:8px;font-size:11px;color:var(--gold)">Dica profissional: Sempre realize os testes de flexibilidade ANTES dos testes de força. O aquecimento pode mascarar os resultados de flexibilidade.</p></div>
+          <div class="form-row-3"><div class="form-group"><label>Wells — Banco (cm)</label><input type="number" step="0.1" id="t_wells" placeholder="cm"/></div><div class="form-group"><label>Flexão (1 min)</label><input type="number" id="t_flexao" placeholder="rep"/></div><div class="form-group"><label>Barra Fixa</label><input type="number" id="t_barra" placeholder="rep"/></div></div>
+
+          <!-- VO2max -->
+          <div class="secao-titulo">VO2max — Escolha o protocolo <button class="btn-info" onclick="toggleInfo('iVo2')">? Qual usar?</button></div>
+          <div id="iVo2" class="info-box"><h4>VO2max — Qual protocolo escolher?</h4><p style="margin-bottom:8px;color:var(--text3);font-size:11px">O VO2max é o principal indicador de aptidão cardiorrespiratória — volume máximo de oxigênio consumido por kg de peso por minuto (ml/kg/min).</p><div class="ponto"><span class="ponto-nome">Cooper 12 min</span><span class="ponto-desc">Indicado para adultos ativos e intermediários sem limitações físicas. Correr/caminhar o máximo em 12 minutos em pista de 400m. Alta validade científica. Fórmula: (distância em metros − 504,9) ÷ 44,73.</span></div><div class="ponto"><span class="ponto-nome">Teste da Milha (Kline 1987)</span><span class="ponto-desc">Ideal para iniciantes, sedentários e pessoas com sobrepeso. Caminhar 1.609m (1 milha) o mais rápido possível SEM correr. Medir FC imediatamente ao terminar. Necessita cronômetro e frequencímetro.</span></div><div class="ponto"><span class="ponto-nome">Teste do Step (McArdle 1972)</span><span class="ponto-desc">Ideal para idosos, sedentários e reabilitação. Degrau de 30,5cm ♀ ou 40,6cm ♂. Cadência de 22 passos/min (use metrônomo) por exatos 3 minutos. Sentar imediatamente e contar FC por 15s × 4. Não exige esforço máximo — seguro para populações especiais.</span></div><p style="margin-top:8px;font-size:11px;color:var(--gold)">Classificação VO2max (adultos): &lt;35 Fraco | 35-42 Regular | 43-52 Bom | 53-60 Excelente | &gt;60 Superior</p></div>
+          <div class="vo2-tabs"><div class="vo2-tab active" onclick="selecionarVo2('cooper',this)">Cooper 12 min</div><div class="vo2-tab" onclick="selecionarVo2('milha',this)">Teste da Milha</div><div class="vo2-tab" onclick="selecionarVo2('step',this)">Teste do Step</div></div>
+          <div id="vo2Cooper" class="vo2-form active">
+            <div class="form-row-3"><div class="form-group"><label>Distância (m)</label><input type="number" id="cooper_dist" placeholder="ex: 2800" oninput="calcCooper()"/></div></div>
+            <div id="resCooper" class="resultado-box"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">VO2max estimado (Cooper)</div><div class="resultado-valor" id="resCooperVal">—</div><div class="resultado-cls" id="resCooperCls"></div></div>
+          </div>
+          <div id="vo2Milha" class="vo2-form">
+            <div class="hint"><strong style="color:var(--gold)">Protocolo:</strong> Caminhar 1.609m o mais rápido possível. Medir FC e tempo ao terminar. Fórmula Kline et al. (1987).</div>
+            <div class="form-row-3"><div class="form-group"><label>Tempo (min)</label><input type="number" step="0.1" id="milha_min" placeholder="ex: 14.5" oninput="calcMilha()"/></div><div class="form-group"><label>FC final (bpm)</label><input type="number" id="milha_fc" placeholder="ex: 140" oninput="calcMilha()"/></div><div class="form-group"><label>Peso (kg)</label><input type="number" step="0.1" id="milha_peso" placeholder="ex: 80" oninput="calcMilha()"/></div></div>
+            <div id="resMilha" class="resultado-box"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">VO2max estimado (Kline 1987)</div><div class="resultado-valor" id="resMilhaVal">—</div><div class="resultado-cls" id="resMilhaCls"></div></div>
+          </div>
+          <div id="vo2Step" class="vo2-form">
+            <div class="hint"><strong style="color:var(--gold)">Protocolo McArdle:</strong> Degrau <strong>30,5cm ♀</strong> ou <strong>40,6cm ♂</strong>. Cadência 22 passos/min por 3 min. Contar FC por 15s ×4.</div>
+            <div class="form-row-3"><div class="form-group"><label>FC recuperação (bpm)</label><input type="number" id="step_fc" placeholder="ex: 92" oninput="calcStep()"/></div><div class="form-group"><label>Sexo</label><select id="step_sexo" onchange="calcStep()"><option value="masculino">Masculino</option><option value="feminino">Feminino</option></select></div></div>
+            <div id="resStep" class="resultado-box"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">VO2max estimado (McArdle 1972)</div><div class="resultado-valor" id="resStepVal">—</div><div class="resultado-cls" id="resStepCls"></div></div>
+          </div>
+
+          <!-- Análise Postural com fotos -->
+          <div class="secao-titulo">Análise Postural — Fotos e Observações <button class="btn-info" onclick="toggleInfo('iPost')">? Referências</button></div>
+          <div id="iPost" class="info-box"><h4>Análise Postural — Como Fotografar e Avaliar</h4><p style="margin-bottom:8px;font-weight:600;color:var(--text);font-size:11px">Posicionamento correto do aluno (posição ortostática):</p><p style="margin-bottom:10px;color:var(--text2);font-size:11px">De pé, relaxado, pés levemente afastados com pontas ligeiramente para fora (posição natural), braços soltos ao lado do corpo, palmas voltadas para as coxas, olhar fixo no horizonte. Use roupas justas ou traje mínimo. NÃO peça para "se endireitar" — a postura espontânea é o que interessa avaliar.</p><div class="ponto"><span class="ponto-nome">Vista Anterior</span><span class="ponto-desc">Avalie: alinhamento da cabeça, altura dos ombros, nível das espinhas ilíacas, posição dos joelhos (varo/valgo) e pés (pronação/supinação).</span></div><div class="ponto"><span class="ponto-nome">Vista Lateral</span><span class="ponto-desc">Avalie: curvaturas da coluna (hiperlordose/hipercifose), projeção anterior da cabeça, posição da pelve (anteroversão/retroversão), joelhos (hiperextensão/flexão).</span></div><div class="ponto"><span class="ponto-nome">Vista Posterior</span><span class="ponto-desc">Avalie: alinhamento das escápulas, desvios laterais da coluna (escoliose), triângulo de Tales, nível da pelve.</span></div><p style="margin-top:8px;font-size:11px;color:var(--gold)">Use o fundo quadriculado como referência. Para análise automática por IA, use o módulo de Análise Postural com IA disponível neste sistema!</p></div>
+
+          <div class="foto-grid">
+            <div>
+              <div class="foto-label">Vista Anterior (frente)</div>
+              <div class="foto-box" id="boxFrente" onclick="document.getElementById('inputFrente').click()">
+                <div class="foto-grid-bg"></div>
+                <div class="foto-placeholder" id="iconFrente"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Clique para adicionar</span></div>
+                <img id="prevFrente" class="foto-preview"/>
+                <button class="foto-remover" id="remFrente" onclick="removerFoto(event,'prevFrente','iconFrente','remFrente','inputFrente')">×</button>
+              </div>
+              <input type="file" id="inputFrente" accept="image/*" style="display:none" onchange="previewFoto(this,'prevFrente','iconFrente','remFrente')"/>
+            </div>
+            <div>
+              <div class="foto-label">Vista Lateral (lado)</div>
+              <div class="foto-box" id="boxLado" onclick="document.getElementById('inputLado').click()">
+                <div class="foto-grid-bg"></div>
+                <div class="foto-placeholder" id="iconLado"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Clique para adicionar</span></div>
+                <img id="prevLado" class="foto-preview"/>
+                <button class="foto-remover" id="remLado" onclick="removerFoto(event,'prevLado','iconLado','remLado','inputLado')">×</button>
+              </div>
+              <input type="file" id="inputLado" accept="image/*" style="display:none" onchange="previewFoto(this,'prevLado','iconLado','remLado')"/>
+            </div>
+            <div>
+              <div class="foto-label">Vista Posterior (costas)</div>
+              <div class="foto-box" id="boxCostas" onclick="document.getElementById('inputCostas').click()">
+                <div class="foto-grid-bg"></div>
+                <div class="foto-placeholder" id="iconCostas"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Clique para adicionar</span></div>
+                <img id="prevCostas" class="foto-preview"/>
+                <button class="foto-remover" id="remCostas" onclick="removerFoto(event,'prevCostas','iconCostas','remCostas','inputCostas')">×</button>
+              </div>
+              <input type="file" id="inputCostas" accept="image/*" style="display:none" onchange="previewFoto(this,'prevCostas','iconCostas','remCostas')"/>
+            </div>
+          </div>
+
+          <div class="form-row-3"><div class="form-group"><label>Cabeça</label><input id="post_cab" placeholder="ex: Centralizada"/></div><div class="form-group"><label>Ombros</label><input id="post_omb" placeholder="ex: Nivelados"/></div><div class="form-group"><label>Coluna</label><input id="post_col" placeholder="ex: Hiperlordose L"/></div></div>
+          <div class="form-row-3"><div class="form-group"><label>Quadril</label><input id="post_quad" placeholder="ex: Nivelado"/></div><div class="form-group"><label>Joelhos</label><input id="post_joe" placeholder="ex: Valgo bilateral"/></div><div class="form-group"><label>Pés</label><input id="post_pes" placeholder="ex: Plano"/></div></div>
+          <div class="form-group"><label>Observações gerais</label><textarea id="av_obs" rows="3" placeholder="Observações da avaliação..."></textarea></div>
+          <div class="err" id="avErr"></div>
+          <div style="display:flex;gap:10px;margin-top:16px"><button class="btn btn-gold" style="padding:10px 24px" onclick="salvarAvaliacao()">Salvar Avaliação</button><button class="btn" onclick="limparAvaliacao()">Limpar</button></div>
+        </div></div>
+      </div>
+
+      <!-- Treinos -->
+      <div id="pgTreinos" class="page"><div style="text-align:center;padding:48px"><div style="font-size:13px;color:var(--text2);margin-bottom:16px">Módulo de periodização disponível via API</div></div></div>
+
+      <!-- Financeiro -->
+      <div id="pgFinanceiro" class="page">
+        <div class="stats-grid"><div class="stat-card"><div class="stat-label">Recebido Total</div><div class="stat-value" id="fRec">R$ 0</div></div><div class="stat-card"><div class="stat-label">Pendente</div><div class="stat-value" id="fPend">R$ 0</div></div><div class="stat-card"><div class="stat-label">Em Atraso</div><div class="stat-value" style="color:var(--red)" id="fAtr">R$ 0</div></div><div class="stat-card"><div class="stat-label">Mês Atual</div><div class="stat-value" id="fMes">R$ 0</div></div></div>
+        <div style="margin-bottom:14px"><button class="btn btn-gold" onclick="abrirModalMensal()">+ Gerar mensalidades</button></div>
+        <div class="card"><div class="card-head"><span class="card-title">Inadimplentes</span></div><table><thead><tr><th>Aluno</th><th>Parcelas</th><th>Valor</th></tr></thead><tbody id="fInad"><tr><td colspan="3" style="text-align:center;padding:16px;color:var(--text3)">Sem inadimplência</td></tr></tbody></table></div>
+      </div>
+
+      <!-- Loja de Equipamentos -->
+      <div id="pgLoja" class="page">
+        <div style="margin-bottom:20px">
+          <div style="font-size:14px;color:var(--text2);margin-bottom:4px">Equipamentos recomendados para avaliação física profissional</div>
+          <div style="font-size:12px;color:var(--text3)">Links para compra nas principais plataformas</div>
+        </div>
+        <div class="loja-grid">
+          <div class="loja-card loja-destaque">
+            <div class="loja-badge">Essencial</div>
+            <div class="loja-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+            <div class="loja-nome">Adipômetro Científico</div>
+            <div class="loja-desc">Indispensável para Pollock 3 e 7 dobras. Precisão de 0,1mm. Recomendado: Cescorf ou Lange.</div>
+            <div class="loja-preco">A partir de <span>R$ 280</span></div>
+            <div class="loja-btns">
+              <a class="btn-loja-ml" href="https://www.mercadolivre.com.br/busca?q=adipometro+cientifico+cescorf" target="_blank">Mercado Livre</a>
+              <a class="btn-loja-az" href="https://www.amazon.com.br/s?k=adipometro+cientifico" target="_blank">Amazon</a>
+            </div>
+          </div>
+          <div class="loja-card">
+            <div class="loja-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+            <div class="loja-nome">Bioimpedância Portátil</div>
+            <div class="loja-desc">Avaliação rápida de composição corporal. Modelos domésticos e profissionais disponíveis.</div>
+            <div class="loja-preco">A partir de <span>R$ 150</span></div>
+            <div class="loja-btns">
+              <a class="btn-loja-ml" href="https://www.mercadolivre.com.br/busca?q=bioimpedancia+profissional" target="_blank">Mercado Livre</a>
+              <a class="btn-loja-az" href="https://www.amazon.com.br/s?k=balanca+bioimpedancia+profissional" target="_blank">Amazon</a>
+            </div>
+          </div>
+          <div class="loja-card">
+            <div class="loja-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+            <div class="loja-nome">Ultrassom Portátil</div>
+            <div class="loja-desc">Avaliação por ultrassom de 9 pontos. Alta precisão, não requer preparo especial do aluno.</div>
+            <div class="loja-preco">A partir de <span>R$ 2.500</span></div>
+            <div class="loja-btns">
+              <a class="btn-loja-ml" href="https://www.mercadolivre.com.br/busca?q=ultrassom+portatil+composicao+corporal" target="_blank">Mercado Livre</a>
+              <a class="btn-loja-az" href="https://www.amazon.com.br/s?k=ultrassom+portatil+fisioterapia" target="_blank">Amazon</a>
+            </div>
+          </div>
+          <div class="loja-card">
+            <div class="loja-icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+            <div class="loja-nome">Fita Métrica Profissional</div>
+            <div class="loja-desc">Inextensível, com trava automática. Essencial para circunferências. Largura 7mm ideal.</div>
+            <div class="loja-preco">A partir de <span>R$ 35</span></div>
+            <div class="loja-btns">
+              <a class="btn-loja-ml" href="https://www.mercadolivre.com.br/busca?q=fita+metrica+antropometrica+profissional" target="_blank">Mercado Livre</a>
+              <a class="btn-loja-az" href="https://www.amazon.com.br/s?k=fita+metrica+antropometrica" target="_blank">Amazon</a>
+            </div>
+          </div>
+          <div class="loja-card loja-destaque">
+            <div class="loja-badge">Recomendado</div>
+            <div class="loja-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+            <div class="loja-nome">Banco de Wells</div>
+            <div class="loja-desc">Indispensável para o teste de flexibilidade. Escala em cm, estrutura resistente.</div>
+            <div class="loja-preco">A partir de <span>R$ 180</span></div>
+            <div class="loja-btns">
+              <a class="btn-loja-ml" href="https://www.mercadolivre.com.br/busca?q=banco+wells+flexibilidade" target="_blank">Mercado Livre</a>
+              <a class="btn-loja-az" href="https://www.amazon.com.br/s?k=banco+wells+flexibilidade" target="_blank">Amazon</a>
+            </div>
+          </div>
+          <div class="loja-card">
+            <div class="loja-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div class="loja-nome">Estadiômetro</div>
+            <div class="loja-desc">Medição precisa da estatura. Modelos de parede ou portáteis. Precisão de 1mm.</div>
+            <div class="loja-preco">A partir de <span>R$ 120</span></div>
+            <div class="loja-btns">
+              <a class="btn-loja-ml" href="https://www.mercadolivre.com.br/busca?q=estadiometro+profissional" target="_blank">Mercado Livre</a>
+              <a class="btn-loja-az" href="https://www.amazon.com.br/s?k=estadiometro+profissional" target="_blank">Amazon</a>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:20px;padding:14px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:8px;font-size:12px;color:var(--text3);text-align:center">
+          Os links acima são sugestões de busca. Pesquise e compare preços antes de comprar. Priorize equipamentos de marcas reconhecidas e validados cientificamente.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal Aluno -->
+<div class="modal-wrap" id="mAluno"><div class="modal"><h3>Novo aluno</h3><div class="form-row"><div class="form-group"><label>Nome *</label><input id="mNome"/></div><div class="form-group"><label>Nascimento</label><input type="date" id="mNasc"/></div></div><div class="form-row"><div class="form-group"><label>E-mail</label><input type="email" id="mEmail"/></div><div class="form-group"><label>Telefone</label><input id="mTel"/></div></div><div class="form-row"><div class="form-group"><label>Sexo</label><select id="mSexo"><option value="">Selecione</option><option value="masculino">Masculino</option><option value="feminino">Feminino</option></select></div><div class="form-group"><label>Nível</label><select id="mNivel"><option value="iniciante">Iniciante</option><option value="intermediario">Intermediário</option><option value="avancado">Avançado</option></select></div></div><div class="form-group"><label>Objetivo</label><select id="mObj"><option value="emagrecimento">Emagrecimento</option><option value="hipertrofia">Hipertrofia</option><option value="condicionamento">Condicionamento</option><option value="reabilitacao">Reabilitação</option><option value="qualidade_de_vida">Qualidade de vida</option></select></div><div class="err" id="mErr"></div><div class="modal-footer"><button class="btn" onclick="fecharModal('mAluno')">Cancelar</button><button class="btn btn-gold" onclick="salvarAluno()">Cadastrar</button></div></div></div>
+
+<!-- Modal Mensalidade -->
+<div class="modal-wrap" id="mMensal"><div class="modal"><h3>Gerar Mensalidades</h3><div class="form-group"><label>Aluno</label><select id="fnAluno"><option value="">Selecione</option></select></div><div class="form-row"><div class="form-group"><label>Valor (R$)</label><input type="number" id="fnValor" value="300"/></div><div class="form-group"><label>Dia vencimento</label><input type="number" id="fnDia" value="10" min="1" max="28"/></div></div><div class="form-group"><label>Meses</label><select id="fnMeses"><option value="1">1 mês</option><option value="3" selected>3 meses</option><option value="6">6 meses</option><option value="12">12 meses</option></select></div><div class="err" id="fnErr"></div><div class="modal-footer"><button class="btn" onclick="fecharModal('mMensal')">Cancelar</button><button class="btn btn-gold" onclick="salvarMensal()">Gerar</button></div></div></div>
+
+<script>
+const API='http://localhost:8000';
+let token='',alunos=[],metodoAtual='pollock3',vo2Atual='cooper';
+const objLabel={emagrecimento:['Emagrecimento','bo'],hipertrofia:['Hipertrofia','bb'],condicionamento:['Condicionamento','bg'],reabilitacao:['Reabilitação','br'],qualidade_de_vida:['Qualidade de vida','bg']};
+const nivLabel={iniciante:'Iniciante',intermediario:'Intermediário',avancado:'Avançado'};
+
+function toggleTema(){const h=document.documentElement,novo=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',novo);localStorage.setItem('tema',novo);atualizarIconeTema(novo);}
+function atualizarIconeTema(t){const icon=t==='dark'?'🌙':'☀️',label=t==='dark'?'Tema escuro':'Tema claro';['themeIcon','themeIcon2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=icon;});['themeLabel','themeLabel2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=label;});}
+function toggleInfo(id){document.getElementById(id).classList.toggle('open');}
+
+function previewFoto(input,prevId,iconId,remId){
+  if(input.files&&input.files[0]){
+    const r=new FileReader();
+    r.onload=e=>{
+      const img=document.getElementById(prevId);img.src=e.target.result;img.style.display='block';
+      document.getElementById(iconId).style.display='none';
+      const rem=document.getElementById(remId);rem.style.display='flex';
+    };
+    r.readAsDataURL(input.files[0]);
+  }
+}
+function removerFoto(e,prevId,iconId,remId,inputId){
+  e.stopPropagation();
+  document.getElementById(prevId).style.display='none';document.getElementById(prevId).src='';
+  document.getElementById(iconId).style.display='block';
+  document.getElementById(remId).style.display='none';
+  document.getElementById(inputId).value='';
+}
+
+function selecionarMetodo(m,el){
+  metodoAtual=m;
+  document.querySelectorAll('.metodo-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');
+  document.querySelectorAll('.metodo-form').forEach(f=>f.classList.remove('active'));
+  const map={pollock3:'Pollock3',pollock7:'Pollock7',bioimpedancia:'Bioimpedancia',ultrassom9:'Ultrassom9',outro:'Outro'};
+  const form=document.getElementById('form'+(map[m]||m));if(form)form.classList.add('active');
+}
+function selecionarVo2(v,el){
+  vo2Atual=v;document.querySelectorAll('.vo2-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  document.querySelectorAll('.vo2-form').forEach(f=>f.classList.remove('active'));
+  const map={cooper:'Cooper',milha:'Milha',step:'Step'};
+  document.getElementById('vo2'+(map[v]||v)).classList.add('active');
+}
+function clsVo2(vo2){if(vo2>=56)return'Superior';if(vo2>=51)return'Excelente';if(vo2>=43)return'Bom';if(vo2>=34)return'Regular';return'Fraco';}
+function calcCooper(){const d=parseFloat(document.getElementById('cooper_dist').value);if(!d)return;const vo2=Math.max((d-504.9)/44.73,0);const res=document.getElementById('resCooper');res.classList.add('show');document.getElementById('resCooperVal').textContent=vo2.toFixed(1)+' ml/kg/min';document.getElementById('resCooperCls').textContent='Classificação: '+clsVo2(vo2);}
+function calcMilha(){const t=parseFloat(document.getElementById('milha_min').value),fc=parseFloat(document.getElementById('milha_fc').value),p=parseFloat(document.getElementById('milha_peso').value);if(!t||!fc||!p)return;const vo2=132.853-(0.0769*p)-(0.3877*t)+6.315-(3.2649*t)-(0.1565*fc);const res=document.getElementById('resMilha');res.classList.add('show');document.getElementById('resMilhaVal').textContent=Math.max(vo2,0).toFixed(1)+' ml/kg/min';document.getElementById('resMilhaCls').textContent='Classificação: '+clsVo2(vo2);}
+function calcStep(){const fc=parseFloat(document.getElementById('step_fc').value),sexo=document.getElementById('step_sexo').value;if(!fc)return;const vo2=sexo==='masculino'?(111.33-(0.42*fc)):(65.81-(0.1847*fc));const res=document.getElementById('resStep');res.classList.add('show');document.getElementById('resStepVal').textContent=Math.max(vo2,0).toFixed(1)+' ml/kg/min';document.getElementById('resStepCls').textContent='Classificação: '+clsVo2(vo2);}
+
+async function ping(){try{const r=await fetch(API+'/health');if(r.ok){document.getElementById('aDot').className='api-dot';document.getElementById('aStatus').textContent='API online';}}catch{document.getElementById('aDot').className='api-dot off';document.getElementById('aStatus').textContent='API offline';}}
+async function api(path,method='GET',body=null){const opts={method,headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}};if(body)opts.body=JSON.stringify(body);const r=await fetch(API+path,opts);const d=await r.json();if(!r.ok)throw new Error(d.detail||'Erro');return d;}
+async function login(){const err=document.getElementById('lErr');err.style.display='none';try{const d=await api('/auth/login','POST',{email:document.getElementById('lEmail').value,senha:document.getElementById('lSenha').value});token=d.access_token;document.getElementById('sNome').textContent=d.nome;document.getElementById('sAvatar').textContent=d.nome.split(' ').map(n=>n[0]).slice(0,2).join('');document.getElementById('loginWrap').style.display='none';document.getElementById('appWrap').style.display='flex';document.getElementById('dataHoje').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});await carregarTudo();}catch(e){err.textContent=e.message;err.style.display='block';}}
+async function carregarTudo(){await Promise.all([carregarAlunos(),carregarFinanceiro()]);}
+async function carregarAlunos(){try{const d=await api('/alunos?por_pagina=100');alunos=d.alunos||[];renderAlunos(alunos);renderDashboard();popularSelects();}catch{}}
+async function carregarFinanceiro(){try{const d=await api('/financeiro/resumo');document.getElementById('dRecebido').textContent='R$'+d.mes_atual.recebido.toLocaleString('pt-BR');document.getElementById('dAberto').textContent='R$'+(d.geral.pendente+d.geral.atrasado).toLocaleString('pt-BR');document.getElementById('fRec').textContent='R$ '+d.geral.recebido.toLocaleString('pt-BR');document.getElementById('fPend').textContent='R$ '+d.geral.pendente.toLocaleString('pt-BR');document.getElementById('fAtr').textContent='R$ '+d.geral.atrasado.toLocaleString('pt-BR');document.getElementById('fMes').textContent='R$ '+d.mes_atual.recebido.toLocaleString('pt-BR');const inad=d.inadimplentes||[];document.getElementById('fInad').innerHTML=inad.length?inad.map(i=>`<tr><td>${i.aluno}</td><td><span class="badge br">${i.parcelas}</span></td><td style="color:var(--red)">R$ ${i.valor.toLocaleString('pt-BR')}</td></tr>`).join(''):'<tr><td colspan="3" style="text-align:center;padding:14px;color:var(--text3)">Sem inadimplência</td></tr>';}catch{}}
+function renderDashboard(){document.getElementById('dAtivos').textContent=alunos.filter(a=>a.ativo).length;document.getElementById('dTotal').textContent=alunos.length;const tb=document.getElementById('dTabela');if(!alunos.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3)">Nenhum aluno</td></tr>';return;}tb.innerHTML=alunos.slice(0,6).map(a=>{const[l,c]=objLabel[a.objetivo]||['—','bo'];return`<tr><td><span class="mini-avatar">${a.nome.split(' ').map(n=>n[0]).slice(0,2).join('')}</span>${a.nome}</td><td><span class="badge ${c}">${l}</span></td><td>${nivLabel[a.nivel_experiencia]||'—'}</td><td><span class="badge bg">Ativo</span></td></tr>`;}).join('');}
+function renderAlunos(lista){const tb=document.getElementById('aTabela');if(!lista.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text3)">Nenhum aluno</td></tr>';return;}tb.innerHTML=lista.map(a=>{const[l,c]=objLabel[a.objetivo]||['—','bo'];return`<tr><td><div style="display:flex;align-items:center"><span class="mini-avatar">${a.nome.split(' ').map(n=>n[0]).slice(0,2).join('')}</span><div><div style="color:var(--text);font-size:13px">${a.nome}</div><div style="font-size:11px;color:var(--text3)">${a.email||''}</div></div></div></td><td style="font-size:12px">${a.telefone||'—'}</td><td><span class="badge ${c}">${l}</span></td><td>${nivLabel[a.nivel_experiencia]||'—'}</td><td>${a.idade||'—'}</td><td><button class="btn" style="font-size:11px;padding:4px 8px">Ver</button></td></tr>`;}).join('');}
+function buscar(q){renderAlunos(q?alunos.filter(a=>a.nome.toLowerCase().includes(q.toLowerCase())||(a.email||'').toLowerCase().includes(q.toLowerCase())):alunos);}
+function popularSelects(){['avAluno','fnAluno'].forEach(id=>{const sel=document.getElementById(id);if(!sel)return;const val=sel.value;sel.innerHTML=(id==='avAluno'?'<option value="">Selecione o aluno</option>':'<option value="">Selecione</option>')+alunos.map(a=>`<option value="${a.id}">${a.nome}</option>`).join('');sel.value=val;});}
+
+async function salvarAvaliacao(){
+  const alunoId=document.getElementById('avAluno').value;const err=document.getElementById('avErr');err.style.display='none';
+  if(!alunoId){err.textContent='Selecione o aluno';err.style.display='block';return;}
+  const v=id=>document.getElementById(id).value;const n=id=>{const val=parseFloat(v(id));return isNaN(val)?null:val;};const ni=id=>{const val=parseInt(v(id));return isNaN(val)?null:val;};
+  let cooper_metros=vo2Atual==='cooper'?n('cooper_dist'):null;
+  let obs=v('av_obs')||'';
+  if(vo2Atual==='milha'&&v('milha_min'))obs+=` [Milha: ${v('milha_min')}min FC:${v('milha_fc')}bpm]`;
+  if(vo2Atual==='step'&&v('step_fc'))obs+=` [Step FC rec: ${v('step_fc')}bpm]`;
+  const postural=[v('post_cab'),v('post_omb'),v('post_col'),v('post_quad'),v('post_joe'),v('post_pes')].filter(Boolean);
+  if(postural.length)obs+=` [Postural: ${postural.join(', ')}]`;
+  let body={aluno_id:parseInt(alunoId),circ_cintura:n('c_cintura'),circ_quadril:n('c_quadril'),circ_abdomen:n('c_abdomen'),circ_braco_d_contraido:n('c_braco_d'),circ_coxa_d:n('c_coxa_d'),circ_panturrilha_d:n('c_pant_d'),teste_flexibilidade_cm:n('t_wells'),teste_flexao_num:ni('t_flexao'),teste_barra_num:ni('t_barra'),teste_cooper_metros:cooper_metros,postura_cabeca:v('post_cab')||null,postura_ombros:v('post_omb')||null,postura_coluna:v('post_col')||null,observacoes:obs||null};
+  if(metodoAtual==='pollock3')body={...body,dc_peitoral:n('p3_peit'),dc_abdominal:n('p3_abdo'),dc_coxa:n('p3_coxa'),dc_triciptal:n('p3_tric'),'dc_suprailíaca':n('p3_supra'),peso:n('p3_peso'),estatura:n('p3_estat')};
+  else if(metodoAtual==='pollock7'){const soma=['p7_peit','p7_axil','p7_tric','p7_sub','p7_abdo','p7_supra','p7_coxa'].map(id=>n(id)||0).reduce((a,b)=>a+b,0);body={...body,peso:n('p7_peso'),estatura:n('p7_estat'),observacoes:(obs)+` [Pollock 7: soma ${soma.toFixed(1)}mm]`};}
+  else if(metodoAtual==='bioimpedancia')body={...body,percentual_gordura:n('bio_gord'),massa_gorda_kg:n('bio_mg'),massa_magra_kg:n('bio_mm'),peso:n('bio_peso'),estatura:n('bio_estat'),observacoes:obs+(v('bio_aparelho')?` [Bio: ${v('bio_aparelho')}]`:'')};
+  else if(metodoAtual==='ultrassom9'){const soma=['us9_peit','us9_axil','us9_sub','us9_abdo','us9_supra','us9_bic','us9_tric','us9_coxa','us9_perna'].map(id=>n(id)||0).reduce((a,b)=>a+b,0);body={...body,percentual_gordura:n('us9_gord'),peso:n('us9_peso'),estatura:n('us9_estat'),observacoes:obs+` [Ultrassom 9pts: soma ${soma.toFixed(1)}mm${v('us9_marca')?' | '+v('us9_marca'):''}]`};}
+  else if(metodoAtual==='outro')body={...body,percentual_gordura:n('outro_gord'),peso:n('outro_peso'),estatura:n('outro_estat'),observacoes:obs+(v('outro_metodo')?` [Método: ${v('outro_metodo')}]`:'')};
+  try{await api('/avaliacao','POST',body);alert('Avaliação salva com sucesso!');limparAvaliacao();}catch(e){err.textContent=e.message;err.style.display='block';}
+}
+function limparAvaliacao(){document.querySelectorAll('#pgAvaliacao input,#pgAvaliacao textarea').forEach(el=>el.value='');document.getElementById('avErr').style.display='none';document.querySelectorAll('.resultado-box').forEach(r=>r.classList.remove('show'));['prevFrente','prevLado','prevCostas'].forEach(id=>{const img=document.getElementById(id);if(img){img.src='';img.style.display='none';}});['iconFrente','iconLado','iconCostas'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='block';});['remFrente','remLado','remCostas'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
+
+function abrirModalAluno(){document.getElementById('mAluno').classList.add('open');}
+function abrirModalMensal(){popularSelects();document.getElementById('mMensal').classList.add('open');}
+function fecharModal(id){document.getElementById(id).classList.remove('open');}
+async function salvarAluno(){const nome=document.getElementById('mNome').value.trim();const err=document.getElementById('mErr');if(!nome){err.textContent='Nome obrigatório';err.style.display='block';return;}try{await api('/alunos','POST',{nome,email:document.getElementById('mEmail').value||null,telefone:document.getElementById('mTel').value||null,data_nascimento:document.getElementById('mNasc').value||null,sexo:document.getElementById('mSexo').value||null,objetivo:document.getElementById('mObj').value,nivel_experiencia:document.getElementById('mNivel').value});fecharModal('mAluno');['mNome','mEmail','mTel','mNasc'].forEach(id=>document.getElementById(id).value='');await carregarAlunos();}catch(e){err.textContent=e.message;err.style.display='block';}}
+async function salvarMensal(){const alunoId=document.getElementById('fnAluno').value;const err=document.getElementById('fnErr');if(!alunoId){err.textContent='Selecione o aluno';err.style.display='block';return;}try{const d=await api('/financeiro/mensalidade/gerar','POST',{aluno_id:parseInt(alunoId),valor:parseFloat(document.getElementById('fnValor').value),dia_vencimento:parseInt(document.getElementById('fnDia').value),meses:parseInt(document.getElementById('fnMeses').value)});fecharModal('mMensal');alert(d.mensagem);carregarFinanceiro();}catch(e){err.textContent=e.message;err.style.display='block';}}
+
+function goPage(name,el){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('pg'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');if(el)el.classList.add('active');const titles={dashboard:'Dashboard',alunos:'Alunos',avaliacao:'Avaliação Física',treinos:'Treinos',financeiro:'Financeiro',loja:'Loja de Equipamentos'};document.getElementById('pageTitle').textContent=titles[name]||name;document.getElementById('topBtn').style.display=name==='alunos'?'block':'none';if(name==='avaliacao')popularSelects();}
+function sair(){token='';document.getElementById('appWrap').style.display='none';document.getElementById('loginWrap').style.display='flex';}
+
+const temaSalvo=localStorage.getItem('tema')||'dark';document.documentElement.setAttribute('data-theme',temaSalvo);atualizarIconeTema(temaSalvo);ping();
+</script>
+</body>
+</html>

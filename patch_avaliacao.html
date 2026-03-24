@@ -1,0 +1,224 @@
+<!--
+=================================================================
+PATCH 1 — Adicionar após o card "Ultrassom / Outro Método"
+Substitui o bloco id="formUltrassom" existente
+=================================================================
+-->
+
+<!-- ULTRASSOM 7 PONTOS (novo) -->
+<div id="formUltrassom7" class="metodo-form">
+  <div class="secao-titulo">
+    Ultrassom — 7 Pontos
+    <button class="btn-info" onclick="toggleInfo('iUs7')">? Protocolo</button>
+  </div>
+  <div id="iUs7" class="info-box">
+    <h4>Avaliação por Ultrassom — 7 Pontos Anatômicos</h4>
+    <p style="margin-bottom:8px">O ultrassom portátil mede a espessura do tecido adiposo subcutâneo com alta precisão. Inserir os valores em mm fornecidos pelo aparelho.</p>
+    <div class="ponto"><span class="ponto-nome">1. Peitoral</span><span class="ponto-desc">Face anterior do tórax, entre axila e mamilo.</span></div>
+    <div class="ponto"><span class="ponto-nome">2. Suprailíaca</span><span class="ponto-desc">Logo acima da crista ilíaca, linha axilar anterior.</span></div>
+    <div class="ponto"><span class="ponto-nome">3. Subescapular</span><span class="ponto-desc">2cm abaixo do ângulo inferior da escápula, diagonal 45°.</span></div>
+    <div class="ponto"><span class="ponto-nome">4. Bíceps</span><span class="ponto-desc">Face anterior do braço, ponto médio entre acrômio e fossa cubital.</span></div>
+    <div class="ponto"><span class="ponto-nome">5. Tríceps</span><span class="ponto-desc">Face posterior do braço, ponto médio entre acrômio e olécrano.</span></div>
+    <div class="ponto"><span class="ponto-nome">6. Coxa</span><span class="ponto-desc">Face anterior da coxa, ponto médio entre prega inguinal e patela.</span></div>
+    <div class="ponto"><span class="ponto-nome">7. Perna</span><span class="ponto-desc">Face medial da panturrilha, ponto de maior circunferência.</span></div>
+    <p style="margin-top:8px;color:var(--gold);font-size:11px">O % de gordura é calculado pelo aparelho. Insira o resultado abaixo.</p>
+  </div>
+  <div class="hint"><strong style="color:var(--gold)">Como usar:</strong> Posicione o transdutor perpendicularmente à pele em cada ponto. Aguarde a leitura estabilizar. O aparelho calcula automaticamente o % de gordura.</div>
+  <div class="form-row-3">
+    <div class="form-group"><label>Peitoral (mm)</label><input type="number" step="0.1" id="us7_peit" placeholder="mm"/></div>
+    <div class="form-group"><label>Suprailíaca (mm)</label><input type="number" step="0.1" id="us7_supra" placeholder="mm"/></div>
+    <div class="form-group"><label>Subescapular (mm)</label><input type="number" step="0.1" id="us7_sub" placeholder="mm"/></div>
+  </div>
+  <div class="form-row-3">
+    <div class="form-group"><label>Bíceps (mm)</label><input type="number" step="0.1" id="us7_bic" placeholder="mm"/></div>
+    <div class="form-group"><label>Tríceps (mm)</label><input type="number" step="0.1" id="us7_tric" placeholder="mm"/></div>
+    <div class="form-group"><label>Coxa (mm)</label><input type="number" step="0.1" id="us7_coxa" placeholder="mm"/></div>
+  </div>
+  <div class="form-row-3">
+    <div class="form-group"><label>Perna (mm)</label><input type="number" step="0.1" id="us7_perna" placeholder="mm"/></div>
+    <div class="form-group"><label>% Gordura (aparelho)</label><input type="number" step="0.1" id="us7_gord" placeholder="ex: 18.5"/></div>
+    <div class="form-group"><label>Marca do aparelho</label><input id="us7_marca" placeholder="ex: Ultrassom portátil"/></div>
+  </div>
+  <div class="form-row-3">
+    <div class="form-group"><label>Peso (kg)</label><input type="number" step="0.1" id="us7_peso" placeholder="ex: 80"/></div>
+    <div class="form-group"><label>Estatura (cm)</label><input type="number" id="us7_estat" placeholder="ex: 175"/></div>
+  </div>
+</div>
+
+<!-- OUTRO MÉTODO (simplificado) -->
+<div id="formOutro" class="metodo-form">
+  <div class="secao-titulo">
+    Outro Método
+    <button class="btn-info" onclick="toggleInfo('iOutro')">? Saiba mais</button>
+  </div>
+  <div id="iOutro" class="info-box">
+    <h4>Outros métodos aceitos</h4>
+    <div class="ponto"><span class="ponto-nome">DEXA</span><span class="ponto-desc">Raios-X de dupla energia. Padrão ouro para composição corporal.</span></div>
+    <div class="ponto"><span class="ponto-nome">Hidrostática</span><span class="ponto-desc">Pesagem subaquática. Baseada no princípio de Arquimedes.</span></div>
+    <div class="ponto"><span class="ponto-nome">BOD POD</span><span class="ponto-desc">Deslocamento de ar. Muito preciso e confortável.</span></div>
+    <div class="ponto"><span class="ponto-nome">Perimetria</span><span class="ponto-desc">Apenas circunferências, sem dobras. Menos preciso mas rápido.</span></div>
+  </div>
+  <div class="form-row-3">
+    <div class="form-group"><label>% Gordura *</label><input type="number" step="0.1" id="outro_gord" placeholder="ex: 18.5"/></div>
+    <div class="form-group"><label>Peso (kg)</label><input type="number" step="0.1" id="outro_peso"/></div>
+    <div class="form-group"><label>Estatura (cm)</label><input type="number" id="outro_estat"/></div>
+  </div>
+  <div class="form-group" style="max-width:380px">
+    <label>Método utilizado</label>
+    <input id="outro_metodo" placeholder="ex: DEXA, Hidrostática, BOD POD..."/>
+  </div>
+</div>
+
+
+<!--
+=================================================================
+PATCH 2 — Substituir o bloco "Análise Postural" existente
+Adiciona upload de fotos
+=================================================================
+-->
+
+<div class="secao-titulo">
+  Análise Postural com Fotos
+  <button class="btn-info" onclick="toggleInfo('iPost')">? Referências</button>
+</div>
+<div id="iPost" class="info-box">
+  <h4>Análise Postural — Referências</h4>
+  <div class="ponto"><span class="ponto-nome">Vista Anterior</span><span class="ponto-desc">Alinhamento da cabeça, ombros, quadril, joelhos e pés. Observar desvios laterais.</span></div>
+  <div class="ponto"><span class="ponto-nome">Vista Lateral</span><span class="ponto-desc">Curvaturas da coluna, projeção da cabeça, posição da pelve.</span></div>
+  <div class="ponto"><span class="ponto-nome">Vista Posterior</span><span class="ponto-desc">Alinhamento das escápulas, desvios da coluna, triângulo de Tales.</span></div>
+  <p style="margin-top:8px;font-size:11px;color:var(--text3)">Fotografar o aluno em posição anatômica: pés unidos, braços ao longo do corpo, olhar ao horizonte.</p>
+</div>
+
+<!-- Upload de fotos -->
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+  <div>
+    <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Vista Anterior (frente)</div>
+    <div id="fotoFrenteBox" onclick="document.getElementById('fotoFrente').click()" style="background:var(--bg3);border:1px dashed var(--border2);border-radius:8px;height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.15s">
+      <img id="fotoFrentePreview" src="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:8px"/>
+      <div id="fotoFrenteIcon" style="text-align:center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">Clique para adicionar</div>
+      </div>
+    </div>
+    <input type="file" id="fotoFrente" accept="image/*" style="display:none" onchange="previewFoto(this,'fotoFrentePreview','fotoFrenteIcon')"/>
+  </div>
+  <div>
+    <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Vista Lateral (lado)</div>
+    <div id="fotoLadoBox" onclick="document.getElementById('fotoLado').click()" style="background:var(--bg3);border:1px dashed var(--border2);border-radius:8px;height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.15s">
+      <img id="fotoLadoPreview" src="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:8px"/>
+      <div id="fotoLadoIcon" style="text-align:center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">Clique para adicionar</div>
+      </div>
+    </div>
+    <input type="file" id="fotoLado" accept="image/*" style="display:none" onchange="previewFoto(this,'fotoLadoPreview','fotoLadoIcon')"/>
+  </div>
+  <div>
+    <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Vista Posterior (costas)</div>
+    <div id="fotoCostasBox" onclick="document.getElementById('fotoCostas').click()" style="background:var(--bg3);border:1px dashed var(--border2);border-radius:8px;height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.15s">
+      <img id="fotoCostasPreview" src="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:8px"/>
+      <div id="fotoCostasIcon" style="text-align:center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">Clique para adicionar</div>
+      </div>
+    </div>
+    <input type="file" id="fotoCostas" accept="image/*" style="display:none" onchange="previewFoto(this,'fotoCostasPreview','fotoCostasIcon')"/>
+  </div>
+</div>
+
+<div class="form-row-3">
+  <div class="form-group"><label>Cabeça</label><input id="post_cab" placeholder="ex: Centralizada"/></div>
+  <div class="form-group"><label>Ombros</label><input id="post_omb" placeholder="ex: Nivelados"/></div>
+  <div class="form-group"><label>Coluna</label><input id="post_col" placeholder="ex: Hiperlordose L"/></div>
+</div>
+<div class="form-row-3">
+  <div class="form-group"><label>Quadril</label><input id="post_quad" placeholder="ex: Nivelado"/></div>
+  <div class="form-group"><label>Joelhos</label><input id="post_joe" placeholder="ex: Valgo bilateral"/></div>
+  <div class="form-group"><label>Pés</label><input id="post_pes" placeholder="ex: Plano"/></div>
+</div>
+
+
+<!--
+=================================================================
+PATCH 3 — Adicionar no metodo-grid (5 métodos agora)
+Substitui os 4 cards existentes por estes 5
+=================================================================
+-->
+
+<div class="metodo-grid" style="grid-template-columns:repeat(5,minmax(0,1fr))">
+  <div class="metodo-card selected" onclick="selecionarMetodo('pollock3',this)">
+    <div class="metodo-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></svg></div>
+    <div class="metodo-title">Pollock 3</div>
+    <div class="metodo-desc">Clássico e preciso</div>
+  </div>
+  <div class="metodo-card" onclick="selecionarMetodo('pollock7',this)">
+    <div class="metodo-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+    <div class="metodo-title">Pollock 7</div>
+    <div class="metodo-desc">Máxima precisão</div>
+  </div>
+  <div class="metodo-card" onclick="selecionarMetodo('bioimpedancia',this)">
+    <div class="metodo-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+    <div class="metodo-title">Bioimpedância</div>
+    <div class="metodo-desc">Dados do aparelho</div>
+  </div>
+  <div class="metodo-card" onclick="selecionarMetodo('ultrassom7',this)">
+    <div class="metodo-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+    <div class="metodo-title">Ultrassom 7pts</div>
+    <div class="metodo-desc">Alta precisão</div>
+  </div>
+  <div class="metodo-card" onclick="selecionarMetodo('outro',this)">
+    <div class="metodo-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83"/></svg></div>
+    <div class="metodo-title">Outro Método</div>
+    <div class="metodo-desc">DEXA, BOD POD...</div>
+  </div>
+</div>
+
+
+<!--
+=================================================================
+PATCH 4 — JavaScript adicional
+Cole dentro da tag <script> existente, antes do ping()
+=================================================================
+-->
+<script>
+// Preview das fotos posturais
+function previewFoto(input, previewId, iconId) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.getElementById(previewId);
+      img.src = e.target.result;
+      img.style.display = 'block';
+      document.getElementById(iconId).style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+// Atualizar selecionarMetodo para incluir novos métodos
+// Substitui a função existente selecionarMetodo
+function selecionarMetodo(m, el) {
+  metodoAtual = m;
+  document.querySelectorAll('.metodo-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.querySelectorAll('.metodo-form').forEach(f => f.classList.remove('active'));
+  const nomes = {
+    pollock3: 'Pollock3', pollock7: 'Pollock7',
+    bioimpedancia: 'Bioimpedancia', ultrassom7: 'Ultrassom7', outro: 'Outro'
+  };
+  const formId = 'form' + (nomes[m] || m.charAt(0).toUpperCase() + m.slice(1));
+  const form = document.getElementById(formId);
+  if (form) form.classList.add('active');
+}
+
+// Atualizar salvarAvaliacao para incluir novos métodos
+// Adicione dentro do if/else de metodo na função existente:
+// } else if (metodoAtual === 'ultrassom7') {
+//   const soma = ['us7_peit','us7_supra','us7_sub','us7_bic','us7_tric','us7_coxa','us7_perna'].map(id => n(id)||0).reduce((a,b) => a+b, 0);
+//   body = { ...body, percentual_gordura: n('us7_gord'), peso: n('us7_peso'), estatura: n('us7_estat'),
+//     observacoes: obs + ` [Ultrassom 7pts: soma ${soma.toFixed(1)}mm${v('us7_marca') ? ' | ' + v('us7_marca') : ''}]` };
+// } else if (metodoAtual === 'outro') {
+//   body = { ...body, percentual_gordura: n('outro_gord'), peso: n('outro_peso'), estatura: n('outro_estat'),
+//     observacoes: obs + (v('outro_metodo') ? ` [Método: ${v('outro_metodo')}]` : '') };
+// }
+</script>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PT Gestão — Painel Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--bg2:#111111;--bg3:#1a1a1a;--bg4:#222222;--gold:#C9A84C;--gold2:#E8C97A;--gold3:#8B6914;--text:#F0EDE8;--text2:#A09888;--text3:#6B6358;--border:#2A2520;--border2:#3A3228;--green:#1D9E75;--red:#E24B4A;--blue:#378ADD;}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center}
+.login-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:14px;padding:40px;width:380px}
+.login-title{font-size:20px;font-weight:600;color:var(--gold);text-align:center;margin-bottom:4px}
+.login-sub{font-size:11px;color:var(--red);text-align:center;margin-bottom:24px;letter-spacing:1px;text-transform:uppercase}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:11px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px}
+.form-group input{width:100%;padding:9px 12px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;color:var(--text);font-size:13px;outline:none;font-family:inherit}
+.form-group input:focus{border-color:var(--gold)}
+.btn{padding:8px 14px;border-radius:6px;font-size:12px;cursor:pointer;border:0.5px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:inherit;transition:all 0.1s}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-gold{background:var(--gold3);border-color:var(--gold);color:var(--gold2)}
+.btn-gold:hover{background:#7A5C10}
+.btn-red{background:#1F0A0A;border-color:var(--red);color:var(--red)}
+.btn-green{background:#0A1F17;border-color:var(--green);color:var(--green)}
+.err{color:var(--red);font-size:12px;margin-top:8px;display:none}
+.app{display:none;flex-direction:column;min-height:100vh}
+.header{background:var(--bg2);border-bottom:0.5px solid var(--border2);padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
+.header-title{font-size:16px;font-weight:600;color:var(--red)}
+.header-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.tabs{display:flex;gap:0;border-bottom:0.5px solid var(--border2);background:var(--bg2);padding:0 28px}
+.tab{padding:12px 18px;font-size:13px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.1s}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.content{padding:28px;flex:1}
+.page{display:none}.page.active{display:block}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.stat-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;padding:16px}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.stat-value{font-size:24px;font-weight:600;color:var(--gold)}
+.card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;margin-bottom:20px}
+.card-head{padding:14px 20px;border-bottom:0.5px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:600;color:var(--gold)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;color:var(--text3);border-bottom:0.5px solid var(--border2);text-transform:uppercase;letter-spacing:0.5px;background:var(--bg3)}
+td{padding:10px 12px;border-bottom:0.5px solid var(--border);color:var(--text2)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.bg{background:#0A1F17;color:#1D9E75}
+.br{background:#1F0A0A;color:#E24B4A}
+.bo{background:#2A200A;color:#C9A84C}
+.bb{background:#0A1525;color:#378ADD}
+.modal-bg{display:none;min-height:300px;background:rgba(0,0,0,0.7);align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:28px;width:420px}
+.modal h3{font-size:15px;font-weight:600;color:var(--gold);margin-bottom:18px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:0.5px solid var(--border2)}
+select{width:100%;padding:8px 10px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;color:var(--text);font-size:13px;outline:none;font-family:inherit}
+select:focus{border-color:var(--gold)}
+</style>
+</head>
+<body>
+
+<div id="loginWrap" class="login-wrap">
+  <div class="login-card">
+    <div class="login-title">PT Gestão</div>
+    <div class="login-sub">⚠ Painel Administrativo</div>
+    <div class="form-group"><label>E-mail Admin</label><input type="email" id="lEmail" onkeydown="if(event.key==='Enter')login()"/></div>
+    <div class="form-group"><label>Senha</label><input type="password" id="lSenha" onkeydown="if(event.key==='Enter')login()"/></div>
+    <div class="err" id="lErr"></div>
+    <button class="btn btn-gold" style="width:100%;margin-top:12px;padding:10px" onclick="login()">Entrar como Admin</button>
+  </div>
+</div>
+
+<div id="appWrap" class="app">
+  <div class="header">
+    <div>
+      <div class="header-title">PT Gestão — Admin</div>
+      <div class="header-sub">Painel de controle do sistema</div>
+    </div>
+    <button class="btn" onclick="sair()">Sair</button>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="goTab('dashboard',this)">Dashboard</div>
+    <div class="tab" onclick="goTab('personais',this)">Personais</div>
+    <div class="tab" onclick="goTab('planos',this)">Planos</div>
+  </div>
+
+  <div class="content">
+
+    <div id="pgDashboard" class="page active">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total Personais</div><div class="stat-value" id="sTotalP">—</div></div>
+        <div class="stat-card"><div class="stat-label">Personais Ativos</div><div class="stat-value" style="color:var(--green)" id="sAtivosP">—</div></div>
+        <div class="stat-card"><div class="stat-label">Total Alunos</div><div class="stat-value" id="sTotalA">—</div></div>
+        <div class="stat-card"><div class="stat-label">Em Trial</div><div class="stat-value" style="color:var(--blue)" id="sTrials">—</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">Status das Contas</span></div>
+        <table>
+          <thead><tr><th>Status</th><th>Quantidade</th></tr></thead>
+          <tbody id="statusTabela"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="pgPersonais" class="page">
+      <div style="margin-bottom:16px;display:flex;justify-content:flex-end">
+        <button class="btn btn-gold" onclick="carregarPersonais()">Atualizar</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Personal</th><th>CREF</th><th>Alunos</th><th>Plano</th><th>Status</th><th>Trial até</th><th>Ações</th></tr></thead>
+          <tbody id="personaisTabela"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="pgPlanos" class="page">
+      <div style="margin-bottom:16px;display:flex;justify-content:flex-end">
+        <button class="btn btn-gold" onclick="abrirModalPlano()">+ Novo Plano</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Plano</th><th>Preço/mês</th><th>Limite Alunos</th><th>Avaliação</th><th>Laudo PDF</th><th>Portal Aluno</th></tr></thead>
+          <tbody id="planosTabela"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-bg" id="mPlano">
+  <div class="modal">
+    <h3>Novo Plano de Assinatura</h3>
+    <div class="form-group"><label>Nome</label><input id="pNome" placeholder="Ex: Pro"/></div>
+    <div class="form-group"><label>Preço mensal (R$)</label><input type="number" id="pPreco" placeholder="99"/></div>
+    <div class="form-group"><label>Limite de alunos</label><input type="number" id="pLimite" placeholder="30" value="30"/></div>
+    <div style="display:flex;gap:16px;margin-top:8px">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" id="pAval" checked/> Avaliação física</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" id="pPdf"/> Laudo PDF</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" id="pPortal"/> Portal aluno</label>
+    </div>
+    <div class="err" id="pErr"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="fecharModal('mPlano')">Cancelar</button>
+      <button class="btn btn-gold" onclick="salvarPlano()">Criar plano</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="mAtivar">
+  <div class="modal">
+    <h3 id="mAtivarTitulo">Ativar Plano</h3>
+    <div class="form-group"><label>Plano</label><select id="mAtivarPlano"></select></div>
+    <div class="form-group"><label>Meses</label><select id="mAtivarMeses"><option value="1">1 mês</option><option value="3">3 meses</option><option value="6">6 meses</option><option value="12">12 meses</option></select></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="fecharModal('mAtivar')">Cancelar</button>
+      <button class="btn btn-gold" onclick="confirmarAtivar()">Ativar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API='http://localhost:8000';
+let token='',personalSelecionado=null,planos=[];
+
+async function api(path,method='GET',body=null){
+  const opts={method,headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}};
+  if(body)opts.body=JSON.stringify(body);
+  const r=await fetch(API+path,opts);
+  const d=await r.json();
+  if(!r.ok)throw new Error(d.detail||'Erro');
+  return d;
+}
+
+async function login(){
+  const err=document.getElementById('lErr');err.style.display='none';
+  try{
+    const d=await api('/admin/login','POST',{email:document.getElementById('lEmail').value,senha:document.getElementById('lSenha').value});
+    token=d.access_token;
+    document.getElementById('loginWrap').style.display='none';
+    document.getElementById('appWrap').style.display='flex';
+    await carregarTudo();
+  }catch(e){err.textContent=e.message;err.style.display='block';}
+}
+
+async function carregarTudo(){await Promise.all([carregarStats(),carregarPersonais(),carregarPlanos()]);}
+
+async function carregarStats(){
+  try{
+    const d=await api('/admin/stats');
+    document.getElementById('sTotalP').textContent=d.personais.total;
+    document.getElementById('sAtivosP').textContent=d.personais.ativos;
+    document.getElementById('sTotalA').textContent=d.alunos.total;
+    document.getElementById('sTrials').textContent=d.contas.trial;
+    document.getElementById('statusTabela').innerHTML=[
+      ['Trial',d.contas.trial,'bb'],
+      ['Ativo',d.contas.ativo,'bg'],
+      ['Bloqueado',d.contas.bloqueado,'br'],
+    ].map(([s,q,c])=>`<tr><td><span class="badge ${c}">${s}</span></td><td style="font-weight:600;color:var(--text)">${q}</td></tr>`).join('');
+  }catch{}
+}
+
+async function carregarPersonais(){
+  try{
+    const lista=await api('/admin/personais');
+    const badge=s=>s==='ativo'?'bg':s==='trial'?'bb':s==='bloqueado'?'br':'bo';
+    document.getElementById('personaisTabela').innerHTML=lista.map(p=>`
+      <tr>
+        <td><div style="font-weight:500;color:var(--text)">${p.nome}</div><div style="font-size:11px;color:var(--text3)">${p.email}</div></td>
+        <td style="font-size:11px">${p.cref||'—'}</td>
+        <td style="font-weight:600;color:var(--gold)">${p.total_alunos}</td>
+        <td>${p.plano?`<span class="badge bo">${p.plano}</span>`:'<span style="color:var(--text3);font-size:11px">Sem plano</span>'}</td>
+        <td><span class="badge ${badge(p.status_conta)}">${p.status_conta}</span></td>
+        <td style="font-size:11px;color:var(--text3)">${p.trial_fim||'—'}</td>
+        <td>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-green" style="font-size:11px;padding:4px 8px" onclick="abrirAtivar(${p.id},'${p.nome}')">Plano</button>
+            <button class="btn" style="font-size:11px;padding:4px 8px" onclick="ativarTrial(${p.id})">Trial</button>
+            ${p.status_conta!=='bloqueado'?`<button class="btn btn-red" style="font-size:11px;padding:4px 8px" onclick="bloquear(${p.id})">Bloquear</button>`:`<button class="btn btn-green" style="font-size:11px;padding:4px 8px" onclick="desbloquear(${p.id})">Ativar</button>`}
+          </div>
+        </td>
+      </tr>`).join('');
+  }catch{}
+}
+
+async function carregarPlanos(){
+  try{
+    planos=await api('/admin/planos');
+    document.getElementById('planosTabela').innerHTML=planos.map(p=>`
+      <tr>
+        <td style="font-weight:600;color:var(--gold2)">${p.nome}</td>
+        <td style="color:var(--green);font-weight:600">R$ ${p.preco_mensal.toLocaleString('pt-BR')}</td>
+        <td>${p.limite_alunos} alunos</td>
+        <td>${p.avaliacao_fisica?'<span class="badge bg">Sim</span>':'<span class="badge br">Não</span>'}</td>
+        <td>${p.laudo_pdf?'<span class="badge bg">Sim</span>':'<span class="badge br">Não</span>'}</td>
+        <td>${p.portal_aluno?'<span class="badge bg">Sim</span>':'<span class="badge br">Não</span>'}</td>
+      </tr>`).join('');
+    const sel=document.getElementById('mAtivarPlano');
+    sel.innerHTML=planos.map(p=>`<option value="${p.id}">${p.nome} — R$ ${p.preco_mensal}/mês</option>`).join('');
+  }catch{}
+}
+
+function abrirAtivar(id,nome){
+  personalSelecionado=id;
+  document.getElementById('mAtivarTitulo').textContent=`Ativar Plano — ${nome}`;
+  document.getElementById('mAtivar').classList.add('open');
+}
+
+async function confirmarAtivar(){
+  try{
+    const plano_id=parseInt(document.getElementById('mAtivarPlano').value);
+    const meses=parseInt(document.getElementById('mAtivarMeses').value);
+    const d=await api(`/admin/personais/${personalSelecionado}/plano`,'PUT',{plano_id,meses});
+    alert(d.mensagem);
+    fecharModal('mAtivar');
+    carregarPersonais();
+  }catch(e){alert(e.message);}
+}
+
+async function ativarTrial(id){
+  try{
+    const d=await api(`/admin/personais/${id}/trial`,'POST');
+    alert(d.mensagem);
+    carregarPersonais();carregarStats();
+  }catch(e){alert(e.message);}
+}
+
+async function bloquear(id){
+  if(!confirm('Bloquear este personal?'))return;
+  try{await api(`/admin/personais/${id}/status`,'PUT',{status:'bloqueado'});carregarPersonais();carregarStats();}
+  catch(e){alert(e.message);}
+}
+
+async function desbloquear(id){
+  try{await api(`/admin/personais/${id}/status`,'PUT',{status:'ativo'});carregarPersonais();carregarStats();}
+  catch(e){alert(e.message);}
+}
+
+function abrirModalPlano(){document.getElementById('mPlano').classList.add('open');}
+function fecharModal(id){document.getElementById(id).classList.remove('open');}
+
+async function salvarPlano(){
+  const err=document.getElementById('pErr');err.style.display='none';
+  try{
+    const d=await api('/admin/planos','POST',{
+      nome:document.getElementById('pNome').value,
+      preco_mensal:parseFloat(document.getElementById('pPreco').value),
+      limite_alunos:parseInt(document.getElementById('pLimite').value),
+      avaliacao_fisica:document.getElementById('pAval').checked,
+      laudo_pdf:document.getElementById('pPdf').checked,
+      portal_aluno:document.getElementById('pPortal').checked,
+    });
+    fecharModal('mPlano');
+    alert(`Plano "${d.nome}" criado!`);
+    carregarPlanos();
+  }catch(e){err.textContent=e.message;err.style.display='block';}
+}
+
+function goTab(name,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('pg'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+  el.classList.add('active');
+}
+
+function sair(){token='';document.getElementById('appWrap').style.display='none';document.getElementById('loginWrap').style.display='flex';}
+</script>
+</body>
+</html>

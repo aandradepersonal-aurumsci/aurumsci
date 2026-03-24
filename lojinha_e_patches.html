@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PT Gestão — Lojinha</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+[data-theme="dark"]{--bg:#0a0a0a;--bg2:#111111;--bg3:#1a1a1a;--bg4:#222222;--gold:#C9A84C;--gold2:#E8C97A;--gold3:#8B6914;--text:#F0EDE8;--text2:#A09888;--text3:#6B6358;--border:#2A2520;--border2:#3A3228;--green:#1D9E75;--red:#E24B4A;--blue:#378ADD;--input-bg:#1a1a1a}
+[data-theme="light"]{--bg:#F5F3EE;--bg2:#FFFFFF;--bg3:#F0EDE8;--bg4:#E8E4DC;--gold:#8B6914;--gold2:#6B5010;--gold3:#C9A84C;--text:#1A1610;--text2:#5A5040;--text3:#8B8070;--border:#D8D0C0;--border2:#C8C0B0;--green:#0F6E56;--red:#C03030;--blue:#185FA5;--input-bg:#F5F3EE}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;padding:28px}
+h1{font-size:22px;font-weight:700;color:var(--gold);margin-bottom:6px}
+.sub{font-size:13px;color:var(--text2);margin-bottom:28px}
+.categorias{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.cat-btn{padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:0.5px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:inherit;transition:all 0.1s}
+.cat-btn:hover,.cat-btn.active{background:var(--gold3);border-color:var(--gold);color:var(--bg)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.produto{background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;overflow:hidden;transition:border-color 0.15s}
+.produto:hover{border-color:var(--gold3)}
+.produto-img{height:140px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:40px;border-bottom:0.5px solid var(--border2)}
+.produto-body{padding:14px}
+.produto-nome{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.produto-desc{font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.5}
+.produto-preco{font-size:16px;font-weight:700;color:var(--gold);margin-bottom:8px}
+.produto-preco span{font-size:11px;color:var(--text3);font-weight:400}
+.produto-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.tag{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--text3);border:0.5px solid var(--border)}
+.tag.destaque{background:#2A200A;color:var(--gold);border-color:var(--gold3)}
+.btns{display:flex;gap:8px}
+.btn{padding:7px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:0.5px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:inherit;text-decoration:none;display:inline-block;text-align:center;transition:all 0.1s;flex:1}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-gold{background:var(--gold3);border-color:var(--gold);color:var(--bg)}
+.btn-gold:hover{opacity:0.85}
+.comissao{font-size:10px;color:var(--green);margin-top:6px;text-align:center}
+.badge-novo{display:inline-block;background:#0A1F17;color:var(--green);border:0.5px solid var(--green);font-size:9px;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle}
+.info-afiliado{background:var(--bg2);border:0.5px solid var(--gold3);border-radius:10px;padding:16px;margin-bottom:24px;font-size:12px;color:var(--text2);line-height:1.6}
+.info-afiliado h3{font-size:13px;font-weight:600;color:var(--gold);margin-bottom:6px}
+
+/* Postural photo section */
+.postural-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+.photo-box{position:relative;border-radius:8px;overflow:hidden;cursor:pointer;background:var(--bg3);border:1px dashed var(--border2);height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:border-color 0.15s}
+.photo-box:hover{border-color:var(--gold3)}
+.photo-box canvas{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.15;pointer-events:none}
+.photo-box img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:none}
+.photo-box img.loaded{display:block}
+.photo-placeholder{text-align:center;z-index:1;pointer-events:none}
+.photo-placeholder svg{width:28px;height:28px;stroke:var(--text3);fill:none;stroke-width:1.5;margin-bottom:6px}
+.photo-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;font-weight:600}
+.photo-hint{font-size:10px;color:var(--text3)}
+.photo-remove{position:absolute;top:6px;right:6px;width:20px;height:20px;background:rgba(226,75,74,0.8);border-radius:50%;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:2;color:white;font-size:12px;line-height:1}
+.photo-box:hover .photo-remove{display:flex}
+
+/* Ultrassom 9 pontos */
+.us9-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.us9-ponto{background:var(--bg3);border-radius:8px;padding:10px;border:0.5px solid var(--border)}
+.us9-ponto-nome{font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;font-weight:600}
+.us9-ponto input{width:100%;padding:6px 8px;background:var(--input-bg);border:0.5px solid var(--border2);border-radius:5px;color:var(--text);font-size:12px;outline:none;font-family:inherit}
+.us9-ponto input:focus{border-color:var(--gold)}
+.us9-soma{background:var(--bg3);border:0.5px solid var(--gold3);border-radius:8px;padding:12px;margin-top:12px;display:flex;align-items:center;justify-content:space-between}
+.us9-soma-label{font-size:11px;color:var(--text3)}
+.us9-soma-valor{font-size:18px;font-weight:700;color:var(--gold)}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     PARTE 1: LOJINHA DE EQUIPAMENTOS
+     Cole como nova aba no dashboard_premium.html
+     ============================================================ -->
+
+<div style="max-width:1100px;margin:0 auto">
+
+<h1>🏪 Equipamentos Recomendados</h1>
+<div class="sub">Ferramentas que uso e recomendo para avaliação física profissional</div>
+
+<div class="info-afiliado">
+  <h3>💡 Como funciona</h3>
+  Os links abaixo levam direto para os produtos no Mercado Livre, Amazon e Shopee. Ao comprar pelo link, você apoia este sistema sem pagar nada a mais. Todos os produtos foram selecionados por qualidade e custo-benefício para personal trainers.
+</div>
+
+<div class="categorias">
+  <button class="cat-btn active" onclick="filtrar('todos',this)">Todos</button>
+  <button class="cat-btn" onclick="filtrar('dobras',this)">Dobras Cutâneas</button>
+  <button class="cat-btn" onclick="filtrar('bioimpedancia',this)">Bioimpedância</button>
+  <button class="cat-btn" onclick="filtrar('medicoes',this)">Medições</button>
+  <button class="cat-btn" onclick="filtrar('testes',this)">Testes Físicos</button>
+  <button class="cat-btn" onclick="filtrar('postural',this)">Postural</button>
+</div>
+
+<div class="grid" id="produtosGrid"></div>
+
+</div>
+
+<script>
+const produtos = [
+  {
+    id:1, categoria:'dobras', emoji:'📐',
+    nome:'Adipômetro Científico Cescorf',
+    desc:'Padrão ouro para dobras cutâneas. Pressão constante de 10g/mm². Escala de 0,1mm. O mais utilizado por profissionais.',
+    preco:'R$ 280',
+    tags:['Pollock 3', 'Pollock 7', 'Profissional'],
+    destaque:'Mais vendido',
+    links:{ml:'https://lista.mercadolivre.com.br/adipometro-cescorf',amazon:'https://www.amazon.com.br/s?k=adipometro+cescorf'}
+  },
+  {
+    id:2, categoria:'dobras', emoji:'📏',
+    nome:'Adipômetro Clínico Sanny',
+    desc:'Ótimo custo-benefício. Pressão constante, fácil de usar. Ideal para iniciantes e avaliações em academia.',
+    preco:'R$ 120',
+    tags:['Pollock 3', 'Custo-benefício'],
+    links:{ml:'https://lista.mercadolivre.com.br/adipometro-sanny',shopee:'https://shopee.com.br/search?keyword=adipometro+sanny'}
+  },
+  {
+    id:3, categoria:'bioimpedancia', emoji:'⚡',
+    nome:'Balança com Bioimpedância Omron',
+    desc:'Mede peso, % gordura, massa muscular, gordura visceral e IMC. Sincroniza com app. Ideal para consultório.',
+    preco:'R$ 350',
+    tags:['Bioimpedância', 'App'],
+    destaque:'Recomendado',
+    links:{ml:'https://lista.mercadolivre.com.br/balanca-bioimpedancia-omron',amazon:'https://www.amazon.com.br/s?k=balanca+bioimpedancia+omron'}
+  },
+  {
+    id:4, categoria:'bioimpedancia', emoji:'🔋',
+    nome:'Bioimpedância Profissional InBody H20N',
+    desc:'Análise segmental. 8 eletrodos. Diferencia massa muscular por segmento. Para profissionais exigentes.',
+    preco:'R$ 2.800',
+    tags:['Segmental', 'Profissional', '8 eletrodos'],
+    links:{ml:'https://lista.mercadolivre.com.br/inbody-bioimpedancia'}
+  },
+  {
+    id:5, categoria:'medicoes', emoji:'📍',
+    nome:'Fita Métrica Antropométrica Sanny',
+    desc:'Fita inextensível de 2m com trava automática. Essencial para medição de circunferências. Leitura fácil.',
+    preco:'R$ 45',
+    tags:['Circunferências', 'Essencial'],
+    links:{ml:'https://lista.mercadolivre.com.br/fita-metrica-antropometrica',shopee:'https://shopee.com.br/search?keyword=fita+antropometrica'}
+  },
+  {
+    id:6, categoria:'medicoes', emoji:'📊',
+    nome:'Estadiômetro Portátil',
+    desc:'Medição de estatura com precisão de 1mm. Portátil, dobrável. Indispensável para avaliação completa.',
+    preco:'R$ 180',
+    tags:['Estatura', 'Portátil'],
+    links:{ml:'https://lista.mercadolivre.com.br/estadiometro-portatil',shopee:'https://shopee.com.br/search?keyword=estadiometro+portatil'}
+  },
+  {
+    id:7, categoria:'testes', emoji:'🏃',
+    nome:'Banco de Wells — Flexibilidade',
+    desc:'Teste de sentar e alcançar. MDF resistente com escala em cm. Necessário para o teste de Wells.',
+    preco:'R$ 220',
+    tags:['Wells', 'Flexibilidade'],
+    links:{ml:'https://lista.mercadolivre.com.br/banco-wells-flexibilidade',shopee:'https://shopee.com.br/search?keyword=banco+wells'}
+  },
+  {
+    id:8, categoria:'testes', emoji:'⏱️',
+    nome:'Oxímetro com Frequencímetro',
+    desc:'Mede FC e SpO2 em tempo real. Essencial para testes de VO2max (Cooper, Milha, Step). Com alarme.',
+    preco:'R$ 85',
+    tags:['FC', 'Cooper', 'Step', 'Milha'],
+    destaque:'Essencial',
+    links:{ml:'https://lista.mercadolivre.com.br/oximetro-frequencimetro',amazon:'https://www.amazon.com.br/s?k=oximetro+frequencimetro'}
+  },
+  {
+    id:9, categoria:'testes', emoji:'📦',
+    nome:'Degrau para Teste do Step',
+    desc:'Degrau regulável 30/40cm para o protocolo McArdle. MDF reforçado, antiderrapante. Para idosos e iniciantes.',
+    preco:'R$ 160',
+    tags:['Step', 'McArdle', 'Idosos'],
+    links:{ml:'https://lista.mercadolivre.com.br/degrau-step-fitness',shopee:'https://shopee.com.br/search?keyword=step+degrau+fitness'}
+  },
+  {
+    id:10, categoria:'postural', emoji:'📸',
+    nome:'Tripé Flexível para Smartphone',
+    desc:'Para fotografar a análise postural com consistência. Altura regulável, fixação estável. Essencial para fotos posturais.',
+    preco:'R$ 65',
+    tags:['Postural', 'Fotos'],
+    links:{ml:'https://lista.mercadolivre.com.br/tripe-flexivel-celular',shopee:'https://shopee.com.br/search?keyword=tripe+flexivel+celular'}
+  },
+  {
+    id:11, categoria:'postural', emoji:'📐',
+    nome:'Fio de Prumo para Análise Postural',
+    desc:'Referência vertical para análise postural. Simples e preciso. Use pendurado atrás do aluno como eixo de referência.',
+    preco:'R$ 25',
+    tags:['Postural', 'Referência'],
+    links:{ml:'https://lista.mercadolivre.com.br/fio+prumo',shopee:'https://shopee.com.br/search?keyword=fio+prumo'}
+  },
+  {
+    id:12, categoria:'medicoes', emoji:'⚖️',
+    nome:'Balança Digital Profissional',
+    desc:'Capacidade 200kg, precisão 100g. Visor digital grande. Base antiderrapante. Essencial para qualquer avaliação.',
+    preco:'R$ 120',
+    tags:['Peso', 'Essencial'],
+    links:{ml:'https://lista.mercadolivre.com.br/balanca-digital-profissional',amazon:'https://www.amazon.com.br/s?k=balanca+digital+profissional+200kg'}
+  },
+];
+
+function renderProdutos(lista) {
+  const grid = document.getElementById('produtosGrid');
+  grid.innerHTML = lista.map(p => `
+    <div class="produto" data-cat="${p.categoria}">
+      <div class="produto-img">${p.emoji}</div>
+      <div class="produto-body">
+        <div class="produto-nome">${p.nome}${p.destaque ? `<span class="badge-novo">${p.destaque}</span>` : ''}</div>
+        <div class="produto-desc">${p.desc}</div>
+        <div class="produto-tags">${p.tags.map(t => `<span class="tag${t === p.destaque ? ' destaque' : ''}">${t}</span>`).join('')}</div>
+        <div class="produto-preco">${p.preco} <span>aprox.</span></div>
+        <div class="btns">
+          ${p.links.ml ? `<a href="${p.links.ml}" target="_blank" class="btn btn-gold">Mercado Livre</a>` : ''}
+          ${p.links.amazon ? `<a href="${p.links.amazon}" target="_blank" class="btn">Amazon</a>` : ''}
+          ${p.links.shopee ? `<a href="${p.links.shopee}" target="_blank" class="btn">Shopee</a>` : ''}
+        </div>
+        <div class="comissao">🔗 Link de afiliado — você apoia sem pagar a mais</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filtrar(cat, el) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderProdutos(cat === 'todos' ? produtos : produtos.filter(p => p.categoria === cat));
+}
+
+renderProdutos(produtos);
+</script>
+
+
+<!-- ============================================================
+     PARTE 2: ULTRASSOM 9 PONTOS
+     Substitui o bloco id="formUltrassom7" no dashboard
+     ============================================================ -->
+
+<div id="formUltrassom9" class="metodo-form" style="margin-top:40px">
+  <div style="font-size:11px;font-weight:600;color:#C9A84C;text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px;padding-bottom:5px;border-bottom:0.5px solid #2A2520;display:flex;align-items:center;justify-content:space-between">
+    Avaliação por Ultrassom — 9 Pontos
+    <button style="background:transparent;border:0.5px solid #378ADD;color:#378ADD;font-size:11px;padding:4px 10px;border-radius:5px;cursor:pointer;font-family:inherit" onclick="document.getElementById('iUs9').classList.toggle('open')">? Protocolo</button>
+  </div>
+
+  <div id="iUs9" style="background:#1a1a1a;border:0.5px solid #2A2520;border-left:2px solid #378ADD;border-radius:8px;padding:14px;margin-bottom:14px;font-size:12px;color:#A09888;line-height:1.6;display:none">
+    <div style="font-size:12px;font-weight:600;color:#C9A84C;margin-bottom:8px">Avaliação por Ultrassom Portátil — 9 Pontos Anatômicos</div>
+    <p style="margin-bottom:10px">O aparelho de ultrassom portátil mede a espessura do tecido adiposo subcutâneo com alta precisão, sem interferência de hidratação ou exercício prévio.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+      <div style="display:flex;gap:8px"><span style="font-weight:600;color:#F0EDE8;min-width:130px;font-size:11px">1. Peitoral</span><span style="font-size:11px">Diagonal entre axila anterior e mamilo</span></div>
+      <div style="display:flex;gap:8px"><span style="font-weight:600;color:#F0EDE8;min-width:130px;font-size:11px">2. Subescapular</span><span style="font-size:11px">2cm abaixo do ângulo inferior da escápula, diagonal 45°</span></div>
+      <div style="display:flex;gap:8px"><span style="font-weight:600;color:#F0EDE8;min-width:130px;font-size:11px">3. Abdômen</span><span style="font-size:11px">2cm à direita da cicatriz umbilical, vertical</span></div>
+      <div style="display:flex;gap:8px"><span style="font-weight:600;color:#F0EDE8;min-width:130px;font-size:11px">4. Suprailíaca</span><span style="font-size:11px">Logo acima da crista ilíaca, linha axilar anterior</span></div>
+      <div style="display:flex;gap:8px"><span style="font-weight:600;color:#F0EDE8;min-width:130px;font-size:11px">5. Bíceps</span><span style="font-size:11px">Face anterior do braço, ponto médio</span></div>
+      <div style="display:flex;gap:8px"><span style="font-weight:600;color:#F0EDE8;min-width:130px;font-size:11px">6. Tríceps</span><span style="font-size:11px">Face posterior do braço, ponto médio</span></div>
+      <div style="display:flex;gap:8px"><span style="font-weight:600;color:#F0EDE8;min-width:130px;font-size:11px">7. Axilar Média</span><span style="font-size:11px">Horizontal, linha axilar média, nível xifóide</span></div>
+      <div style="display:flex;gap:8px"><span style="font-weight:600;color:#F0EDE8;min-width:130px;font-size:11px">8. Coxa</span><span style="font-size:11px">Face anterior, ponto médio entre prega inguinal e patela</span></div>
+      <div style="display:flex;gap:8px"><span style="font-weight:600;color:#F0EDE8;min-width:130px;font-size:11px">9. Perna</span><span style="font-size:11px">Face medial da panturrilha, maior circunferência</span></div>
+    </div>
+    <p style="margin-top:10px;color:#C9A84C;font-size:11px">O % de gordura é calculado pelo aparelho. Insira os valores em mm e o resultado final.</p>
+  </div>
+
+  <div style="background:#1a1a1a;border-radius:7px;padding:10px;margin-bottom:14px;font-size:11px;color:#A09888">
+    <strong style="color:#C9A84C">Como usar:</strong> Posicione o transdutor perpendicularmente à pele em cada ponto. Aguarde estabilizar. Insira os valores em mm fornecidos pelo aparelho.
+  </div>
+
+  <div class="us9-grid">
+    <div class="us9-ponto"><div class="us9-ponto-nome">1. Peitoral</div><input type="number" step="0.1" id="us9_peit" placeholder="mm" oninput="calcUs9()"/></div>
+    <div class="us9-ponto"><div class="us9-ponto-nome">2. Subescapular</div><input type="number" step="0.1" id="us9_sub" placeholder="mm" oninput="calcUs9()"/></div>
+    <div class="us9-ponto"><div class="us9-ponto-nome">3. Abdômen</div><input type="number" step="0.1" id="us9_abdo" placeholder="mm" oninput="calcUs9()"/></div>
+    <div class="us9-ponto"><div class="us9-ponto-nome">4. Suprailíaca</div><input type="number" step="0.1" id="us9_supra" placeholder="mm" oninput="calcUs9()"/></div>
+    <div class="us9-ponto"><div class="us9-ponto-nome">5. Bíceps</div><input type="number" step="0.1" id="us9_bic" placeholder="mm" oninput="calcUs9()"/></div>
+    <div class="us9-ponto"><div class="us9-ponto-nome">6. Tríceps</div><input type="number" step="0.1" id="us9_tric" placeholder="mm" oninput="calcUs9()"/></div>
+    <div class="us9-ponto"><div class="us9-ponto-nome">7. Axilar Média</div><input type="number" step="0.1" id="us9_axil" placeholder="mm" oninput="calcUs9()"/></div>
+    <div class="us9-ponto"><div class="us9-ponto-nome">8. Coxa</div><input type="number" step="0.1" id="us9_coxa" placeholder="mm" oninput="calcUs9()"/></div>
+    <div class="us9-ponto"><div class="us9-ponto-nome">9. Perna</div><input type="number" step="0.1" id="us9_perna" placeholder="mm" oninput="calcUs9()"/></div>
+  </div>
+
+  <div class="us9-soma" id="us9Soma">
+    <div><div class="us9-soma-label">Soma dos 9 pontos</div><div class="us9-soma-valor" id="us9SomaVal">0 mm</div></div>
+    <div style="text-align:right"><div class="us9-soma-label">Informe o % calculado pelo aparelho</div><input type="number" step="0.1" id="us9_gord" placeholder="% gordura" style="padding:6px 10px;background:#111;border:0.5px solid #3A3228;border-radius:6px;color:#F0EDE8;font-size:14px;width:140px;outline:none;font-family:inherit;text-align:center"/></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px">
+    <div style="margin-bottom:0"><label style="display:block;font-size:11px;color:#6B6358;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Peso (kg)</label><input type="number" step="0.1" id="us9_peso" placeholder="ex: 80" style="width:100%;padding:9px 12px;background:#1a1a1a;border:0.5px solid #3A3228;border-radius:6px;color:#F0EDE8;font-size:13px;outline:none;font-family:inherit"/></div>
+    <div style="margin-bottom:0"><label style="display:block;font-size:11px;color:#6B6358;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Estatura (cm)</label><input type="number" id="us9_estat" placeholder="ex: 175" style="width:100%;padding:9px 12px;background:#1a1a1a;border:0.5px solid #3A3228;border-radius:6px;color:#F0EDE8;font-size:13px;outline:none;font-family:inherit"/></div>
+    <div style="margin-bottom:0"><label style="display:block;font-size:11px;color:#6B6358;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Marca do aparelho</label><input id="us9_marca" placeholder="ex: Ultrassom portátil" style="width:100%;padding:9px 12px;background:#1a1a1a;border:0.5px solid #3A3228;border-radius:6px;color:#F0EDE8;font-size:13px;outline:none;font-family:inherit"/></div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     PARTE 3: FOTOS POSTURAIS COM FUNDO QUADRICULADO
+     Substitui o bloco de análise postural no dashboard
+     ============================================================ -->
+
+<div style="margin-top:40px">
+  <div style="font-size:11px;font-weight:600;color:#C9A84C;text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px;padding-bottom:5px;border-bottom:0.5px solid #2A2520">
+    Análise Postural com Fotos
+  </div>
+
+  <div class="postural-grid">
+    <!-- Frente -->
+    <div>
+      <div class="photo-label" style="font-size:11px;color:#6B6358;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;font-weight:600">Vista Anterior</div>
+      <div class="photo-box" id="boxFrente" onclick="document.getElementById('inputFrente').click()">
+        <canvas id="canvasFrente"></canvas>
+        <img id="imgFrente" alt="Vista anterior"/>
+        <button class="photo-remove" onclick="removerFoto(event,'imgFrente','boxFrente')">×</button>
+        <div class="photo-placeholder">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <div class="photo-hint">Clique para adicionar foto</div>
+          <div style="font-size:9px;color:#6B6358;margin-top:4px">Fundo quadriculado = referência postural</div>
+        </div>
+      </div>
+      <input type="file" id="inputFrente" accept="image/*" style="display:none" onchange="carregarFoto(this,'imgFrente','boxFrente')"/>
+    </div>
+
+    <!-- Lado -->
+    <div>
+      <div class="photo-label" style="font-size:11px;color:#6B6358;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;font-weight:600">Vista Lateral</div>
+      <div class="photo-box" id="boxLado" onclick="document.getElementById('inputLado').click()">
+        <canvas id="canvasLado"></canvas>
+        <img id="imgLado" alt="Vista lateral"/>
+        <button class="photo-remove" onclick="removerFoto(event,'imgLado','boxLado')">×</button>
+        <div class="photo-placeholder">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <div class="photo-hint">Clique para adicionar foto</div>
+        </div>
+      </div>
+      <input type="file" id="inputLado" accept="image/*" style="display:none" onchange="carregarFoto(this,'imgLado','boxLado')"/>
+    </div>
+
+    <!-- Costas -->
+    <div>
+      <div class="photo-label" style="font-size:11px;color:#6B6358;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;font-weight:600">Vista Posterior</div>
+      <div class="photo-box" id="boxCostas" onclick="document.getElementById('inputCostas').click()">
+        <canvas id="canvasCostas"></canvas>
+        <img id="imgCostas" alt="Vista posterior"/>
+        <button class="photo-remove" onclick="removerFoto(event,'imgCostas','boxCostas')">×</button>
+        <div class="photo-placeholder">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <div class="photo-hint">Clique para adicionar foto</div>
+        </div>
+      </div>
+      <input type="file" id="inputCostas" accept="image/*" style="display:none" onchange="carregarFoto(this,'imgCostas','boxCostas')"/>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+    <div><label style="display:block;font-size:11px;color:#6B6358;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Cabeça</label><input id="post_cab" placeholder="ex: Centralizada" style="width:100%;padding:9px 12px;background:#1a1a1a;border:0.5px solid #3A3228;border-radius:6px;color:#F0EDE8;font-size:13px;outline:none;font-family:inherit"/></div>
+    <div><label style="display:block;font-size:11px;color:#6B6358;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Ombros</label><input id="post_omb" placeholder="ex: Nivelados" style="width:100%;padding:9px 12px;background:#1a1a1a;border:0.5px solid #3A3228;border-radius:6px;color:#F0EDE8;font-size:13px;outline:none;font-family:inherit"/></div>
+    <div><label style="display:block;font-size:11px;color:#6B6358;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Coluna</label><input id="post_col" placeholder="ex: Hiperlordose L" style="width:100%;padding:9px 12px;background:#1a1a1a;border:0.5px solid #3A3228;border-radius:6px;color:#F0EDE8;font-size:13px;outline:none;font-family:inherit"/></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+    <div><label style="display:block;font-size:11px;color:#6B6358;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Quadril</label><input id="post_quad" placeholder="ex: Nivelado" style="width:100%;padding:9px 12px;background:#1a1a1a;border:0.5px solid #3A3228;border-radius:6px;color:#F0EDE8;font-size:13px;outline:none;font-family:inherit"/></div>
+    <div><label style="display:block;font-size:11px;color:#6B6358;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Joelhos</label><input id="post_joe" placeholder="ex: Valgo bilateral" style="width:100%;padding:9px 12px;background:#1a1a1a;border:0.5px solid #3A3228;border-radius:6px;color:#F0EDE8;font-size:13px;outline:none;font-family:inherit"/></div>
+    <div><label style="display:block;font-size:11px;color:#6B6358;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Pés</label><input id="post_pes" placeholder="ex: Plano" style="width:100%;padding:9px 12px;background:#1a1a1a;border:0.5px solid #3A3228;border-radius:6px;color:#F0EDE8;font-size:13px;outline:none;font-family:inherit"/></div>
+  </div>
+</div>
+
+<script>
+// Fundo quadriculado nos canvas posturais
+function desenharGrade(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const box = canvas.parentElement;
+  canvas.width = box.offsetWidth || 240;
+  canvas.height = box.offsetHeight || 200;
+  const ctx = canvas.getContext('2d');
+  const tam = 20;
+  ctx.strokeStyle = '#C9A84C';
+  ctx.lineWidth = 0.3;
+  for (let x = 0; x <= canvas.width; x += tam) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+  }
+  for (let y = 0; y <= canvas.height; y += tam) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+  }
+  // Linhas centrais mais fortes
+  ctx.strokeStyle = '#C9A84C';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(canvas.width/2, canvas.height); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, canvas.height/2); ctx.lineTo(canvas.width, canvas.height/2); ctx.stroke();
+}
+
+// Desenha grade em todos os canvas ao carregar
+window.addEventListener('load', () => {
+  ['canvasFrente','canvasLado','canvasCostas'].forEach(id => desenharGrade(id));
+});
+
+function carregarFoto(input, imgId, boxId) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById(imgId);
+    img.src = e.target.result;
+    img.classList.add('loaded');
+    const placeholder = document.querySelector(`#${boxId} .photo-placeholder`);
+    if (placeholder) placeholder.style.display = 'none';
+    const canvas = document.querySelector(`#${boxId} canvas`);
+    if (canvas) canvas.style.display = 'none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function removerFoto(event, imgId, boxId) {
+  event.stopPropagation();
+  const img = document.getElementById(imgId);
+  img.src = '';
+  img.classList.remove('loaded');
+  const placeholder = document.querySelector(`#${boxId} .photo-placeholder`);
+  if (placeholder) placeholder.style.display = '';
+  const canvas = document.querySelector(`#${boxId} canvas`);
+  if (canvas) { canvas.style.display = ''; desenharGrade(canvas.id); }
+}
+
+// Cálculo soma ultrassom 9 pontos
+function calcUs9() {
+  const ids = ['us9_peit','us9_sub','us9_abdo','us9_supra','us9_bic','us9_tric','us9_axil','us9_coxa','us9_perna'];
+  const soma = ids.reduce((acc, id) => {
+    const val = parseFloat(document.getElementById(id)?.value) || 0;
+    return acc + val;
+  }, 0);
+  const el = document.getElementById('us9SomaVal');
+  if (el) el.textContent = soma.toFixed(1) + ' mm';
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Portal — PT Gestão</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--bg2:#111111;--bg3:#1a1a1a;--bg4:#222222;--gold:#C9A84C;--gold2:#E8C97A;--gold3:#8B6914;--text:#F0EDE8;--text2:#A09888;--text3:#6B6358;--border:#2A2520;--border2:#3A3228;--green:#1D9E75;--red:#E24B4A;--blue:#378ADD;}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center}
+.login-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:14px;padding:40px;width:380px}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-icon{width:56px;height:56px;background:var(--gold3);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.login-icon svg{width:28px;height:28px;stroke:var(--gold2);fill:none;stroke-width:2}
+.login-title{font-size:20px;font-weight:600;color:var(--gold)}
+.login-sub{font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:3px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:11px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px}
+.form-group input{width:100%;padding:9px 12px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;color:var(--text);font-size:13px;outline:none;font-family:inherit}
+.form-group input:focus{border-color:var(--gold)}
+.btn{padding:9px 16px;border-radius:6px;font-size:13px;cursor:pointer;border:0.5px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:inherit;transition:all 0.1s}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-gold{background:var(--gold3);border-color:var(--gold);color:var(--gold2)}
+.btn-gold:hover{background:#7A5C10}
+.err{color:var(--red);font-size:12px;margin-top:8px;display:none}
+.app{display:none;flex-direction:column;min-height:100vh}
+.header{background:var(--bg2);border-bottom:0.5px solid var(--border2);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.header-left{display:flex;align-items:center;gap:12px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--gold3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--gold2)}
+.header-nome{font-size:14px;font-weight:500;color:var(--text)}
+.header-sub{font-size:11px;color:var(--gold)}
+.tabs{display:flex;gap:0;border-bottom:0.5px solid var(--border2);background:var(--bg2);padding:0 24px}
+.tab{padding:12px 18px;font-size:13px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.1s}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.content{padding:24px;flex:1}
+.page{display:none}.page.active{display:block}
+.card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;margin-bottom:16px}
+.card-head{padding:14px 18px;border-bottom:0.5px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:600;color:var(--gold)}
+.card-body{padding:18px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;padding:14px}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px}
+.stat-value{font-size:20px;font-weight:600;color:var(--gold)}
+.stat-cls{font-size:11px;margin-top:3px}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.bg{background:#0A1F17;color:var(--green)}
+.br{background:#1F0A0A;color:var(--red)}
+.bo{background:#2A200A;color:var(--gold)}
+.bb{background:#0A1525;color:var(--blue)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;color:var(--text3);border-bottom:0.5px solid var(--border2);text-transform:uppercase;letter-spacing:0.5px;background:var(--bg3)}
+td{padding:10px 12px;border-bottom:0.5px solid var(--border);color:var(--text2)}
+tr:last-child td{border-bottom:none}
+.perfil-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.perfil-item{background:var(--bg3);border-radius:8px;padding:12px}
+.perfil-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.perfil-valor{font-size:14px;color:var(--text);font-weight:500}
+.treino-sessao{background:var(--bg3);border-radius:8px;padding:14px;margin-bottom:10px;border-left:3px solid var(--gold)}
+.sessao-nome{font-size:14px;font-weight:600;color:var(--gold2);margin-bottom:4px}
+.sessao-info{font-size:12px;color:var(--text3)}
+.chart-wrap{position:relative;height:200px;margin-top:12px}
+.sem-dados{text-align:center;padding:40px;color:var(--text3);font-size:13px}
+.api-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:5px}
+.api-dot.off{background:var(--red)}
+.dias{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.dia{width:36px;height:36px;border-radius:50%;border:0.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3)}
+.dia.ativo{background:var(--gold3);border-color:var(--gold);color:var(--gold2);font-weight:600}
+</style>
+</head>
+<body>
+
+<div id="loginWrap" class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <div class="login-title">Meu Portal</div>
+      <div class="login-sub">Acompanhe seu progresso</div>
+    </div>
+    <div class="form-group"><label>E-mail</label><input type="email" id="lEmail" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')login()"/></div>
+    <div class="form-group"><label>Senha</label><input type="password" id="lSenha" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()"/></div>
+    <div class="err" id="lErr"></div>
+    <button class="btn btn-gold" style="width:100%;margin-top:12px;padding:10px" onclick="login()">Entrar</button>
+    <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--text3)">
+      <span class="api-dot" id="aDot"></span><span id="aStatus">Verificando...</span>
+    </div>
+  </div>
+</div>
+
+<div id="appWrap" class="app">
+  <div class="header">
+    <div class="header-left">
+      <div class="avatar" id="hAvatar">AA</div>
+      <div>
+        <div class="header-nome" id="hNome">Aluno</div>
+        <div class="header-sub" id="hObj">—</div>
+      </div>
+    </div>
+    <button class="btn" onclick="sair()">Sair</button>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="goTab('inicio',this)">Início</div>
+    <div class="tab" onclick="goTab('avaliacoes',this)">Avaliações</div>
+    <div class="tab" onclick="goTab('treino',this)">Meu Treino</div>
+    <div class="tab" onclick="goTab('pagamentos',this)">Pagamentos</div>
+    <div class="tab" onclick="goTab('perfil',this)">Perfil</div>
+  </div>
+
+  <div class="content">
+
+    <div id="pgInicio" class="page active">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Peso Atual</div><div class="stat-value" id="iPeso">—</div><div class="stat-cls" id="iImc"></div></div>
+        <div class="stat-card"><div class="stat-label">% Gordura</div><div class="stat-value" id="iGord">—</div><div class="stat-cls" id="iGordCls"></div></div>
+        <div class="stat-card"><div class="stat-label">VO2max</div><div class="stat-value" id="iVo2">—</div><div class="stat-cls" id="iVo2Cls"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">Evolução do Peso</span></div>
+        <div class="card-body"><div class="chart-wrap"><canvas id="chartInicio"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">Próximos Pagamentos</span></div>
+        <div class="card-body">
+          <table><thead><tr><th>Descrição</th><th>Vencimento</th><th>Valor</th><th>Status</th></tr></thead>
+          <tbody id="iPags"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <div id="pgAvaliacoes" class="page">
+      <div id="semAval" class="card" style="display:none"><div class="sem-dados">Nenhuma avaliação registrada ainda</div></div>
+      <div id="avsWrap"></div>
+    </div>
+
+    <div id="pgTreino" class="page">
+      <div id="semTreino" class="card" style="display:none"><div class="sem-dados">Nenhum plano de treino ativo</div></div>
+      <div id="treinoWrap" style="display:none">
+        <div class="card">
+          <div class="card-head"><span class="card-title" id="tNome">—</span><span style="font-size:11px;color:var(--text3)" id="tInfo"></span></div>
+          <div class="card-body">
+            <div style="display:flex;gap:20px;margin-bottom:16px">
+              <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">Objetivo</div><div style="font-size:13px;color:var(--gold);margin-top:3px" id="tObj">—</div></div>
+              <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">Dias/semana</div><div style="font-size:13px;color:var(--text);margin-top:3px" id="tDias">—</div></div>
+              <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">Duração</div><div style="font-size:13px;color:var(--text);margin-top:3px" id="tSemanas">—</div></div>
+              <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">Início</div><div style="font-size:13px;color:var(--text);margin-top:3px" id="tInicio">—</div></div>
+            </div>
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Divisão de treino</div>
+            <div id="tSessoes"></div>
+          </div>
+        </div>
+        <div class="card" id="periodCard" style="display:none">
+          <div class="card-head"><span class="card-title">Periodização</span></div>
+          <div class="card-body" id="periodBody"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pgPagamentos" class="page">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Pago</div><div class="stat-value" style="color:var(--green)" id="pPago">R$ 0</div></div>
+        <div class="stat-card"><div class="stat-label">Pendente</div><div class="stat-value" id="pPend">R$ 0</div></div>
+        <div class="stat-card"><div class="stat-label">Em Atraso</div><div class="stat-value" style="color:var(--red)" id="pAtr">R$ 0</div></div>
+      </div>
+      <div class="card">
+        <table><thead><tr><th>Descrição</th><th>Vencimento</th><th>Pagamento</th><th>Valor</th><th>Status</th></tr></thead>
+        <tbody id="pagTabela"></tbody></table>
+      </div>
+    </div>
+
+    <div id="pgPerfil" class="page">
+      <div class="card">
+        <div class="card-head"><span class="card-title">Meus Dados</span></div>
+        <div class="card-body">
+          <div class="perfil-grid" id="perfilGrid"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">Alterar Senha</span></div>
+        <div class="card-body">
+          <div class="form-group"><label>Senha Atual</label><input type="password" id="sAtual"/></div>
+          <div class="form-group"><label>Nova Senha</label><input type="password" id="sNova"/></div>
+          <div class="err" id="sErr"></div>
+          <button class="btn btn-gold" onclick="alterarSenha()">Salvar nova senha</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API='http://localhost:8000';
+let token='',perfil={},avals=[],chartInicio=null;
+
+async function ping(){
+  try{const r=await fetch(API+'/health');if(r.ok){document.getElementById('aDot').className='api-dot';document.getElementById('aStatus').textContent='API online';}}
+  catch{document.getElementById('aDot').className='api-dot off';document.getElementById('aStatus').textContent='API offline';}
+}
+
+async function api(path){
+  const r=await fetch(API+path,{headers:{'Authorization':'Bearer '+token}});
+  if(!r.ok){const d=await r.json();throw new Error(d.detail||'Erro');}
+  return r.json();
+}
+
+async function login(){
+  const email=document.getElementById('lEmail').value;
+  const senha=document.getElementById('lSenha').value;
+  const err=document.getElementById('lErr');err.style.display='none';
+  try{
+    const r=await fetch(API+'/aluno-portal/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,senha})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.detail||'Erro');
+    token=d.access_token;
+    document.getElementById('hNome').textContent=d.nome;
+    document.getElementById('hAvatar').textContent=d.nome.split(' ').map(n=>n[0]).slice(0,2).join('');
+    document.getElementById('loginWrap').style.display='none';
+    document.getElementById('appWrap').style.display='flex';
+    await carregarTudo();
+  }catch(e){err.textContent=e.message;err.style.display='block';}
+}
+
+async function carregarTudo(){
+  await Promise.all([carregarPerfil(),carregarAvaliacoes(),carregarTreino(),carregarPagamentos()]);
+}
+
+async function carregarPerfil(){
+  try{
+    perfil=await api('/aluno-portal/perfil');
+    document.getElementById('hObj').textContent=(perfil.objetivo||'').replace('_',' ');
+    const campos=[
+      ['Nome',perfil.nome],['Idade',perfil.idade?perfil.idade+' anos':'—'],
+      ['E-mail',perfil.email||'—'],['Telefone',perfil.telefone||'—'],
+      ['Sexo',(perfil.sexo||'—').charAt(0).toUpperCase()+(perfil.sexo||'').slice(1)],
+      ['Nível',(perfil.nivel_experiencia||'—').charAt(0).toUpperCase()+(perfil.nivel_experiencia||'').slice(1)],
+      ['Objetivo',(perfil.objetivo||'—').replace('_',' ')],['',''],
+    ];
+    document.getElementById('perfilGrid').innerHTML=campos.map(([l,v])=>
+      l?`<div class="perfil-item"><div class="perfil-label">${l}</div><div class="perfil-valor">${v}</div></div>`:''
+    ).join('');
+  }catch{}
+}
+
+async function carregarAvaliacoes(){
+  try{
+    avals=await api('/aluno-portal/avaliacoes');
+    if(!avals.length){
+      document.getElementById('semAval').style.display='block';
+      document.getElementById('avsWrap').innerHTML='';
+      return;
+    }
+    document.getElementById('semAval').style.display='none';
+    const atual=avals[0];
+    document.getElementById('iPeso').textContent=atual.peso?atual.peso.toFixed(1)+' kg':'—';
+    document.getElementById('iImc').innerHTML=atual.classificacao_imc?`<span class="badge bo">${atual.classificacao_imc}</span>`:'';
+    document.getElementById('iGord').textContent=atual.percentual_gordura?atual.percentual_gordura.toFixed(1)+'%':'—';
+    document.getElementById('iGordCls').innerHTML=atual.classificacao_gordura?`<span class="badge ${clsBadge(atual.classificacao_gordura)}">${atual.classificacao_gordura}</span>`:'';
+    document.getElementById('iVo2').textContent=atual.vo2max?atual.vo2max.toFixed(1):'—';
+    document.getElementById('iVo2Cls').innerHTML=atual.classificacao_vo2?`<span class="badge ${clsBadge(atual.classificacao_vo2)}">${atual.classificacao_vo2}</span>`:'';
+
+    const labels=avals.slice().reverse().map(a=>new Date(a.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}));
+    const pesos=avals.slice().reverse().map(a=>a.peso);
+    if(chartInicio)chartInicio.destroy();
+    const ctx=document.getElementById('chartInicio').getContext('2d');
+    chartInicio=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Peso (kg)',data:pesos,borderColor:'#C9A84C',backgroundColor:'rgba(201,168,76,0.1)',tension:0.3,pointBackgroundColor:'#C9A84C',pointRadius:5,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1A1A1A',borderColor:'#3A3228',borderWidth:1,titleColor:'#C9A84C',bodyColor:'#F0EDE8'}},scales:{x:{grid:{color:'rgba(58,50,40,0.5)'},ticks:{color:'#6B6358'}},y:{grid:{color:'rgba(58,50,40,0.5)'},ticks:{color:'#6B6358'}}}}});
+
+    document.getElementById('avsWrap').innerHTML=avals.map(a=>`
+      <div class="card">
+        <div class="card-head"><span class="card-title">${new Date(a.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</span><span class="badge ${clsBadge(a.classificacao_gordura||'')}">${a.classificacao_gordura||'—'}</span></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+            ${mkItem('Peso',a.peso?a.peso.toFixed(1)+' kg':'—')}
+            ${mkItem('IMC',a.imc?a.imc.toFixed(2):'—',a.classificacao_imc)}
+            ${mkItem('% Gordura',a.percentual_gordura?a.percentual_gordura.toFixed(1)+'%':'—')}
+            ${mkItem('Massa Magra',a.massa_magra_kg?a.massa_magra_kg.toFixed(1)+' kg':'—')}
+            ${mkItem('VO2max',a.vo2max?a.vo2max.toFixed(1)+' ml/kg':'—',a.classificacao_vo2)}
+            ${mkItem('Risco CV',a.risco_cardiovascular||'—')}
+          </div>
+        </div>
+      </div>`).join('');
+  }catch{}
+}
+
+function mkItem(l,v,cls=''){return`<div style="background:var(--bg3);border-radius:6px;padding:10px"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">${l}</div><div style="font-size:13px;color:var(--gold2);font-weight:600">${v}</div>${cls?`<div style="font-size:10px;margin-top:2px"><span class="badge ${clsBadge(cls)}">${cls}</span></div>`:''}</div>`;}
+
+function clsBadge(cls){
+  const c=cls.toLowerCase();
+  if(c.includes('excelente')||c.includes('bom')||c.includes('boa')||c.includes('atleta')||c.includes('baixo')||c.includes('normal'))return'bg';
+  if(c.includes('regular')||c.includes('media')||c.includes('aceitavel')||c.includes('moderado')||c.includes('sobrepeso'))return'bo';
+  return'br';
+}
+
+async function carregarTreino(){
+  try{
+    const d=await api('/aluno-portal/treino');
+    if(d.mensagem){document.getElementById('semTreino').style.display='block';document.getElementById('treinoWrap').style.display='none';return;}
+    document.getElementById('semTreino').style.display='none';
+    document.getElementById('treinoWrap').style.display='block';
+    document.getElementById('tNome').textContent=d.plano.nome;
+    document.getElementById('tObj').textContent=(d.plano.objetivo||'').charAt(0).toUpperCase()+(d.plano.objetivo||'').slice(1);
+    document.getElementById('tDias').textContent=d.plano.dias_semana+'x por semana';
+    document.getElementById('tSemanas').textContent=d.plano.semanas_total+' semanas';
+    document.getElementById('tInicio').textContent=d.plano.data_inicio?new Date(d.plano.data_inicio).toLocaleDateString('pt-BR'):'—';
+    const dias=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+    document.getElementById('tSessoes').innerHTML=(d.sessoes||[]).map(s=>`
+      <div class="treino-sessao">
+        <div class="sessao-nome">${s.nome}</div>
+        <div class="sessao-info">${s.dia_semana!==null?dias[s.dia_semana]||'':''}</div>
+      </div>`).join('');
+    if(d.periodizacao){
+      document.getElementById('periodCard').style.display='block';
+      const mesos=d.periodizacao.mesociclos||[];
+      document.getElementById('periodBody').innerHTML=mesos.map(m=>`
+        <div style="margin-bottom:12px;padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--gold3)">
+          <div style="font-size:13px;font-weight:600;color:var(--gold);margin-bottom:4px">Mesociclo ${m.numero} — ${m.fase}</div>
+          <div style="font-size:11px;color:var(--text3)">${m.semanas} semanas • ${(m.microciclos||[]).map(s=>`Sem ${s.semana}: ${s.intensidade_percentual}% 1RM${s.deload?' (Deload)':''}`).join(' | ')}</div>
+        </div>`).join('');
+    }
+  }catch{}
+}
+
+async function carregarPagamentos(){
+  try{
+    const d=await api('/aluno-portal/pagamentos');
+    document.getElementById('pPago').textContent='R$ '+(d.resumo.pago||0).toLocaleString('pt-BR');
+    document.getElementById('pPend').textContent='R$ '+(d.resumo.pendente||0).toLocaleString('pt-BR');
+    document.getElementById('pAtr').textContent='R$ '+(d.resumo.atrasado||0).toLocaleString('pt-BR');
+    const pags=d.pagamentos||[];
+    const badge=s=>s==='pago'?'bg':s==='atrasado'?'br':'bo';
+    const proximos=pags.filter(p=>p.status!=='pago').slice(0,3);
+    document.getElementById('iPags').innerHTML=proximos.length?proximos.map(p=>`<tr><td>${p.descricao}</td><td>${new Date(p.vencimento).toLocaleDateString('pt-BR')}</td><td>R$ ${p.valor.toLocaleString('pt-BR')}</td><td><span class="badge ${badge(p.status)}">${p.status}</span></td></tr>`).join(''):'<tr><td colspan="4" style="text-align:center;padding:16px;color:var(--text3)">Sem pagamentos pendentes</td></tr>';
+    document.getElementById('pagTabela').innerHTML=pags.length?pags.map(p=>`<tr><td>${p.descricao}</td><td>${new Date(p.vencimento).toLocaleDateString('pt-BR')}</td><td>${p.pagamento?new Date(p.pagamento).toLocaleDateString('pt-BR'):'—'}</td><td>R$ ${p.valor.toLocaleString('pt-BR')}</td><td><span class="badge ${badge(p.status)}">${p.status}${p.dias_atraso>0?' (+'+p.dias_atraso+'d)':''}</span></td></tr>`).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text3)">Nenhum pagamento</td></tr>';
+  }catch{}
+}
+
+async function alterarSenha(){
+  const err=document.getElementById('sErr');err.style.display='none';
+  try{
+    const r=await fetch(API+'/aluno-portal/senha',{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({senha_atual:document.getElementById('sAtual').value,nova_senha:document.getElementById('sNova').value})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.detail);
+    alert('Senha alterada com sucesso!');
+    document.getElementById('sAtual').value='';document.getElementById('sNova').value='';
+  }catch(e){err.textContent=e.message;err.style.display='block';}
+}
+
+function goTab(name,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('pg'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+  el.classList.add('active');
+}
+
+function sair(){token='';document.getElementById('appWrap').style.display='none';document.getElementById('loginWrap').style.display='flex';}
+
+ping();
+</script>
+</body>
+</html>

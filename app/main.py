@@ -130,7 +130,7 @@ async def log_requests(request: Request, call_next):
 # ── Static files ──────────────────────────────────────────────
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
-app.mount("/static", StaticFiles(directory="static", html=True), name="static")
+app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "static"), html=True), name="static")
 
 # ── Routers ───────────────────────────────────────────────────
 app.include_router(auth.router)

@@ -8,3 +8,6 @@ def resposta_rapida(mensagem: str) -> str:
 
 def responder_chat(mensagem: str, contexto: dict = {}) -> str:
     return "Olá! Sou a AURI, sua assistente de treino!"
+
+def responder_chatbot(mensagem: str, contexto: dict = {}) -> str:
+    return "Olá! Sou a AURI, sua assistente de treino!"

@@ -165,3 +165,13 @@ def root():
 @app.get("/health", tags=["Status"])
 def health():
     return {"status": "ok"}
+
+@app.get("/debug-path")
+def debug_path():
+    import os
+    return {
+        "cwd": os.getcwd(),
+        "static_exists": os.path.exists("static"),
+        "static_abs": os.path.abspath("static"),
+        "files": os.listdir(".") if os.path.exists(".") else []
+    }

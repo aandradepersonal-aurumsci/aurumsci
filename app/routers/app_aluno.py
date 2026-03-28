@@ -113,9 +113,9 @@ async def treino_hoje(aluno: Aluno = Depends(get_aluno_logado), db: Session = De
 
 @router.post("/presenca")
 async def registrar_presenca(dados: PresencaSchema, aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
-    from app.routers.treino import RegistroPresenca, PlanoTreino
+    from app.routers.treino import PresencaTreino, PlanoTreino
     plano = db.query(PlanoTreino).filter(PlanoTreino.aluno_id == aluno.id, PlanoTreino.ativo == True).first()
-    presenca = RegistroPresenca(aluno_id=aluno.id, personal_id=1, plano_id=plano.id if plano else None, sessao_id=dados.sessao_id, data_presenca=date.today(), presente=True, duracao_minutos=dados.duracao_minutos, observacao=dados.observacao)
+    presenca = PresencaTreino(aluno_id=aluno.id, personal_id=1, plano_id=plano.id if plano else None, sessao_id=dados.sessao_id, data_presenca=date.today(), presente=True, duracao_minutos=dados.duracao_minutos, observacao=dados.observacao)
     db.add(presenca)
     db.commit()
     return {"mensagem": "Presenca registrada! Continue assim!", "data": str(date.today())}
@@ -123,11 +123,11 @@ async def registrar_presenca(dados: PresencaSchema, aluno: Aluno = Depends(get_a
 @router.get("/dashboard")
 async def dashboard(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
     from app.routers.avaliacao import AvaliacaoFisica
-    from app.routers.treino import RegistroPresenca
+    from app.routers.treino import PresencaTreino
     avals = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno.id).order_by(AvaliacaoFisica.data_avaliacao).all()
     evolucao = [{"data": str(a.data_avaliacao), "peso": a.peso, "percentual_gordura": a.percentual_gordura, "massa_magra_kg": a.massa_magra_kg, "imc": a.imc} for a in avals if a.peso]
     trinta_dias = date.today() - timedelta(days=30)
-    presencas_30 = db.query(RegistroPresenca).filter(RegistroPresenca.aluno_id == aluno.id, RegistroPresenca.data_presenca >= trinta_dias, RegistroPresenca.presente == True).count()
+    presencas_30 = db.query(PresencaTreino).filter(PresencaTreino.aluno_id == aluno.id, PresencaTreino.data >= trinta_dias, PresencaTreino.presente == True).count()
     ultima_aval = avals[-1] if avals else None
     dias_ultima = (date.today() - ultima_aval.data_avaliacao).days if ultima_aval else None
     proxima = str(ultima_aval.data_avaliacao + timedelta(days=60)) if ultima_aval else None
@@ -151,14 +151,14 @@ async def verificar_reavaliacao(aluno: Aluno = Depends(get_aluno_logado), db: Se
 async def chat_aluno(dados: ChatSchema, aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
     from app.motor.ia_chatbot import montar_contexto, responder_chatbot, resposta_rapida
     from app.routers.avaliacao import AvaliacaoFisica
-    from app.routers.treino import PlanoTreino, RegistroPresenca
+    from app.routers.treino import PlanoTreino, PresencaTreino
     rapida = resposta_rapida(dados.mensagem, {"nome": aluno.nome})
     if rapida:
         return {"resposta": rapida}
     avals = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno.id).order_by(AvaliacaoFisica.data_avaliacao.desc()).limit(3).all()
     plano = db.query(PlanoTreino).filter(PlanoTreino.aluno_id == aluno.id, PlanoTreino.ativo == True).first()
     trinta_dias = date.today() - timedelta(days=30)
-    presencas_30 = db.query(RegistroPresenca).filter(RegistroPresenca.aluno_id == aluno.id, RegistroPresenca.data_presenca >= trinta_dias, RegistroPresenca.presente == True).count()
+    presencas_30 = db.query(PresencaTreino).filter(PresencaTreino.aluno_id == aluno.id, PresencaTreino.data >= trinta_dias, PresencaTreino.presente == True).count()
     aluno_dict = {"nome": aluno.nome, "objetivo": aluno.objetivo.value if aluno.objetivo else "hipertrofia", "nivel": aluno.nivel_experiencia.value if aluno.nivel_experiencia else "iniciante"}
     avals_dict = [{"data": str(a.data_avaliacao), "peso": a.peso, "percentual_gordura": a.percentual_gordura} for a in avals]
     treino_dict = {"nome": plano.nome, "objetivo": plano.objetivo} if plano else {}

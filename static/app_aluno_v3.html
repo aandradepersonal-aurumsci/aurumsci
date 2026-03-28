@@ -2096,43 +2096,6 @@ window.fetch = function(url, opts) {
     return Promise.resolve({json:function(){ return Promise.resolve({mensagem:'OK', sequencia:7});}});
   }
 
-  if(u.indexOf('/app-aluno/chat') > -1) {
-    var msg = '';
-    try { msg = JSON.parse(opts.body).mensagem.toLowerCase(); } catch(e){}
-
-    // Respostas contextuais baseadas na mensagem
-    var resposta = '';
-
-    if(msg.indexOf('resultado') > -1 || msg.indexOf('evolucao') > -1 || msg.indexOf('evolução') > -1) {
-      resposta = 'Seus resultados estao incriveis! Voce perdeu 3.2kg e reduziu o % de gordura de 18% para 14.9% — isso e Boa forma! A massa magra se manteve em 69.8kg, o que e perfeito para hipertrofia. Continue assim! 💪';
-    } else if(msg.indexOf('nao tenho resultado') > -1 || msg.indexOf('não tenho resultado') > -1 || msg.indexOf('sem resultado') > -1 || msg.indexOf('frequencia') > -1 || msg.indexOf('frequência') > -1) {
-      resposta = 'Entendo sua frustração! Analisando seu programa de 12 aulas mensais, você compareceu a apenas 40% das sessões. Resultado é consequência de consistência — cada treino perdido é um estímulo a menos. Que tal me contar o que tem dificultado sua presença? Podemos ajustar o horário ou os dias! 🎯';
-    } else if(msg.indexOf('dieta') > -1 || msg.indexOf('comer') > -1 || msg.indexOf('alimentacao') > -1 || msg.indexOf('alimentação') > -1) {
-      resposta = 'Para o seu biotipo (mesomorfo, foco em hipertrofia com 82kg): Priorize 160-180g de proteína/dia. Boas fontes: frango, ovo, atum, whey. Carboidratos: arroz integral, batata doce, aveia — concentre antes e após o treino. Evite: açúcar refinado, ultra-processados e álcool. Hidratação: mínimo 35ml/kg = 2.8L/dia! 🥗';
-    } else if(msg.indexOf('treino') > -1 || msg.indexOf('exercicio') > -1 || msg.indexOf('exercício') > -1) {
-      resposta = 'Seu treino atual é de Intermediário 1 com divisão ABC. Hoje é sessão B — Costas, Bíceps e Antebraço. Lembre: a progressão de carga é o principal estímulo para hipertrofia. Tente superar pelo menos 1 repetição ou 2.5kg a mais que a semana anterior! 🏋️';
-    } else if(msg.indexOf('descanso') > -1 || msg.indexOf('recuperacao') > -1 || msg.indexOf('recuperação') > -1 || msg.indexOf('sono') > -1) {
-      resposta = 'O músculo cresce FORA da academia, não dentro! Durante o sono seu corpo libera GH (hormônio do crescimento). Durma 7-9 horas. Nos dias de descanso, uma caminhada leve ou mobilidade ajuda a recuperação sem prejudicar os ganhos. 😴💪';
-    } else if(msg.indexOf('suplemento') > -1 || msg.indexOf('whey') > -1 || msg.indexOf('creatina') > -1) {
-      resposta = 'Para hipertrofia os suplementos com mais evidência científica são: 1) Creatina 3-5g/dia — aumenta força e volume muscular. 2) Whey Protein — praticidade para bater a meta proteica. 3) Vitamina D3 — essencial para testosterona e saúde óssea. Mais do que isso é marketing! ⚗️';
-    } else if(msg.indexOf('oi') > -1 || msg.indexOf('ola') > -1 || msg.indexOf('olá') > -1 || msg.indexOf('bom dia') > -1 || msg.indexOf('boa tarde') > -1) {
-      var hora = new Date().getHours();
-      var sauda = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite';
-      resposta = sauda + '! Sou o AURI, seu assistente de treino 💪 Posso te ajudar com treinos, dieta, resultados ou motivação. O que você precisa hoje?';
-    } else {
-      var respostas = [
-        'Você está no caminho certo! Com 82kg e 14.9% de gordura, seu corpo está respondendo muito bem ao programa. Continue focado! 🔥',
-        'Dica de hoje: a técnica vale mais que a carga. Um supino bem feito com 60kg é mais eficiente que 100kg mal executado.',
-        'Você sabia? A síntese proteica muscular dura até 48h após o treino. Por isso a proteína em todas as refeições é fundamental!',
-        'Seu VO2max de 43.49 ml/kg/min está classificado como Bom. Para hipertrofia isso é ótimo — indica boa capacidade de recuperação entre séries!',
-        'Consistência > Perfeição. Não existe treino perfeito, existe o treino que você FAZ. 🏆'
-      ];
-      resposta = respostas[Math.floor(Math.random()*respostas.length)];
-    }
-
-    return Promise.resolve({json:function(){ return Promise.resolve({resposta: resposta});}});
-  }
-
   if(u.indexOf('/login') > -1) {
     return Promise.resolve({json:function(){ return Promise.resolve({access_token:'demo_token', nome:'Aluno Teste'});}});
   }

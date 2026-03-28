@@ -730,7 +730,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 const TX = {
   pt:{
     tag:'CIÊNCIA QUE VIRA RESULTADO', email:'EMAIL', senha:'SENHA', login:'ENTRAR',
-    bomDia:'BOM DIA', boaTarde:'BOA TARDE', boaNoite:'BOA NOITE',
+    bomDia:'BOM DIA', boaTarde:'BOA TARDE', boaNoite:'BOA NOITE', auriSaudacao:'Oi! Sou o AURI 💪 Pode me perguntar qualquer coisa sobre seu treino!',
     checkinTitulo:'Pronto para treinar hoje?', checkinSub:'Registre sua presença para liberar o treino e acompanhar sua evolução!',
     importanciaDescanso:'💡 O descanso é parte do treino! Músculos crescem durante a recuperação. Respeite o seu corpo.',
     btnCheckin:'FAZER CHECK-IN', treinoDone:'TREINO CONCLUÍDO!',
@@ -815,7 +815,7 @@ const TX = {
   },
   en:{
     tag:'SCIENCE THAT BECOMES RESULTS', email:'EMAIL', senha:'PASSWORD', login:'SIGN IN',
-    bomDia:'GOOD MORNING', boaTarde:'GOOD AFTERNOON', boaNoite:'GOOD EVENING',
+    bomDia:'GOOD MORNING', boaTarde:'GOOD AFTERNOON', boaNoite:'GOOD EVENING', auriSaudacao:'Hi! I am AURI 💪 Ask me anything about your training!',
     checkinTitulo:'Ready to train today?', checkinSub:'Check in to unlock your workout and track your progress!',
     importanciaDescanso:'💡 Rest is part of training! Muscles grow during recovery. Respect your body.',
     btnCheckin:'CHECK IN', treinoDone:'WORKOUT COMPLETE!',
@@ -899,7 +899,7 @@ const TX = {
   },
   es:{
     tag:'CIENCIA QUE SE CONVIERTE EN RESULTADO', email:'CORREO', senha:'CONTRASEÑA', login:'ENTRAR',
-    bomDia:'BUENOS DÍAS', boaTarde:'BUENAS TARDES', boaNoite:'BUENAS NOCHES',
+    bomDia:'BUENOS DÍAS', boaTarde:'BUENAS TARDES', boaNoite:'BUENAS NOCHES', auriSaudacao:'¡Hola! Soy AURI 💪 ¡Pregúntame lo que quieras sobre tu entrenamiento!',
     checkinTitulo:'¿Listo para entrenar hoy?', checkinSub:'¡Regístra tu asistencia para desbloquear el entrenamiento y seguir tu evolución!',
     importanciaDescanso:'💡 ¡El descanso es parte del entrenamiento! Los músculos crecen durante la recuperación. Respeta tu cuerpo.',
     btnCheckin:'HACER CHECK-IN', treinoDone:'¡ENTRENAMIENTO COMPLETADO!',
@@ -1009,6 +1009,12 @@ function setLangApp(l,el){
   document.getElementById('t-loja-sub').textContent=T('lojaSub');
   var tEl = document.getElementById('t-result-titulo');
   if(tEl) tEl.textContent = T('resultTitulo');
+  // Limpa chat ao mudar idioma
+  chatHist=[];
+  var msgs=document.getElementById('chat-msgs');
+  if(msgs){
+    msgs.innerHTML='<div class="msg msg-auri"><span class="msg-tag">AURI</span>'+T('auriSaudacao')+'</div>';
+  }
   // Atualiza AURI bubble
   if(document.getElementById('auri-bubble-msg')){
     var h=new Date().getHours();
@@ -1760,7 +1766,7 @@ function enviarMsg(){
   typing.innerHTML='<span class="msg-tag">AURI</span>...';
   msgs.appendChild(typing);
   msgs.scrollTop=msgs.scrollHeight;
-  fetch('http://127.0.0.1:8000/app-aluno/chat',{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({mensagem:msg,historico:chatHist.slice(-10)})})
+  fetch('/app-aluno/chat',{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({mensagem:msg,historico:chatHist.slice(-10)})})
   .then(function(r){return r.json();})
   .then(function(d){typing.innerHTML='<span class="msg-tag">AURI</span>'+d.resposta;chatHist.push({role:'assistant',content:d.resposta});msgs.scrollTop=msgs.scrollHeight;})
   .catch(function(){typing.innerHTML='<span class="msg-tag">AURI</span>Tente novamente!';});
@@ -1772,6 +1778,11 @@ function mudarTab(tab,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('screen-'+tab).classList.add('active');
   el.classList.add('active');
+  // Esconde bubble quando abre chat
+  if(tab==='chat'){
+    var b=document.getElementById('auri-bubble-float');
+    if(b) b.classList.remove('show');
+  }
 }
 
 // ── TOAST ──

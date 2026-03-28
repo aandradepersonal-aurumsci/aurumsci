@@ -1,13 +1,49 @@
-# ia_chatbot.py - AurumSci
+# ia_chatbot.py - AurumSci AURI
+import anthropic
+import asyncio
 
-def montar_contexto(aluno: dict) -> str:
-    return f"Aluno: {aluno.get('nome', 'Aluno')}"
+client = anthropic.Anthropic()
 
-def resposta_rapida(mensagem: str) -> str:
-    return "Olá! Sou a AURI. Como posso ajudar?"
+def montar_contexto(aluno: dict, avaliacoes: list = [], treino: dict = {}, anamnese: dict = {}, presencas: dict = {}) -> str:
+    ctx = f"Aluno: {aluno.get('nome', 'Aluno')}\n"
+    ctx += f"Objetivo: {aluno.get('objetivo', 'hipertrofia')}\n"
+    ctx += f"Nível: {aluno.get('nivel', 'iniciante')}\n"
+    if avaliacoes:
+        a = avaliacoes[0]
+        ctx += f"Última avaliação: peso {a.get('peso')}kg, gordura {a.get('percentual_gordura')}%\n"
+    if treino:
+        ctx += f"Plano ativo: {treino.get('nome')} — objetivo: {treino.get('objetivo')}\n"
+    if presencas:
+        ctx += f"Frequência últimos 30 dias: {presencas.get('frequencia_pct')}%\n"
+    return ctx
 
-def responder_chat(mensagem: str, contexto: dict = {}) -> str:
-    return "Olá! Sou a AURI, sua assistente de treino!"
+def resposta_rapida(mensagem: str, aluno: dict = {}) -> str:
+    return None
 
-def responder_chatbot(mensagem: str, contexto: dict = {}) -> str:
-    return "Olá! Sou a AURI, sua assistente de treino!"
+async def responder_chatbot(mensagem: str, historico: list = [], contexto: str = "", nome_personal: str = "seu personal") -> str:
+    system = f"""Você é AURI, assistente de treino inteligente da plataforma AurumSci.
+Você é especialista em ciência do exercício, hipertrofia, nutrição esportiva e periodização.
+Responda de forma direta, motivadora e baseada em evidências científicas.
+Sempre personalize suas respostas com base no perfil do aluno.
+
+PERFIL DO ALUNO:
+{contexto}
+
+Seja conciso (máximo 3 parágrafos), use linguagem acessível e sempre encoraje o aluno."""
+
+    msgs = []
+    for h in historico[-10:]:
+        if h.get("role") and h.get("content"):
+            msgs.append({"role": h["role"], "content": h["content"]})
+    msgs.append({"role": "user", "content": mensagem})
+
+    try:
+        response = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=500,
+            system=system,
+            messages=msgs
+        )
+        return response.content[0].text
+    except Exception as e:
+        return f"Desculpe, tive um problema técnico. Tente novamente! ({str(e)[:50]})"

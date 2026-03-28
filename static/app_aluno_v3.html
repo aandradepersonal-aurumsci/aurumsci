@@ -709,7 +709,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'http://127.0.0.1:8000';
+const API = '';
 let token, nomeAluno, lang, dark;
 let chatHist = [], onbStep = 0, onbData = {}, fotos = {}, periodizacaoData = null;
 
@@ -1036,7 +1036,7 @@ function fazerLogin(){
   var senha=document.getElementById('login-senha').value;
   if(!email||!senha){mostrarToast(T('email')+' / '+T('senha'));return;}
   mostrarToast('...');
-  fetch('http://127.0.0.1:8000/aluno-portal/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,senha:senha})})
+  fetch('/aluno-portal/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,senha:senha})})
   .then(function(r){return r.json();})
   .then(function(d){
     if(d.access_token){
@@ -1376,7 +1376,7 @@ function onbPular(){ onbStep=Math.min(onbStep+1,PASSOS.length-1); renderOnbStep(
 
 function finalizarOnboarding(){
   if(onbData.objetivo && onbData.nivel && onbData.dias){
-    fetch('http://127.0.0.1:8000/app-aluno/onboarding',{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({objetivo:onbData.objetivo,nivel_experiencia:onbData.nivel,dias_disponiveis:parseInt(onbData.dias)})}).then(function(r){return r.json();}).catch(function(){});
+    fetch('/app-aluno/onboarding',{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({objetivo:onbData.objetivo,nivel_experiencia:onbData.nivel,dias_disponiveis:parseInt(onbData.dias)})}).then(function(r){return r.json();}).catch(function(){});
   }
   localStorage.setItem('aurum_onb_done','1');
   document.getElementById('screen-onboarding').style.display='none';
@@ -1424,7 +1424,7 @@ function renderTreino(){
   html+='<div class="streak"><div style="font-size:28px">🔥</div><div style="flex:1"><div style="display:flex;align-items:baseline;gap:6px"><div class="streak-num">'+seq+'</div><div style="color:var(--cinza);font-size:12px">'+T("diasStreak")+'</div></div><div class="streak-bars">'+bars+'</div></div></div>';
   if(!checkinFeito){
     // Busca o treino do dia para mostrar preview antes do check-in
-    fetch("http://127.0.0.1:8000/app-aluno/treino-hoje",{headers:{"Authorization":"Bearer "+token}})
+    fetch("/app-aluno/treino-hoje",{headers:{"Authorization":"Bearer "+token}})
     .then(function(r){return r.json();})
     .then(function(d){
       var temTreino = d.exercicios && d.exercicios.length > 0;
@@ -1456,7 +1456,7 @@ function renderTreino(){
     html+='<div class="card"><div class="card-line verde"></div><div style="text-align:center;padding:30px 0"><div style="font-size:56px">🏆</div><div style="font-family:Bebas Neue;font-size:26px;color:var(--verde)">'+T("treinoDone")+'</div><div style="font-size:13px;color:var(--cinza);font-style:italic">"'+frase+'"</div></div></div>';
     document.getElementById("treino-content").innerHTML=html; return;
   }
-  fetch("http://127.0.0.1:8000/app-aluno/treino-hoje",{headers:{"Authorization":"Bearer "+token}})
+  fetch("/app-aluno/treino-hoje",{headers:{"Authorization":"Bearer "+token}})
   .then(function(r){return r.json();})
   .then(function(d){
     if(!d.exercicios){
@@ -1503,7 +1503,7 @@ function fazerCheckin(){
 }
 
 function concluirTreino(){
-  fetch('http://127.0.0.1:8000/app-aluno/presenca',{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({duracao_minutos:60})}).then(function(){}).catch(function(){});
+  fetch('/app-aluno/presenca',{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({duracao_minutos:60})}).then(function(){}).catch(function(){});
   var hoje=new Date().toISOString().slice(0,10);
   localStorage.setItem('treino_'+hoje,'1');
   var s=parseInt(localStorage.getItem('sequencia')||'0')+1;
@@ -1614,7 +1614,7 @@ function renderResultado(){
   // Atualiza título com idioma correto
   var tEl = document.getElementById('t-result-titulo');
   if(tEl) tEl.textContent = T('resultTitulo');
-  fetch('http://127.0.0.1:8000/app-aluno/dashboard',{headers:{'Authorization':'Bearer '+token}})
+  fetch('/app-aluno/dashboard',{headers:{'Authorization':'Bearer '+token}})
   .then(function(r){return r.json();})
   .then(function(d){
     var ul=d.ultima_avaliacao;

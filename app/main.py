@@ -151,6 +151,11 @@ def app_aluno():
     with open("static/app_aluno_v3.html", "r", encoding="utf-8") as f:
         return f.read()
 
+@app.get("/personal", response_class=HTMLResponse, include_in_schema=False)
+def app_personal():
+    with open("static/app_personal_v1.html", "r", encoding="utf-8") as f:
+        return f.read()
+
 # ── Status ────────────────────────────────────────────────────
 @app.get("/", tags=["Status"])
 def root():

@@ -690,7 +690,7 @@ function enviarMsg(){
   msgs.appendChild(typing);
   msgs.scrollTop = msgs.scrollHeight;
 
-  fetch('/app-aluno/chat', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+  fetch('/app-personal/chat', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({mensagem:msg, historico:chatHist.slice(-10)})})
   .then(function(r){ return r.json(); })
   .then(function(d){ 

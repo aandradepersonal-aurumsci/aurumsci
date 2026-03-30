@@ -340,7 +340,7 @@ Use terminologia técnica de fisioterapia/educação física. Se não conseguir 
 
     // Monta FormData com as fotos
     const formData = new FormData();
-    const token = localStorage.getItem('aurum_token') || '';
+    const token = localStorage.getItem('aurum_token') || localStorage.getItem('aurum_personal_token') || '';
 
     if (fotos.frente) {
       const blob = await fetch(fotos.frente).then(r => r.blob());

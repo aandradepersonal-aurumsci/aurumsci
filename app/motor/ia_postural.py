@@ -18,7 +18,7 @@ class ResultadoPostural:
     achados: list = field(default_factory=list)
     erro: Optional[str] = None
 
-async def analisar_postural(foto_frente=None, foto_lado=None, foto_costas=None):
+async def analisar_postural(foto_frente=None, foto_lado=None, foto_costas=None, mime_frente="image/jpeg", mime_lado="image/jpeg", mime_costas="image/jpeg"):
     client = anthropic.Anthropic()
     
     imgs = []

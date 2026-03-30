@@ -649,6 +649,33 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div id="resultado-content"></div>
   </div>
 
+  <!-- AVALIACAO -->
+  <div class="screen" id="screen-avaliacao">
+    <div style="font-family:'Bebas Neue';font-size:34px;letter-spacing:1px;margin-bottom:4px">AVALIACAO</div>
+    <div style="font-size:12px;color:var(--cinza);margin-bottom:20px">Acompanhe sua evolucao fisica completa</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div onclick="abrirPostural()" style="background:var(--bg2);border-radius:16px;border:1px solid var(--borda);padding:16px;cursor:pointer;text-align:center">
+        <div style="font-size:32px;margin-bottom:8px">🧍</div>
+        <div style="font-family:'Bebas Neue';font-size:16px;letter-spacing:1px;color:var(--ouro2)">POSTURAL</div>
+        <div style="font-size:11px;color:var(--cinza);margin-top:4px">Analise com IA</div>
+      </div>
+      <div onclick="abrirTesteFisico()" style="background:var(--bg2);border-radius:16px;border:1px solid var(--borda);padding:16px;cursor:pointer;text-align:center">
+        <div style="font-size:32px;margin-bottom:8px">❤️</div>
+        <div style="font-family:'Bebas Neue';font-size:16px;letter-spacing:1px;color:var(--ouro2)">TESTES</div>
+        <div style="font-size:11px;color:var(--cinza);margin-top:4px">VO2, FC, Forca</div>
+      </div>
+      <div onclick="abrirCircunferencias()" style="background:var(--bg2);border-radius:16px;border:1px solid var(--borda);padding:16px;cursor:pointer;text-align:center">
+        <div style="font-size:32px;margin-bottom:8px">📏</div>
+        <div style="font-family:'Bebas Neue';font-size:16px;letter-spacing:1px;color:var(--ouro2)">MEDIDAS</div>
+        <div style="font-size:11px;color:var(--cinza);margin-top:4px">Circunferencias</div>
+      </div>
+      <div onclick="abrirBioimpedancia()" style="background:var(--bg2);border-radius:16px;border:1px solid var(--borda);padding:16px;cursor:pointer;text-align:center">
+        <div style="font-size:32px;margin-bottom:8px">⚖️</div>
+        <div style="font-family:'Bebas Neue';font-size:16px;letter-spacing:1px;color:var(--ouro2)">COMPOSICAO</div>
+        <div style="font-size:11px;color:var(--cinza);margin-top:4px">Peso e gordura</div>
+      </div>
+    </div>
+  </div>
   <!-- LOJA -->
   <div class="screen" id="screen-loja">
     <div class="loja-titulo" id="t-loja-titulo">LOJINHA</div>
@@ -674,7 +701,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <!-- TABS -->
   <div class="tabs">
     <div class="tab active" onclick="mudarTab('treino',this)"><span class="tab-icon">🏋️</span><span id="t-tab1">TREINO</span><div class="tab-dot"></div></div>
-    <div class="tab" onclick="mudarTab('periodo',this)"><span class="tab-icon">📅</span><span id="t-tab2">CICLOS</span><div class="tab-dot"></div></div>
+    <div class="tab" onclick="mudarTab('avaliacao',this)"><span class="tab-icon">📋</span><span id="t-tab2">AVALIAÇÃO</span><div class="tab-dot"></div></div>
     <div class="tab" onclick="mudarTab('resultado',this)"><span class="tab-icon">📊</span><span id="t-tab3">EVOLUÇÃO</span><div class="tab-dot"></div></div>
     <div class="tab" onclick="mudarTab('loja',this)"><span class="tab-icon">🛍️</span><span id="t-tab4">LOJA</span><div class="tab-dot"></div></div>
     <div class="tab" onclick="mudarTab('chat',this)"><span class="tab-icon">🤖</span><span id="t-tab5">AURI</span><div class="tab-dot"></div></div>
@@ -1780,6 +1807,18 @@ function mudarTab(tab,el){
   el.classList.add('active');
 }
 
+function abrirPostural(){
+  window.open('/postural', '_blank');
+}
+function abrirTesteFisico(){
+  mostrarToast('Em breve: Testes Fisicos!');
+}
+function abrirCircunferencias(){
+  mostrarToast('Em breve: Circunferencias!');
+}
+function abrirBioimpedancia(){
+  mostrarToast('Em breve: Composicao Corporal!');
+}
 // ── TOAST ──
 function mostrarToast(msg){
   const t=document.getElementById('toast');

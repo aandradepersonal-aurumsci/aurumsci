@@ -338,24 +338,45 @@ async function analisarPostura() {
 Use terminologia técnica de fisioterapia/educação física. Se não conseguir visualizar bem algum segmento nas fotos disponíveis, indique "Não avaliado — foto insuficiente".`
     });
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    // Monta FormData com as fotos
+    const formData = new FormData();
+    const token = localStorage.getItem('aurum_token') || '';
+
+    if (fotos.frente) {
+      const blob = await fetch(fotos.frente).then(r => r.blob());
+      formData.append('foto_frente', blob, 'frente.jpg');
+    }
+    if (fotos.lado) {
+      const blob = await fetch(fotos.lado).then(r => r.blob());
+      formData.append('foto_lado', blob, 'lado.jpg');
+    }
+    if (fotos.costas) {
+      const blob = await fetch(fotos.costas).then(r => r.blob());
+      formData.append('foto_costas', blob, 'costas.jpg');
+    }
+
+    const response = await fetch('/app-aluno/postural', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content }]
-      })
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData
     });
 
     clearInterval(stepInterval);
     const data = await response.json();
 
-    if (!response.ok) throw new Error(data.error?.message || 'Erro na API');
+    if (!response.ok) throw new Error(data.detail || 'Erro na API');
 
-    const texto = data.content.map(c => c.text || '').join('');
-    const clean = texto.replace(/```json|```/g, '').trim();
-    const analise = JSON.parse(clean);
+    const analise = {
+      cabeca: data.desvios?.cabeca || '',
+      ombros: data.desvios?.ombros || '',
+      coluna: data.desvios?.coluna || '',
+      quadril: data.desvios?.quadril || '',
+      joelhos: data.desvios?.joelhos || '',
+      pes: data.desvios?.pes || '',
+      observacoes: data.observacoes || '',
+      recomendacoes: data.recomendacoes || [],
+      achados: data.achados || []
+    };
 
     // Preenche campos
     document.getElementById('r_cab').value = analise.cabeca || '';

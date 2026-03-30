@@ -1369,7 +1369,14 @@ function onbPular(){ onbStep=Math.min(onbStep+1,PASSOS.length-1); renderOnbStep(
 
 function finalizarOnboarding(){
   if(onbData.objetivo && onbData.nivel && onbData.dias){
-    fetch('http://127.0.0.1:8000/app-aluno/onboarding',{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({objetivo:onbData.objetivo,nivel_experiencia:onbData.nivel,dias_disponiveis:parseInt(onbData.dias)})}).then(function(r){return r.json();}).catch(function(){});
+    fetch('/app-aluno/onboarding',{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({objetivo:onbData.objetivo,nivel_experiencia:onbData.nivel,dias_disponiveis:parseInt(onbData.dias)})}).then(function(r){return r.json();}).catch(function(){});
+  }
+  if(fotos && (fotos.frente || fotos.lado || fotos.costas)){
+    var fd=new FormData();
+    if(fotos.frente){fd.append('foto_frente',new Blob([Uint8Array.from(atob(fotos.frente),c=>c.charCodeAt(0))],{type:'image/jpeg'}),'frente.jpg');}
+    if(fotos.lado){fd.append('foto_lado',new Blob([Uint8Array.from(atob(fotos.lado),c=>c.charCodeAt(0))],{type:'image/jpeg'}),'lado.jpg');}
+    if(fotos.costas){fd.append('foto_costas',new Blob([Uint8Array.from(atob(fotos.costas),c=>c.charCodeAt(0))],{type:'image/jpeg'}),'costas.jpg');}
+    fetch('/app-aluno/postural',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd}).catch(function(){});
   }
   localStorage.setItem('aurum_onb_done','1');
   document.getElementById('screen-onboarding').style.display='none';

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análise Postural com IA — PT Gestão</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+[data-theme="dark"]{--bg:#0a0a0a;--bg2:#111111;--bg3:#1a1a1a;--bg4:#222222;--gold:#C9A84C;--gold2:#E8C97A;--gold3:#8B6914;--text:#F0EDE8;--text2:#A09888;--text3:#6B6358;--border:#2A2520;--border2:#3A3228;--green:#1D9E75;--red:#E24B4A;--blue:#378ADD}
+[data-theme="light"]{--bg:#F5F3EE;--bg2:#FFFFFF;--bg3:#F0EDE8;--bg4:#E8E4DC;--gold:#8B6914;--gold2:#6B5010;--gold3:#C9A84C;--text:#1A1610;--text2:#5A5040;--text3:#8B8070;--border:#D8D0C0;--border2:#C8C0B0;--green:#0F6E56;--red:#C03030;--blue:#185FA5}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;padding:24px;max-width:1000px;margin:0 auto}
+
+.titulo{font-size:16px;font-weight:700;color:var(--gold);margin-bottom:4px}
+.subtitulo{font-size:12px;color:var(--text3);margin-bottom:24px}
+
+/* Upload grid */
+.upload-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px}
+.upload-box{position:relative;border-radius:10px;overflow:hidden;cursor:pointer;border:1px dashed var(--border2);background:var(--bg2);transition:border-color 0.15s;aspect-ratio:3/4}
+.upload-box:hover{border-color:var(--gold3)}
+.upload-box.has-photo{border-color:var(--gold3)}
+
+/* Fundo quadriculado */
+.grade-bg{position:absolute;inset:0;pointer-events:none;opacity:0.12}
+[data-theme="dark"] .grade-bg{background-image:linear-gradient(var(--gold) 1px,transparent 1px),linear-gradient(90deg,var(--gold) 1px,transparent 1px);background-size:24px 24px}
+[data-theme="light"] .grade-bg{background-image:linear-gradient(rgba(0,0,0,0.15) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.15) 1px,transparent 1px);background-size:24px 24px}
+/* Linhas centrais */
+.grade-center-h{position:absolute;left:0;right:0;top:50%;height:1px;background:var(--gold);opacity:0.3;pointer-events:none}
+.grade-center-v{position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--gold);opacity:0.3;pointer-events:none}
+
+.upload-preview{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;display:none}
+.upload-preview.show{display:block}
+.upload-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:1}
+.upload-placeholder svg{width:28px;height:28px;stroke:var(--text3);fill:none;stroke-width:1.5}
+.upload-label-top{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;margin-bottom:4px;text-align:center}
+.upload-hint{font-size:10px;color:var(--text3);text-align:center}
+.upload-remove{position:absolute;top:8px;right:8px;z-index:4;background:rgba(226,75,74,0.85);border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;color:white;font-size:14px;display:none;align-items:center;justify-content:center;font-weight:700}
+.upload-box.has-photo .upload-remove{display:flex}
+
+/* Botão analisar */
+.btn-analisar{width:100%;padding:14px;background:var(--gold3);border:0.5px solid var(--gold);border-radius:8px;color:var(--bg);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-analisar:hover{opacity:0.9}
+.btn-analisar:disabled{opacity:0.4;cursor:not-allowed}
+.btn-analisar svg{width:18px;height:18px;stroke:var(--bg);fill:none;stroke-width:2.5}
+
+/* Loading */
+.loading{display:none;text-align:center;padding:32px;background:var(--bg2);border-radius:10px;border:0.5px solid var(--border2);margin-bottom:20px}
+.loading.show{display:block}
+.loading-dots{display:flex;gap:6px;justify-content:center;margin-bottom:12px}
+.loading-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 1.2s ease-in-out infinite}
+.loading-dot:nth-child(2){animation-delay:0.2s}
+.loading-dot:nth-child(3){animation-delay:0.4s}
+@keyframes pulse{0%,80%,100%{opacity:0.3;transform:scale(0.8)}40%{opacity:1;transform:scale(1)}}
+.loading-txt{font-size:13px;color:var(--text2)}
+.loading-step{font-size:11px;color:var(--text3);margin-top:4px}
+
+/* Resultado */
+.resultado{display:none;background:var(--bg2);border:0.5px solid var(--gold3);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.resultado.show{display:block}
+.resultado-head{background:var(--gold3);padding:14px 18px;display:flex;align-items:center;gap:10px}
+.resultado-head svg{width:18px;height:18px;stroke:var(--bg);fill:none;stroke-width:2.5}
+.resultado-head span{font-size:13px;font-weight:700;color:var(--bg)}
+.resultado-body{padding:18px}
+
+/* Cards de achados */
+.achados-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.achado{background:var(--bg3);border-radius:8px;padding:12px;border-left:3px solid var(--border2)}
+.achado.normal{border-left-color:var(--green)}
+.achado.atencao{border-left-color:var(--gold)}
+.achado.alterado{border-left-color:var(--red)}
+.achado-titulo{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;font-weight:600}
+.achado-valor{font-size:13px;color:var(--text);font-weight:500;margin-bottom:2px}
+.achado-cls{font-size:10px}
+.achado.normal .achado-cls{color:var(--green)}
+.achado.atencao .achado-cls{color:var(--gold)}
+.achado.alterado .achado-cls{color:var(--red)}
+
+/* Recomendações */
+.recomendacoes{background:var(--bg3);border-radius:8px;padding:14px;margin-bottom:14px}
+.rec-titulo{font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px}
+.rec-item{display:flex;gap:8px;margin-bottom:8px;font-size:12px;color:var(--text2);align-items:flex-start}
+.rec-item:before{content:"→";color:var(--gold);flex-shrink:0;font-weight:700}
+
+/* Campos editáveis */
+.campos-titulo{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px}
+.campos-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.campo{background:var(--bg3);border-radius:8px;padding:10px}
+.campo label{display:block;font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;font-weight:600}
+.campo input,.campo textarea{width:100%;padding:7px 9px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:5px;color:var(--text);font-size:12px;outline:none;font-family:inherit;resize:none}
+.campo input:focus,.campo textarea:focus{border-color:var(--gold)}
+
+/* Aviso */
+.aviso{background:#1A1500;border:0.5px solid var(--gold3);border-radius:8px;padding:12px;font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:14px}
+.aviso strong{color:var(--gold)}
+
+/* Botões ação */
+.acoes{display:flex;gap:10px}
+.btn{padding:9px 18px;border-radius:6px;font-size:13px;cursor:pointer;border:0.5px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:inherit;transition:all 0.1s}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-gold{background:var(--gold3);border-color:var(--gold);color:var(--bg)}
+.btn-gold:hover{opacity:0.85}
+.err{color:var(--red);font-size:12px;margin-top:8px;display:none}
+</style>
+</head>
+<body>
+
+<div class="titulo">🤖 Análise Postural com Inteligência Artificial</div>
+<div class="subtitulo">Suba as fotos do aluno — a IA analisa automaticamente os desvios posturais</div>
+
+<div class="aviso">
+  <strong>Como posicionar o aluno:</strong> Posição ortostática — de pé, relaxado, pés levemente afastados com pontas ligeiramente para fora (posição natural), braços soltos ao lado do corpo, palmas voltadas para as coxas, olhar fixo no horizonte. Use roupas justas ou traje mínimo para facilitar a análise. Fotografe sempre na mesma distância e altura para comparar evoluções.<br/><br/>
+  <strong>Como usar:</strong> Suba 1, 2 ou 3 fotos. A IA identifica desvios posturais automaticamente e preenche o laudo. O profissional revisa e edita antes de salvar.
+</div>
+
+<!-- Upload das 3 fotos -->
+<div class="upload-grid">
+  <div>
+    <div class="upload-label-top" style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;font-weight:600">Vista Anterior</div>
+    <div class="upload-box" id="boxFrente" onclick="document.getElementById('inFrente').click()">
+      <div class="grade-bg"></div>
+      <div class="grade-center-h"></div>
+      <div class="grade-center-v"></div>
+      <img id="prevFrente" class="upload-preview"/>
+      <button class="upload-remove" onclick="remover(event,'prevFrente','inFrente','boxFrente')">×</button>
+      <div class="upload-placeholder" id="phFrente">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <div class="upload-hint">Frente</div>
+      </div>
+    </div>
+    <input type="file" id="inFrente" accept="image/*" style="display:none" onchange="carregarFoto(this,'prevFrente','phFrente','boxFrente')"/>
+  </div>
+  <div>
+    <div class="upload-label-top" style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;font-weight:600">Vista Lateral</div>
+    <div class="upload-box" id="boxLado" onclick="document.getElementById('inLado').click()">
+      <div class="grade-bg"></div>
+      <div class="grade-center-h"></div>
+      <div class="grade-center-v"></div>
+      <img id="prevLado" class="upload-preview"/>
+      <button class="upload-remove" onclick="remover(event,'prevLado','inLado','boxLado')">×</button>
+      <div class="upload-placeholder" id="phLado">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <div class="upload-hint">Lateral</div>
+      </div>
+    </div>
+    <input type="file" id="inLado" accept="image/*" style="display:none" onchange="carregarFoto(this,'prevLado','phLado','boxLado')"/>
+  </div>
+  <div>
+    <div class="upload-label-top" style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;font-weight:600">Vista Posterior</div>
+    <div class="upload-box" id="boxCostas" onclick="document.getElementById('inCostas').click()">
+      <div class="grade-bg"></div>
+      <div class="grade-center-h"></div>
+      <div class="grade-center-v"></div>
+      <img id="prevCostas" class="upload-preview"/>
+      <button class="upload-remove" onclick="remover(event,'prevCostas','inCostas','boxCostas')">×</button>
+      <div class="upload-placeholder" id="phCostas">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <div class="upload-hint">Costas</div>
+      </div>
+    </div>
+    <input type="file" id="inCostas" accept="image/*" style="display:none" onchange="carregarFoto(this,'prevCostas','phCostas','boxCostas')"/>
+  </div>
+</div>
+
+<button class="btn-analisar" id="btnAnalisar" onclick="analisarPostura()" disabled>
+  <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M20 2v6h-6"/></svg>
+  Analisar com Inteligência Artificial
+</button>
+
+<!-- Loading -->
+<div class="loading" id="loading">
+  <div class="loading-dots">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
+  <div class="loading-txt">Analisando postura com IA...</div>
+  <div class="loading-step" id="loadingStep">Processando imagens</div>
+</div>
+
+<div class="err" id="errGeral"></div>
+
+<!-- Resultado -->
+<div class="resultado" id="resultado">
+  <div class="resultado-head">
+    <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    <span>Análise Postural Concluída</span>
+  </div>
+  <div class="resultado-body">
+
+    <div class="achados-grid" id="achadosGrid"></div>
+
+    <div class="recomendacoes" id="recsBox" style="display:none">
+      <div class="rec-titulo">Recomendações do Profissional de IA</div>
+      <div id="recsList"></div>
+    </div>
+
+    <div class="aviso" style="margin-bottom:14px">
+      <strong>⚠️ Revise os campos abaixo</strong> — a IA pode errar! Como profissional, você tem a palavra final. Edite o que precisar antes de salvar no laudo.
+    </div>
+
+    <div class="campos-titulo">Resultado editável — revise e confirme</div>
+    <div class="campos-grid">
+      <div class="campo"><label>Cabeça</label><input id="r_cab" placeholder="—"/></div>
+      <div class="campo"><label>Ombros</label><input id="r_omb" placeholder="—"/></div>
+      <div class="campo"><label>Coluna</label><input id="r_col" placeholder="—"/></div>
+      <div class="campo"><label>Quadril</label><input id="r_quad" placeholder="—"/></div>
+      <div class="campo"><label>Joelhos</label><input id="r_joe" placeholder="—"/></div>
+      <div class="campo"><label>Pés</label><input id="r_pes" placeholder="—"/></div>
+    </div>
+    <div class="campo" style="margin-bottom:16px">
+      <label>Observações gerais</label>
+      <textarea id="r_obs" rows="3" placeholder="Resumo da avaliação postural..."></textarea>
+    </div>
+
+    <div class="acoes">
+      <button class="btn btn-gold" onclick="salvarNoLaudo()">✓ Confirmar e salvar no laudo</button>
+      <button class="btn" onclick="novaAnalise()">↺ Nova análise</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const fotos = {frente: null, lado: null, costas: null};
+const steps = [
+  'Processando imagens...',
+  'Identificando pontos anatômicos...',
+  'Analisando alinhamento postural...',
+  'Detectando desvios...',
+  'Gerando laudo...'
+];
+
+function carregarFoto(input, prevId, phId, boxId) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById(prevId);
+    img.src = e.target.result;
+    img.classList.add('show');
+    document.getElementById(phId).style.display = 'none';
+    document.getElementById(boxId).classList.add('has-photo');
+    const chave = boxId.replace('box','').toLowerCase();
+    fotos[chave] = e.target.result;
+    verificarBotao();
+  };
+  reader.readAsDataURL(file);
+}
+
+function remover(e, prevId, inId, boxId) {
+  e.stopPropagation();
+  const img = document.getElementById(prevId);
+  img.src = '';
+  img.classList.remove('show');
+  const ph = document.getElementById(prevId.replace('prev','ph'));
+  if (ph) ph.style.display = '';
+  document.getElementById(boxId).classList.remove('has-photo');
+  document.getElementById(inId).value = '';
+  const chave = boxId.replace('box','').toLowerCase();
+  fotos[chave] = null;
+  verificarBotao();
+}
+
+function verificarBotao() {
+  const temAlguma = fotos.frente || fotos.lado || fotos.costas;
+  document.getElementById('btnAnalisar').disabled = !temAlguma;
+}
+
+function classFromText(texto) {
+  if (!texto) return '';
+  const t = texto.toLowerCase();
+  if (t.includes('normal') || t.includes('centraliz') || t.includes('nivelad') || t.includes('sem alteração') || t.includes('adequado')) return 'normal';
+  if (t.includes('leve') || t.includes('discret') || t.includes('anteriorizado') || t.includes('atenção')) return 'atencao';
+  return 'alterado';
+}
+
+async function analisarPostura() {
+  const btn = document.getElementById('btnAnalisar');
+  const loading = document.getElementById('loading');
+  const resultado = document.getElementById('resultado');
+  const err = document.getElementById('errGeral');
+
+  btn.disabled = true;
+  loading.classList.add('show');
+  resultado.classList.remove('show');
+  err.style.display = 'none';
+
+  // Animação dos steps
+  let stepIdx = 0;
+  const stepEl = document.getElementById('loadingStep');
+  const stepInterval = setInterval(() => {
+    stepEl.textContent = steps[stepIdx % steps.length];
+    stepIdx++;
+  }, 1200);
+
+  try {
+    // Monta o conteúdo para o Claude
+    const content = [];
+
+    if (fotos.frente) {
+      const base64 = fotos.frente.split(',')[1];
+      const mime = fotos.frente.split(';')[0].split(':')[1];
+      content.push({ type: 'image', source: { type: 'base64', media_type: mime, data: base64 } });
+      content.push({ type: 'text', text: 'Esta é a VISTA ANTERIOR (frente) do aluno.' });
+    }
+    if (fotos.lado) {
+      const base64 = fotos.lado.split(',')[1];
+      const mime = fotos.lado.split(';')[0].split(':')[1];
+      content.push({ type: 'image', source: { type: 'base64', media_type: mime, data: base64 } });
+      content.push({ type: 'text', text: 'Esta é a VISTA LATERAL do aluno.' });
+    }
+    if (fotos.costas) {
+      const base64 = fotos.costas.split(',')[1];
+      const mime = fotos.costas.split(';')[0].split(':')[1];
+      content.push({ type: 'image', source: { type: 'base64', media_type: mime, data: base64 } });
+      content.push({ type: 'text', text: 'Esta é a VISTA POSTERIOR (costas) do aluno.' });
+    }
+
+    content.push({
+      type: 'text',
+      text: `Você é um especialista em avaliação postural para personal trainers. Analise as fotos posturais fornecidas e retorne APENAS um JSON válido (sem markdown, sem texto antes ou depois) com este formato exato:
+{
+  "cabeca": "descrição do alinhamento da cabeça",
+  "ombros": "descrição do alinhamento dos ombros",
+  "coluna": "descrição das curvaturas da coluna",
+  "quadril": "descrição do alinhamento do quadril",
+  "joelhos": "descrição dos joelhos",
+  "pes": "descrição dos pés",
+  "observacoes": "resumo geral em 2-3 frases",
+  "recomendacoes": ["recomendação 1", "recomendação 2", "recomendação 3"],
+  "achados": [
+    {"segmento": "Cabeça", "valor": "descrição", "classificacao": "Normal|Alterado|Atenção"},
+    {"segmento": "Ombros", "valor": "descrição", "classificacao": "Normal|Alterado|Atenção"},
+    {"segmento": "Coluna", "valor": "descrição", "classificacao": "Normal|Alterado|Atenção"},
+    {"segmento": "Quadril", "valor": "descrição", "classificacao": "Normal|Alterado|Atenção"},
+    {"segmento": "Joelhos", "valor": "descrição", "classificacao": "Normal|Alterado|Atenção"},
+    {"segmento": "Pés", "valor": "descrição", "classificacao": "Normal|Alterado|Atenção"}
+  ]
+}
+Use terminologia técnica de fisioterapia/educação física. Se não conseguir visualizar bem algum segmento nas fotos disponíveis, indique "Não avaliado — foto insuficiente".`
+    });
+
+    // Monta FormData com as fotos
+    const formData = new FormData();
+    const token = localStorage.getItem('aurum_token') || '';
+
+    if (fotos.frente) {
+      const blob = await fetch(fotos.frente).then(r => r.blob());
+      formData.append('foto_frente', blob, 'frente.jpg');
+    }
+    if (fotos.lado) {
+      const blob = await fetch(fotos.lado).then(r => r.blob());
+      formData.append('foto_lado', blob, 'lado.jpg');
+    }
+    if (fotos.costas) {
+      const blob = await fetch(fotos.costas).then(r => r.blob());
+      formData.append('foto_costas', blob, 'costas.jpg');
+    }
+
+    const response = await fetch('/app-aluno/postural', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData
+    });
+
+    clearInterval(stepInterval);
+    const data = await response.json();
+
+    if (!response.ok) throw new Error(data.detail || 'Erro na API');
+
+    const analise = {
+      cabeca: data.desvios?.cabeca || '',
+      ombros: data.desvios?.ombros || '',
+      coluna: data.desvios?.coluna || '',
+      quadril: data.desvios?.quadril || '',
+      joelhos: data.desvios?.joelhos || '',
+      pes: data.desvios?.pes || '',
+      observacoes: data.observacoes || '',
+      recomendacoes: data.recomendacoes || [],
+      achados: data.achados || []
+    };
+
+    // Preenche campos
+    document.getElementById('r_cab').value = analise.cabeca || '';
+    document.getElementById('r_omb').value = analise.ombros || '';
+    document.getElementById('r_col').value = analise.coluna || '';
+    document.getElementById('r_quad').value = analise.quadril || '';
+    document.getElementById('r_joe').value = analise.joelhos || '';
+    document.getElementById('r_pes').value = analise.pes || '';
+    document.getElementById('r_obs').value = analise.observacoes || '';
+
+    // Achados
+    const grid = document.getElementById('achadosGrid');
+    if (analise.achados) {
+      grid.innerHTML = analise.achados.map(a => {
+        const cls = a.classificacao === 'Normal' ? 'normal' : a.classificacao === 'Atenção' ? 'atencao' : 'alterado';
+        return `<div class="achado ${cls}">
+          <div class="achado-titulo">${a.segmento}</div>
+          <div class="achado-valor">${a.valor}</div>
+          <div class="achado-cls">${a.classificacao}</div>
+        </div>`;
+      }).join('');
+    }
+
+    // Recomendações
+    if (analise.recomendacoes && analise.recomendacoes.length) {
+      const recsBox = document.getElementById('recsBox');
+      const recsList = document.getElementById('recsList');
+      recsList.innerHTML = analise.recomendacoes.map(r => `<div class="rec-item">${r}</div>`).join('');
+      recsBox.style.display = 'block';
+    }
+
+    loading.classList.remove('show');
+    resultado.classList.add('show');
+
+  } catch (e) {
+    clearInterval(stepInterval);
+    loading.classList.remove('show');
+    err.textContent = 'Erro na análise: ' + e.message;
+    err.style.display = 'block';
+    btn.disabled = false;
+  }
+}
+
+function salvarNoLaudo() {
+  // Preenche os campos do dashboard principal se existirem
+  const campos = {
+    post_cab: document.getElementById('r_cab')?.value,
+    post_omb: document.getElementById('r_omb')?.value,
+    post_col: document.getElementById('r_col')?.value,
+    post_quad: document.getElementById('r_quad')?.value,
+    post_joe: document.getElementById('r_joe')?.value,
+    post_pes: document.getElementById('r_pes')?.value,
+    av_obs: document.getElementById('r_obs')?.value,
+  };
+
+  // Tenta preencher no dashboard pai (se estiver em iframe ou mesma página)
+  Object.entries(campos).forEach(([id, val]) => {
+    const el = document.getElementById(id) || (window.parent && window.parent.document.getElementById(id));
+    if (el && val) el.value = val;
+  });
+
+  // Salva no localStorage para o dashboard ler
+  localStorage.setItem('postural_analise', JSON.stringify(campos));
+
+  alert('✅ Análise salva! Os campos posturais foram preenchidos automaticamente.');
+}
+
+function novaAnalise() {
+  ['prevFrente','prevLado','prevCostas'].forEach(id => {
+    const el = document.getElementById(id);
+    el.src = ''; el.classList.remove('show');
+  });
+  ['phFrente','phLado','phCostas'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = '';
+  });
+  ['boxFrente','boxLado','boxCostas'].forEach(id => {
+    document.getElementById(id).classList.remove('has-photo');
+  });
+  ['inFrente','inLado','inCostas'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  fotos.frente = null; fotos.lado = null; fotos.costas = null;
+  document.getElementById('resultado').classList.remove('show');
+  document.getElementById('errGeral').style.display = 'none';
+  document.getElementById('btnAnalisar').disabled = true;
+}
+</script>
+</body>
+</html>

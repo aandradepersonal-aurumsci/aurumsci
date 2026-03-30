@@ -1808,7 +1808,8 @@ function mudarTab(tab,el){
 }
 
 function abrirPostural(){
-  window.open('/postural', '_blank');
+  var t = localStorage.getItem('aurum_token') || '';
+  window.open('/postural?token=' + t, '_blank');
 }
 function abrirTesteFisico(){
   mostrarToast('Em breve: Testes Fisicos!');

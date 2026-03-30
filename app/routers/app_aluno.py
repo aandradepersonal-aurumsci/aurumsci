@@ -78,10 +78,13 @@ async def analise_postural(aluno: Aluno = Depends(get_aluno_logado), db: Session
     import base64
     from app.motor.ia_postural import analisar_postural
     from app.routers.avaliacao import AvaliacaoFisica
+    mime_f = foto_frente.content_type if foto_frente else "image/jpeg"
+    mime_l = foto_lado.content_type if foto_lado else "image/jpeg"
+    mime_c = foto_costas.content_type if foto_costas else "image/jpeg"
     foto_frente_b64 = base64.b64encode(await foto_frente.read()).decode() if foto_frente else None
     foto_lado_b64 = base64.b64encode(await foto_lado.read()).decode() if foto_lado else None
     foto_costas_b64 = base64.b64encode(await foto_costas.read()).decode() if foto_costas else None
-    resultado = await analisar_postural(foto_frente_b64, foto_lado_b64, foto_costas_b64)
+    resultado = await analisar_postural(foto_frente_b64, foto_lado_b64, foto_costas_b64, mime_f, mime_l, mime_c)
     if resultado.erro:
         raise HTTPException(status_code=500, detail=resultado.erro)
     aval = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno.id).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()

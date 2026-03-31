@@ -50,7 +50,7 @@ async def onboarding(dados: OnboardingSchema, aluno: Aluno = Depends(get_aluno_l
     db.flush()
     for i, sessao_nome in enumerate(periodizacao.divisao_sessoes):
         from app.routers.treino import SessaoTreino
-        sessao = SessaoTreino(plano_id=plano.id, nome=sessao_nome, dia_semana=i, ordem=i+1)
+        sessao = SessaoTreino(plano_id=plano.id, nome=sessao_nome, dia_semana=i)
         db.add(sessao)
     db.commit()
     return {"mensagem": f"Bem-vindo ao AurumSci, {aluno.nome.split()[0]}!", "plano": {"nome": plano.nome, "objetivo": dados.objetivo, "dias_semana": dados.dias_disponiveis, "semanas": 12, "divisao": periodizacao.divisao_nome, "sessoes": periodizacao.divisao_sessoes}, "proxima_etapa": "Complete sua bioimpedancia e analise postural!"}

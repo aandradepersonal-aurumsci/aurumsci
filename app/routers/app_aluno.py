@@ -98,6 +98,9 @@ async def analise_postural(aluno: Aluno = Depends(get_aluno_logado), db: Session
     aval.postura_joelhos = resultado.joelhos
     aval.postura_pes = resultado.pes
     aval.postura_observacoes = resultado.observacoes
+    import json as _json
+    if resultado.recomendacoes:
+        aval.observacoes = _json.dumps(resultado.recomendacoes, ensure_ascii=False)
     db.commit()
     return {"mensagem": "Analise postural concluida!", "desvios": {"cabeca": resultado.cabeca, "ombros": resultado.ombros, "coluna": resultado.coluna, "quadril": resultado.quadril, "joelhos": resultado.joelhos, "pes": resultado.pes}, "observacoes": resultado.observacoes, "achados": resultado.achados, "recomendacoes": resultado.recomendacoes}
 
@@ -112,7 +115,22 @@ async def treino_hoje(aluno: Aluno = Depends(get_aluno_logado), db: Session = De
     if not sessao:
         return {"mensagem": "Hoje e dia de descanso!", "dica": "Aproveite para fazer mobilidade ou caminhada leve."}
     exercicios = db.query(ExercicioSessao).filter(ExercicioSessao.sessao_id == sessao.id).order_by(ExercicioSessao.ordem).all()
-    return {"sessao": sessao.nome, "data": str(date.today()), "exercicios": [{"ordem": e.ordem, "nome": e.exercicio.nome if e.exercicio else "", "series": e.series, "repeticoes": e.repeticoes, "carga": e.carga_sugerida, "descanso": e.descanso_segundos} for e in exercicios]}
+    lista_ex = [{"ordem": e.ordem, "nome": e.exercicio.nome if e.exercicio else "", "series": e.series, "repeticoes": e.repeticoes, "carga": e.carga_sugerida, "descanso": e.descanso_segundos, "corretivo": False} for e in exercicios]
+    from app.routers.avaliacao import AvaliacaoFisica
+    aval = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno.id).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+    corretivos = []
+    if aval and aval.postura_observacoes:
+        import json as _json
+        try:
+            recs = _json.loads(aval.postura_observacoes) if aval.postura_observacoes.startswith("[") else []
+        except:
+            recs = []
+        if not recs and aval.postura_cabeca:
+            recs_raw = []
+            for campo in [aval.postura_cabeca, aval.postura_ombros, aval.postura_coluna, aval.postura_quadril, aval.postura_joelhos, aval.postura_pes]:
+                if campo: recs_raw.append(campo)
+        corretivos = ["Exercicios corretivos posturais"]
+    return {"sessao": sessao.nome, "data": str(date.today()), "exercicios": lista_ex, "corretivos_posturais": corretivos, "postura_resumo": {"cabeca": aval.postura_cabeca if aval else None, "ombros": aval.postura_ombros if aval else None, "coluna": aval.postura_coluna if aval else None} if aval else None}
 
 @router.post("/presenca")
 async def registrar_presenca(dados: PresencaSchema, aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):

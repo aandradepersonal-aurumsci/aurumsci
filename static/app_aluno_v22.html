@@ -323,6 +323,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <button class="lang-mini" onclick="setLangApp('es',this)">ES</button>
       </div>
       <div class="btn-icon" onclick="toggleTheme()" id="theme-btn">🌙</div>
+      <div class="btn-icon" onclick="fazerLogout()" title="Logout">🚪</div>
       <div class="avatar" id="avatar">A</div>
     </div>
   </div>
@@ -1396,6 +1397,7 @@ function enviarMsg(){
   }).catch(function(){ typing.innerHTML = '<span class="msg-tag">AURI</span>Tente novamente!'; });
 }
 
+function fazerLogout(){ localStorage.clear(); location.reload(); }
 // ── TOAST ─────────────────────────────────────────────
 function mostrarToast(msg){
   var t = document.getElementById('toast');

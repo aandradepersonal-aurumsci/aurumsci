@@ -33,6 +33,7 @@ class PresencaSchema(BaseModel):
 
 class ChatSchema(BaseModel):
     mensagem: str
+    idioma: Optional[str] = "pt"
     historico: Optional[List[dict]] = []
 
 @router.post("/onboarding")
@@ -186,5 +187,8 @@ async def chat_aluno(dados: ChatSchema, aluno: Aluno = Depends(get_aluno_logado)
     treino_dict = {"nome": plano.nome, "objetivo": plano.objetivo} if plano else {}
     presencas_dict = {"frequencia_pct": round(presencas_30 / 30 * 100, 1)}
     contexto = montar_contexto(aluno_dict, avals_dict, treino_dict, {}, presencas_dict)
-    resposta = await responder_chatbot(mensagem=dados.mensagem, historico=dados.historico or [], contexto=contexto, nome_personal="seu programa")
+    idiomas = {"pt": "Responda SEMPRE em Portugues do Brasil.", "en": "Always respond in English.", "es": "Responde SIEMPRE en Espanol."}
+    idioma_instrucao = idiomas.get(dados.idioma or "pt", idiomas["pt"])
+    contexto_final = idioma_instrucao + "\n" + contexto
+    resposta = await responder_chatbot(mensagem=dados.mensagem, historico=dados.historico or [], contexto=contexto_final, nome_personal="seu programa")
     return {"resposta": resposta}

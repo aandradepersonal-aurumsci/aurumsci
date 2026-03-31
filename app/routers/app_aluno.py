@@ -44,7 +44,7 @@ async def onboarding(dados: OnboardingSchema, aluno: Aluno = Depends(get_aluno_l
     periodo_dict = periodizacao_to_dict(periodizacao)
     plano_existente = db.query(PlanoTreino).filter(PlanoTreino.aluno_id == aluno.id, PlanoTreino.ativo == True).first()
     if plano_existente:
-        plano_existente.ativo = False
+        return {"mensagem": "Bem-vindo de volta ao AurumSci, " + aluno.nome.split()[0] + "!", "plano": {"nome": plano_existente.nome, "objetivo": plano_existente.objetivo, "dias_semana": plano_existente.dias_semana, "semanas": plano_existente.semanas_total, "divisao": "ABCDE", "sessoes": []}, "proxima_etapa": "Seu plano ja esta ativo!"}
     plano = PlanoTreino(aluno_id=aluno.id, personal_id=1, nome=f"Plano {dados.objetivo.capitalize()}", objetivo=dados.objetivo, nivel=dados.nivel_experiencia, dias_semana=dados.dias_disponiveis, semanas_total=12, data_inicio=date.today(), ativo=True, periodizacao=json.dumps(periodo_dict, ensure_ascii=False))
     db.add(plano)
     db.flush()

@@ -1058,32 +1058,52 @@ function renderTreino(){
   .then(function(r){ return r.json(); })
   .then(function(d){
     var treinoHtml = '';
-    if(d && d.sessoes && d.sessoes.length > 0){
-      d.sessoes.forEach(function(s, si){
-        treinoHtml += '<div class="card" style="margin-bottom:14px"><div class="card-line ouro"></div>' +
-          '<div class="sessao-tag">' + (s.tag||'TREINO') + '</div>' +
-          '<div class="sessao-nome">' + (s.nome||'TREINO DO DIA') + '</div>' +
-          '<div class="sessao-meta"><span>⏱ ' + (s.duracao||45) + 'min</span><span>💪 ' + (s.exercicios?s.exercicios.length:0) + ' exercícios</span></div></div>';
-        if(s.exercicios && s.exercicios.length > 0){
-          treinoHtml += '<div class="card"><div class="card-line verde"></div>';
-          s.exercicios.forEach(function(ex, i){
-            treinoHtml += '<div class="ex-item">' +
-              '<div class="ex-num">' + (i+1) + '</div>' +
-              '<div class="ex-info"><div class="ex-nome">' + ex.nome + '</div>' +
-              '<div class="ex-det">' + ex.series + ' séries × ' + ex.repeticoes + ' reps · ' + ex.descanso + 's descanso</div>' +
-              (ex.corretivo ? '<div class="ex-corretivo">CORRETIVO</div>' : '') + '</div>' +
-              '<div class="ex-carga"><div class="ex-carga-val">' + (ex.carga||'—') + '</div><div class="ex-carga-un">kg</div></div>' +
-              '</div>';
-          });
-          treinoHtml += '<button class="btn-concluir" onclick="concluirTreino(' + si + ')">CONCLUIR TREINO ✓</button></div>';
-        }
-      });
-    } else {
+    if(d && d.sessao){
+      // Card da sessão
+      treinoHtml += '<div class="card" style="margin-bottom:14px"><div class="card-line ouro"></div>' +
+        '<div class="sessao-tag">TREINO DO DIA</div>' +
+        '<div class="sessao-nome">' + (d.sessao||'TREINO') + '</div>' +
+        '<div class="sessao-meta"><span>📅 ' + (d.data||'') + '</span><span>💪 ' + (d.exercicios?d.exercicios.length:0) + ' exercícios</span></div></div>';
+      // Exercícios
+      if(d.exercicios && d.exercicios.length > 0){
+        treinoHtml += '<div class="card"><div class="card-line verde"></div>';
+        d.exercicios.forEach(function(ex, i){
+          treinoHtml += '<div class="ex-item">' +
+            '<div class="ex-num">' + (i+1) + '</div>' +
+            '<div class="ex-info"><div class="ex-nome">' + ex.nome + '</div>' +
+            '<div class="ex-det">' + (ex.series||3) + ' séries × ' + (ex.repeticoes||'10-12') + ' reps · ' + (ex.descanso||60) + 's descanso</div>' +
+            (ex.corretivo ? '<div class="ex-corretivo">CORRETIVO</div>' : '') + '</div>' +
+            '<div class="ex-carga"><div class="ex-carga-val">' + (ex.carga||'—') + '</div><div class="ex-carga-un">kg</div></div>' +
+            '</div>';
+        });
+        treinoHtml += '<button class="btn-concluir" onclick="concluirTreino(0)">CONCLUIR TREINO ✓</button></div>';
+      }
+      // Exercícios corretivos posturais
+      if(d.corretivos_posturais && d.corretivos_posturais.length > 0){
+        treinoHtml += '<div class="card" style="margin-top:14px"><div class="card-line" style="background:linear-gradient(90deg,var(--verde),#00B87A)"></div>' +
+          '<div style="font-size:10px;color:var(--verde);letter-spacing:2px;font-weight:600;margin-bottom:12px">🧍 CORRETIVOS POSTURAIS</div>';
+        d.corretivos_posturais.forEach(function(c, i){
+          treinoHtml += '<div class="ex-item">' +
+            '<div class="ex-num" style="background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.2);color:var(--verde)">' + (i+1) + '</div>' +
+            '<div class="ex-info"><div class="ex-nome">' + c + '</div>' +
+            '<div class="ex-det">2-3 séries · conforme orientação</div>' +
+            '<div class="ex-corretivo">CORRETIVO</div></div></div>';
+        });
+        treinoHtml += '</div>';
+      }
+    } else if(d && d.mensagem && d.mensagem.includes('descanso')){
       treinoHtml = '<div class="card"><div class="card-line azul"></div>' +
         '<div style="text-align:center;padding:20px">' +
         '<div style="font-size:40px;margin-bottom:12px">😴</div>' +
         '<div style="font-family:Bebas Neue;font-size:22px;color:var(--azul)">DIA DE DESCANSO</div>' +
         '<div style="font-size:13px;color:var(--cinza);margin-top:8px">Recuperação é parte do treino!</div>' +
+        '</div></div>';
+    } else {
+      treinoHtml = '<div class="card"><div class="card-line azul"></div>' +
+        '<div style="text-align:center;padding:20px">' +
+        '<div style="font-size:40px;margin-bottom:12px">📋</div>' +
+        '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2)">COMPLETE SEU CADASTRO</div>' +
+        '<div style="font-size:13px;color:var(--cinza);margin-top:8px">Faça o onboarding para ver seu treino!</div>' +
         '</div></div>';
     }
     document.getElementById('treino-content').innerHTML = html + treinoHtml;

@@ -115,7 +115,7 @@ async def treino_hoje(aluno: Aluno = Depends(get_aluno_logado), db: Session = De
     if not sessao:
         return {"mensagem": "Hoje e dia de descanso!", "dica": "Aproveite para fazer mobilidade ou caminhada leve."}
     exercicios = db.query(ExercicioSessao).filter(ExercicioSessao.sessao_id == sessao.id).order_by(ExercicioSessao.ordem).all()
-    lista_ex = [{"ordem": e.ordem, "nome": e.exercicio.nome if e.exercicio else "", "series": e.series, "repeticoes": e.repeticoes, "carga": e.carga_sugerida, "descanso": e.descanso_segundos, "corretivo": False} for e in exercicios]
+    lista_ex = [{"ordem": e.ordem, "nome": e.exercicio.nome if e.exercicio else "", "series": e.series, "repeticoes": e.repeticoes, "carga": e.carga_kg, "descanso": e.tempo_descanso_seg, "corretivo": False} for e in exercicios]
     from app.routers.avaliacao import AvaliacaoFisica
     aval = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno.id).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
     corretivos = []

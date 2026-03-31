@@ -1136,9 +1136,21 @@ function fazerCheckin(){
 }
 
 function concluirTreino(idx){
-  mostrarToast('🎉 Treino concluído!');
+  var hojeStr = new Date().toISOString().slice(0,10);
+  localStorage.setItem('treino_'+hojeStr, '1');
+  var seq = parseInt(localStorage.getItem('sequencia')||'0') + 1;
+  localStorage.setItem('sequencia', seq);
   fetch('/app-aluno/treino-concluir', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({sessao_idx: idx})}).catch(function(){});
+  var msg = 'Parabens! Voce esta ' + seq + ' dias seguidos! 💪';
+  var html = '<div class="card"><div class="card-line verde"></div>';
+  html += '<div style="text-align:center;padding:40px 20px">';
+  html += '<div style="font-size:60px;margin-bottom:14px">🏆</div>';
+  html += '<div style="font-family:Bebas Neue;font-size:28px;color:var(--verde);letter-spacing:1px">TREINO CONCLUIDO!</div>';
+  html += '<div style="font-size:14px;color:var(--cinza);margin-top:8px;line-height:1.6">' + msg + '</div>';
+  html += '</div></div>';
+  document.getElementById('treino-content').innerHTML = html;
+  setTimeout(function(){ renderTreino(); }, 3000);
 }
 
 // ── EVOLUÇÃO ──────────────────────────────────────────

@@ -23,12 +23,12 @@ async def analisar_postural(foto_frente=None, foto_lado=None, foto_costas=None, 
     
     imgs = []
     if foto_frente:
-        imgs.append({"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": foto_frente}})
+        imgs.append({"type": "image", "source": {"type": "base64", "media_type": mime_frente, "data": foto_frente}})
         imgs.append({"type": "text", "text": "Vista anterior."})
     if foto_lado:
-        imgs.append({"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": foto_lado}})
+        imgs.append({"type": "image", "source": {"type": "base64", "media_type": mime_lado, "data": foto_lado}})
     if foto_costas:
-        imgs.append({"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": foto_costas}})
+        imgs.append({"type": "image", "source": {"type": "base64", "media_type": mime_costas, "data": foto_costas}})
     
     if not imgs:
         return ResultadoPostural(erro="Nenhuma foto fornecida")

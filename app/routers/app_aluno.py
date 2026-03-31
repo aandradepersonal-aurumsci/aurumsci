@@ -89,7 +89,7 @@ async def analise_postural(aluno: Aluno = Depends(get_aluno_logado), db: Session
         raise HTTPException(status_code=500, detail=resultado.erro)
     aval = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno.id).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
     if not aval:
-        aval = AvaliacaoFisica(aluno_id=aluno.id, personal_id=1, data_avaliacao=date.today())
+        aval = AvaliacaoFisica(aluno_id=aluno.id, data_avaliacao=date.today())
         db.add(aval)
     aval.postura_cabeca = resultado.cabeca
     aval.postura_ombros = resultado.ombros

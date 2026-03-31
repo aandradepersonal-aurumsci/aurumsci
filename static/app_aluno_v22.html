@@ -723,7 +723,16 @@ function fazerLogin(){
       localStorage.setItem('aurum_token', token);
       localStorage.setItem('aurum_nome', nomeAluno);
       var onbDone = localStorage.getItem('aurum_onb_done');
-      if(onbDone){ mostrarApp(); } else { iniciarOnboarding(); }
+      if(onbDone){ mostrarApp(); } else {
+        fetch('/app-aluno/treino-hoje', {headers:{"Authorization":"Bearer "+token}})
+        .then(function(r){ return r.json(); })
+        .then(function(t){
+          if(t.sessao || t.mensagem){
+            localStorage.setItem("aurum_onb_done","1");
+            mostrarApp();
+          } else { iniciarOnboarding(); }
+        }).catch(function(){ iniciarOnboarding(); });
+      }
     } else { mostrarToast(d.detail || 'Email ou senha incorretos'); }
   }).catch(function(){ mostrarToast('Erro de conexão'); });
 }

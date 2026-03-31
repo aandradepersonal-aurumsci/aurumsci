@@ -690,6 +690,7 @@ function setLangApp(l, el){
   document.querySelectorAll('.lang-mini-row .lang-mini').forEach(function(b){ b.classList.remove('active'); });
   el.classList.add('active');
   atualizarTextos();
+  renderTreino();
   chatHist = [];
   var msgs = document.getElementById('chat-msgs');
   if(msgs) msgs.innerHTML = '<div class="msg msg-auri"><span class="msg-tag">AURI</span>' + T('auriMsg') + '</div>';

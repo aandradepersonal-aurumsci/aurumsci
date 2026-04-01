@@ -195,7 +195,7 @@ async def chat_aluno(dados: ChatSchema, aluno: Aluno = Depends(get_aluno_logado)
 
 
 @router.get("/resultado")
-def resultado(aluno: AlunoCredencial = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+def resultado(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
     from app.routers.avaliacao import AvaliacaoFisica
     from app.models import Aluno
     aluno_obj = db.query(Aluno).filter(Aluno.id == aluno.aluno_id).first()
@@ -224,7 +224,7 @@ def resultado(aluno: AlunoCredencial = Depends(get_aluno_logado), db: Session = 
 
 
 @router.get("/periodizacao")
-def periodizacao(aluno: AlunoCredencial = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+def periodizacao(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
     from app.models import Aluno
     aluno_obj = db.query(Aluno).filter(Aluno.id == aluno.aluno_id).first()
     if not aluno_obj:

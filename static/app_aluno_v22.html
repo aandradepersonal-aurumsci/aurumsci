@@ -380,8 +380,15 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div id="loja-content"></div>
   </div>
 
+  <!-- FINANCEIRO -->
+  <div class="screen" id="screen-fin">
+    <div class="section-title">FINANCEIRO</div>
+    <div class="section-sub">Seu plano e pagamentos</div>
+    <div id="fin-content"><div style="text-align:center;padding:40px;color:var(--cinza)">Carregando...</div></div>
+  </div>
+
   <!-- TABS -->
-  <div class="tabs">
+  <div class="tabs" style="overflow-x:auto;-webkit-overflow-scrolling:touch;justify-content:flex-start">
     <div class="tab active" onclick="mudarTab('treino',this)">
       <span class="tab-icon">🏋️</span><span id="t-tab1">TREINO</span><div class="tab-dot"></div>
     </div>
@@ -393,6 +400,9 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     </div>
     <div class="tab" onclick="mudarTab('periodo',this)">
       <span class="tab-icon">📅</span><span id="t-tab4">CICLOS</span><div class="tab-dot"></div>
+    </div>
+    <div class="tab" onclick="mudarTab('fin',this)">
+      <span class="tab-icon">💳</span><span>FINANCEIRO</span><div class="tab-dot"></div>
     </div>
     <div class="tab" onclick="mudarTab('loja',this)">
       <span class="tab-icon">🛍️</span><span id="t-tab5">LOJA</span><div class="tab-dot"></div>
@@ -1054,6 +1064,44 @@ function mudarTab(tab, el){
   document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
   document.getElementById('screen-' + tab).classList.add('active');
   el.classList.add('active');
+  if(tab === 'fin'){ renderFinanceiro(); }
+}
+
+function renderFinanceiro(){
+  var el = document.getElementById('fin-content');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--cinza)">Carregando...</div>';
+  fetch('/app-aluno/financeiro', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.detail){ el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--cinza)">Nenhum plano ativo ainda.</div>'; return; }
+    var statusCor = d.status === 'pago' ? 'var(--verde)' : d.status === 'atrasado' ? '#FF6B6B' : 'var(--ouro)';
+    var statusLabel = d.status === 'pago' ? '✅ PAGO' : d.status === 'atrasado' ? '⚠️ ATRASADO' : '🕐 PENDENTE';
+    var html = '<div class="card" style="margin-bottom:12px"><div class="card-line ouro"></div>';
+    html += '<div style="font-size:10px;color:var(--cinza);letter-spacing:1px;margin-bottom:6px">PLANO ATIVO</div>';
+    html += '<div style="font-family:Bebas Neue;font-size:24px;margin-bottom:4px">' + (d.plano||'Plano Personal') + '</div>';
+    html += '<div style="font-family:Bebas Neue;font-size:36px;color:var(--ouro2)">R$ ' + (d.valor||'0') + '<span style="font-size:14px;color:var(--cinza)">/mês</span></div>';
+    html += '</div>';
+    html += '<div class="card" style="margin-bottom:12px"><div class="card-line ' + (d.status === 'pago' ? 'verde' : 'ouro') + '"></div>';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center">';
+    html += '<div><div style="font-size:10px;color:var(--cinza);letter-spacing:1px">STATUS</div>';
+    html += '<div style="font-family:Bebas Neue;font-size:20px;color:' + statusCor + ';margin-top:4px">' + statusLabel + '</div></div>';
+    if(d.vencimento){ html += '<div style="text-align:right"><div style="font-size:10px;color:var(--cinza);letter-spacing:1px">VENCIMENTO</div><div style="font-family:Bebas Neue;font-size:18px;margin-top:4px">' + d.vencimento + '</div></div>'; }
+    html += '</div></div>';
+    if(d.historico && d.historico.length){
+      html += '<div class="card"><div class="card-line azul"></div>';
+      html += '<div style="font-size:10px;color:var(--cinza);letter-spacing:1px;margin-bottom:12px">HISTÓRICO</div>';
+      d.historico.forEach(function(p){
+        var cor = p.status === 'pago' ? 'var(--verde)' : '#FF6B6B';
+        html += '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">';
+        html += '<div style="font-size:13px">' + p.mes + '</div>';
+        html += '<div style="font-size:13px;color:' + cor + ';font-weight:600">R$ ' + p.valor + ' · ' + p.status + '</div></div>';
+      });
+      html += '</div>';
+    }
+    el.innerHTML = html;
+  }).catch(function(){
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--cinza)">Nenhum plano ativo ainda.</div>';
+  });
 }
 
 // ── TREINO ────────────────────────────────────────────

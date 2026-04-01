@@ -250,3 +250,39 @@ def periodizacao(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends
     }
     ciclos = ciclos_map.get(objetivo, ciclos_map["hipertrofia"])
     return {"objetivo": objetivo, "nivel": nivel, "ciclos": ciclos}
+
+
+@router.get("/financeiro")
+def financeiro(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    from app.routers.financeiro import Pagamento
+    from datetime import date
+    pags = db.query(Pagamento).filter(
+        Pagamento.aluno_id == aluno.id
+    ).order_by(Pagamento.data_vencimento.desc()).all()
+    if not pags:
+        return {"detail": "Nenhum pagamento encontrado"}
+    ultimo = pags[0]
+    hoje = date.today()
+    # Status
+    if ultimo.data_pagamento:
+        status = "pago"
+    elif ultimo.data_vencimento and ultimo.data_vencimento < hoje:
+        status = "atrasado"
+    else:
+        status = "pendente"
+    # Historico
+    historico = []
+    for p in pags[:6]:
+        st = "pago" if p.data_pagamento else ("atrasado" if p.data_vencimento and p.data_vencimento < hoje else "pendente")
+        historico.append({
+            "mes": p.data_vencimento.strftime("%b/%Y") if p.data_vencimento else "",
+            "valor": str(p.valor),
+            "status": st
+        })
+    return {
+        "plano": "Plano Personal",
+        "valor": str(ultimo.valor),
+        "status": status,
+        "vencimento": ultimo.data_vencimento.strftime("%d/%m/%Y") if ultimo.data_vencimento else None,
+        "historico": historico
+    }

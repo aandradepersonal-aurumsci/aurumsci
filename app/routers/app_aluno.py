@@ -198,11 +198,11 @@ async def chat_aluno(dados: ChatSchema, aluno: Aluno = Depends(get_aluno_logado)
 def resultado(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
     from app.routers.avaliacao import AvaliacaoFisica
     from app.models import Aluno
-    aluno_obj = db.query(Aluno).filter(Aluno.id == aluno.aluno_id).first()
+    aluno_obj = aluno
     if not aluno_obj:
         return {"detail": "Aluno nao encontrado"}
     avals = db.query(AvaliacaoFisica).filter(
-        AvaliacaoFisica.aluno_id == aluno.aluno_id
+        AvaliacaoFisica.aluno_id == aluno.id
     ).order_by(AvaliacaoFisica.data_avaliacao.desc()).all()
     if not avals:
         return {"detail": "Sem avaliacoes"}
@@ -226,7 +226,7 @@ def resultado(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(ge
 @router.get("/periodizacao")
 def periodizacao(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
     from app.models import Aluno
-    aluno_obj = db.query(Aluno).filter(Aluno.id == aluno.aluno_id).first()
+    aluno_obj = aluno
     if not aluno_obj:
         return {"detail": "Aluno nao encontrado"}
     objetivo = aluno_obj.objetivo.value if aluno_obj.objetivo else "hipertrofia"

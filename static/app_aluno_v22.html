@@ -1091,7 +1091,7 @@ function renderTreino(){
     var treinoHtml = '';
     var exercicios = d.exercicios || [];
     var sessaoNome = d.sessao || '';
-    var isDescanso = !sessaoNome || (d.mensagem && d.mensagem.indexOf('descanso') > -1);
+    var isDescanso = (!sessaoNome || sessaoNome === '') && (!exercicios || exercicios.length === 0);
 
     if(!isDescanso && exercicios.length > 0){
       // Salva lista de exercicios globalmente para o timer

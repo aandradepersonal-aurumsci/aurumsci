@@ -1086,18 +1086,15 @@ function renderTreino(){
   .then(function(r){ return r.json(); })
   .then(function(d){
     var treinoHtml = '';
-    // Backend retorna d.sessao (string) + d.exercicios (array)
     var exercicios = d.exercicios || [];
     var sessaoNome = d.sessao || '';
-    var isDescanso = !sessaoNome || sessaoNome === '' || (d.mensagem && d.mensagem.indexOf('descanso') > -1);
+    var isDescanso = !sessaoNome || (d.mensagem && d.mensagem.indexOf('descanso') > -1);
 
     if(!isDescanso && exercicios.length > 0){
-      // Header da sessão
       treinoHtml += '<div class="card" style="margin-bottom:14px"><div class="card-line ouro"></div>' +
         '<div class="sessao-tag">TREINO DO DIA</div>' +
         '<div class="sessao-nome">' + sessaoNome + '</div>' +
         '<div class="sessao-meta"><span>⏱ 45-60min</span><span>💪 ' + exercicios.length + ' exercícios</span></div></div>';
-      // Exercícios
       treinoHtml += '<div class="card"><div class="card-line verde"></div>';
       exercicios.forEach(function(ex, i){
         treinoHtml += '<div class="ex-item">' +
@@ -1109,7 +1106,6 @@ function renderTreino(){
           '</div>';
       });
       treinoHtml += '<button class="btn-concluir" onclick="concluirTreino(0)">CONCLUIR TREINO ✓</button></div>';
-      // Corretivos posturais
       if(d.corretivos_posturais && d.corretivos_posturais.length > 0){
         treinoHtml += '<div class="card" style="margin-top:12px"><div class="card-line roxo"></div>' +
           '<div style="font-size:10px;color:var(--ouro);letter-spacing:2px;margin-bottom:10px">🧍 CORRETIVOS POSTURAIS</div>';
@@ -1122,7 +1118,6 @@ function renderTreino(){
         treinoHtml += '</div>';
       }
     } else {
-      // Dia de descanso — mostra próximo treino
       var diasSemana = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
       var proximoDia = new Date();
       proximoDia.setDate(proximoDia.getDate() + 1);
@@ -1138,7 +1133,7 @@ function renderTreino(){
         '<div><div style="font-size:10px;color:var(--cinza);letter-spacing:1px">PRÓXIMO TREINO</div>' +
         '<div style="font-family:Bebas Neue;font-size:20px;margin-top:4px">' + proximoDiaNome + ' →</div></div>' +
         '<div style="font-size:32px">🏋️</div></div>' +
-        '<div style="font-size:12px;color:var(--cinza);margin-top:8px">Aproveite hoje para alongar, caminhar ou descansar bem!</div></div>';
+        '<div style="font-size:12px;color:var(--cinza);margin-top:8px">Aproveite hoje para alongar ou descansar bem!</div></div>';
     }
     document.getElementById('treino-content').innerHTML = html + treinoHtml;
   }).catch(function(){
@@ -1161,7 +1156,19 @@ function fazerCheckin(){
 }
 
 function concluirTreino(idx){
-  mostrarToast('🎉 Treino concluído!');
+  var hojeStr = new Date().toISOString().slice(0,10);
+  localStorage.setItem('treino_' + hojeStr, '1');
+  var seq = parseInt(localStorage.getItem('sequencia')||'0') + 1;
+  localStorage.setItem('sequencia', seq);
+  // Tela de parabéns
+  document.getElementById('treino-content').innerHTML =
+    '<div class="card"><div class="card-line verde"></div>' +
+    '<div style="text-align:center;padding:40px 20px">' +
+    '<div style="font-size:64px;margin-bottom:16px">🏆</div>' +
+    '<div style="font-family:Bebas Neue;font-size:32px;color:var(--verde);letter-spacing:1px">TREINO CONCLUÍDO!</div>' +
+    '<div style="font-size:15px;color:var(--cinza);margin-top:12px;line-height:1.6">Parabéns! Você está ' + seq + ' dias seguidos! 💪<br>Descanse bem e volte mais forte amanhã.</div>' +
+    '</div></div>';
+  setTimeout(function(){ renderTreino(); }, 3500);
   fetch('/app-aluno/treino-concluir', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({sessao_idx: idx})}).catch(function(){});
 }

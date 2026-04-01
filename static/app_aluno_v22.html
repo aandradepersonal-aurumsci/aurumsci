@@ -1086,33 +1086,59 @@ function renderTreino(){
   .then(function(r){ return r.json(); })
   .then(function(d){
     var treinoHtml = '';
-    if(d && d.sessoes && d.sessoes.length > 0){
-      d.sessoes.forEach(function(s, si){
-        treinoHtml += '<div class="card" style="margin-bottom:14px"><div class="card-line ouro"></div>' +
-          '<div class="sessao-tag">' + (s.tag||'TREINO') + '</div>' +
-          '<div class="sessao-nome">' + (s.nome||'TREINO DO DIA') + '</div>' +
-          '<div class="sessao-meta"><span>⏱ ' + (s.duracao||45) + 'min</span><span>💪 ' + (s.exercicios?s.exercicios.length:0) + ' exercícios</span></div></div>';
-        if(s.exercicios && s.exercicios.length > 0){
-          treinoHtml += '<div class="card"><div class="card-line verde"></div>';
-          s.exercicios.forEach(function(ex, i){
-            treinoHtml += '<div class="ex-item">' +
-              '<div class="ex-num">' + (i+1) + '</div>' +
-              '<div class="ex-info"><div class="ex-nome">' + ex.nome + '</div>' +
-              '<div class="ex-det">' + ex.series + ' séries × ' + ex.repeticoes + ' reps · ' + ex.descanso + 's descanso</div>' +
-              (ex.corretivo ? '<div class="ex-corretivo">CORRETIVO</div>' : '') + '</div>' +
-              '<div class="ex-carga"><div class="ex-carga-val">' + (ex.carga||'—') + '</div><div class="ex-carga-un">kg</div></div>' +
-              '</div>';
-          });
-          treinoHtml += '<button class="btn-concluir" onclick="concluirTreino(' + si + ')">CONCLUIR TREINO ✓</button></div>';
-        }
+    // Backend retorna d.sessao (string) + d.exercicios (array)
+    var exercicios = d.exercicios || [];
+    var sessaoNome = d.sessao || '';
+    var isDescanso = !sessaoNome || sessaoNome === '' || (d.mensagem && d.mensagem.indexOf('descanso') > -1);
+
+    if(!isDescanso && exercicios.length > 0){
+      // Header da sessão
+      treinoHtml += '<div class="card" style="margin-bottom:14px"><div class="card-line ouro"></div>' +
+        '<div class="sessao-tag">TREINO DO DIA</div>' +
+        '<div class="sessao-nome">' + sessaoNome + '</div>' +
+        '<div class="sessao-meta"><span>⏱ 45-60min</span><span>💪 ' + exercicios.length + ' exercícios</span></div></div>';
+      // Exercícios
+      treinoHtml += '<div class="card"><div class="card-line verde"></div>';
+      exercicios.forEach(function(ex, i){
+        treinoHtml += '<div class="ex-item">' +
+          '<div class="ex-num">' + (i+1) + '</div>' +
+          '<div class="ex-info"><div class="ex-nome">' + ex.nome + '</div>' +
+          '<div class="ex-det">' + ex.series + ' séries × ' + ex.repeticoes + ' reps · ' + (ex.descanso||90) + 's descanso</div>' +
+          (ex.corretivo ? '<div class="ex-corretivo">CORRETIVO</div>' : '') + '</div>' +
+          '<div class="ex-carga"><div class="ex-carga-val">' + (ex.carga||'—') + '</div><div class="ex-carga-un">kg</div></div>' +
+          '</div>';
       });
+      treinoHtml += '<button class="btn-concluir" onclick="concluirTreino(0)">CONCLUIR TREINO ✓</button></div>';
+      // Corretivos posturais
+      if(d.corretivos_posturais && d.corretivos_posturais.length > 0){
+        treinoHtml += '<div class="card" style="margin-top:12px"><div class="card-line roxo"></div>' +
+          '<div style="font-size:10px;color:var(--ouro);letter-spacing:2px;margin-bottom:10px">🧍 CORRETIVOS POSTURAIS</div>';
+        d.corretivos_posturais.forEach(function(c, i){
+          treinoHtml += '<div class="ex-item"><div class="ex-num">' + (i+1) + '</div>' +
+            '<div class="ex-info"><div class="ex-nome">' + c + '</div>' +
+            '<div class="ex-det">2-3 séries · conforme orientação</div>' +
+            '<div class="ex-corretivo">CORRETIVO</div></div></div>';
+        });
+        treinoHtml += '</div>';
+      }
     } else {
+      // Dia de descanso — mostra próximo treino
+      var diasSemana = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
+      var proximoDia = new Date();
+      proximoDia.setDate(proximoDia.getDate() + 1);
+      var proximoDiaNome = diasSemana[proximoDia.getDay() === 0 ? 6 : proximoDia.getDay() - 1];
       treinoHtml = '<div class="card"><div class="card-line azul"></div>' +
-        '<div style="text-align:center;padding:20px">' +
-        '<div style="font-size:40px;margin-bottom:12px">😴</div>' +
-        '<div style="font-family:Bebas Neue;font-size:22px;color:var(--azul)">DIA DE DESCANSO</div>' +
-        '<div style="font-size:13px;color:var(--cinza);margin-top:8px">Recuperação é parte do treino!</div>' +
-        '</div></div>';
+        '<div style="text-align:center;padding:24px 20px">' +
+        '<div style="font-size:48px;margin-bottom:12px">😴</div>' +
+        '<div style="font-family:Bebas Neue;font-size:26px;color:var(--azul);letter-spacing:1px">DIA DE DESCANSO</div>' +
+        '<div style="font-size:13px;color:var(--cinza);margin-top:8px;line-height:1.6">Recuperação é parte do treino!<br>Músculos crescem durante o descanso. 💪</div>' +
+        '</div></div>' +
+        '<div class="card" style="margin-top:12px"><div class="card-line ouro"></div>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0">' +
+        '<div><div style="font-size:10px;color:var(--cinza);letter-spacing:1px">PRÓXIMO TREINO</div>' +
+        '<div style="font-family:Bebas Neue;font-size:20px;margin-top:4px">' + proximoDiaNome + ' →</div></div>' +
+        '<div style="font-size:32px">🏋️</div></div>' +
+        '<div style="font-size:12px;color:var(--cinza);margin-top:8px">Aproveite hoje para alongar, caminhar ou descansar bem!</div></div>';
     }
     document.getElementById('treino-content').innerHTML = html + treinoHtml;
   }).catch(function(){

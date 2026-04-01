@@ -997,7 +997,8 @@ function renderMiniListaAlunos(tela){
   }
   var html = '<div style="display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px">';
   todosAlunos.filter(function(a){ return a.ativo; }).forEach(function(a){
-    html += '<div onclick="selecionar' + tela.charAt(0).toUpperCase() + tela.slice(1) + 'Aluno(' + a.id + ','' + (a.nome||'').split(' ')[0] + '')" style="background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:8px 14px;cursor:pointer;white-space:nowrap;font-size:12px;font-weight:600;flex-shrink:0">' + (a.nome||'?').split(' ')[0] + '</div>';
+    var primeiroNome = (a.nome||'').split(' ')[0];
+    html += '<div onclick="selecionar' + tela.charAt(0).toUpperCase() + tela.slice(1) + 'Aluno(' + a.id + ',\'' + primeiroNome + '\')" style="background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:8px 14px;cursor:pointer;white-space:nowrap;font-size:12px;font-weight:600;flex-shrink:0">' + primeiroNome + '</div>';
   });
   html += '</div>';
   return html;

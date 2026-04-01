@@ -46,9 +46,9 @@ Seja técnico, direto e baseado em evidências científicas."""
 
 @router.get("/dashboard")
 def dashboard(personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
-    from app.routers.alunos import Aluno
-    from app.routers.treino import PresencaTreino
-    from app.routers.financeiro import Pagamento, calc_status
+    from app.models import Aluno
+    from app.models import PresencaTreino
+    from app.models import Pagamento
 
     alunos = db.query(Aluno).filter(Aluno.personal_id == personal.id, Aluno.ativo == True).all()
     total_alunos = len(alunos)
@@ -95,9 +95,9 @@ def dashboard(personal: Personal = Depends(get_personal_atual), db: Session = De
 
 @router.get("/aluno/{aluno_id}/resumo")
 def resumo_aluno(aluno_id: int, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
-    from app.routers.alunos import Aluno
-    from app.routers.avaliacao import AvaliacaoFisica
-    from app.routers.treino import PlanoTreino, PresencaTreino
+    from app.models import Aluno
+    from app.models import AvaliacaoFisica
+    from app.models import PlanoTreino, PresencaTreino
 
     aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal.id).first()
     if not aluno:

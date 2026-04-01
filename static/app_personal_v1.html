@@ -438,6 +438,8 @@ var token = localStorage.getItem('aurum_personal_token') || '';
 var nomePersonal = localStorage.getItem('aurum_personal_nome') || '';
 var chatHist = [];
 var todosAlunos = [];
+var alunoSelecionadoId = null;
+var fotosPosturalP = {};
 var filtroAtual = 'todos';
 
 // ── TRADUÇÕES ─────────────────────────────────────────────────
@@ -607,13 +609,115 @@ function carregarAlunos(){
 function renderAlunos(alunos){
   var html = '';
   alunos.forEach(function(a){
-    html += '<div class="aluno-item">';
+    html += '<div class="aluno-item" onclick="abrirPerfilAluno(' + a.id + ')">';
     html += '<div class="aluno-avatar">' + (a.nome||'?').charAt(0).toUpperCase() + '</div>';
     html += '<div class="aluno-info"><div class="aluno-nome">' + (a.nome||'') + '</div>';
     html += '<div class="aluno-meta">' + (a.objetivo||'—') + ' · ' + (a.nivel_experiencia||'—') + '</div></div>';
-    html += '<div class="aluno-status ' + (a.ativo ? 'status-ativo' : 'status-inativo') + '"></div></div>';
+    html += '<div style="display:flex;align-items:center;gap:8px">';
+    html += '<div class="aluno-status ' + (a.ativo ? 'status-ativo' : 'status-inativo') + '"></div>';
+    html += '<span style="font-size:18px;color:var(--cinza)">›</span></div></div>';
   });
   document.getElementById('lista-alunos').innerHTML = html || '<div style="color:var(--cinza);text-align:center;padding:30px">Nenhum aluno encontrado</div>';
+}
+
+function abrirPerfilAluno(id){
+  alunoSelecionadoId = id;
+  document.getElementById('perfil-aluno-content').innerHTML = '<div style="text-align:center;padding:30px;color:var(--cinza)">Carregando...</div>';
+  document.getElementById('modal-perfil-aluno').classList.add('show');
+  fetch('/app-personal/aluno/' + id + '/resumo', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var a = d.aluno || {};
+    var av = d.avaliacao || {};
+    var pl = d.plano || {};
+    var po = d.postural || {};
+    var html = '<div class="modal-titulo">' + (a.nome||'Aluno') + '</div>';
+    html += '<div class="modal-sub">' + (a.objetivo||'—') + ' · ' + (a.nivel||'—') + '</div>';
+    // Stats
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">';
+    html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center"><div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2)">' + (av.peso||'—') + '</div><div style="font-size:10px;color:var(--cinza)">kg</div></div>';
+    html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center"><div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2)">' + (av.gordura||'—') + '</div><div style="font-size:10px;color:var(--cinza)">% gordura</div></div>';
+    html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center"><div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2)">' + (d.frequencia_mes||0) + '</div><div style="font-size:10px;color:var(--cinza)">treinos/mês</div></div>';
+    html += '</div>';
+    // Plano
+    if(pl.nome) html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;margin-bottom:12px;font-size:13px"><span style="color:var(--ouro);font-size:10px;letter-spacing:1px">PLANO ATIVO</span><br>' + pl.nome + ' · ' + (pl.dias_semana||0) + 'x/semana</div>';
+    // Postural resumo
+    if(po && po.cabeca){
+      html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;margin-bottom:12px">';
+      html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin-bottom:8px">🧍 ÚLTIMA ANÁLISE POSTURAL</div>';
+      html += '<div style="font-size:12px;color:var(--cinza);line-height:1.6">' + (po.observacoes||po.cabeca||'') + '</div>';
+      html += '</div>';
+    }
+    // Botões
+    html += '<button onclick="abrirPosturalAluno(' + id + ', \'' + (a.nome||'') + '\')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:18px;letter-spacing:2px;cursor:pointer;margin-top:4px">🤖 ANÁLISE POSTURAL COM IA</button>';
+    document.getElementById('perfil-aluno-content').innerHTML = html;
+  }).catch(function(){
+    document.getElementById('perfil-aluno-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:20px">Erro ao carregar perfil</div>';
+  });
+}
+
+function abrirPosturalAluno(id, nome){
+  alunoSelecionadoId = id;
+  fotosPosturalP = {};
+  document.getElementById('postural-aluno-nome').textContent = 'Aluno: ' + nome;
+  document.getElementById('post-p-resultado').innerHTML = '';
+  document.getElementById('post-p-loading').style.display = 'none';
+  ['frente','lado','costas'].forEach(function(t){
+    var s = document.getElementById('slot-p-'+t);
+    if(s) s.innerHTML = '<div style="font-size:24px">' + (t==='costas'?'🚶':'🧍') + '</div><div style="font-size:10px;color:var(--cinza);margin-top:4px">Foto</div>';
+  });
+  var btn = document.getElementById('btn-analisar-p');
+  btn.disabled = true; btn.style.opacity = '0.4';
+  fecharModal('modal-perfil-aluno');
+  document.getElementById('modal-postural-aluno').classList.add('show');
+}
+
+function fotoPosturalP(tipo, input){
+  if(!input.files[0]) return;
+  var file = input.files[0];
+  var reader = new FileReader();
+  reader.onload = function(e){
+    fotosPosturalP[tipo] = file;
+    var slot = document.getElementById('slot-p-'+tipo);
+    slot.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover">';
+    var tem = fotosPosturalP.frente || fotosPosturalP.lado || fotosPosturalP.costas;
+    var btn = document.getElementById('btn-analisar-p');
+    btn.disabled = !tem; btn.style.opacity = tem ? '1' : '0.4';
+  };
+  reader.readAsDataURL(file);
+}
+
+function analisarPosturalP(){
+  if(!alunoSelecionadoId) return;
+  var btn = document.getElementById('btn-analisar-p');
+  var loading = document.getElementById('post-p-loading');
+  var resultado = document.getElementById('post-p-resultado');
+  btn.disabled = true; loading.style.display = 'block'; resultado.innerHTML = '';
+  var fd = new FormData();
+  if(fotosPosturalP.frente) fd.append('foto_frente', fotosPosturalP.frente);
+  if(fotosPosturalP.lado) fd.append('foto_lado', fotosPosturalP.lado);
+  if(fotosPosturalP.costas) fd.append('foto_costas', fotosPosturalP.costas);
+  fetch('/app-personal/postural/' + alunoSelecionadoId, {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    loading.style.display = 'none'; btn.disabled = false; btn.style.opacity = '1';
+    if(d.detail){ resultado.innerHTML = '<div style="color:#FF6B6B;padding:16px;text-align:center">Erro: ' + d.detail + '</div>'; return; }
+    var html = '<div style="background:var(--bg);border-radius:16px;border:1px solid var(--borda);padding:16px">';
+    html += '<div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2);margin-bottom:12px;letter-spacing:1px">RESULTADO — ' + (d.aluno||'') + '</div>';
+    var dev = d.desvios || {};
+    var campos = [['🗣️','Cabeça',dev.cabeca],['🏋️','Ombros',dev.ombros],['🦴','Coluna',dev.coluna],['⚡','Quadril',dev.quadril],['🦵','Joelhos',dev.joelhos],['👣','Pés',dev.pes]];
+    campos.forEach(function(cc){ if(cc[2]){ html += '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)"><div style="font-size:10px;color:var(--ouro);letter-spacing:1px">' + cc[0] + ' ' + cc[1].toUpperCase() + '</div><div style="font-size:12px;margin-top:4px;line-height:1.5">' + cc[2] + '</div></div>'; }});
+    if(d.observacoes) html += '<div style="margin-top:10px;padding:10px;background:rgba(75,159,255,.06);border-radius:10px;font-size:12px;line-height:1.6">' + d.observacoes + '</div>';
+    if(d.recomendacoes && d.recomendacoes.length){
+      html += '<div style="margin-top:12px"><div style="font-size:10px;color:#00E5A0;letter-spacing:1px;margin-bottom:8px">✅ EXERCÍCIOS CORRETIVOS</div>';
+      d.recomendacoes.forEach(function(r){ html += '<div style="padding:6px 0;font-size:12px;border-bottom:1px solid rgba(255,255,255,.05)">• ' + r + '</div>'; });
+      html += '</div>';
+    }
+    html += '</div>';
+    resultado.innerHTML = html;
+    mostrarToast('✅ Análise salva no perfil do aluno!');
+  })
+  .catch(function(e){ loading.style.display='none'; btn.disabled=false; btn.style.opacity='1'; resultado.innerHTML='<div style="color:#FF6B6B;padding:16px">Erro: '+e.message+'</div>'; });
 }
 
 function filtrarAlunos(){
@@ -735,5 +839,57 @@ function mostrarToast(msg){
   setTimeout(function(){ t.classList.remove('show'); }, 2500);
 }
 </script>
+
+<!-- MODAL PERFIL ALUNO -->
+<div class="modal-overlay" id="modal-perfil-aluno" style="align-items:center;padding:0">
+  <div class="modal" style="border-radius:20px;max-height:90vh;margin:20px">
+    <span class="modal-close" onclick="fecharModal('modal-perfil-aluno')">×</span>
+    <div id="perfil-aluno-content">
+      <div style="text-align:center;padding:30px;color:var(--cinza)">Carregando...</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POSTURAL DO ALUNO (pelo personal) -->
+<div class="modal-overlay" id="modal-postural-aluno" style="align-items:center;padding:0">
+  <div class="modal" style="border-radius:20px;max-height:90vh;margin:20px">
+    <span class="modal-close" onclick="fecharModal('modal-postural-aluno')">×</span>
+    <div class="modal-titulo">ANÁLISE POSTURAL</div>
+    <div class="modal-sub" id="postural-aluno-nome">Selecione o aluno</div>
+    <div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--cinza);line-height:1.6">
+      <strong style="color:var(--ouro)">Como posicionar:</strong> De pé, relaxado, pés levemente afastados, braços soltos, olhar fixo no horizonte. Use roupa mínima.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
+      <div>
+        <div style="font-size:10px;color:var(--cinza);text-align:center;margin-bottom:4px">FRENTE</div>
+        <div id="slot-p-frente" onclick="document.getElementById('in-p-frente').click()" style="border-radius:12px;border:2px dashed var(--borda);aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:var(--bg);overflow:hidden">
+          <div style="font-size:24px">🧍</div><div style="font-size:10px;color:var(--cinza);margin-top:4px">Foto</div>
+        </div>
+        <input type="file" id="in-p-frente" accept="image/*" style="display:none" onchange="fotoPosturalP('frente',this)">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--cinza);text-align:center;margin-bottom:4px">LATERAL</div>
+        <div id="slot-p-lado" onclick="document.getElementById('in-p-lado').click()" style="border-radius:12px;border:2px dashed var(--borda);aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:var(--bg);overflow:hidden">
+          <div style="font-size:24px">🧍</div><div style="font-size:10px;color:var(--cinza);margin-top:4px">Foto</div>
+        </div>
+        <input type="file" id="in-p-lado" accept="image/*" style="display:none" onchange="fotoPosturalP('lado',this)">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--cinza);text-align:center;margin-bottom:4px">COSTAS</div>
+        <div id="slot-p-costas" onclick="document.getElementById('in-p-costas').click()" style="border-radius:12px;border:2px dashed var(--borda);aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:var(--bg);overflow:hidden">
+          <div style="font-size:24px">🚶</div><div style="font-size:10px;color:var(--cinza);margin-top:4px">Foto</div>
+        </div>
+        <input type="file" id="in-p-costas" accept="image/*" style="display:none" onchange="fotoPosturalP('costas',this)">
+      </div>
+    </div>
+    <button id="btn-analisar-p" onclick="analisarPosturalP()" disabled style="width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:14px;color:#0A0A0F;font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;cursor:pointer;opacity:0.4;margin-bottom:12px">🤖 ANALISAR COM IA</button>
+    <div id="post-p-loading" style="display:none;text-align:center;padding:20px;color:var(--cinza)">
+      <div style="font-size:36px;margin-bottom:8px">🔍</div>
+      <div>Analisando com IA...</div>
+    </div>
+    <div id="post-p-resultado"></div>
+  </div>
+</div>
+
 </body>
 </html>

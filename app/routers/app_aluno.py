@@ -192,3 +192,61 @@ async def chat_aluno(dados: ChatSchema, aluno: Aluno = Depends(get_aluno_logado)
     contexto_final = idioma_instrucao + "\n" + contexto
     resposta = await responder_chatbot(mensagem=dados.mensagem, historico=dados.historico or [], contexto=contexto_final, nome_personal="seu programa")
     return {"resposta": resposta}
+
+
+@router.get("/resultado")
+def resultado(aluno: AlunoCredencial = Depends(get_aluno_atual), db: Session = Depends(get_db)):
+    from app.routers.avaliacao import AvaliacaoFisica
+    from app.models import Aluno
+    aluno_obj = db.query(Aluno).filter(Aluno.id == aluno.aluno_id).first()
+    if not aluno_obj:
+        return {"detail": "Aluno nao encontrado"}
+    avals = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno.aluno_id
+    ).order_by(AvaliacaoFisica.data_avaliacao.desc()).all()
+    if not avals:
+        return {"detail": "Sem avaliacoes"}
+    atual = avals[0]
+    anterior = avals[1] if len(avals) > 1 else None
+    variacao_peso = None
+    if anterior and atual.peso and anterior.peso:
+        variacao_peso = round(float(atual.peso) - float(anterior.peso), 1)
+    massa_magra = None
+    if atual.peso and atual.percentual_gordura:
+        massa_magra = round(float(atual.peso) * (1 - float(atual.percentual_gordura)/100), 1)
+    return {
+        "peso_atual": float(atual.peso) if atual.peso else None,
+        "percentual_gordura": float(atual.percentual_gordura) if atual.percentual_gordura else None,
+        "massa_magra": massa_magra,
+        "variacao_peso": variacao_peso,
+        "data": str(atual.data_avaliacao)
+    }
+
+
+@router.get("/periodizacao")
+def periodizacao(aluno: AlunoCredencial = Depends(get_aluno_atual), db: Session = Depends(get_db)):
+    from app.models import Aluno
+    aluno_obj = db.query(Aluno).filter(Aluno.id == aluno.aluno_id).first()
+    if not aluno_obj:
+        return {"detail": "Aluno nao encontrado"}
+    objetivo = aluno_obj.objetivo.value if aluno_obj.objetivo else "hipertrofia"
+    nivel = aluno_obj.nivel_experiencia.value if aluno_obj.nivel_experiencia else "intermediario"
+    ciclos_map = {
+        "hipertrofia": [
+            {"emoji":"💪","nome":"FASE 1 — ADAPTACAO","descricao":"Semanas 1-4 · Base muscular","detalhes":"Volume moderado\nIntensidade 60-70% 1RM\nFoco em tecnica e postura\n3-4x por semana"},
+            {"emoji":"🔥","nome":"FASE 2 — HIPERTROFIA","descricao":"Semanas 5-12 · Crescimento","detalhes":"Volume alto\nIntensidade 70-85% 1RM\nProgressao de carga semanal\n4-5x por semana"},
+            {"emoji":"⚡","nome":"FASE 3 — INTENSIFICACAO","descricao":"Semanas 13-16 · Forca","detalhes":"Volume baixo\nIntensidade 85-95% 1RM\nMetodos avancados\n4x por semana"},
+            {"emoji":"😴","nome":"FASE 4 — DELOAD","descricao":"Semana 17 · Recuperacao","detalhes":"Volume 50% do normal\nIntensidade reduzida\nFoco em mobilidade\n3x por semana"},
+        ],
+        "emagrecimento": [
+            {"emoji":"🏃","nome":"FASE 1 — ATIVACAO","descricao":"Semanas 1-4 · Queima inicial","detalhes":"Cardio moderado\nTreino funcional\nDeficit calorico leve\n4x por semana"},
+            {"emoji":"🔥","nome":"FASE 2 — ACELERACAO","descricao":"Semanas 5-10 · Queima intensa","detalhes":"HIIT 2x semana\nMusculacao 3x\nDeficit calorico moderado\n5x por semana"},
+            {"emoji":"💪","nome":"FASE 3 — MANUTENCAO","descricao":"Semanas 11-16 · Preservar musculo","detalhes":"Foco em forca\nCardio steady state\nDieta de manutencao\n4x por semana"},
+        ],
+        "condicionamento": [
+            {"emoji":"🫀","nome":"FASE 1 — BASE AEROBICA","descricao":"Semanas 1-6 · Cardio base","detalhes":"Zona 2 predominante\nFC 60-70% max\n30-45min por sessao\n4x por semana"},
+            {"emoji":"⚡","nome":"FASE 2 — POTENCIA","descricao":"Semanas 7-12 · Intensidade","detalhes":"Intervalados\nFC 80-90% max\nVO2max em foco\n5x por semana"},
+        ],
+    }
+    ciclos = ciclos_map.get(objetivo, ciclos_map["hipertrofia"])
+    return {"objetivo": objetivo, "nivel": nivel, "ciclos": ciclos}

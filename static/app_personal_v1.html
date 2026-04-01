@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AurumSci PRO">
 <meta name="theme-color" content="#0A0A0F">
-<link rel="apple-touch-icon" href="/static/aurumsci_logo2-2.png">
+<link rel="apple-touch-icon" href="/static/aurumsci_logo2.png">
 <link rel="manifest" href="/static/manifest_personal.json">
 <title>AurumSci — Personal</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -886,7 +886,7 @@ function selecionarAvalAluno(id, nome){
       html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin-bottom:8px">🧍 POSTURAL</div>';
       html += '<div style="font-size:12px;color:var(--cinza);line-height:1.6;margin-bottom:12px">' + (po.observacoes||po.cabeca) + '</div>';
     }
-    html += '<button onclick="abrirPosturalAluno(' + id + ', '' + nome + '')" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer">🤖 NOVA ANÁLISE POSTURAL</button>';
+    html += '<button onclick="abrirPosturalAluno(' + id + ', \'' + nome + '\')" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer">🤖 NOVA ANÁLISE POSTURAL</button>';
     html += '</div>';
     document.getElementById('aval-content').innerHTML = html;
   }).catch(function(){ document.getElementById('aval-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:20px">Erro ao carregar</div>'; });

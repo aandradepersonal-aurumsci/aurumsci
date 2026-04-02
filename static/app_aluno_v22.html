@@ -1165,10 +1165,23 @@ function renderTreino(){
           '<div class="ex-info"><div class="ex-nome">' + ex.nome + '</div>' +
           '<div class="ex-det">' + series + ' séries × ' + ex.repeticoes + ' reps · ' + (ex.descanso||90) + 's descanso</div>' +
           (ex.corretivo ? '<div class="ex-corretivo">CORRETIVO</div>' : '') + '</div>' +
-          '<div class="ex-carga"><div class="ex-carga-val">' + (ex.carga||'—') + '</div><div class="ex-carga-un">kg</div></div></div>' +
+          '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' +
+          '<div class="ex-carga"><div class="ex-carga-val">' + (ex.carga||'—') + '</div><div class="ex-carga-un">kg</div></div>' +
+          '<button onclick="verVideoExercicio(\'' + ex.nome + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0" title="Ver vídeo">🎬</button>' +
+          '</div></div>' +
           '<div style="display:flex;flex-wrap:wrap;gap:4px;padding-left:44px">' + botoesHtml + '</div>' +
           '</div>';
       });
+      // Botão adicionar exercício extra
+      treinoHtml += '<div style="padding:10px 0;border-top:1px solid var(--borda);margin-top:8px">' +
+        '<div id="extra-form" style="display:none;margin-bottom:10px">' +
+        '<input id="extra-nome" type="text" placeholder="Nome do exercício..." style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--borda);background:var(--bg);color:var(--texto);font-size:14px;margin-bottom:8px;box-sizing:border-box">' +
+        '<div style="display:flex;gap:8px">' +
+        '<button onclick="adicionarExtraConfirmar()" style="flex:1;padding:10px;background:var(--ouro);border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:15px;cursor:pointer">ADICIONAR ✓</button>' +
+        '<button onclick="document.getElementById(\"extra-form\").style.display=\"none\"" style="padding:10px 16px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--cinza);cursor:pointer">✕</button>' +
+        '</div></div>' +
+        '<button onclick="document.getElementById(\"extra-form\").style.display=\"block\";document.getElementById(\"extra-nome\").focus()" style="width:100%;padding:12px;background:none;border:1px dashed var(--borda);border-radius:12px;color:var(--cinza);font-size:13px;cursor:pointer">+ Adicionar exercício</button>' +
+        '</div>';
       treinoHtml += '<button class="btn-concluir" id="btn-concluir-treino" onclick="concluirTreino(0)" style="opacity:0.3;pointer-events:none">CONCLUIR TREINO ✓</button></div>';
 
       // Corretivos posturais
@@ -1493,6 +1506,49 @@ function iniciarTimer(segundos, proxEx, tipo){
     if(timerAtual <= 0){ clearInterval(timerInterval); overlay.classList.remove('ativo'); }
   }, 1000);
 }
+function verVideoExercicio(nome){
+  var query = encodeURIComponent(nome + ' exercicio academia como fazer');
+  var url = 'https://www.youtube.com/results?search_query=' + query;
+  window.open(url, '_blank');
+}
+
+var extrasAdicionados = [];
+function adicionarExtraConfirmar(){
+  var nome = document.getElementById('extra-nome').value.trim();
+  if(!nome){ mostrarToast('Digite o nome do exercício!'); return; }
+  document.getElementById('extra-form').style.display = 'none';
+  document.getElementById('extra-nome').value = '';
+  var idx = treinoExercicios.length + extrasAdicionados.length;
+  extrasAdicionados.push(nome);
+  treinoSeriesFeitas[idx] = 0;
+  // Adiciona visualmente no card
+  var card = document.getElementById('card-exercicios');
+  if(!card) return;
+  var botoesHtml = '';
+  for(var s = 0; s < 3; s++){
+    botoesHtml += '<button class="btn-serie" id="serie-' + idx + '-' + s + '" onclick="marcarSerie(' + idx + ',' + s + ',3,60,\'' + nome + '\')" style="width:32px;height:32px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin:2px">' + (s+1) + '</button>';
+  }
+  var div = document.createElement('div');
+  div.className = 'ex-item';
+  div.style.cssText = 'flex-direction:column;align-items:flex-start;padding:14px 0;gap:10px;border-top:1px solid var(--borda)';
+  div.innerHTML = '<div style="display:flex;align-items:center;gap:12px;width:100%">' +
+    '<div class="ex-num" id="ex-num-' + idx + '" style="background:var(--azul)">' + (idx+1) + '</div>' +
+    '<div class="ex-info"><div class="ex-nome">' + nome + '</div>' +
+    '<div class="ex-det">3 séries · livre</div>' +
+    '<div class="ex-corretivo" style="background:rgba(75,159,255,.1);color:var(--azul);border-color:rgba(75,159,255,.3)">EXTRA</div></div>' +
+    '<button onclick="verVideoExercicio(\'' + nome + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;margin-left:auto">🎬</button>' +
+    '</div>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:4px;padding-left:44px">' + botoesHtml + '</div>';
+  // Insere antes do botão adicionar
+  var btnAdicionar = card.querySelector('[onclick*="extra-form"]');
+  if(btnAdicionar && btnAdicionar.parentNode){
+    card.insertBefore(div, btnAdicionar.parentNode);
+  } else {
+    card.appendChild(div);
+  }
+  mostrarToast('✅ ' + nome + ' adicionado!');
+}
+
 function pularTimer(){ clearInterval(timerInterval); document.getElementById('timer-overlay').classList.remove('ativo'); }
 
 function marcarSerie(exIdx, serieIdx, totalSeries, descanso, exNome){

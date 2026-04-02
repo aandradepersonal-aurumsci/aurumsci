@@ -171,7 +171,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 .timer-prox{font-size:12px;color:rgba(255,255,255,.5);margin-top:8px;text-align:center;padding:0 24px}
 .timer-badge{font-size:10px;letter-spacing:2px;color:var(--ouro);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:4px 14px;margin-bottom:20px}
 .btn-pular-timer{padding:14px 40px;background:var(--bg2);border:1px solid var(--borda);border-radius:14px;color:var(--cinza);font-size:14px;cursor:pointer;font-family:'DM Sans'}
-.btn-ajuda{position:fixed;bottom:80px;right:16px;width:36px;height:36px;border-radius:50%;background:var(--bg2);border:1.5px solid var(--borda);color:var(--cinza);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:90;box-shadow:0 2px 12px rgba(0,0,0,.3);transition:all .2s;font-weight:700}
+.btn-ajuda{position:fixed;top:14px;right:70px;width:30px;height:30px;border-radius:50%;background:rgba(201,168,76,.15);border:1.5px solid var(--ouro);color:var(--ouro);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:150;transition:all .2s;font-weight:700}
 .btn-ajuda:active{transform:scale(.92)}
 .ajuda-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;display:none;align-items:flex-end;justify-content:center}
 .ajuda-overlay.show{display:flex}
@@ -1294,11 +1294,12 @@ function renderTreino(){
       if(d.corretivos_posturais && d.corretivos_posturais.length > 0){
         treinoHtml += '<div class="card" style="margin-top:12px"><div class="card-line roxo"></div>' +
           '<div style="font-size:10px;color:var(--ouro);letter-spacing:2px;margin-bottom:10px">🧍 CORRETIVOS POSTURAIS</div>';
-        d.corretivos_posturais.forEach(function(c, idx){
+        d.corretivos_posturais.forEach(function(corr, idx){
           treinoHtml += '<div class="ex-item"><div class="ex-num">' + (idx+1) + '</div>' +
-            '<div class="ex-info"><div class="ex-nome">' + c + '</div>' +
+            '<div class="ex-info"><div class="ex-nome">' + corr + '</div>' +
             '<div class="ex-det">2-3 séries · conforme orientação</div>' +
-            '<div class="ex-corretivo">CORRETIVO</div></div></div>';
+            '<div class="ex-corretivo">CORRETIVO</div></div>' +
+            '<button onclick="verVideoCorretivo(\'' + corr + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0;flex-shrink:0" title="Ver vídeo">🎬</button></div>';
         });
         treinoHtml += '</div>';
       }
@@ -1621,6 +1622,10 @@ function abrirExtraForm(){
 function fecharExtraForm(){
   var f = document.getElementById('extra-form');
   if(f){ f.style.display = 'none'; }
+}
+function verVideoCorretivo(nome){
+  var query = encodeURIComponent(nome + ' exercicio corretivo postural como fazer');
+  window.open('https://www.youtube.com/results?search_query=' + query, '_blank');
 }
 function verVideoExercicio(nome){
   var query = encodeURIComponent(nome + ' exercicio academia como fazer');

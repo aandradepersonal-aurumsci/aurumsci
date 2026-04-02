@@ -632,3 +632,5 @@ def periodizacao(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends
     }
     ciclos = ciclos_map.get(objetivo, ciclos_map["hipertrofia"])
     return {"objetivo": objetivo, "nivel": nivel, "ciclos": ciclos}
+
+# pente fino v1

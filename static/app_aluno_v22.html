@@ -1175,7 +1175,7 @@ function renderTreino(){
       // Botão adicionar exercício extra
       treinoHtml += '<div style="padding:10px 0;border-top:1px solid var(--borda);margin-top:8px">' +
         '<div id="extra-form" style="display:none;margin-bottom:10px">' +
-        '<input id="extra-nome" type="text" placeholder="Nome do exercício..." style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--borda);background:var(--bg);color:var(--texto);font-size:14px;margin-bottom:8px;box-sizing:border-box">' +
+        '<div id="extra-nome" contenteditable="true" data-placeholder="Nome do exercício..." style="display:block;width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--ouro);background:var(--bg2);color:var(--texto);font-size:14px;margin-bottom:8px;box-sizing:border-box;min-height:40px;outline:none" onkeydown="if(event.key===\'Enter\'){event.preventDefault();adicionarExtraConfirmar()}"></div>' +
         '<div style="display:flex;gap:8px">' +
         '<button onclick="adicionarExtraConfirmar()" style="flex:1;padding:10px;background:var(--ouro);border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:15px;cursor:pointer">ADICIONAR ✓</button>' +
         '<button onclick="fecharExtraForm()" style="padding:10px 16px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--cinza);cursor:pointer">✕</button>' +
@@ -1524,10 +1524,10 @@ function verVideoExercicio(nome){
 
 var extrasAdicionados = [];
 function adicionarExtraConfirmar(){
-  var nome = document.getElementById('extra-nome').value.trim();
+  var el = document.getElementById('extra-nome'); var nome = (el.value !== undefined ? el.value : el.textContent || el.innerText).trim();
   if(!nome){ mostrarToast('Digite o nome do exercício!'); return; }
   document.getElementById('extra-form').style.display = 'none';
-  document.getElementById('extra-nome').value = '';
+  var elc = document.getElementById('extra-nome'); if(elc.value !== undefined){ elc.value=''; } else { elc.textContent=''; }
   var idx = treinoExercicios.length + extrasAdicionados.length;
   extrasAdicionados.push(nome);
   treinoSeriesFeitas[idx] = 0;

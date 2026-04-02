@@ -29,6 +29,7 @@ def criar_sessao(dados: CheckoutSchema):
                 "quantity": 1,
             }],
             mode="subscription",
+            subscription_data={"trial_period_days": 14},
             success_url="https://www.aurumsc.com.br/aluno?pagamento=sucesso",
             cancel_url="https://www.aurumsc.com.br/aluno?pagamento=cancelado",
             metadata={"aluno_id": str(dados.aluno_id)},

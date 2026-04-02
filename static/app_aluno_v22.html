@@ -1366,88 +1366,14 @@ function renderEvolucao(){
   fetch('/app-aluno/resultado', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
-    if(!d || d.detail){
-      document.getElementById('evolucao-content').innerHTML =
-        '<div style="text-align:center;padding:40px">' +
-        '<div style="font-size:48px;margin-bottom:16px">📊</div>' +
-        '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2);margin-bottom:8px">NENHUM DADO AINDA</div>' +
-        '<div style="font-size:13px;color:var(--cinza);line-height:1.7">Vá em <strong style="color:var(--ouro)">AVALIAÇÃO → COMPOSIÇÃO</strong><br>e registre seu peso e % de gordura.<br>Seu personal também pode registrar para você!</div>' +
-        '</div>';
-      return;
-    }
-    var peso = d.peso_atual;
-    var gord = d.percentual_gordura;
-    var magra = d.massa_magra;
-    var variacao = d.variacao_peso;
-
-    // Frase motivacional
-    var frase = '';
-    if(variacao !== null && variacao !== undefined){
-      if(variacao < -1) frase = '🎉 Incrível! Você perdeu ' + Math.abs(variacao) + 'kg! Continue assim!';
-      else if(variacao < 0) frase = '💪 Ótimo progresso! Você perdeu ' + Math.abs(variacao) + 'kg!';
-      else if(variacao === 0) frase = '⚡ Peso estável! Foque na composição corporal!';
-      else frase = '💡 Lembre-se: ganho de peso pode ser músculo! Veja o % de gordura.';
-    } else {
-      frase = '🚀 Registre avaliações regularmente para ver sua evolução!';
-    }
-
-    var corGord = gord < 15 ? 'var(--azul)' : gord < 20 ? 'var(--verde)' : gord < 25 ? 'var(--ouro)' : 'var(--vermelho)';
-    var classifGord = gord < 15 ? 'Ótimo' : gord < 20 ? 'Bom' : gord < 25 ? 'Acima do ideal' : 'Alto';
-
+    if(!d || d.detail){ document.getElementById('evolucao-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">Complete sua avaliação para ver evolução!</div>'; return; }
     var html = '';
-
-    // Frase motivacional
-    html += '<div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:14px 16px;margin-bottom:16px;font-size:14px;line-height:1.6">' + frase + '</div>';
-
-    // Cards principais
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">';
-
-    // Peso
-    html += '<div class="card" style="margin:0"><div class="card-line ouro"></div>' +
-      '<div style="font-size:10px;color:var(--cinza);letter-spacing:1px">PESO ATUAL</div>' +
-      '<div style="font-family:Bebas Neue;font-size:36px;color:var(--ouro2);line-height:1">' + (peso||'—') + '</div>' +
-      '<div style="font-size:11px;color:var(--cinza)">kg</div>' +
-      (variacao !== null && variacao !== undefined ? '<div style="font-size:12px;color:' + (variacao <= 0 ? 'var(--verde)' : 'var(--vermelho)') + ';margin-top:4px;font-weight:600">' + (variacao > 0 ? '+' : '') + variacao + ' kg</div>' : '') +
-      '</div>';
-
-    // % Gordura
-    html += '<div class="card" style="margin:0"><div class="card-line" style="background:' + corGord + '"></div>' +
-      '<div style="font-size:10px;color:var(--cinza);letter-spacing:1px">% GORDURA</div>' +
-      '<div style="font-family:Bebas Neue;font-size:36px;color:' + corGord + ';line-height:1">' + (gord||'—') + '</div>' +
-      '<div style="font-size:11px;color:var(--cinza)">% · ' + (gord ? classifGord : '—') + '</div>' +
-      '</div>';
-
-    html += '</div>';
-
-    // Massa magra — barra visual
-    if(magra && peso){
-      var pctMagra = Math.round((magra/peso)*100);
-      html += '<div class="card" style="margin-bottom:16px"><div class="card-line verde"></div>' +
-        '<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px">' +
-        '<div><div style="font-size:10px;color:var(--cinza);letter-spacing:1px">MASSA MAGRA</div>' +
-        '<div style="font-family:Bebas Neue;font-size:32px;color:var(--verde);line-height:1">' + magra + '<span style="font-size:14px"> kg</span></div></div>' +
-        '<div style="text-align:right"><div style="font-size:10px;color:var(--cinza)">COMPOSIÇÃO</div>' +
-        '<div style="font-size:13px;font-weight:600">' + pctMagra + '% do peso</div></div>' +
-        '</div>' +
-        '<div style="background:var(--bg);border-radius:8px;height:12px;overflow:hidden">' +
-        '<div style="height:100%;border-radius:8px;background:linear-gradient(90deg,var(--verde),#00B87A);width:' + pctMagra + '%"></div>' +
-        '</div>' +
-        '<div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--cinza)">' +
-        '<span>💪 Músculo ' + pctMagra + '%</span><span>🔥 Gordura ' + (100-pctMagra) + '%</span>' +
-        '</div></div>';
-    }
-
-    // Dica baseada no perfil
-    var dica = '';
-    if(gord > 25) dica = '💡 <strong>Dica:</strong> Seu % de gordura está alto. Combine treino com alimentação saudável para melhores resultados.';
-    else if(gord < 15) dica = '💡 <strong>Dica:</strong> Excelente composição! Foque em manter e ganhar massa muscular.';
-    else dica = '💡 <strong>Dica:</strong> Continue treinando consistentemente. A evolução vem com o tempo!';
-
-    html += '<div style="font-size:12px;color:var(--cinza);line-height:1.7;padding:12px;background:var(--bg2);border-radius:12px">' + dica + '</div>';
-
-    document.getElementById('evolucao-content').innerHTML = html;
+    if(d.peso_atual){ html += '<div class="metric-big"><div class="metric-label">PESO ATUAL</div><div class="metric-val">' + d.peso_atual + '<span class="metric-unit"> kg</span></div>' + (d.variacao_peso ? '<div class="metric-diff ' + (d.variacao_peso < 0 ? 'diff-pos' : 'diff-neg') + '">' + (d.variacao_peso > 0 ? '+' : '') + d.variacao_peso + ' kg</div>' : '') + '</div>'; }
+    if(d.percentual_gordura){ html += '<div class="metric-big"><div class="metric-label">% GORDURA</div><div class="metric-val">' + d.percentual_gordura + '<span class="metric-unit"> %</span></div></div>'; }
+    if(d.massa_magra){ html += '<div class="metric-big"><div class="metric-label">MASSA MAGRA</div><div class="metric-val">' + d.massa_magra + '<span class="metric-unit"> kg</span></div></div>'; }
+    document.getElementById('evolucao-content').innerHTML = html || '<div style="color:var(--cinza);text-align:center;padding:40px">Nenhum dado ainda!</div>';
   }).catch(function(){
-    document.getElementById('evolucao-content').innerHTML = '<div style="text-align:center;padding:40px;color:var(--cinza)">Complete sua avaliação!</div>';
+    document.getElementById('evolucao-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">Complete sua avaliação!</div>';
   });
 }
 
@@ -1458,30 +1384,11 @@ function renderPeriodo(){
   .then(function(d){
     if(!d || d.detail || !d.ciclos){ document.getElementById('periodo-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">Faça o onboarding primeiro!</div>'; return; }
     var html = '';
-    var intensidades = [
-      [30,40,50,60], // fase 1
-      [65,70,75,80,82,84,85,87], // fase 2
-      [88,90,92,95], // fase 3
-      [50] // deload
-    ];
-    var coresF = ['var(--azul)','var(--ouro)','var(--vermelho)','var(--verde)'];
-    d.ciclos.forEach(function(ciclo, i){
-      var intens = intensidades[i] || [60,70,80];
-      var maxI = Math.max.apply(null, intens);
-      var barras = intens.map(function(v){
-        return '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">' +
-          '<div style="font-size:9px;color:var(--cinza)">' + v + '%</div>' +
-          '<div style="height:' + Math.round(v*0.7) + 'px;background:' + coresF[i] + ';border-radius:4px 4px 0 0;width:100%;opacity:0.85"></div>' +
-          '</div>';
-      }).join('');
+    d.ciclos.forEach(function(c, i){
       html += '<div class="ciclo-card" onclick="toggleCiclo(this)">' +
-        '<div class="ciclo-header"><div class="ciclo-icon" style="background:rgba(201,168,76,.08)">' + (ciclo.emoji||'💪') + '</div>' +
-        '<div class="ciclo-info"><div class="ciclo-nome">' + ciclo.nome + '</div><div class="ciclo-desc">' + ciclo.descricao + '</div></div></div>' +
-        '<div class="ciclo-detalhe">' +
-        '<div style="display:flex;align-items:flex-end;gap:3px;height:60px;padding:0 4px;margin-bottom:8px;border-bottom:2px solid var(--borda)">' + barras + '</div>' +
-        '<div style="font-size:10px;color:var(--cinza);text-align:center;margin-bottom:10px;letter-spacing:1px">INTENSIDADE POR SEMANA</div>' +
-        (ciclo.detalhes||'').split('\n').map(function(l){ return '<div class="ciclo-item"><div class="ciclo-dot"></div>' + l + '</div>'; }).join('') +
-        '</div></div>';
+        '<div class="ciclo-header"><div class="ciclo-icon" style="background:rgba(201,168,76,.08)">' + (c.emoji||'💪') + '</div>' +
+        '<div class="ciclo-info"><div class="ciclo-nome">' + c.nome + '</div><div class="ciclo-desc">' + c.descricao + '</div></div></div>' +
+        '<div class="ciclo-detalhe">' + (c.detalhes||'').split('\n').map(function(l){ return '<div class="ciclo-item"><div class="ciclo-dot"></div>' + l + '</div>'; }).join('') + '</div></div>';
     });
     document.getElementById('periodo-content').innerHTML = html;
   }).catch(function(){});
@@ -1490,43 +1397,19 @@ function toggleCiclo(el){ el.querySelector('.ciclo-detalhe').classList.toggle('s
 
 // ── LOJA ──────────────────────────────────────────────
 function renderLoja(){
-  var categorias = [
-    {cat:'📏 PARA SUA AVALIAÇÃO', itens:[
-      {emoji:'📏', nome:'Fita Métrica Profissional', desc:'Indispensável para medir circunferências com precisão. Flexível e graduada em cm.', preco:'R$ 15', link:'https://amzn.to/aurumsci'},
-      {emoji:'⚖️', nome:'Balança de Bioimpedância', desc:'Mede peso, % gordura, massa magra, massa óssea e água corporal. Essencial para acompanhar sua evolução!', preco:'R$ 180', link:'https://amzn.to/aurumsci'},
-      {emoji:'🩺', nome:'Esfigmomanômetro Digital', desc:'Aparelho para medir pressão arterial (sistólica e diastólica) em casa. Use antes e após o treino.', preco:'R$ 120', link:'https://amzn.to/aurumsci'},
-    ]},
-    {cat:'🏋️ EQUIPAMENTOS', itens:[
-      {emoji:'🏋️', nome:'Kit Halteres Ajustáveis', desc:'2kg a 24kg — perfeito para treinar em casa. Substitui vários pares de halteres!', preco:'R$ 299', link:'https://amzn.to/aurumsci'},
-      {emoji:'🧘', nome:'Colchonete de Exercício', desc:'Para abdominais, alongamentos e exercícios no chão. Antiderrapante e confortável.', preco:'R$ 89', link:'https://amzn.to/aurumsci'},
-    ]},
-    {cat:'💊 SUPLEMENTAÇÃO', itens:[
-      {emoji:'🧴', nome:'Whey Protein Growth', desc:'25g de proteína por dose. Tome até 30min após o treino para recuperação muscular máxima.', preco:'R$ 149', link:'https://amzn.to/aurumsci'},
-      {emoji:'💊', nome:'Creatina Growth', desc:'5g por dia — a suplementação com maior evidência científica para ganho de força e massa muscular.', preco:'R$ 79', link:'https://amzn.to/aurumsci'},
-      {emoji:'🫀', nome:'Magnésio', desc:'Auxilia na contração muscular, qualidade do sono e recuperação. Tome à noite.', preco:'R$ 45', link:'https://amzn.to/aurumsci'},
-    ]},
-    {cat:'🎽 ACESSÓRIOS', itens:[
-      {emoji:'🧤', nome:'Luva de Musculação', desc:'Protege as mãos e melhora a pegada nos exercícios. Essencial para quem treina pesado.', preco:'R$ 49', link:'https://amzn.to/aurumsci'},
-      {emoji:'🪣', nome:'Garrafinha Squeeze', desc:'Hidratação durante o treino. Beba pelo menos 500ml por hora de treino!', preco:'R$ 25', link:'https://amzn.to/aurumsci'},
-      {emoji:'🪢', nome:'Strap de Pulso', desc:'Para exercícios pesados como levantamento terra e remadas. Garante melhor pegada.', preco:'R$ 39', link:'https://amzn.to/aurumsci'},
-      {emoji:'🏋️', nome:'Cinta de Couro', desc:'Para levantamentos pesados (avançados). Dá suporte lombar extra em cargas máximas.', preco:'R$ 89', link:'https://amzn.to/aurumsci'},
-      {emoji:'🎽', nome:'Camiseta Dry-Fit ALPHAco', desc:'Tecnologia de secagem rápida, visual premium. Confortável para treinar e usar no dia a dia.', preco:'R$ 79', link:'https://amzn.to/aurumsci'},
-    ]},
+  var itens = [
+    {emoji:'🏋️', nome:'Kit Halteres Ajustáveis', desc:'2kg a 24kg — perfeito pra casa', preco:'R$ 299', link:'https://amzn.to/aurumsci'},
+    {emoji:'🎽', nome:'Camiseta Dry-Fit AurumSci', desc:'Tecnologia suor-dry, visual premium', preco:'R$ 89', link:'https://amzn.to/aurumsci'},
+    {emoji:'💊', nome:'Creatina Monohidratada', desc:'5g/dia — evidência científica sólida', preco:'R$ 79', link:'https://amzn.to/aurumsci'},
+    {emoji:'📱', nome:'Faixa de FC Polar H10', desc:'FC em tempo real durante o treino', preco:'R$ 399', link:'https://amzn.to/aurumsci'},
+    {emoji:'🧴', nome:'Proteína Whey Isolada', desc:'25g proteína por dose, baixo carboidrato', preco:'R$ 149', link:'https://amzn.to/aurumsci'},
   ];
-  var itens = [];
-  categorias.forEach(function(cat){ cat.itens.forEach(function(i){ i.categoria = cat.cat; itens.push(i); }); });
-  var html = '';
-  var catAtual = '';
-  itens.forEach(function(i){
-    if(i.categoria !== catAtual){
-      catAtual = i.categoria;
-      html += '<div style="font-size:11px;color:var(--ouro);letter-spacing:2px;padding:14px 0 8px;font-weight:700">' + catAtual + '</div>';
-    }
-    html += '<div class="loja-item" onclick="window.open(\'' + i.link + '\',\'_blank\')">'+
+  var html = itens.map(function(i){
+    return '<div class="loja-item" onclick="window.open(\'' + i.link + '\',\'_blank\')">' +
       '<div class="loja-icon">' + i.emoji + '</div>' +
       '<div class="loja-info"><div class="loja-nome">' + i.nome + '</div><div class="loja-desc">' + i.desc + '</div></div>' +
       '<div class="loja-preco">' + i.preco + '</div></div>';
-  });
+  }).join('');
   document.getElementById('loja-content').innerHTML = html;
 }
 
@@ -1539,18 +1422,7 @@ function abrirModal(id){
 function fecharModal(id){ document.getElementById(id).classList.remove('show'); }
 
 function renderModalMedidas(){
-  var dica = '<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;line-height:1.8;color:var(--cinza)">' +
-    '<strong style="color:var(--ouro)">📏 Como medir corretamente:</strong><br>' +
-    '• Fique em pé, relaxado, pés unidos<br>' +
-    '• Fita paralela ao chão, sem apertar<br>' +
-    '• Meça sempre no mesmo horário (preferencialmente de manhã)<br>' +
-    '• <strong style="color:var(--ouro)">Cintura:</strong> parte mais estreita entre costelas e quadril<br>' +
-    '• <strong style="color:var(--ouro)">Abdômen:</strong> na altura do umbigo<br>' +
-    '• <strong style="color:var(--ouro)">Quadril:</strong> parte mais larga dos glúteos<br>' +
-    '• <strong style="color:var(--ouro)">Bíceps:</strong> braço contraído, ponto de maior volume<br>' +
-    '• <strong style="color:var(--ouro)">Coxa:</strong> parte mais larga da coxa, logo abaixo do glúteo' +
-    '</div>';
-  document.getElementById('body-medidas').innerHTML = dica + renderMedidasRows() +
+  document.getElementById('body-medidas').innerHTML = renderMedidasRows() +
     '<br><button class="btn-gold" onclick="salvarMedidas()">SALVAR MEDIDAS</button>';
 }
 function salvarMedidas(){
@@ -1560,16 +1432,7 @@ function salvarMedidas(){
 
 function renderModalComposicao(){
   document.getElementById('body-composicao').innerHTML =
-    '<div style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2);border-radius:12px;padding:12px;margin-bottom:14px">' +
-    '<div style="font-size:11px;color:var(--azul);font-weight:700;letter-spacing:1px;margin-bottom:8px">⚠️ PROTOCOLO PRÉ-BIOIMPEDÂNCIA</div>' +
-    '<div style="font-size:12px;color:var(--cinza);line-height:1.9">' +
-    '🚫 <strong>12 horas</strong> sem atividade física intensa<br>' +
-    '🍽️ <strong>6 horas</strong> sem alimentos sólidos<br>' +
-    '💧 <strong>4 horas</strong> sem líquidos<br>' +
-    '🚿 Não faça o teste após banho quente ou sauna<br>' +
-    '📱 Use sempre no mesmo horário para comparar resultados' +
-    '</div></div>' +
-    '<div style="font-size:11px;color:var(--cinza);margin-bottom:12px">Informe os dados que aparecem na sua balança de bioimpedância:</div>' +
+    '<div class="onb-dica">Informe os dados da sua bioimpedância ou dobras cutâneas.</div>' +
     '<div class="bio-row"><div class="bio-icon">⚖️</div><div class="bio-info"><div class="bio-label">Peso</div></div><input class="bio-input-val" type="number" id="comp-peso" placeholder="70"><div class="bio-un">kg</div></div>' +
     '<div class="bio-row"><div class="bio-icon">📊</div><div class="bio-info"><div class="bio-label">% Gordura</div></div><input class="bio-input-val" type="number" id="comp-gord" placeholder="18"><div class="bio-un">%</div></div>' +
     '<div class="bio-row"><div class="bio-icon">💪</div><div class="bio-info"><div class="bio-label">Massa Magra</div></div><input class="bio-input-val" type="number" id="comp-mm" placeholder="57"><div class="bio-un">kg</div></div>' +
@@ -1651,13 +1514,19 @@ function renderTesteVO2(area){
     '<div class="result-input-row"><div class="result-input-label">Distância percorrida</div><input class="result-input-val" type="number" id="vo2-dist" placeholder="2400"><div class="result-input-un">m</div></div>' +
     '<div class="result-input-row"><div class="result-input-label">FC antes (repouso)</div><input class="result-input-val" type="number" id="vo2-fc-rep" placeholder="65"><div class="result-input-un">bpm</div></div>' +
     '<div class="result-input-row"><div class="result-input-label">FC após esforço</div><input class="result-input-val" type="number" id="vo2-fc-pos" placeholder="160"><div class="result-input-un">bpm</div></div>' +
-    '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin:10px 0 4px">PRESSÃO ARTERIAL</div>' +
-    '<div class="result-input-row"><div class="result-input-label">PA repouso sistólica</div><input class="result-input-val" type="number" id="vo2-pa-sis-rep" placeholder="120"><div class="result-input-un">mmHg</div></div>' +
-    '<div class="result-input-row"><div class="result-input-label">PA repouso diastólica</div><input class="result-input-val" type="number" id="vo2-pa-dia-rep" placeholder="80"><div class="result-input-un">mmHg</div></div>' +
-    '<div class="result-input-row"><div class="result-input-label">PA pós sistólica</div><input class="result-input-val" type="number" id="vo2-pa-sis-pos" placeholder="160"><div class="result-input-un">mmHg</div></div>' +
-    '<div class="result-input-row"><div class="result-input-label">PA pós diastólica</div><input class="result-input-val" type="number" id="vo2-pa-dia-pos" placeholder="90"><div class="result-input-un">mmHg</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">PA repouso (sistólica)</div><input class="result-input-val" type="number" id="vo2-pa-rep" placeholder="120"><div class="result-input-un">mmHg</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">PA pós imediato</div><input class="result-input-val" type="number" id="vo2-pa-pos" placeholder="160"><div class="result-input-un">mmHg</div></div>' +
     '<br><button class="btn-gold" onclick="calcularVO2()">CALCULAR VO2 MÁX</button>' +
-    '<div id="vo2-resultado" style="margin-top:16px"></div></div>';
+    '<div id="vo2-resultado" style="margin-top:16px"></div>' +
+    '<div style="margin-top:16px;background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2);border-radius:12px;padding:12px">' +
+    '<div style="font-size:10px;color:var(--azul);letter-spacing:1px;font-weight:700;margin-bottom:8px">❤️ FC DE RECUPERAÇÃO (HRR) — faça logo após o teste</div>' +
+    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.6">Pare o teste, meça a FC imediatamente e após 1 minuto de repouso parado.</div>' +
+    '<div class="result-input-row"><div class="result-input-label">FC pico (fim do teste)</div><input class="result-input-val" type="number" id="vo2-hrr-pico" placeholder="165"><div class="result-input-un">bpm</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">FC após 1 minuto</div><input class="result-input-val" type="number" id="vo2-hrr-1min" placeholder="140"><div class="result-input-un">bpm</div></div>' +
+    '</div>' +
+    '<br><button class="btn-gold" style="background:linear-gradient(135deg,var(--azul),#357ABD)" onclick="calcularVO2comHRR()">CALCULAR VO2 + HRR ❤️</button>' +
+    '<div id="vo2-hrr-resultado" style="margin-top:16px"></div>' +
+    '</div>';
 }
 
 function calcularVO2(){
@@ -1674,6 +1543,43 @@ function calcularVO2(){
     '<div class="class-val" style="color:' + classif.cor + '">' + vo2 + ' <span style="font-size:16px">ml/kg/min</span></div>' +
     '<div class="class-desc" style="color:' + classif.cor + '">' + classif.txt + '</div>' +
     (fcPos && fcRep ? '<div style="margin-top:12px;font-size:12px;color:var(--cinza)">FC pico: ' + fcPos + ' bpm · FC repouso: ' + fcRep + ' bpm</div>' : '') +
+    '</div>';
+}
+
+function calcularVO2comHRR(){
+  calcularVO2();
+  var pico = parseFloat(document.getElementById('vo2-hrr-pico').value)||0;
+  var min1 = parseFloat(document.getElementById('vo2-hrr-1min').value)||0;
+  if(!pico || !min1){ mostrarToast('Informe a FC pico e após 1 minuto!'); return; }
+  var hrr = pico - min1;
+  var cor, classif, msg, aviso = '';
+  if(hrr >= 25){
+    cor = 'var(--verde)'; classif = 'Excelente ✅';
+    msg = 'Sua recuperação cardíaca é excelente! Coração bem condicionado e sistema nervoso autônomo saudável.';
+  } else if(hrr >= 18){
+    cor = 'var(--azul)'; classif = 'Boa ✅';
+    msg = 'Boa recuperação cardíaca. Continue treinando para melhorar ainda mais!';
+  } else if(hrr >= 12){
+    cor = 'var(--ouro)'; classif = 'Regular ⚠️';
+    msg = 'Recuperação dentro do limite aceitável. Invista em treino aeróbico para melhorar.';
+  } else {
+    cor = 'var(--vermelho)'; classif = 'Abaixo do esperado 🔴';
+    msg = '';
+    aviso = '<div style="margin-top:12px;padding:12px;background:rgba(255,75,75,.08);border:1px solid rgba(255,75,75,.3);border-radius:10px;font-size:12px;line-height:1.8">' +
+      '<strong style="color:#FF6B6B">⚠️ Atenção importante:</strong><br>' +
+      'Sua recuperação cardíaca está abaixo do esperado (queda de apenas ' + hrr + ' bpm em 1 min).<br><br>' +
+      'Isso <strong>não é diagnóstico</strong>, mas é um sinal que merece atenção médica.<br><br>' +
+      '👨‍⚕️ <strong>Recomendamos consultar um cardiologista</strong> para uma avaliação completa antes de aumentar a intensidade dos treinos. Peça um <em>teste ergométrico</em> e <em>ecocardiograma</em>.<br><br>' +
+      '<span style="color:rgba(255,120,120,.7);font-size:11px">Esta é uma orientação preventiva do seu personal trainer. Não interrompa os treinos sem orientação médica.</span>' +
+      '</div>';
+  }
+  document.getElementById('vo2-hrr-resultado').innerHTML =
+    '<div class="classificacao-box" style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2)">' +
+    '<div class="class-titulo" style="color:var(--azul)">FC DE RECUPERAÇÃO (HRR)</div>' +
+    '<div class="class-val" style="color:' + cor + '">-' + hrr + ' <span style="font-size:16px">bpm/min</span></div>' +
+    '<div class="class-desc" style="color:' + cor + '">' + classif + '</div>' +
+    (msg ? '<div style="margin-top:10px;font-size:12px;color:var(--cinza);line-height:1.6">' + msg + '</div>' : '') +
+    aviso +
     '</div>';
 }
 
@@ -1706,10 +1612,7 @@ function salvarForca(){
 function renderTesteFC(area){
   area.innerHTML = '<div class="card"><div class="card-line vermelho" style="background:linear-gradient(90deg,var(--vermelho),#FF8C00)"></div>' +
     '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2);margin-bottom:8px">FC DE RECUPERAÇÃO (HRR)</div>' +
-    '<div style="background:rgba(255,75,75,.08);border:1px solid rgba(255,75,75,.3);border-radius:12px;padding:12px;margin-bottom:12px">' +
-    '<div style="font-size:11px;color:#FF6B6B;font-weight:700;letter-spacing:1px;margin-bottom:6px">⚠️ ATENÇÃO — FAÇA APÓS O EXERCÍCIO</div>' +
-    '<div style="font-size:12px;color:rgba(255,120,120,.9);line-height:1.7">Este teste <strong>SÓ é válido após exercício físico intenso</strong> (corrida, bicicleta, treino de musculação etc.).<br>Pare o exercício, meça a FC imediatamente, depois 1 min e 2 min em repouso.</div>' +
-    '</div>' +
+    '<div class="onb-dica" style="border-color:rgba(255,75,75,.3);background:rgba(255,75,75,.05);color:rgba(255,120,120,.9)">Meça a FC pico logo após o esforço, depois 1 minuto de repouso e 2 minutos. A queda indica sua recuperação cardíaca.</div>' +
     '<div class="result-input-row"><div class="result-input-label">FC logo após esforço</div><input class="result-input-val" type="number" id="hrr-pico" placeholder="160"><div class="result-input-un">bpm</div></div>' +
     '<div class="result-input-row"><div class="result-input-label">FC após 1 minuto</div><input class="result-input-val" type="number" id="hrr-1min" placeholder="130"><div class="result-input-un">bpm</div></div>' +
     '<div class="result-input-row"><div class="result-input-label">FC após 2 minutos</div><input class="result-input-val" type="number" id="hrr-2min" placeholder="110"><div class="result-input-un">bpm</div></div>' +

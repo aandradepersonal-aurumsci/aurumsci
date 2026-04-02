@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0A0A0F">
 <title>AurumSci</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -418,7 +419,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       <span class="tab-icon">📅</span><span id="t-tab4">CICLOS</span><div class="tab-dot"></div>
     </div>
     <div class="tab" onclick="mudarTab('fin',this)">
-      <span class="tab-icon">💳</span><span>FINANCEIRO</span><div class="tab-dot"></div>
+      <span class="tab-icon">💳</span><span id="t-tab6">FINANCEIRO</span><div class="tab-dot"></div>
     </div>
     <div class="tab" onclick="mudarTab('loja',this)">
       <span class="tab-icon">🛍️</span><span id="t-tab5">LOJA</span><div class="tab-dot"></div>
@@ -644,7 +645,7 @@ var API = '';
 var TX = {
   pt: {
     emailLabel:'EMAIL', senhaLabel:'SENHA', entrar:'ENTRAR',
-    tab1:'TREINO', tab2:'AVALIAÇÃO', tab3:'EVOLUÇÃO', tab4:'CICLOS', tab5:'LOJA',
+    tab1:'TREINO', tab2:'AVALIAÇÃO', tab3:'EVOLUÇÃO', tab4:'CICLOS', tab5:'LOJA', tab6:'FINANCEIRO',
     online:'Online',
     auriMsg:'Oi! Sou o AURI 💪 Pode me perguntar qualquer coisa sobre seu treino!',
     auriSauda:'Como posso te ajudar hoje? 💪',
@@ -676,7 +677,7 @@ var TX = {
   },
   en: {
     emailLabel:'EMAIL', senhaLabel:'PASSWORD', entrar:'LOGIN',
-    tab1:'WORKOUT', tab2:'ASSESSMENT', tab3:'PROGRESS', tab4:'CYCLES', tab5:'SHOP',
+    tab1:'WORKOUT', tab2:'ASSESSMENT', tab3:'PROGRESS', tab4:'CYCLES', tab5:'SHOP', tab6:'FINANCIAL',
     online:'Online', auriMsg:'Hi! I am AURI 💪 Ask me anything about your workout!',
     auriSauda:'How can I help you today? 💪',
     bomDia:'GOOD MORNING', boaTarde:'GOOD AFTERNOON', boaNoite:'GOOD EVENING',
@@ -701,7 +702,7 @@ var TX = {
   },
   es: {
     emailLabel:'EMAIL', senhaLabel:'CONTRASEÑA', entrar:'ENTRAR',
-    tab1:'ENTRENO', tab2:'EVALUACIÓN', tab3:'EVOLUCIÓN', tab4:'CICLOS', tab5:'TIENDA',
+    tab1:'ENTRENO', tab2:'EVALUACIÓN', tab3:'EVOLUCIÓN', tab4:'CICLOS', tab5:'TIENDA', tab6:'FINANZAS',
     online:'En línea', auriMsg:'¡Hola! Soy AURI 💪 ¡Pregúntame cualquier cosa sobre tu entrenamiento!',
     auriSauda:'¿Cómo puedo ayudarte hoy? 💪',
     bomDia:'BUENOS DÍAS', boaTarde:'BUENAS TARDES', boaNoite:'BUENAS NOCHES',
@@ -779,7 +780,7 @@ function setLangApp(l, el){
 }
 function atualizarTextos(){
   var els = {
-    't-tab1': T('tab1'), 't-tab2': T('tab2'), 't-tab3': T('tab3'), 't-tab4': T('tab4'), 't-tab5': T('tab5'),
+    't-tab1': T('tab1'), 't-tab2': T('tab2'), 't-tab3': T('tab3'), 't-tab4': T('tab4'), 't-tab5': T('tab5'), 't-tab6': T('tab6'),
     't-online': T('online'), 't-msg-auri': T('auriMsg'), 'auri-bubble-msg': T('auriSauda')
   };
   Object.keys(els).forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent=els[id]; });
@@ -1936,6 +1937,22 @@ function mostrarToast(msg){
   var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/static/sw-aluno.js').then(function(reg){
+    reg.addEventListener('updatefound', function(){
+      var newWorker = reg.installing;
+      newWorker.addEventListener('statechange', function(){
+        if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
+          // Nova versão disponível — recarrega automaticamente
+          window.location.reload();
+        }
+      });
+    });
+  });
 }
 </script>
 </body>

@@ -330,19 +330,25 @@ async def treino_hoje(
             "coluna": ultima_aval.postura_coluna,
         }
 
+    from app.routers.treino import Exercicio
+    lista_ex = []
+    for e in exercicios:
+        ex_obj = db.query(Exercicio).filter(Exercicio.id == e.exercicio_id).first()
+        lista_ex.append({
+            "ordem":      e.ordem,
+            "nome":       ex_obj.nome if ex_obj else "Exercicio",
+            "series":     e.series,
+            "repeticoes": e.repeticoes,
+            "carga":      e.carga_sugerida,
+            "descanso":   e.descanso_segundos,
+            "observacao": e.observacao,
+            "corretivo":  False,
+        })
+
     return {
         "sessao": sessao.nome,
         "data": str(date.today()),
-        "exercicios": [{
-            "ordem":       e.ordem,
-            "nome":        e.exercicio.nome if e.exercicio else "",
-            "series":      e.series,
-            "repeticoes":  e.repeticoes,
-            "carga":       e.carga_sugerida,
-            "descanso":    e.descanso_segundos,
-            "observacao":  e.observacao,
-            "corretivo":   False,
-        } for e in exercicios],
+        "exercicios": lista_ex,
         "total_exercicios": len(exercicios),
         "corretivos_posturais": corretivos,
         "postura_resumo": postura_resumo

@@ -634,3 +634,36 @@ def periodizacao(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends
     return {"objetivo": objetivo, "nivel": nivel, "ciclos": ciclos}
 
 # pente fino v1
+
+
+@router.get("/financeiro")
+def financeiro(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    from app.routers.financeiro import Pagamento
+    from datetime import date
+    pags = db.query(Pagamento).filter(Pagamento.aluno_id == aluno.id).order_by(Pagamento.data_vencimento.desc()).all()
+    if not pags:
+        return {"detail": "Nenhum pagamento encontrado"}
+    ultimo = pags[0]
+    hoje = date.today()
+    status = "pago" if ultimo.data_pagamento else ("atrasado" if ultimo.data_vencimento and ultimo.data_vencimento < hoje else "pendente")
+    historico = []
+    for p in pags[:6]:
+        st = "pago" if p.data_pagamento else ("atrasado" if p.data_vencimento and p.data_vencimento < hoje else "pendente")
+        historico.append({"mes": p.data_vencimento.strftime("%b/%Y") if p.data_vencimento else "", "valor": str(p.valor), "status": st})
+    return {"plano": "Plano Personal", "valor": str(ultimo.valor), "status": status, "vencimento": ultimo.data_vencimento.strftime("%d/%m/%Y") if ultimo.data_vencimento else None, "historico": historico}
+
+
+@router.post("/treino-concluir")
+def treino_concluir(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    return {"mensagem": "Treino concluido!", "sequencia": _calcular_sequencia(aluno.id, db)}
+
+
+@router.post("/checkin")
+def checkin(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    from app.routers.treino import RegistroPresenca, PlanoTreino
+    from datetime import date
+    plano = db.query(PlanoTreino).filter(PlanoTreino.aluno_id == aluno.id, PlanoTreino.ativo == True).first()
+    presenca = RegistroPresenca(aluno_id=aluno.id, personal_id=1, plano_id=plano.id if plano else None, data_presenca=date.today(), presente=True)
+    db.add(presenca)
+    db.commit()
+    return {"mensagem": "Check-in registrado!", "sequencia": _calcular_sequencia(aluno.id, db)}

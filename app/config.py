@@ -1,5 +1,4 @@
 from pydantic_settings import BaseSettings
-
 class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./personal_trainer.db"
     SECRET_KEY: str = ""
@@ -11,14 +10,10 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = "uploads"
     MAX_FILE_SIZE_MB: int = 5
     ANTHROPIC_API_KEY: str = ""
-
+    STRIPE_SECRET_KEY: str = ""
+    STRIPE_PUBLISHABLE_KEY: str = ""
+    STRIPE_WEBHOOK_SECRET: str = ""
     class Config:
         env_file = ".env"
         extra = "ignore"
-
 settings = Settings()
-
-# Stripe
-STRIPE_SECRET_KEY: str = ""
-STRIPE_PUBLISHABLE_KEY: str = ""
-STRIPE_WEBHOOK_SECRET: str = ""

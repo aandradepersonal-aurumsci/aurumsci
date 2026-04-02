@@ -1657,16 +1657,28 @@ function calcularHRR(){
   var min1 = parseFloat(document.getElementById('hrr-1min').value)||0;
   if(!pico || !min1){ mostrarToast('Informe FC pico e após 1 minuto!'); return; }
   var hrr = pico - min1;
-  var bom = hrr >= 20;
-  var cor = bom ? 'var(--verde)' : hrr >= 12 ? 'var(--ouro)' : 'var(--vermelho)';
+  var cor = hrr >= 20 ? 'var(--verde)' : hrr >= 12 ? 'var(--ouro)' : 'var(--vermelho)';
   var classif = hrr >= 20 ? 'Boa recuperação ✅' : hrr >= 12 ? 'Recuperação regular ⚠️' : 'Recuperação lenta 🔴';
-  var aviso = hrr < 12 ? '<div style="margin-top:10px;padding:12px;background:rgba(255,75,75,.06);border:1px solid rgba(255,75,75,.2);border-radius:10px;font-size:12px;line-height:1.6;color:rgba(255,120,120,.9)">Sua recuperação cardíaca está abaixo do esperado. Recomendamos consultar um <strong>cardiologista</strong> para uma avaliação antes de aumentar a intensidade dos treinos.</div>' : '';
+  var aviso = '';
+  if(hrr < 12){
+    aviso = '<div style="margin-top:12px;padding:12px;background:rgba(255,75,75,.06);border:1px solid rgba(255,75,75,.2);border-radius:10px;font-size:12px;line-height:1.8">' +
+      '<strong style="color:#FF6B6B">⚠️ Atenção:</strong><br>' +
+      'Sua queda de FC em 1 minuto foi de apenas <strong>' + hrr + ' bpm</strong>, abaixo do valor de referência (≥12 bpm).<br><br>' +
+      'Como educador físico, <strong>sugerimos que você comunique este resultado ao seu médico</strong> e solicite uma avaliação cardiológica antes de aumentar a intensidade dos treinos. Um <em>teste ergométrico</em> pode ser indicado.<br><br>' +
+      '<span style="color:rgba(255,120,120,.7)">Esta é uma orientação preventiva do educador físico (CREF), não um diagnóstico médico.</span>' +
+      '</div>';
+  }
+  var citacao = '<div style="margin-top:12px;padding:8px 10px;background:var(--bg);border-radius:8px;font-size:10px;color:var(--cinza);line-height:1.7">' +
+    '📚 <em>Cole CR et al. (1999), NEJM — HRR &lt;12 bpm/min associado a maior mortalidade.<br>' +
+    'Nishime EO et al. (2000), JAMA — HRR como preditor independente de risco cardiovascular.<br>' +
+    'Orientação embasada nas diretrizes ACSM (2022) para avaliação cardiorrespiratória.</em>' +
+    '</div>';
   document.getElementById('hrr-resultado').innerHTML =
     '<div class="classificacao-box" style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2)">' +
     '<div class="class-titulo" style="color:var(--verde)">HRR — RECUPERAÇÃO CARDÍACA</div>' +
     '<div class="class-val" style="color:' + cor + '">-' + hrr + ' <span style="font-size:16px">bpm/min</span></div>' +
     '<div class="class-desc" style="color:' + cor + '">' + classif + '</div>' +
-    aviso + '</div>';
+    aviso + citacao + '</div>';
 }
 
 // ── NUTRIÇÃO ──────────────────────────────────────────

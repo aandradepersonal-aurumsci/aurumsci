@@ -37,6 +37,7 @@ from app.routers.chatbot import router as chatbot_router
 from app.routers.postural_ia import router as postural_ia_router
 from app.routers.app_aluno import router as app_aluno_router
 from app.routers.app_personal import router as app_personal_router
+from app.routers.pagamento import router as pagamento_router
 
 # ── Logging ───────────────────────────────────────────────────
 logging.basicConfig(
@@ -146,6 +147,7 @@ app.include_router(chatbot_router)
 app.include_router(postural_ia_router)
 app.include_router(app_aluno_router)
 app.include_router(app_personal_router)
+app.include_router(pagamento_router)
 
 # ── App do Aluno ──────────────────────────────────────────────
 @app.get("/aluno", response_class=HTMLResponse, include_in_schema=False)

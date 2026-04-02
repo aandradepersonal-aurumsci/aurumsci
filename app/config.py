@@ -17,3 +17,8 @@ class Settings(BaseSettings):
         extra = "ignore"
 
 settings = Settings()
+
+# Stripe
+STRIPE_SECRET_KEY: str = ""
+STRIPE_PUBLISHABLE_KEY: str = ""
+STRIPE_WEBHOOK_SECRET: str = ""

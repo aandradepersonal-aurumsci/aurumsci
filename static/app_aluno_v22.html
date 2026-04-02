@@ -1086,6 +1086,12 @@ function renderMedidasRows(){
 }
 
 // ── APP PRINCIPAL ─────────────────────────────────────
+function fazerLogout(){
+  localStorage.clear();
+  token = "";
+  nomeAluno = "";
+  location.reload();
+}
 function mostrarApp(){
   document.getElementById('screen-login').style.display = 'none';
   document.getElementById('screen-onboarding').style.display = 'none';

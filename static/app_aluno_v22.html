@@ -368,6 +368,11 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <div class="aval-titulo">COMPOSIÇÃO</div>
         <div class="aval-sub" id="t-aval4">Peso e gordura</div>
       </div>
+      <div class="aval-card" onclick="abrirModalNutri()" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.04));border-color:rgba(201,168,76,.3)">
+        <div class="aval-icon">🥗</div>
+        <div class="aval-titulo">NUTRIÇÃO</div>
+        <div class="aval-sub">Sugestão baseada em evidências</div>
+      </div>
     </div>
   </div>
 
@@ -561,6 +566,31 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div class="modal-titulo">COMPOSIÇÃO CORPORAL</div>
   </div>
   <div class="modal-body" id="body-composicao"></div>
+</div>
+
+<!-- MODAL NUTRIÇÃO -->
+<div class="modal-full" id="modal-nutri">
+  <div class="modal-header">
+    <button class="modal-back" onclick="fecharModal('modal-nutri')">←</button>
+    <div class="modal-titulo">SUGESTÃO NUTRICIONAL</div>
+  </div>
+  <div class="modal-body" id="body-nutri">
+    <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:14px;margin-bottom:16px">
+      <div style="font-size:11px;color:var(--ouro);letter-spacing:1px;font-weight:700;margin-bottom:6px">📚 BASEADO NA LITERATURA CIENTÍFICA</div>
+      <div style="font-size:12px;color:var(--cinza);line-height:1.7">
+        Estas são <strong style="color:var(--texto)">sugestões de consumo</strong> baseadas nas diretrizes internacionais de nutrição esportiva (ISSN, ACSM, IOC). 
+        <strong style="color:var(--ouro)">Não substituem avaliação de nutricionista.</strong> Consulte um profissional para plano alimentar individualizado.
+      </div>
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:11px;color:var(--cinza);letter-spacing:1px">SEU PESO (kg)</label>
+      <div style="display:flex;gap:10px;margin-top:8px;align-items:center">
+        <input type="number" id="nutri-peso" placeholder="80" style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);font-size:16px;outline:none">
+        <button onclick="calcularNutri()" style="padding:12px 20px;background:var(--ouro);border:none;border-radius:10px;color:#0A0A0F;font-family:'Bebas Neue';font-size:16px;cursor:pointer">CALCULAR</button>
+      </div>
+    </div>
+    <div id="nutri-resultado"></div>
+  </div>
 </div>
 
 <!-- AURI FLUTUANTE -->
@@ -1101,6 +1131,7 @@ var DICAS = {
       {e:'❤️', t:'<strong>TESTES</strong>: realize testes de condicionamento como VO2, frequência cardíaca e força com a ajuda do seu personal.'},
       {e:'📏', t:'<strong>MEDIDAS</strong>: registre suas circunferências (cintura, quadril, braço etc.) para acompanhar sua evolução.'},
       {e:'⚖️', t:'<strong>COMPOSIÇÃO</strong>: insira seu peso e percentual de gordura para calcular sua massa magra.'},
+      {e:'🥗', t:'<strong>NUTRIÇÃO</strong>: calcule sua sugestão de proteína, carboidrato e gordura por peso corporal, baseada na literatura científica (ISSN/ACSM).'},
     ]
   },
   'evolucao': {
@@ -1418,6 +1449,7 @@ function abrirModal(id){
   document.getElementById(id).classList.add('show');
   if(id === 'modal-medidas') renderModalMedidas();
   if(id === 'modal-composicao') renderModalComposicao();
+  if(id === 'modal-nutri') { /* handled by abrirModalNutri */ }
 }
 function fecharModal(id){ document.getElementById(id).classList.remove('show'); }
 
@@ -1635,6 +1667,108 @@ function calcularHRR(){
     '<div class="class-val" style="color:' + cor + '">-' + hrr + ' <span style="font-size:16px">bpm/min</span></div>' +
     '<div class="class-desc" style="color:' + cor + '">' + classif + '</div>' +
     aviso + '</div>';
+}
+
+// ── NUTRIÇÃO ──────────────────────────────────────────
+function calcularNutri(){
+  var peso = parseFloat(document.getElementById('nutri-peso').value);
+  if(!peso || peso < 30 || peso > 300){ mostrarToast('Informe um peso válido!'); return; }
+
+  // Proteína
+  var protMin = (peso * 1.6).toFixed(0);
+  var protMax = (peso * 2.2).toFixed(0);
+  var protOtimo = (peso * 1.8).toFixed(0);
+
+  // Carboidrato (hipertrofia moderada)
+  var carbMin = (peso * 4).toFixed(0);
+  var carbMax = (peso * 6).toFixed(0);
+
+  // Gordura (20-35% das calorias — usando 1g/kg como referência prática)
+  var gordMin = (peso * 0.8).toFixed(0);
+  var gordMax = (peso * 1.2).toFixed(0);
+
+  // Água
+  var agua = (peso * 35 / 1000).toFixed(1);
+
+  var html = '';
+
+  // Proteína
+  html += '<div class="card" style="margin-bottom:12px"><div class="card-line ouro"></div>';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+  html += '<div><div style="font-size:10px;color:var(--cinza);letter-spacing:1px">🥩 PROTEÍNA</div>';
+  html += '<div style="font-family:Bebas Neue;font-size:28px;color:var(--ouro2)">' + protMin + '–' + protMax + '<span style="font-size:14px"> g/dia</span></div></div>';
+  html += '<div style="text-align:right"><div style="font-size:10px;color:var(--cinza)">ÓTIMO</div><div style="font-family:Bebas Neue;font-size:22px;color:var(--verde)">~' + protOtimo + 'g</div></div>';
+  html += '</div>';
+  html += '<div style="font-size:11px;color:var(--cinza);line-height:1.7">';
+  html += '• Distribua em <strong style="color:var(--texto)">4–5 refeições</strong> (20–40g cada)<br>';
+  html += '• Priorize pós-treino e pré-sono (caseína 30–40g)<br>';
+  html += '• Fontes: frango, ovo, peixe, whey, iogurte grego';
+  html += '</div>';
+  html += '<div style="margin-top:10px;padding:8px 10px;background:var(--bg);border-radius:8px;font-size:10px;color:var(--cinza);line-height:1.7">';
+  html += '📚 <em>Morton et al. (2017), Br J Sports Med — meta-análise 1.863 participantes.<br>ISSN Position Stand — Stokes et al. (2018), J Int Soc Sports Nutr.</em>';
+  html += '</div></div>';
+
+  // Carboidrato
+  html += '<div class="card" style="margin-bottom:12px"><div class="card-line azul"></div>';
+  html += '<div style="margin-bottom:8px"><div style="font-size:10px;color:var(--cinza);letter-spacing:1px">🍚 CARBOIDRATO</div>';
+  html += '<div style="font-family:Bebas Neue;font-size:28px;color:var(--azul)">' + carbMin + '–' + carbMax + '<span style="font-size:14px"> g/dia</span></div></div>';
+  html += '<div style="font-size:11px;color:var(--cinza);line-height:1.7">';
+  html += '• <strong style="color:var(--texto)">Treino leve:</strong> 3–5 g/kg/dia<br>';
+  html += '• <strong style="color:var(--texto)">Treino moderado:</strong> 5–7 g/kg/dia<br>';
+  html += '• <strong style="color:var(--texto)">Treino intenso:</strong> 7–12 g/kg/dia<br>';
+  html += '• Fontes: arroz, batata-doce, aveia, frutas, mandioca';
+  html += '</div>';
+  html += '<div style="margin-top:10px;padding:8px 10px;background:var(--bg);border-radius:8px;font-size:10px;color:var(--cinza);line-height:1.7">';
+  html += '📚 <em>Burke et al. (2011), J Sports Sci.<br>ACSM/ISSN/IOC Consensus — Thomas et al. (2016), Med Sci Sports Exerc.</em>';
+  html += '</div></div>';
+
+  // Gordura
+  html += '<div class="card" style="margin-bottom:12px"><div class="card-line verde"></div>';
+  html += '<div style="margin-bottom:8px"><div style="font-size:10px;color:var(--cinza);letter-spacing:1px">🥑 GORDURA</div>';
+  html += '<div style="font-family:Bebas Neue;font-size:28px;color:var(--verde)">' + gordMin + '–' + gordMax + '<span style="font-size:14px"> g/dia</span></div></div>';
+  html += '<div style="font-size:11px;color:var(--cinza);line-height:1.7">';
+  html += '• Representa <strong style="color:var(--texto)">20–35%</strong> do total calórico<br>';
+  html += '• Priorize gorduras insaturadas: azeite, abacate, castanhas, salmão<br>';
+  html += '• Essencial para hormônios, vitaminas A/D/E/K e recuperação';
+  html += '</div>';
+  html += '<div style="margin-top:10px;padding:8px 10px;background:var(--bg);border-radius:8px;font-size:10px;color:var(--cinza);line-height:1.7">';
+  html += '📚 <em>ACSM Position Stand — Rodriguez et al. (2009), Med Sci Sports Exerc.<br>Institute of Medicine — Acceptable Macronutrient Distribution Ranges (AMDR).</em>';
+  html += '</div></div>';
+
+  // Água
+  html += '<div class="card" style="margin-bottom:12px"><div class="card-line azul"></div>';
+  html += '<div style="margin-bottom:8px"><div style="font-size:10px;color:var(--cinza);letter-spacing:1px">💧 ÁGUA</div>';
+  html += '<div style="font-family:Bebas Neue;font-size:28px;color:var(--azul)">' + agua + '<span style="font-size:14px"> litros/dia</span></div></div>';
+  html += '<div style="font-size:11px;color:var(--cinza);line-height:1.7">';
+  html += '• Base: 35 ml/kg/dia em repouso<br>';
+  html += '• Adicione 500–1000 ml por hora de treino<br>';
+  html += '• Urina clara = boa hidratação ✅';
+  html += '</div></div>';
+
+  // Aviso legal
+  html += '<div style="background:rgba(255,75,75,.06);border:1px solid rgba(255,75,75,.15);border-radius:12px;padding:12px;margin-top:4px">';
+  html += '<div style="font-size:10px;color:#FF6B6B;font-weight:700;letter-spacing:1px;margin-bottom:6px">⚠️ IMPORTANTE</div>';
+  html += '<div style="font-size:11px;color:var(--cinza);line-height:1.7">';
+  html += 'Estas são <strong>sugestões baseadas em literatura científica</strong> para praticantes de exercício saudáveis. Valores podem variar conforme objetivo, nível de treino, metabolismo e condições de saúde. <strong style="color:var(--texto)">Consulte um nutricionista esportivo</strong> para plano alimentar individualizado. Orientação fornecida pelo educador físico com base nas diretrizes ISSN/ACSM/IOC.';
+  html += '</div></div>';
+
+  document.getElementById('nutri-resultado').innerHTML = html;
+
+  // Pré-preencher com peso da composição se disponível
+}
+
+// Pré-preenche peso da bioimpedância se disponível
+function abrirModalNutri(){
+  abrirModal('modal-nutri');
+  // tenta pegar peso da composição
+  fetch('/app-aluno/resultado', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d && d.peso_atual){
+      document.getElementById('nutri-peso').value = d.peso_atual;
+      calcularNutri();
+    }
+  }).catch(function(){});
 }
 
 // ── TIMER ─────────────────────────────────────────────

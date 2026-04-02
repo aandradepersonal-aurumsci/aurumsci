@@ -1178,9 +1178,9 @@ function renderTreino(){
         '<input id="extra-nome" type="text" placeholder="Nome do exercício..." style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--borda);background:var(--bg);color:var(--texto);font-size:14px;margin-bottom:8px;box-sizing:border-box">' +
         '<div style="display:flex;gap:8px">' +
         '<button onclick="adicionarExtraConfirmar()" style="flex:1;padding:10px;background:var(--ouro);border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:15px;cursor:pointer">ADICIONAR ✓</button>' +
-        '<button onclick="document.getElementById(\"extra-form\").style.display=\"none\"" style="padding:10px 16px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--cinza);cursor:pointer">✕</button>' +
+        '<button onclick="fecharExtraForm()" style="padding:10px 16px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--cinza);cursor:pointer">✕</button>' +
         '</div></div>' +
-        '<button onclick="document.getElementById(\"extra-form\").style.display=\"block\";document.getElementById(\"extra-nome\").focus()" style="width:100%;padding:12px;background:none;border:1px dashed var(--borda);border-radius:12px;color:var(--cinza);font-size:13px;cursor:pointer">+ Adicionar exercício</button>' +
+        '<button onclick="abrirExtraForm()" style="width:100%;padding:12px;background:none;border:1px dashed var(--borda);border-radius:12px;color:var(--cinza);font-size:13px;cursor:pointer">+ Adicionar exercício</button>' +
         '</div>';
       treinoHtml += '<button class="btn-concluir" id="btn-concluir-treino" onclick="concluirTreino(0)" style="opacity:0.3;pointer-events:none">CONCLUIR TREINO ✓</button></div>';
 
@@ -1505,6 +1505,16 @@ function iniciarTimer(segundos, proxEx, tipo){
     ring.style.strokeDashoffset = circum * (1 - timerAtual/timerTotal);
     if(timerAtual <= 0){ clearInterval(timerInterval); overlay.classList.remove('ativo'); }
   }, 1000);
+}
+function abrirExtraForm(){
+  var f = document.getElementById('extra-form');
+  if(f){ f.style.display = 'block'; }
+  var n = document.getElementById('extra-nome');
+  if(n){ n.focus(); }
+}
+function fecharExtraForm(){
+  var f = document.getElementById('extra-form');
+  if(f){ f.style.display = 'none'; }
 }
 function verVideoExercicio(nome){
   var query = encodeURIComponent(nome + ' exercicio academia como fazer');

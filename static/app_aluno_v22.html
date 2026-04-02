@@ -329,7 +329,6 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <div class="topbar">
     <div class="topbar-logo">AURUMSCI</div>
     <div class="topbar-right">
-      <button style="width:32px;height:32px;border-radius:50%;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);cursor:pointer;font-size:14px" onclick="fazerLogout()" title="Sair">🚪</button>
       <div class="lang-mini-row">
         <button class="lang-mini active" onclick="setLangApp('pt',this)">PT</button>
         <button class="lang-mini" onclick="setLangApp('en',this)">EN</button>
@@ -1087,12 +1086,6 @@ function renderMedidasRows(){
 }
 
 // ── APP PRINCIPAL ─────────────────────────────────────
-function fazerLogout(){
-  localStorage.clear();
-  token = "";
-  nomeAluno = "";
-  location.reload();
-}
 function mostrarApp(){
   document.getElementById('screen-login').style.display = 'none';
   document.getElementById('screen-onboarding').style.display = 'none';
@@ -1285,6 +1278,11 @@ function renderTreino(){
     var exercicios = d.exercicios || [];
     var sessaoNome = d.sessao || '';
     var isDescanso = (!sessaoNome || sessaoNome === '') && (!exercicios || exercicios.length === 0);
+    // Se não tem plano mas tem mensagem de "Nenhum plano"
+    if(d && d.mensagem && d.mensagem.indexOf('Nenhum plano') > -1){
+      document.getElementById('treino-content').innerHTML = html + renderMsgSemPlano();
+      return;
+    }
 
     if(!isDescanso && exercicios.length > 0){
       // Salva lista de exercicios globalmente para o timer
@@ -1363,10 +1361,29 @@ function renderTreino(){
     }
     document.getElementById('treino-content').innerHTML = html + treinoHtml;
   }).catch(function(){
-    document.getElementById('treino-content').innerHTML = html +
-      '<div class="card"><div class="card-line ouro"></div>' +
-      '<div style="text-align:center;padding:20px;color:var(--cinza)">Complete seu cadastro para ver o treino!</div></div>';
+    document.getElementById('treino-content').innerHTML = html + renderMsgSemPlano();
   });
+}
+
+function renderMsgSemPlano(){
+  return '<div class="card"><div class="card-line ouro"></div>' +
+    '<div style="padding:24px 16px">' +
+    '<div style="font-size:40px;text-align:center;margin-bottom:16px">👋</div>' +
+    '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2);margin-bottom:12px;text-align:center">OLÁ! VAMOS NOS CONHECER?</div>' +
+    '<div style="font-size:14px;color:var(--texto);line-height:1.8;margin-bottom:16px">' +
+    'Para montar seu <strong style="color:var(--ouro)">treino 100% personalizado</strong>, nossa IA precisa de algumas informações sobre você.<br><br>' +
+    'Isso nos ajuda a entender seu corpo, seus objetivos e criar um plano que realmente funcione para você. Leva poucos minutinhos! 💪' +
+    '</div>' +
+    '<div style="background:var(--bg);border-radius:12px;padding:14px;margin-bottom:16px">' +
+    '<div style="font-size:11px;color:var(--ouro);letter-spacing:1px;margin-bottom:10px">📋 O QUE VOCÊ VAI FAZER:</div>' +
+    '<div style="font-size:13px;color:var(--cinza);line-height:2">' +
+    '⚖️ Registrar seu peso e % de gordura<br>' +
+    '🧍 Fazer a análise postural com IA<br>' +
+    '📏 Medir suas circunferências<br>' +
+    '❤️ Testar seu condicionamento cardíaco' +
+    '</div></div>' +
+    '<button onclick="mudarTab('avaliacao', document.querySelector('.tab:nth-child(2)'))" style="width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:14px;color:#0A0A0F;font-family:Bebas Neue;font-size:20px;letter-spacing:2px;cursor:pointer">COMEÇAR AVALIAÇÃO →</button>' +
+    '</div></div>';
 }
 
 function fazerCheckin(){

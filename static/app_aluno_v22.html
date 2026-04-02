@@ -1365,6 +1365,10 @@ function renderTreino(){
   });
 }
 
+function irParaAvaliacao(){
+  var tab = document.querySelector('.tab:nth-child(2)');
+  if(tab) mudarTab('avaliacao', tab);
+}
 function renderMsgSemPlano(){
   return '<div class="card"><div class="card-line ouro"></div>' +
     '<div style="padding:24px 16px">' +
@@ -1382,7 +1386,7 @@ function renderMsgSemPlano(){
     '📏 Medir suas circunferências<br>' +
     '❤️ Testar seu condicionamento cardíaco' +
     '</div></div>' +
-    '<button onclick="mudarTab('avaliacao', document.querySelector('.tab:nth-child(2)'))" style="width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:14px;color:#0A0A0F;font-family:Bebas Neue;font-size:20px;letter-spacing:2px;cursor:pointer">COMEÇAR AVALIAÇÃO →</button>' +
+    '<button onclick="irParaAvaliacao()" style="width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:14px;color:#0A0A0F;font-family:Bebas Neue;font-size:20px;letter-spacing:2px;cursor:pointer">COMEÇAR AVALIAÇÃO →</button>' +
     '</div></div>';
 }
 

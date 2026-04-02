@@ -339,9 +339,9 @@ async def treino_hoje(
             "nome":       ex_obj.nome if ex_obj else "Exercicio",
             "series":     e.series,
             "repeticoes": e.repeticoes,
-            "carga":      e.carga_sugerida,
-            "descanso":   e.descanso_segundos,
-            "observacao": e.observacao,
+            "carga":      e.carga_kg,
+            "descanso":   e.tempo_descanso_seg,
+            "observacao": e.observacoes,
             "corretivo":  False,
         })
 

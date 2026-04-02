@@ -22,3 +22,4 @@ slowapi==0.1.9
 email-validator==2.1.0
 anthropic
 psycopg2-binary
+stripe

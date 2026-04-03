@@ -730,7 +730,7 @@ var TX = {
 function T(k){ return (TX[lang]||TX['pt'])[k] || (TX['pt'])[k] || k; }
 
 // ── PASSOS ONBOARDING ─────────────────────────────────
-var PASSOS = ['boas-vindas','objetivo','nivel','dias','anamnese','medicacao','bio','pronto'];
+var PASSOS = ['objetivo','nivel','dias','anamnese','pronto'];
 
 // ── SPLASH ────────────────────────────────────────────
 window.onload = function(){
@@ -876,9 +876,11 @@ function renderOnbStep(){
   }
   else if(passo === 'objetivo'){
     var objs = ['obj1','obj2','obj3','obj4','obj5','obj6'];
-    content = '<div class="onb-step-num">PASSO 4/' + total + '</div>' +
-      '<div class="onb-titulo">' + T('onb4T') + '</div>' +
-      '<div class="onb-sub">' + T('onb4S') + '</div><div class="opcoes">';
+    content = '<div style="text-align:center;font-size:48px;margin-bottom:12px">🏆</div>' +
+      '<div class="onb-titulo">BEM-VINDO!</div>' +
+      '<div class="onb-sub">Vamos personalizar seu treino. Leva menos de 2 minutos!</div>' +
+      '<div style="margin:12px 0 6px;font-size:13px;color:var(--ouro);font-weight:600;letter-spacing:1px">SEU OBJETIVO</div>' +
+      '<div class="opcoes">';
     objs.forEach(function(o){
       var val = o.replace('obj','');
       var map = {1:'hipertrofia',2:'emagrecimento',3:'condicionamento',4:'saude',5:'forca',6:'flexibilidade'};

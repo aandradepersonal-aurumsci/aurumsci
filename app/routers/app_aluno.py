@@ -181,7 +181,6 @@ async def registrar_bioimpedancia(
     if not aval or aval.data_avaliacao != hoje:
         aval = AvaliacaoFisica(
             aluno_id=aluno.id,
-            personal_id=1,
             data_avaliacao=hoje,
             protocolo_composicao="bioimpedancia"
         )
@@ -247,7 +246,6 @@ async def analise_postural(
     if not aval:
         aval = AvaliacaoFisica(
             aluno_id=aluno.id,
-            personal_id=1,
             data_avaliacao=date.today()
         )
         db.add(aval)
@@ -371,7 +369,6 @@ async def registrar_presenca(
 
     presenca = RegistroPresenca(
         aluno_id=aluno.id,
-        personal_id=1,
         plano_id=plano.id if plano else None,
         sessao_id=dados.sessao_id,
         data_presenca=date.today(),

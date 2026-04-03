@@ -375,12 +375,17 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <div class="aval-titulo">NUTRIÇÃO</div>
         <div class="aval-sub">Sugestão baseada em evidências</div>
       </div>
+      <div class="aval-card" onclick="abrirModal('modal-anamnese')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(75,159,255,.08),rgba(75,159,255,.02));border-color:rgba(75,159,255,.25)">
+        <div class="aval-icon">📝</div>
+        <div class="aval-titulo">ANAMNESE</div>
+        <div class="aval-sub">Histórico de saúde e condições</div>
+      </div>
     </div>
   </div>
 
   <!-- SCREEN EVOLUÇÃO -->
   <div class="screen" id="screen-evolucao">
-    <div class="section-title" id="t-evol-titulo">EVOLUÇÃO</div>
+    <div class="section-title" id="t-evol-titulo">RESULTADOS</div>
     <div id="evolucao-content"></div>
   </div>
 
@@ -413,17 +418,17 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div class="tab" onclick="mudarTab('avaliacao',this)">
       <span class="tab-icon">📋</span><span id="t-tab2">AVALIAÇÃO</span><div class="tab-dot"></div>
     </div>
-    <div class="tab" onclick="mudarTab('evolucao',this)">
-      <span class="tab-icon">📊</span><span id="t-tab3">EVOLUÇÃO</span><div class="tab-dot"></div>
-    </div>
     <div class="tab" onclick="mudarTab('periodo',this)">
-      <span class="tab-icon">📅</span><span id="t-tab4">CICLOS</span><div class="tab-dot"></div>
+      <span class="tab-icon">📅</span><span id="t-tab4">PERIODIZAÇÃO</span><div class="tab-dot"></div>
     </div>
-    <div class="tab" onclick="mudarTab('fin',this)">
-      <span class="tab-icon">💳</span><span id="t-tab6">FINANCEIRO</span><div class="tab-dot"></div>
+    <div class="tab" onclick="mudarTab('evolucao',this)">
+      <span class="tab-icon">📈</span><span id="t-tab3">RESULTADOS</span><div class="tab-dot"></div>
     </div>
     <div class="tab" onclick="mudarTab('loja',this)">
       <span class="tab-icon">🛍️</span><span id="t-tab5">LOJA</span><div class="tab-dot"></div>
+    </div>
+    <div class="tab" onclick="mudarTab('fin',this)">
+      <span class="tab-icon">💳</span><span id="t-tab6">FINANCEIRO</span><div class="tab-dot"></div>
     </div>
   </div>
 </div>
@@ -595,6 +600,32 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   </div>
 </div>
 
+<!-- MODAL ANAMNESE -->
+<div class="modal-full" id="modal-anamnese">
+  <div class="modal-header">
+    <button class="modal-back" onclick="fecharModal('modal-anamnese')">←</button>
+    <div class="modal-titulo">ANAMNESE</div>
+  </div>
+  <div class="modal-body" id="body-anamnese">
+    <div style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;line-height:1.7;color:var(--cinza)">
+      <strong style="color:var(--azul)">📝 Por que isso é importante?</strong><br>
+      Conhecer seu histórico de saúde nos ajuda a adaptar seu treino com segurança e personalização máxima.
+    </div>
+    <div style="font-size:13px;color:var(--ouro);font-weight:600;margin-bottom:10px;letter-spacing:1px">CONDIÇÕES DE SAÚDE</div>
+    <div id="anam-checks"></div>
+    <div style="margin-top:16px">
+      <div style="font-size:11px;color:var(--cinza);margin-bottom:8px">OUTRAS CONDIÇÕES OU LESÕES</div>
+      <textarea id="anam-outras" style="width:100%;min-height:80px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);padding:12px;font-size:13px;font-family:DM Sans" placeholder="Descreva outras condições, lesões ou cirurgias..."></textarea>
+    </div>
+    <div style="margin-top:16px">
+      <div style="font-size:11px;color:var(--cinza);margin-bottom:8px">MEDICAMENTOS EM USO</div>
+      <textarea id="anam-med" style="width:100%;min-height:80px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);padding:12px;font-size:13px;font-family:DM Sans" placeholder="Ex: Losartana 50mg, Metformina..."></textarea>
+    </div>
+    <br>
+    <button class="btn-gold" onclick="salvarAnamnese()">SALVAR ANAMNESE</button>
+  </div>
+</div>
+
 <!-- AURI FLUTUANTE -->
 <div class="auri-float" id="auri-float" style="display:none">
   <div class="auri-bubble" id="auri-bubble">
@@ -646,7 +677,7 @@ var API = '';
 var TX = {
   pt: {
     emailLabel:'EMAIL', senhaLabel:'SENHA', entrar:'ENTRAR',
-    tab1:'TREINO', tab2:'AVALIAÇÃO', tab3:'EVOLUÇÃO', tab4:'CICLOS', tab5:'LOJA', tab6:'FINANCEIRO',
+    tab1:'TREINO', tab2:'AVALIAÇÃO', tab3:'RESULTADOS', tab4:'PERIODIZAÇÃO', tab5:'LOJA', tab6:'FINANCEIRO',
     online:'Online',
     auriMsg:'Oi! Sou o AURI 💪 Pode me perguntar qualquer coisa sobre seu treino!',
     auriSauda:'Como posso te ajudar hoje? 💪',
@@ -678,7 +709,7 @@ var TX = {
   },
   en: {
     emailLabel:'EMAIL', senhaLabel:'PASSWORD', entrar:'LOGIN',
-    tab1:'WORKOUT', tab2:'ASSESSMENT', tab3:'PROGRESS', tab4:'CYCLES', tab5:'SHOP', tab6:'FINANCIAL',
+    tab1:'WORKOUT', tab2:'ASSESSMENT', tab3:'RESULTS', tab4:'PERIODIZATION', tab5:'SHOP', tab6:'FINANCIAL',
     online:'Online', auriMsg:'Hi! I am AURI 💪 Ask me anything about your workout!',
     auriSauda:'How can I help you today? 💪',
     bomDia:'GOOD MORNING', boaTarde:'GOOD AFTERNOON', boaNoite:'GOOD EVENING',
@@ -703,7 +734,7 @@ var TX = {
   },
   es: {
     emailLabel:'EMAIL', senhaLabel:'CONTRASEÑA', entrar:'ENTRAR',
-    tab1:'ENTRENO', tab2:'EVALUACIÓN', tab3:'EVOLUCIÓN', tab4:'CICLOS', tab5:'TIENDA', tab6:'FINANZAS',
+    tab1:'ENTRENO', tab2:'EVALUACIÓN', tab3:'RESULTADOS', tab4:'PERIODIZACIÓN', tab5:'TIENDA', tab6:'FINANZAS',
     online:'En línea', auriMsg:'¡Hola! Soy AURI 💪 ¡Pregúntame cualquier cosa sobre tu entrenamiento!',
     auriSauda:'¿Cómo puedo ayudarte hoy? 💪',
     bomDia:'BUENOS DÍAS', boaTarde:'BUENAS TARDES', boaNoite:'BUENAS NOCHES',
@@ -1564,6 +1595,7 @@ function abrirModal(id){
   if(id === 'modal-medidas') renderModalMedidas();
   if(id === 'modal-composicao') renderModalComposicao();
   if(id === 'modal-nutri') { /* handled by abrirModalNutri */ }
+  if(id === 'modal-anamnese') renderAnamnese();
 }
 function fecharModal(id){ document.getElementById(id).classList.remove('show'); }
 
@@ -1967,6 +1999,39 @@ function abrirModalNutri(){
       calcularNutri();
     }
   }).catch(function(){});
+}
+
+// ── ANAMNESE ──────────────────────────────────────────
+function renderAnamnese(){
+  var pats = [
+    {key:'Hipertensão',label:'Hipertensão'},
+    {key:'Diabetes',label:'Diabetes'},
+    {key:'Colesterol alto',label:'Colesterol alto'},
+    {key:'Doença cardíaca',label:'Doença cardíaca'},
+    {key:'Artrite/Artrose',label:'Artrite / Artrose'},
+    {key:'Hérnia de disco',label:'Hérnia de disco'},
+    {key:'Osteoporose',label:'Osteoporose'},
+    {key:'Asma/DPOC',label:'Asma / DPOC'}
+  ];
+  var html = '';
+  pats.forEach(function(p){
+    html += '<div class="check-item" onclick="toggleCheck(this,\'' + p.key + '\')" data-key="' + p.key + '">' +
+      '<div class="check-box"></div><div class="check-label">' + p.label + '</div></div>';
+  });
+  document.getElementById('anam-checks').innerHTML = html;
+}
+
+function salvarAnamnese(){
+  var checks = document.querySelectorAll('#anam-checks .check-item.checked');
+  var pats = []; checks.forEach(function(c){ pats.push(c.dataset.key); });
+  var outras = document.getElementById('anam-outras').value;
+  var med = document.getElementById('anam-med').value;
+  fetch('/app-aluno/onboarding', {
+    method: 'POST',
+    headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
+    body: JSON.stringify({patologias: pats, outras_condicoes: outras, medicacoes: med})
+  }).then(function(){ mostrarToast('✅ Anamnese salva!'); fecharModal('modal-anamnese'); })
+  .catch(function(){ mostrarToast('Erro ao salvar'); });
 }
 
 // ── TIMER ─────────────────────────────────────────────

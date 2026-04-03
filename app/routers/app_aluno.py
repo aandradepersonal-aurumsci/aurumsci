@@ -181,6 +181,7 @@ async def registrar_bioimpedancia(
     if not aval or aval.data_avaliacao != hoje:
         aval = AvaliacaoFisica(
             aluno_id=aluno.id,
+            personal_id=1,
             data_avaliacao=hoje,
             protocolo_composicao="bioimpedancia"
         )
@@ -246,6 +247,7 @@ async def analise_postural(
     if not aval:
         aval = AvaliacaoFisica(
             aluno_id=aluno.id,
+            personal_id=1,
             data_avaliacao=date.today()
         )
         db.add(aval)
@@ -292,11 +294,24 @@ async def treino_hoje(
     if not plano:
         return {"mensagem": "Nenhum plano ativo. Faça o onboarding primeiro!"}
 
-    dia_semana = date.today().weekday()
+    # Dia relativo ao início do plano — nunca depende do dia da semana fixo
+    data_inicio = plano.data_inicio if plano.data_inicio else date.today()
+    dias_desde_inicio = (date.today() - data_inicio).days
+    dias_treino = plano.dias_semana or 3
+
+    dia_na_semana = dias_desde_inicio % 7
+    e_dia_treino = dia_na_semana < dias_treino
+
+    if not e_dia_treino:
+        return {
+            "mensagem": "Hoje é dia de descanso! Recuperação também é treino.",
+            "dica": "Aproveite para fazer mobilidade ou caminhada leve."
+        }
+
+    idx_sessao = dia_na_semana % dias_treino
     sessao = db.query(SessaoTreino).filter(
-        SessaoTreino.plano_id == plano.id,
-        SessaoTreino.dia_semana == dia_semana
-    ).first()
+        SessaoTreino.plano_id == plano.id
+    ).order_by(SessaoTreino.ordem).offset(idx_sessao).first()
 
     if not sessao:
         return {
@@ -328,25 +343,19 @@ async def treino_hoje(
             "coluna": ultima_aval.postura_coluna,
         }
 
-    from app.routers.treino import Exercicio
-    lista_ex = []
-    for e in exercicios:
-        ex_obj = db.query(Exercicio).filter(Exercicio.id == e.exercicio_id).first()
-        lista_ex.append({
-            "ordem":      e.ordem,
-            "nome":       ex_obj.nome if ex_obj else "Exercicio",
-            "series":     e.series,
-            "repeticoes": e.repeticoes,
-            "carga":      e.carga_kg,
-            "descanso":   e.tempo_descanso_seg,
-            "observacao": e.observacoes,
-            "corretivo":  False,
-        })
-
     return {
         "sessao": sessao.nome,
         "data": str(date.today()),
-        "exercicios": lista_ex,
+        "exercicios": [{
+            "ordem":       e.ordem,
+            "nome":        e.exercicio.nome if e.exercicio else "",
+            "series":      e.series,
+            "repeticoes":  e.repeticoes,
+            "carga":       e.carga_sugerida,
+            "descanso":    e.descanso_segundos,
+            "observacao":  e.observacao,
+            "corretivo":   False,
+        } for e in exercicios],
         "total_exercicios": len(exercicios),
         "corretivos_posturais": corretivos,
         "postura_resumo": postura_resumo
@@ -360,15 +369,16 @@ async def registrar_presenca(
     db: Session = Depends(get_db)
 ):
     """Registra presença do aluno no treino."""
-    from app.routers.treino import RegistroPresenca, PlanoTreino
+    from app.routers.treino import PresencaTreino, PlanoTreino
 
     plano = db.query(PlanoTreino).filter(
         PlanoTreino.aluno_id == aluno.id,
         PlanoTreino.ativo == True
     ).first()
 
-    presenca = RegistroPresenca(
+    presenca = PresencaTreino(
         aluno_id=aluno.id,
+        personal_id=1,
         plano_id=plano.id if plano else None,
         sessao_id=dados.sessao_id,
         data_presenca=date.today(),
@@ -399,7 +409,7 @@ async def dashboard(
     - Próxima reavaliação
     """
     from app.routers.avaliacao import AvaliacaoFisica
-    from app.routers.treino import RegistroPresenca
+    from app.routers.treino import PresencaTreino
 
     # Avaliações ordenadas por data
     avals = db.query(AvaliacaoFisica).filter(
@@ -417,10 +427,10 @@ async def dashboard(
 
     # Frequência últimos 30 dias
     trinta_dias  = date.today() - timedelta(days=30)
-    presencas_30 = db.query(RegistroPresenca).filter(
-        RegistroPresenca.aluno_id == aluno.id,
-        RegistroPresenca.data_presenca >= trinta_dias,
-        RegistroPresenca.presente == True
+    presencas_30 = db.query(PresencaTreino).filter(
+        PresencaTreino.aluno_id == aluno.id,
+        PresencaTreino.data_presenca >= trinta_dias,
+        PresencaTreino.presente == True
     ).count()
 
     # Última avaliação
@@ -510,7 +520,7 @@ async def chat_aluno(
     """Chatbot AURI focado no aluno — responde dúvidas sobre treino e evolução."""
     from app.motor.ia_chatbot import montar_contexto, responder_chatbot, resposta_rapida
     from app.routers.avaliacao import AvaliacaoFisica
-    from app.routers.treino import PlanoTreino, RegistroPresenca
+    from app.routers.treino import PlanoTreino, PresencaTreino
 
     # Resposta rápida para saudações
     rapida = resposta_rapida(dados.mensagem, {"nome": aluno.nome})
@@ -527,10 +537,10 @@ async def chat_aluno(
         PlanoTreino.ativo == True
     ).first()
 
-    presencas_30 = db.query(RegistroPresenca).filter(
-        RegistroPresenca.aluno_id == aluno.id,
-        RegistroPresenca.data_presenca >= date.today() - timedelta(days=30),
-        RegistroPresenca.presente == True
+    presencas_30 = db.query(PresencaTreino).filter(
+        PresencaTreino.aluno_id == aluno.id,
+        PresencaTreino.data_presenca >= date.today() - timedelta(days=30),
+        PresencaTreino.presente == True
     ).count()
 
     aluno_dict = {
@@ -562,11 +572,11 @@ async def chat_aluno(
 
 def _calcular_sequencia(aluno_id: int, db: Session) -> int:
     """Calcula sequência de dias consecutivos de treino."""
-    from app.routers.treino import RegistroPresenca
-    presencas = db.query(RegistroPresenca).filter(
-        RegistroPresenca.aluno_id == aluno_id,
-        RegistroPresenca.presente == True
-    ).order_by(RegistroPresenca.data_presenca.desc()).limit(30).all()
+    from app.routers.treino import PresencaTreino
+    presencas = db.query(PresencaTreino).filter(
+        PresencaTreino.aluno_id == aluno_id,
+        PresencaTreino.presente == True
+    ).order_by(PresencaTreino.data_presenca.desc()).limit(30).all()
 
     if not presencas:
         return 1
@@ -630,60 +640,102 @@ def periodizacao(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends
     ciclos = ciclos_map.get(objetivo, ciclos_map["hipertrofia"])
     return {"objetivo": objetivo, "nivel": nivel, "ciclos": ciclos}
 
-# pente fino v1
-
 
 @router.get("/financeiro")
 def financeiro(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    """Retorna plano e histórico de pagamentos do aluno."""
     from app.routers.financeiro import Pagamento
     from datetime import date
-    pags = db.query(Pagamento).filter(Pagamento.aluno_id == aluno.id).order_by(Pagamento.data_vencimento.desc()).all()
+    pags = db.query(Pagamento).filter(
+        Pagamento.aluno_id == aluno.id
+    ).order_by(Pagamento.data_vencimento.desc()).all()
     if not pags:
         return {"detail": "Nenhum pagamento encontrado"}
     ultimo = pags[0]
     hoje = date.today()
-    status = "pago" if ultimo.data_pagamento else ("atrasado" if ultimo.data_vencimento and ultimo.data_vencimento < hoje else "pendente")
+    if ultimo.data_pagamento:
+        status = "pago"
+    elif ultimo.data_vencimento and ultimo.data_vencimento < hoje:
+        status = "atrasado"
+    else:
+        status = "pendente"
     historico = []
     for p in pags[:6]:
         st = "pago" if p.data_pagamento else ("atrasado" if p.data_vencimento and p.data_vencimento < hoje else "pendente")
-        historico.append({"mes": p.data_vencimento.strftime("%b/%Y") if p.data_vencimento else "", "valor": str(p.valor), "status": st})
-    return {"plano": "Plano Personal", "valor": str(ultimo.valor), "status": status, "vencimento": ultimo.data_vencimento.strftime("%d/%m/%Y") if ultimo.data_vencimento else None, "historico": historico}
+        historico.append({
+            "mes": p.data_vencimento.strftime("%b/%Y") if p.data_vencimento else "",
+            "valor": str(p.valor),
+            "status": st
+        })
+    return {
+        "plano": "Plano Personal",
+        "valor": str(ultimo.valor),
+        "status": status,
+        "vencimento": ultimo.data_vencimento.strftime("%d/%m/%Y") if ultimo.data_vencimento else None,
+        "historico": historico
+    }
 
 
 @router.post("/treino-concluir")
 def treino_concluir(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
-    return {"mensagem": "Treino concluido!", "sequencia": _calcular_sequencia(aluno.id, db)}
+    """Registra conclusão do treino do dia."""
+    return {"mensagem": "Treino concluído! Parabéns!", "sequencia": _calcular_sequencia(aluno.id, db)}
 
 
 @router.post("/checkin")
 def checkin(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
-    from app.routers.treino import RegistroPresenca, PlanoTreino
+    """Registra check-in do aluno."""
+    from app.routers.treino import PresencaTreino, PlanoTreino
     from datetime import date
-    plano = db.query(PlanoTreino).filter(PlanoTreino.aluno_id == aluno.id, PlanoTreino.ativo == True).first()
-    presenca = RegistroPresenca(aluno_id=aluno.id, personal_id=1, plano_id=plano.id if plano else None, data_presenca=date.today(), presente=True)
+    plano = db.query(PlanoTreino).filter(
+        PlanoTreino.aluno_id == aluno.id,
+        PlanoTreino.ativo == True
+    ).first()
+    presenca = PresencaTreino(
+        aluno_id=aluno.id,
+        personal_id=aluno.personal_id if hasattr(aluno, 'personal_id') else 1,
+        plano_id=plano.id if plano else None,
+        data_presenca=date.today(),
+        presente=True
+    )
     db.add(presenca)
     db.commit()
     return {"mensagem": "Check-in registrado!", "sequencia": _calcular_sequencia(aluno.id, db)}
 
-@router.post("/medidas")
-def salvar_medidas(dados: dict, aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
-    from app.models import AvaliacaoFisica
-    aval = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno.id).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
-    if not aval:
-        from datetime import date
-        aval = AvaliacaoFisica(aluno_id=aluno.id, personal_id=1, data_avaliacao=date.today())
-        db.add(aval)
-    for campo, valor in dados.items():
-        if hasattr(aval, campo):
-            setattr(aval, campo, valor)
-    db.commit()
-    return {"mensagem": "Medidas salvas!"}
+
+class OvertrainingSchema(BaseModel):
+    score: int
+    risco: str
+
+@router.post("/overtraining")
+def registrar_overtraining(
+    dados: OvertrainingSchema,
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    import json
+    from app.routers.avaliacao import AvaliacaoFisica
+    aval = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno.id
+    ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+    if aval and hasattr(aval, 'observacoes'):
+        obs = {"overtraining_score": dados.score, "overtraining_risco": dados.risco, "overtraining_data": str(date.today())}
+        try:
+            existing = json.loads(aval.observacoes or '{}')
+            existing.update(obs)
+            aval.observacoes = json.dumps(existing, ensure_ascii=False)
+        except Exception:
+            aval.observacoes = json.dumps(obs, ensure_ascii=False)
+        db.commit()
+    return {"mensagem": "Questionário registrado!", "score": dados.score, "risco": dados.risco, "deload_recomendado": dados.risco == "alto"}
 
 @router.get("/medidas")
 def get_medidas(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
-    from app.models import AvaliacaoFisica
-    aval = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno.id).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+    from app.routers.avaliacao import AvaliacaoFisica
+    aval = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno.id
+    ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
     if not aval:
         return {}
     campos = ['torax','cintura','abdomen','quadril','bracoD','bracoE','antebD','antebE','coxaD','coxaE','pantD','pantE']
-    return {c: getattr(aval, c, None) for c in campos if getattr(aval, c, None)}
+    return {c: float(getattr(aval, c)) for c in campos if getattr(aval, c, None)}

@@ -1185,6 +1185,8 @@ function mostrarApp(){
   renderEvolucao();
   renderPeriodo();
   renderLoja();
+  renderFin();
+  verificarOvertraining();
   // Auri flutuante
   setTimeout(function(){
     document.getElementById('auri-float').style.display = 'block';
@@ -1415,7 +1417,14 @@ function renderTreino(){
         '</div>';
       treinoHtml += '<button class="btn-concluir" id="btn-concluir-treino" onclick="concluirTreino(0)" style="opacity:0.3;pointer-events:none">CONCLUIR TREINO ✓</button></div>';
 
-      // Corretivos posturais
+      // Card de avaliação ANTES dos exercícios se não fez postural/HRR
+      var posturalFeita = localStorage.getItem('aurum_postural_feita');
+      var hrrFeito = localStorage.getItem('aurum_hrr_feito');
+      if(!posturalFeita || !hrrFeito){
+        treinoHtml = renderMsgSemAvaliacao() + treinoHtml;
+      }
+
+      // Corretivos posturais (após exercícios)
       if(d.corretivos_posturais && d.corretivos_posturais.length > 0){
         treinoHtml += '<div class="card" style="margin-top:12px"><div class="card-line roxo"></div>' +
           '<div style="font-size:10px;color:var(--ouro);letter-spacing:2px;margin-bottom:10px">🧍 CORRETIVOS POSTURAIS</div>';
@@ -1427,9 +1436,6 @@ function renderTreino(){
             '<button onclick="verVideoCorretivo(\'' + corr + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0;flex-shrink:0" title="Ver vídeo">🎬</button></div>';
         });
         treinoHtml += '</div>';
-      } else {
-        // Sem corretivos — incentiva avaliação postural
-        treinoHtml += renderMsgSemAvaliacao();
       }
     } else {
       var diasSemana = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
@@ -1460,16 +1466,114 @@ function irParaAvaliacao(){
   var tab = document.querySelector('.tab:nth-child(2)');
   if(tab) mudarTab('avaliacao', tab);
 }
+
 function renderMsgSemAvaliacao(){
-  return '<div class="card" style="margin-bottom:12px"><div class="card-line azul"></div>' +
-    '<div style="padding:16px">' +
-    '<div style="font-size:11px;color:var(--azul);letter-spacing:1px;font-weight:700;margin-bottom:10px">⚡ TURBINE SEU TREINO COM AVALIAÇÃO COMPLETA</div>' +
-    '<div style="font-size:13px;color:var(--cinza);line-height:1.9;margin-bottom:14px">' +
-    '🧍 <strong style="color:var(--texto)">Análise Postural com IA</strong> — identificamos seus desvios e adicionamos exercícios corretivos personalizados direto no seu treino<br><br>' +
-    '❤️ <strong style="color:var(--texto)">Teste Cardiorrespiratório</strong> — avaliamos seu risco cardíaco antes de treinar em alta intensidade. Sua segurança em primeiro lugar!' +
-    '</div>' +
-    '<button onclick="irParaAvaliacao()" style="width:100%;padding:12px;background:rgba(75,159,255,.1);border:1px solid rgba(75,159,255,.3);border-radius:12px;color:var(--azul);font-size:13px;font-weight:600;cursor:pointer">FAZER AVALIAÇÃO COMPLETA →</button>' +
+  return '<div style="margin-bottom:16px;border-radius:20px;overflow:hidden;border:1.5px solid rgba(201,168,76,.35);background:linear-gradient(160deg,rgba(201,168,76,.08) 0%,rgba(10,10,15,0) 60%)">' +
+    '<div style="padding:20px 20px 0">' +
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">' +
+    '<div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">⚡</div>' +
+    '<div><div style="font-family:Bebas Neue;font-size:20px;letter-spacing:1px;color:var(--ouro2)">AVALIAÇÃO FÍSICA PENDENTE</div>' +
+    '<div style="font-size:11px;color:var(--cinza)">Seu treino está incompleto sem ela</div></div></div>' +
+
+    '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">' +
+
+    '<div style="display:flex;gap:12px;align-items:flex-start;background:rgba(155,123,255,.07);border:1px solid rgba(155,123,255,.2);border-radius:14px;padding:14px">' +
+    '<div style="font-size:26px;flex-shrink:0">🧍</div>' +
+    '<div><div style="font-size:13px;font-weight:600;color:var(--texto);margin-bottom:4px">Análise Postural com IA</div>' +
+    '<div style="font-size:12px;color:var(--cinza);line-height:1.7">Fotografamos sua postura e identificamos desvios como hiperlordose, escoliose e assimetrias. Nossa IA adiciona <strong style="color:var(--roxo)">exercícios corretivos personalizados</strong> direto no seu treino.</div></div></div>' +
+
+    '<div style="display:flex;gap:12px;align-items:flex-start;background:rgba(255,75,75,.06);border:1px solid rgba(255,75,75,.2);border-radius:14px;padding:14px">' +
+    '<div style="font-size:26px;flex-shrink:0">❤️</div>' +
+    '<div><div style="font-size:13px;font-weight:600;color:var(--texto);margin-bottom:4px">Avaliação Cardiorrespiratória (HRR)</div>' +
+    '<div style="font-size:12px;color:var(--cinza);line-height:1.7">Medimos sua <strong style="color:#FF6B6B">FC de recuperação</strong> após esforço. Queda &lt;12 bpm/min é sinal de alerta cardiovascular. Treinar intenso sem saber seu risco cardíaco pode ser perigoso.<br><span style="font-size:10px;color:rgba(255,120,120,.6)">📚 Cole et al. (1999) NEJM · Nishime et al. (2000) JAMA</span></div></div></div>' +
+
+    '</div></div>' +
+
+    '<div style="padding:0 20px 20px">' +
+    '<button onclick="irParaAvaliacao()" style="width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:14px;color:#0A0A0F;font-family:Bebas Neue;font-size:20px;letter-spacing:2px;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.3)">FAZER AVALIAÇÃO AGORA →</button>' +
+    '<div style="text-align:center;font-size:11px;color:var(--cinza);margin-top:10px">Leva ~10 minutos · Feito uma vez, vale para sempre</div>' +
     '</div></div>';
+}
+
+// ── OVERTRAINING ──────────────────────────────────────
+var OVERTRAINING_KEY = 'aurum_over_last';
+var OVERTRAINING_SEMANAS = 4;
+
+function verificarOvertraining(){
+  var ultimo = localStorage.getItem(OVERTRAINING_KEY);
+  if(ultimo){
+    var diff = (Date.now() - parseInt(ultimo)) / (1000*60*60*24*7);
+    if(diff < OVERTRAINING_SEMANAS) return;
+  }
+  // Mostra questionário após pequeno delay
+  setTimeout(function(){ abrirQuestionarioOver(); }, 1200);
+}
+
+function abrirQuestionarioOver(){
+  var modal = document.getElementById('modal-overtraining');
+  if(modal) modal.classList.add('show');
+}
+function fecharQuestionarioOver(){
+  var modal = document.getElementById('modal-overtraining');
+  if(modal) modal.classList.remove('show');
+}
+
+var overRespostas = {};
+function responderOver(pergId, val, el){
+  overRespostas[pergId] = val;
+  var grupo = el.parentElement;
+  grupo.querySelectorAll('button').forEach(function(b){ b.style.background='var(--bg2)'; b.style.color='var(--cinza)'; b.style.borderColor='var(--borda)'; });
+  el.style.background = val >= 2 ? 'rgba(255,75,75,.15)' : 'rgba(0,229,160,.15)';
+  el.style.color = val >= 2 ? '#FF6B6B' : 'var(--verde)';
+  el.style.borderColor = val >= 2 ? 'rgba(255,75,75,.4)' : 'rgba(0,229,160,.4)';
+  // Verifica se todas respondidas (6 perguntas)
+  if(Object.keys(overRespostas).length >= 6){
+    setTimeout(function(){ calcularOvertraining(); }, 400);
+  }
+}
+
+function calcularOvertraining(){
+  var total = 0;
+  Object.keys(overRespostas).forEach(function(k){ total += overRespostas[k]; });
+  // Score 0-12: 0-4=ok, 5-8=atenção, 9-12=alto risco
+  var risco = total <= 4 ? 'baixo' : total <= 8 ? 'medio' : 'alto';
+  localStorage.setItem(OVERTRAINING_KEY, Date.now().toString());
+  // Salva no backend
+  fetch('/app-aluno/overtraining', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({score: total, risco: risco})}).catch(function(){});
+  // Mostra resultado
+  var res = document.getElementById('over-resultado');
+  var btn = document.getElementById('over-btn-fechar');
+  if(risco === 'baixo'){
+    res.innerHTML = '<div style="text-align:center;padding:20px 0">' +
+      '<div style="font-size:52px;margin-bottom:12px">💪</div>' +
+      '<div style="font-family:Bebas Neue;font-size:26px;color:var(--verde);letter-spacing:1px">VOCÊ ESTÁ BEM!</div>' +
+      '<div style="font-size:13px;color:var(--cinza);margin-top:8px;line-height:1.7">Sem sinais de overtraining. Continue com a periodização normal e siga evoluindo!</div></div>';
+    btn.textContent = 'CONTINUAR TREINANDO 💪';
+    btn.style.background = 'linear-gradient(135deg,var(--verde),#00B87A)';
+  } else if(risco === 'medio'){
+    res.innerHTML = '<div style="text-align:center;padding:20px 0">' +
+      '<div style="font-size:52px;margin-bottom:12px">⚠️</div>' +
+      '<div style="font-family:Bebas Neue;font-size:26px;color:var(--ouro2);letter-spacing:1px">ATENÇÃO!</div>' +
+      '<div style="font-size:13px;color:var(--cinza);margin-top:8px;line-height:1.7">Alguns sinais de fadiga acumulada. Recomendamos <strong style="color:var(--ouro)">reduzir o volume em 20%</strong> esta semana e priorizar o sono.</div></div>';
+    btn.textContent = 'ENTENDIDO ✓';
+    btn.style.background = 'linear-gradient(135deg,var(--ouro),var(--ouro2))';
+  } else {
+    res.innerHTML = '<div style="text-align:center;padding:20px 0">' +
+      '<div style="font-size:52px;margin-bottom:12px">🔴</div>' +
+      '<div style="font-family:Bebas Neue;font-size:26px;color:var(--vermelho);letter-spacing:1px">SEMANA DE DELOAD!</div>' +
+      '<div style="font-size:13px;color:var(--cinza);margin-top:8px;line-height:1.7">Seu corpo está pedindo recuperação. Uma <strong style="color:#FF6B6B">semana de deload</strong> foi adicionada automaticamente à sua periodização — cargas reduzidas em 40%, volume menor, foco em técnica e mobilidade.<br><br><span style="font-size:11px;color:rgba(255,120,120,.7)">📚 Bazgir et al. (2021) — deload estratégico previne lesões e melhora performance a longo prazo.</span></div></div>';
+    btn.textContent = 'VER PERIODIZAÇÃO 📅';
+    btn.style.background = 'linear-gradient(135deg,#FF4B4B,#FF8C00)';
+    btn.onclick = function(){ fecharQuestionarioOver(); mudarTab('periodo', document.querySelector('.tab:nth-child(3)')); };
+    // Marca deload na periodização
+    localStorage.setItem('aurum_deload_ativo', '1');
+    localStorage.setItem('aurum_deload_data', new Date().toISOString().slice(0,10));
+  }
+  // Esconde perguntas, mostra resultado
+  document.getElementById('over-perguntas').style.display = 'none';
+  res.style.display = 'block';
+  btn.style.display = 'block';
 }
 
 function renderMsgSemPlano(){
@@ -1891,6 +1995,7 @@ function calcularHRR(){
     'Nishime EO et al. (2000), JAMA — HRR como preditor independente de risco cardiovascular.<br>' +
     'Orientação embasada nas diretrizes ACSM (2022) para avaliação cardiorrespiratória.</em>' +
     '</div>';
+  localStorage.setItem('aurum_hrr_feito','1');
   document.getElementById('hrr-resultado').innerHTML =
     '<div class="classificacao-box" style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2)">' +
     '<div class="class-titulo" style="color:var(--verde)">HRR — RECUPERAÇÃO CARDÍACA</div>' +
@@ -2205,5 +2310,79 @@ if('serviceWorker' in navigator){
   });
 }
 </script>
+
+<!-- MODAL OVERTRAINING -->
+<div class="modal-full" id="modal-overtraining">
+  <div class="modal-header">
+    <button class="modal-back" onclick="fecharQuestionarioOver()">←</button>
+    <div class="modal-titulo">CHECK MENSAL</div>
+  </div>
+  <div class="modal-body">
+    <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:14px;margin-bottom:20px">
+      <div style="font-size:11px;color:var(--ouro);letter-spacing:1px;font-weight:700;margin-bottom:6px">📋 QUESTIONÁRIO MENSAL DE RECUPERAÇÃO</div>
+      <div style="font-size:12px;color:var(--cinza);line-height:1.7">Responda com honestidade. Isso nos ajuda a ajustar sua periodização para máxima performance sem lesões.</div>
+    </div>
+    <div id="over-perguntas">
+
+      <div style="margin-bottom:18px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5">1. Como está seu nível de energia geral nos últimos dias?</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="responderOver('energia',0,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😊 Ótimo</button>
+          <button onclick="responderOver('energia',1,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😐 Regular</button>
+          <button onclick="responderOver('energia',2,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😴 Cansado</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5">2. Como está sua qualidade de sono?</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="responderOver('sono',0,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😴 Dormindo bem</button>
+          <button onclick="responderOver('sono',1,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">🌙 Irregular</button>
+          <button onclick="responderOver('sono',2,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😵 Mal dormindo</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5">3. Sente dores musculares persistentes (além da dor normal pós-treino)?</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="responderOver('dor',0,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">✅ Não</button>
+          <button onclick="responderOver('dor',1,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">⚠️ Um pouco</button>
+          <button onclick="responderOver('dor',2,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">🔴 Sim, bastante</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5">4. Como está sua motivação para treinar?</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="responderOver('motivacao',0,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">🔥 Alta</button>
+          <button onclick="responderOver('motivacao',1,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😐 Normal</button>
+          <button onclick="responderOver('motivacao',2,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😑 Baixa / nenhuma</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5">5. Notou queda de desempenho nos seus treinos recentes?</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="responderOver('desempenho',0,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">📈 Melhorando</button>
+          <button onclick="responderOver('desempenho',1,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">➡️ Estável</button>
+          <button onclick="responderOver('desempenho',2,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">📉 Caindo</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5">6. Como está seu humor / irritabilidade nos últimos dias?</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="responderOver('humor',0,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😊 Bem</button>
+          <button onclick="responderOver('humor',1,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😤 Um pouco irritado</button>
+          <button onclick="responderOver('humor',2,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😠 Muito irritado</button>
+        </div>
+      </div>
+
+    </div>
+    <div id="over-resultado" style="display:none"></div>
+    <button id="over-btn-fechar" onclick="fecharQuestionarioOver()" style="display:none;width:100%;padding:16px;border:none;border-radius:14px;color:#0A0A0F;font-family:Bebas Neue;font-size:20px;letter-spacing:2px;cursor:pointer;margin-top:8px"></button>
+  </div>
+</div>
+
 </body>
 </html>

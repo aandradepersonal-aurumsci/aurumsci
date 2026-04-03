@@ -1074,22 +1074,70 @@ function finalizarOnboarding(){
   mostrarApp();
 }
 
+var modoMedidasAvancado = false;
+
 function renderMedidasRows(){
-  var medidas = [
-    {grupo:'TRONCO', itens:[{id:'torax',emoji:'🫀',label:'Tórax',hint:'Na linha dos mamilos'},{id:'cintura',emoji:'⏳',label:'Cintura',hint:'Parte mais estreita'},{id:'abdomen',emoji:'🍎',label:'Abdômen',hint:'Na altura do umbigo'},{id:'quadril',emoji:'🍑',label:'Quadril',hint:'Parte mais larga'}]},
-    {grupo:'BRAÇOS', itens:[{id:'bracoD',emoji:'💪',label:'Bíceps Dir.',hint:'Contraído'},{id:'bracoE',emoji:'💪',label:'Bíceps Esq.',hint:'Contraído'},{id:'antebD',emoji:'🦾',label:'Antebraço Dir.',hint:'Parte mais larga'},{id:'antebE',emoji:'🦾',label:'Antebraço Esq.',hint:'Parte mais larga'}]},
-    {grupo:'PERNAS', itens:[{id:'coxaD',emoji:'🦵',label:'Coxa Dir.',hint:'Parte mais larga'},{id:'coxaE',emoji:'🦵',label:'Coxa Esq.',hint:'Parte mais larga'},{id:'pantD',emoji:'🦶',label:'Panturrilha Dir.',hint:'Parte mais larga'},{id:'pantE',emoji:'🦶',label:'Panturrilha Esq.',hint:'Parte mais larga'}]}
+  var simples = [
+    {grupo:'📏 MEDIDAS RÁPIDAS — 2 minutos', itens:[
+      {id:'torax',   emoji:'🫀', label:'Tórax',   hint:'Na linha dos mamilos'},
+      {id:'abdomen', emoji:'🍎', label:'Abdômen', hint:'Na altura do umbigo'},
+      {id:'bracoD',  emoji:'💪', label:'Braço',   hint:'Bíceps contraído, lado direito'},
+      {id:'coxaD',   emoji:'🦵', label:'Coxa',    hint:'Parte mais larga, lado direito'}
+    ]}
   ];
+  var avancadas = [
+    {grupo:'📐 TRONCO', itens:[
+      {id:'torax',   emoji:'🫀', label:'Tórax',   hint:'Na linha dos mamilos'},
+      {id:'cintura', emoji:'⏳', label:'Cintura', hint:'Parte mais estreita'},
+      {id:'abdomen', emoji:'🍎', label:'Abdômen', hint:'Na altura do umbigo'},
+      {id:'quadril', emoji:'🍑', label:'Quadril', hint:'Parte mais larga'}
+    ]},
+    {grupo:'💪 BRAÇOS', itens:[
+      {id:'bracoD',  emoji:'💪', label:'Bíceps Dir.',     hint:'Contraído'},
+      {id:'bracoE',  emoji:'💪', label:'Bíceps Esq.',     hint:'Contraído'},
+      {id:'antebD',  emoji:'🦾', label:'Antebraço Dir.',  hint:'Parte mais larga'},
+      {id:'antebE',  emoji:'🦾', label:'Antebraço Esq.', hint:'Parte mais larga'}
+    ]},
+    {grupo:'🦵 PERNAS', itens:[
+      {id:'coxaD',   emoji:'🦵', label:'Coxa Dir.',          hint:'Parte mais larga'},
+      {id:'coxaE',   emoji:'🦵', label:'Coxa Esq.',          hint:'Parte mais larga'},
+      {id:'pantD',   emoji:'🦶', label:'Panturrilha Dir.',   hint:'Parte mais larga'},
+      {id:'pantE',   emoji:'🦶', label:'Panturrilha Esq.',  hint:'Parte mais larga'}
+    ]}
+  ];
+
+  var grupos = modoMedidasAvancado ? avancadas : simples;
   var html = '';
-  medidas.forEach(function(g){
+  grupos.forEach(function(g){
     html += '<div class="medida-grupo-titulo">' + g.grupo + '</div>';
     g.itens.forEach(function(m){
       html += '<div class="medida-row"><div class="medida-emoji">' + m.emoji + '</div>' +
         '<div class="medida-info"><div class="medida-label">' + m.label + '</div><div class="medida-hint">' + m.hint + '</div></div>' +
-        '<input class="medida-input" type="number" id="m-' + m.id + '" placeholder="00"><div class="medida-un">cm</div></div>';
+        '<input class="medida-input" type="number" id="m-' + m.id + '" placeholder="00" onblur="autoSaveMedida(this, \'' + m.id + '\')"><div class="medida-un">cm</div></div>';
     });
   });
   return html;
+}
+
+function toggleModoMedidas(){
+  modoMedidasAvancado = !modoMedidasAvancado;
+  var btn = document.getElementById('btn-modo-medidas');
+  btn.textContent = modoMedidasAvancado ? '⚡ Modo Rápido (4 medidas)' : '📐 Avaliação Completa (com ajuda)';
+  btn.style.background = modoMedidasAvancado ? 'rgba(0,229,160,.1)' : 'rgba(75,159,255,.1)';
+  btn.style.borderColor = modoMedidasAvancado ? 'rgba(0,229,160,.3)' : 'rgba(75,159,255,.3)';
+  btn.style.color = modoMedidasAvancado ? 'var(--verde)' : 'var(--azul)';
+  var area = document.getElementById('medidas-rows');
+  area.innerHTML = renderMedidasRows();
+  // Recarregar valores salvos
+  fetch('/app-aluno/medidas', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(!d || d.detail) return;
+    Object.keys(d).forEach(function(id){
+      var el = document.getElementById('m-' + id);
+      if(el && d[id]) el.value = d[id];
+    });
+  }).catch(function(){});
 }
 
 // ── APP PRINCIPAL ─────────────────────────────────────
@@ -1511,12 +1559,60 @@ function abrirModal(id){
 function fecharModal(id){ document.getElementById(id).classList.remove('show'); }
 
 function renderModalMedidas(){
-  document.getElementById('body-medidas').innerHTML = renderMedidasRows() +
-    '<br><button class="btn-gold" onclick="salvarMedidas()">SALVAR MEDIDAS</button>';
+  modoMedidasAvancado = false;
+  var dica = '<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:12px;margin-bottom:14px;font-size:12px;line-height:1.8;color:var(--cinza)">' +
+    '<strong style="color:var(--ouro)">📏 Como medir:</strong> Fique em pé, relaxado. Fita paralela ao chão, sem apertar. Meça sempre no mesmo horário.' +
+    '</div>';
+  var btnModo = '<button id="btn-modo-medidas" onclick="toggleModoMedidas()" style="width:100%;padding:12px;background:rgba(75,159,255,.1);border:1px solid rgba(75,159,255,.3);border-radius:12px;color:var(--azul);font-size:13px;cursor:pointer;margin-bottom:14px;font-weight:600">📐 Avaliação Completa — tem alguém pra te ajudar?</button>';
+  document.getElementById('body-medidas').innerHTML = dica + btnModo +
+    '<div id="medidas-rows">' + renderMedidasRows() + '</div>' +
+    '<div style="font-size:11px;color:var(--verde);text-align:center;margin:8px 0">✅ Salva automaticamente quando você sai do campo</div>' +
+    '<br><button class="btn-gold" onclick="salvarMedidas()">SALVAR TUDO ✓</button>';
+  // Carregar medidas salvas
+  fetch('/app-aluno/medidas', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(!d || d.detail) return;
+    Object.keys(d).forEach(function(id){
+      var el = document.getElementById('m-' + id);
+      if(el && d[id]) el.value = d[id];
+    });
+  }).catch(function(){});
 }
+function autoSaveMedida(input, id){
+  var val = parseFloat(input.value);
+  if(!val || val <= 0) return;
+  var dados = {};
+  dados[id] = val;
+  fetch('/app-aluno/medidas', {
+    method: 'POST',
+    headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
+    body: JSON.stringify(dados)
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    input.style.color = 'var(--verde)';
+    setTimeout(function(){ input.style.color = 'var(--ouro2)'; }, 1500);
+  }).catch(function(){
+    input.style.color = 'var(--vermelho)';
+    setTimeout(function(){ input.style.color = 'var(--ouro2)'; }, 1500);
+  });
+}
+
 function salvarMedidas(){
-  mostrarToast('Medidas salvas!');
-  fecharModal('modal-medidas');
+  // Salvar todas de uma vez
+  var campos = ['torax','cintura','abdomen','quadril','bracoD','bracoE','antebD','antebE','coxaD','coxaE','pantD','pantE']; // todos os campos possíveis
+  var dados = {};
+  campos.forEach(function(id){
+    var el = document.getElementById('m-' + id);
+    if(el && el.value) dados[id] = parseFloat(el.value);
+  });
+  if(Object.keys(dados).length === 0){ mostrarToast('Informe pelo menos uma medida!'); return; }
+  fetch('/app-aluno/medidas', {
+    method: 'POST',
+    headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
+    body: JSON.stringify(dados)
+  }).then(function(){ mostrarToast('✅ Medidas salvas!'); fecharModal('modal-medidas'); })
+  .catch(function(){ mostrarToast('Erro ao salvar'); });
 }
 
 function renderModalComposicao(){

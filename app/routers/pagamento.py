@@ -115,7 +115,10 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(e))
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
-        aluno_id = session["metadata"]["aluno_id"] if session.get("metadata") else None
+        try:
+        aluno_id = session["metadata"]["aluno_id"]
+except:
+        aluno_id = None
         if aluno_id:
             from app.models import Aluno
             aluno = db.query(Aluno).filter(Aluno.id == int(aluno_id)).first()

@@ -15,7 +15,7 @@ router = APIRouter(prefix="/pagamento", tags=["Pagamento"])
 class CheckoutSchema(BaseModel):
     aluno_id: int
     plano: str = "Plano Mensal AurumSci"
-    valor: int = 20000
+    valor: int = 4990
 
 def enviar_email_boas_vindas(nome: str, email: str):
     try:

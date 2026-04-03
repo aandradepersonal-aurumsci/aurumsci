@@ -667,3 +667,26 @@ def checkin(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_
     db.add(presenca)
     db.commit()
     return {"mensagem": "Check-in registrado!", "sequencia": _calcular_sequencia(aluno.id, db)}
+
+@router.post("/medidas")
+def salvar_medidas(dados: dict, aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    from app.models import AvaliacaoFisica
+    aval = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno.id).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+    if not aval:
+        from datetime import date
+        aval = AvaliacaoFisica(aluno_id=aluno.id, personal_id=1, data_avaliacao=date.today())
+        db.add(aval)
+    for campo, valor in dados.items():
+        if hasattr(aval, campo):
+            setattr(aval, campo, valor)
+    db.commit()
+    return {"mensagem": "Medidas salvas!"}
+
+@router.get("/medidas")
+def get_medidas(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    from app.models import AvaliacaoFisica
+    aval = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno.id).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+    if not aval:
+        return {}
+    campos = ['torax','cintura','abdomen','quadril','bracoD','bracoE','antebD','antebE','coxaD','coxaE','pantD','pantE']
+    return {c: getattr(aval, c, None) for c in campos if getattr(aval, c, None)}

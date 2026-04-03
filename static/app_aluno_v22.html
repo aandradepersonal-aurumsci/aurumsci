@@ -997,7 +997,25 @@ function renderOnbStep(){
           'Objetivo: <strong style="color:var(--texto)">' + obj + '</strong><br>' +
           'Nível: <strong style="color:var(--texto)">' + nivel + '</strong><br>' +
           'Frequência: <strong style="color:var(--texto)">' + dias + 'x / semana</strong>' +
-        '</div></div>';
+        '</div></div>' +
+      '<div style="margin-top:16px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:16px;padding:20px">' +
+        '<div style="font-family:Bebas Neue;font-size:16px;color:var(--ouro);letter-spacing:1px;margin-bottom:12px">🏆 MAXIMIZE SEUS RESULTADOS</div>' +
+        '<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px">' +
+          '<div style="font-size:22px;flex-shrink:0">🤖</div>' +
+          '<div>' +
+            '<div style="font-size:13px;font-weight:700;color:var(--texto);margin-bottom:3px">Análise Postural com IA</div>' +
+            '<div style="font-size:12px;color:var(--cinza);line-height:1.6">Nossa IA identifica desvios posturais e adiciona <strong style=\"color:var(--verde)\">exercícios corretivos com vídeo</strong> direto no seu treino.</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;align-items:flex-start;gap:12px">' +
+          '<div style="font-size:22px;flex-shrink:0">❤️</div>' +
+          '<div>' +
+            '<div style="font-size:13px;font-weight:700;color:var(--texto);margin-bottom:3px">Teste Cardiorrespiratório (VO2 + HRR)</div>' +
+            '<div style="font-size:12px;color:var(--cinza);line-height:1.6">Medimos seu <strong style=\"color:var(--vermelho)\">risco cardiovascular</strong> pelo HRR — define com segurança até onde você pode evoluir na intensidade do treino.</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="margin-top:12px;font-size:11px;color:var(--cinza);text-align:center;line-height:1.7">Você pode fazer a avaliação agora ou depois na aba <strong style=\"color:var(--ouro)\">AVALIAÇÃO</strong></div>';
     footer = '<button class="btn-next" onclick="finalizarOnboarding()">' + T('comecar') + '</button>';
   }
 

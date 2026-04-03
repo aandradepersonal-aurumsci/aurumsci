@@ -730,7 +730,7 @@ var TX = {
 function T(k){ return (TX[lang]||TX['pt'])[k] || (TX['pt'])[k] || k; }
 
 // ── PASSOS ONBOARDING ─────────────────────────────────
-var PASSOS = ['boas-vindas','anamnese','medicacao','objetivo','nivel','dias','bio','circunferencias','postural','pronto'];
+var PASSOS = ['boas-vindas','objetivo','nivel','dias','anamnese','medicacao','bio','pronto'];
 
 // ── SPLASH ────────────────────────────────────────────
 window.onload = function(){
@@ -954,7 +954,7 @@ function renderOnbStep(){
     var obj = onbData.objetivo || '—';
     var nivel = onbData.nivel || '—';
     var dias = onbData.dias || 3;
-    content = '<div class="onb-step-num">PASSO 10/' + total + '</div>' +
+    content = '<div class="onb-step-num">PASSO ' + (onbStep+1) + '/' + total + '</div>' +
       '<div class="onb-titulo">' + T('onb11T') + '</div>' +
       '<div class="onb-sub">' + T('onb11S') + '</div>' +
       '<div style="text-align:center;font-size:80px;margin:24px 0">🎯</div>' +
@@ -1394,6 +1394,9 @@ function renderTreino(){
             '<button onclick="verVideoCorretivo(\'' + corr + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0;flex-shrink:0" title="Ver vídeo">🎬</button></div>';
         });
         treinoHtml += '</div>';
+      } else {
+        // Sem corretivos — incentiva avaliação postural
+        treinoHtml += renderMsgSemAvaliacao();
       }
     } else {
       var diasSemana = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
@@ -1424,24 +1427,28 @@ function irParaAvaliacao(){
   var tab = document.querySelector('.tab:nth-child(2)');
   if(tab) mudarTab('avaliacao', tab);
 }
+function renderMsgSemAvaliacao(){
+  return '<div class="card" style="margin-bottom:12px"><div class="card-line azul"></div>' +
+    '<div style="padding:16px">' +
+    '<div style="font-size:11px;color:var(--azul);letter-spacing:1px;font-weight:700;margin-bottom:10px">⚡ TURBINE SEU TREINO COM AVALIAÇÃO COMPLETA</div>' +
+    '<div style="font-size:13px;color:var(--cinza);line-height:1.9;margin-bottom:14px">' +
+    '🧍 <strong style="color:var(--texto)">Análise Postural com IA</strong> — identificamos seus desvios e adicionamos exercícios corretivos personalizados direto no seu treino<br><br>' +
+    '❤️ <strong style="color:var(--texto)">Teste Cardiorrespiratório</strong> — avaliamos seu risco cardíaco antes de treinar em alta intensidade. Sua segurança em primeiro lugar!' +
+    '</div>' +
+    '<button onclick="irParaAvaliacao()" style="width:100%;padding:12px;background:rgba(75,159,255,.1);border:1px solid rgba(75,159,255,.3);border-radius:12px;color:var(--azul);font-size:13px;font-weight:600;cursor:pointer">FAZER AVALIAÇÃO COMPLETA →</button>' +
+    '</div></div>';
+}
+
 function renderMsgSemPlano(){
   return '<div class="card"><div class="card-line ouro"></div>' +
     '<div style="padding:24px 16px">' +
     '<div style="font-size:40px;text-align:center;margin-bottom:16px">👋</div>' +
     '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2);margin-bottom:12px;text-align:center">OLÁ! VAMOS NOS CONHECER?</div>' +
     '<div style="font-size:14px;color:var(--texto);line-height:1.8;margin-bottom:16px">' +
-    'Para montar seu <strong style="color:var(--ouro)">treino 100% personalizado</strong>, nossa IA precisa de algumas informações sobre você.<br><br>' +
-    'Isso nos ajuda a entender seu corpo, seus objetivos e criar um plano que realmente funcione para você. Leva poucos minutinhos! 💪' +
+    'Para montar seu <strong style="color:var(--ouro)">treino 100% personalizado</strong>, precisamos de algumas informações básicas sobre você.<br><br>' +
+    'Leva menos de 2 minutos e já liberamos seu treino! 💪' +
     '</div>' +
-    '<div style="background:var(--bg);border-radius:12px;padding:14px;margin-bottom:16px">' +
-    '<div style="font-size:11px;color:var(--ouro);letter-spacing:1px;margin-bottom:10px">📋 O QUE VOCÊ VAI FAZER:</div>' +
-    '<div style="font-size:13px;color:var(--cinza);line-height:2">' +
-    '⚖️ Registrar seu peso e % de gordura<br>' +
-    '🧍 Fazer a análise postural com IA<br>' +
-    '📏 Medir suas circunferências<br>' +
-    '❤️ Testar seu condicionamento cardíaco' +
-    '</div></div>' +
-    '<button onclick="irParaAvaliacao()" style="width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:14px;color:#0A0A0F;font-family:Bebas Neue;font-size:20px;letter-spacing:2px;cursor:pointer">COMEÇAR AVALIAÇÃO →</button>' +
+    '<button onclick="irParaAvaliacao()" style="width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:14px;color:#0A0A0F;font-family:Bebas Neue;font-size:20px;letter-spacing:2px;cursor:pointer;margin-bottom:12px">COMEÇAR AGORA →</button>' +
     '</div></div>';
 }
 

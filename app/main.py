@@ -150,6 +150,11 @@ app.include_router(app_personal_router)
 app.include_router(pagamento_router)
 
 # ── App do Aluno ──────────────────────────────────────────────
+@app.get("/cadastro", response_class=HTMLResponse, include_in_schema=False)
+def cadastro_page():
+    with open("static/cadastro.html", "r", encoding="utf-8") as f:
+        return f.read()
+
 @app.get("/aluno", response_class=HTMLResponse, include_in_schema=False)
 def app_aluno():
     with open("static/app_aluno_v22.html", "r", encoding="utf-8") as f:

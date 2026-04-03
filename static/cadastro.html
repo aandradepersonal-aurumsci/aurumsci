@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0A0A0F">
+<title>AurumSci — Comece Agora</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0A0A0F;--bg2:#12121A;--borda:#2A2A3A;
+  --ouro:#C9A84C;--ouro2:#E8C96A;--verde:#00E5A0;
+  --azul:#4B9FFF;--texto:#F0F0F0;--cinza:#888;
+  --vermelho:#FF4B4B;
+}
+body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.logo{text-align:center;margin-bottom:32px}
+.logo-title{font-family:'Bebas Neue';font-size:36px;color:var(--ouro);letter-spacing:6px}
+.logo-sub{font-size:11px;color:var(--cinza);letter-spacing:3px;margin-top:4px}
+.card{background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:28px;width:100%;max-width:400px}
+.card-title{font-family:'Bebas Neue';font-size:24px;color:var(--ouro2);margin-bottom:6px;letter-spacing:2px}
+.card-sub{font-size:13px;color:var(--cinza);margin-bottom:24px;line-height:1.6}
+.trial-badge{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);border-radius:10px;padding:10px 14px;margin-bottom:20px;font-size:13px;color:var(--verde);text-align:center;line-height:1.7}
+.field{margin-bottom:14px}
+.field label{font-size:11px;color:var(--cinza);letter-spacing:1px;display:block;margin-bottom:6px}
+.field input{width:100%;padding:14px;background:var(--bg);border:1px solid var(--borda);border-radius:12px;color:var(--texto);font-size:15px;outline:none;font-family:'DM Sans',sans-serif;transition:border .2s}
+.field input:focus{border-color:var(--ouro)}
+.btn-main{width:100%;padding:18px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:14px;color:#0A0A0F;font-family:'Bebas Neue';font-size:22px;letter-spacing:3px;cursor:pointer;margin-top:8px;transition:opacity .2s}
+.btn-main:active{opacity:.9}
+.btn-main:disabled{opacity:.5;cursor:not-allowed}
+.divider{text-align:center;margin:20px 0;font-size:12px;color:var(--cinza)}
+.login-link{text-align:center;font-size:13px;color:var(--cinza)}
+.login-link a{color:var(--ouro);text-decoration:none;font-weight:600}
+.features{margin:28px 0;display:flex;flex-direction:column;gap:10px}
+.feature{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--cinza)}
+.feature-icon{font-size:20px;width:32px;text-align:center}
+.price-info{text-align:center;margin-top:16px;font-size:12px;color:var(--cinza);line-height:1.8}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1A1A2E;border:1px solid var(--borda);border-radius:12px;padding:12px 20px;font-size:13px;display:none;z-index:999;white-space:nowrap}
+.loading{display:none;text-align:center;padding:10px;color:var(--cinza);font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="logo">
+  <div class="logo-title">AURUMSCI</div>
+  <div class="logo-sub">CIÊNCIA QUE VIRA RESULTADO</div>
+</div>
+
+<div class="card">
+  <div class="card-title">COMECE AGORA 🚀</div>
+  <div class="card-sub">Crie sua conta e comece a treinar com ciência e inteligência artificial.</div>
+
+  <div class="trial-badge">
+    🎯 <strong>14 dias grátis</strong> — sem cobrança agora<br>
+    Depois, apenas <strong>R$200/mês</strong> · Cancele quando quiser
+  </div>
+
+  <div class="features">
+    <div class="feature"><div class="feature-icon">🤖</div><span>Análise postural com Inteligência Artificial</span></div>
+    <div class="feature"><div class="feature-icon">🏋️</div><span>Treino personalizado gerado pela IA</span></div>
+    <div class="feature"><div class="feature-icon">📊</div><span>Acompanhamento de evolução e composição</span></div>
+    <div class="feature"><div class="feature-icon">🥗</div><span>Nutrição baseada em evidências científicas</span></div>
+    <div class="feature"><div class="feature-icon">❤️</div><span>Avaliação cardiorrespiratória completa</span></div>
+  </div>
+
+  <div class="field">
+    <label>SEU NOME</label>
+    <input type="text" id="nome" placeholder="André Luiz">
+  </div>
+  <div class="field">
+    <label>EMAIL</label>
+    <input type="email" id="email" placeholder="seu@email.com">
+  </div>
+  <div class="field">
+    <label>SENHA</label>
+    <input type="password" id="senha" placeholder="mínimo 6 caracteres">
+  </div>
+
+  <button class="btn-main" id="btn-cadastrar" onclick="cadastrar()">COMEÇAR 14 DIAS GRÁTIS →</button>
+  <div class="loading" id="loading">⏳ Criando sua conta...</div>
+
+  <div class="price-info">
+    🔒 Pagamento seguro via Stripe<br>
+    Ao continuar, você concorda com nossos termos de uso
+  </div>
+
+  <div class="divider">— ou —</div>
+  <div class="login-link">Já tem conta? <a href="/aluno">Fazer login</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function mostrarToast(msg, cor){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.color = cor || '#F0F0F0';
+  t.style.display = 'block';
+  setTimeout(function(){ t.style.display = 'none'; }, 3000);
+}
+
+function cadastrar(){
+  var nome = document.getElementById('nome').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var senha = document.getElementById('senha').value;
+
+  if(!nome){ mostrarToast('Informe seu nome!', '#FF4B4B'); return; }
+  if(!email || !email.includes('@')){ mostrarToast('Informe um email válido!', '#FF4B4B'); return; }
+  if(!senha || senha.length < 6){ mostrarToast('Senha deve ter pelo menos 6 caracteres!', '#FF4B4B'); return; }
+
+  var btn = document.getElementById('btn-cadastrar');
+  var loading = document.getElementById('loading');
+  btn.disabled = true;
+  loading.style.display = 'block';
+
+  // 1. Cria o personal (trainer) — usa endpoint de cadastro rápido
+  fetch('/aluno-portal/cadastro', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({nome: nome, email: email, senha: senha})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.detail){ mostrarToast('Erro: ' + d.detail, '#FF4B4B'); btn.disabled=false; loading.style.display='none'; return; }
+    var aluno_id = d.aluno_id;
+    loading.textContent = '💳 Redirecionando para pagamento...';
+    // 2. Cria sessão Stripe
+    return fetch('/pagamento/criar-sessao', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({aluno_id: aluno_id})
+    });
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.url){ window.location.href = d.url; }
+    else{ mostrarToast('Erro ao criar sessão de pagamento!', '#FF4B4B'); btn.disabled=false; loading.style.display='none'; }
+  })
+  .catch(function(e){
+    mostrarToast('Erro: ' + e.message, '#FF4B4B');
+    btn.disabled = false;
+    loading.style.display = 'none';
+  });
+}
+</script>
+</body>
+</html>

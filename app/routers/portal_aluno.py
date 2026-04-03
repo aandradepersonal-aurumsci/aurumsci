@@ -254,7 +254,7 @@ def cadastro_rapido(dados: CadastroRapido, db: Session = Depends(get_db)):
     aluno = Aluno(
         nome=dados.nome, email=dados.email,
         telefone="", objetivo="hipertrofia",
-        nivel_experiencia="iniciante", sexo="masculino",
+        nivel_experiencia="iniciante", sexo="MASCULINO",
         personal_id=1
     )
     db.add(aluno)

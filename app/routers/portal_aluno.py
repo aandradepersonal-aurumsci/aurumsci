@@ -253,8 +253,8 @@ def cadastro_rapido(dados: CadastroRapido, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Email ja cadastrado")
     aluno = Aluno(
         nome=dados.nome, email=dados.email,
-        telefone="", objetivo="hipertrofia",
-        nivel_experiencia="iniciante", sexo="MASCULINO",
+        telefone="", objetivo="HIPERTROFIA",
+        nivel_experiencia="INICIANTE", sexo="MASCULINO",
         personal_id=1
     )
     db.add(aluno)

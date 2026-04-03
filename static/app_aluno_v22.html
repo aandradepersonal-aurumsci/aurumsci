@@ -1639,17 +1639,41 @@ var fotosPostural = {frente: null, lado: null, costas: null};
 function fotoPostural(tipo, input){
   if(!input.files[0]) return;
   var file = input.files[0];
-  var reader = new FileReader();
-  reader.onload = function(e){
-    fotosPostural[tipo] = file;
-    var slot = document.getElementById('slot-post-' + tipo);
-    slot.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover">';
-    slot.classList.add('feita');
-    var tem = fotosPostural.frente || fotosPostural.lado || fotosPostural.costas;
-    var btn = document.getElementById('btn-analisar-post');
-    btn.disabled = !tem; btn.style.opacity = tem ? '1' : '0.4';
+  var slot = document.getElementById('slot-post-' + tipo);
+  slot.innerHTML = '<div style="color:var(--cinza);font-size:11px;text-align:center;padding-top:30px">⏳ Processando...</div>';
+
+  // Auto-ajusta: redimensiona, corrige orientação e comprime
+  var img = new Image();
+  var url = URL.createObjectURL(file);
+  img.onload = function(){
+    var canvas = document.createElement('canvas');
+    var MAX = 1200;
+    var w = img.width, h = img.height;
+    // Redimensiona mantendo proporção
+    if(w > h){ if(w > MAX){ h = Math.round(h*MAX/w); w = MAX; } }
+    else { if(h > MAX){ w = Math.round(w*MAX/h); h = MAX; } }
+    canvas.width = w;
+    canvas.height = h;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+    URL.revokeObjectURL(url);
+    // Converte para blob JPEG comprimido
+    canvas.toBlob(function(blob){
+      fotosPostural[tipo] = new File([blob], 'foto_' + tipo + '.jpg', {type:'image/jpeg'});
+      var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      slot.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:10px">';
+      slot.classList.add('feita');
+      var tem = fotosPostural.frente || fotosPostural.lado || fotosPostural.costas;
+      var btn = document.getElementById('btn-analisar-post');
+      btn.disabled = !tem; btn.style.opacity = tem ? '1' : '0.4';
+    }, 'image/jpeg', 0.85);
   };
-  reader.readAsDataURL(file);
+  img.onerror = function(){
+    slot.innerHTML = '<div style="color:var(--vermelho);font-size:11px;text-align:center;padding-top:30px">Erro na foto</div>';
+  };
+  img.src = url;
 }
 
 function analisarPostura(){

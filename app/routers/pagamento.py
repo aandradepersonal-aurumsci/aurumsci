@@ -117,8 +117,6 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
         session = event["data"]["object"]
         try:
             aluno_id = session["metadata"]["aluno_id"]
-        except:
-            aluno_id = None
 except:
         aluno_id = None
         if aluno_id:

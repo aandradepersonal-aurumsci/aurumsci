@@ -329,6 +329,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <div class="topbar">
     <div class="topbar-logo">AURUMSCI</div>
     <div class="topbar-right">
+      <button style="width:32px;height:32px;border-radius:50%;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);cursor:pointer;font-size:14px" onclick="fazerLogout()" title="Sair">🚪</button>
       <div class="lang-mini-row">
         <button class="lang-mini active" onclick="setLangApp('pt',this)">PT</button>
         <button class="lang-mini" onclick="setLangApp('en',this)">EN</button>
@@ -787,6 +788,12 @@ function atualizarTextos(){
 }
 
 // ── THEME ─────────────────────────────────────────────
+function fazerLogout(){
+  localStorage.clear();
+  token = "";
+  nomeAluno = "";
+  location.reload();
+}
 function toggleTheme(){
   var light = document.body.hasAttribute('data-theme');
   if(light){ document.body.removeAttribute('data-theme'); document.getElementById('theme-btn').textContent='🌙'; }

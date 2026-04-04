@@ -642,7 +642,17 @@ def gerar_periodizacao(
     dias_semana: int,
     semanas_total: int = 12,
     data_inicio: Optional[date] = None,
+    tipo_periodizacao: str = "ondulatoria",
 ) -> "Periodizacao":
+    # Redireciona para periodização em blocos se solicitado
+    if tipo_periodizacao == "blocos":
+        return gerar_periodizacao_blocos(
+            objetivo=objetivo,
+            nivel=nivel,
+            dias_semana=dias_semana,
+            semanas_total=semanas_total,
+            data_inicio=data_inicio,
+        )
     """
     Gera periodização completa — Macro > Meso > Microciclo
     com deload automático na semana 4 de cada mesociclo,
@@ -835,6 +845,125 @@ def _descricao_fase(objetivo: str, fase: str, indice: int) -> str:
     fases = descricoes.get(objetivo, [f"Fase {indice+1} do programa."] * 4)
     return fases[indice] if indice < len(fases) else f"Fase {indice+1} — continuidade do programa."
 
+
+# ── Periodização em Blocos ───────────────────────────────────────────────────
+
+BLOCOS_CONFIG = {
+    "hipertrofia": [
+        {"fase": "Acumulação",    "semanas": 3, "reps": "10-15", "intensidade": 0.65, "descricao": "Alto volume, baixa intensidade. Base metabólica e hipertrofia sarcoplasmática."},
+        {"fase": "Transmutação",  "semanas": 3, "reps": "6-10",  "intensidade": 0.75, "descricao": "Volume moderado, intensidade crescente. Transição para força-hipertrofia."},
+        {"fase": "Realização",    "semanas": 2, "reps": "4-6",   "intensidade": 0.85, "descricao": "Baixo volume, alta intensidade. Pico de força e consolidação dos ganhos."},
+    ],
+    "forca": [
+        {"fase": "Acumulação",    "semanas": 3, "reps": "8-12",  "intensidade": 0.65, "descricao": "Base de volume para suportar cargas máximas futuras."},
+        {"fase": "Transmutação",  "semanas": 3, "reps": "4-6",   "intensidade": 0.80, "descricao": "Transição para alta intensidade com redução progressiva de volume."},
+        {"fase": "Realização",    "semanas": 2, "reps": "1-3",   "intensidade": 0.95, "descricao": "Pico de força máxima. Teste de 1RM opcional."},
+    ],
+    "condicionamento": [
+        {"fase": "Acumulação",    "semanas": 3, "reps": "15-20", "intensidade": 0.55, "descricao": "Base aeróbica e resistência muscular."},
+        {"fase": "Transmutação",  "semanas": 3, "reps": "12-15", "intensidade": 0.65, "descricao": "Aumento da densidade e intensidade dos treinos."},
+        {"fase": "Realização",    "semanas": 2, "reps": "10-12", "intensidade": 0.75, "descricao": "Pico de performance cardiorrespiratória."},
+    ],
+    "emagrecimento": [
+        {"fase": "Acumulação",    "semanas": 3, "reps": "15-20", "intensidade": 0.55, "descricao": "Alto volume para máximo gasto calórico."},
+        {"fase": "Transmutação",  "semanas": 3, "reps": "12-15", "intensidade": 0.65, "descricao": "Manutenção do déficit calórico com aumento de intensidade."},
+        {"fase": "Realização",    "semanas": 2, "reps": "10-12", "intensidade": 0.70, "descricao": "Consolidação da perda e prevenção do efeito platô."},
+    ],
+}
+
+def gerar_periodizacao_blocos(
+    objetivo: str,
+    nivel: str,
+    dias_semana: int,
+    semanas_total: int = 8,
+    data_inicio = None,
+) -> "Periodizacao":
+    """
+    Periodização em Blocos — Issurin (2010) · Sports Med
+    Acumulação → Transmutação → Realização
+    Ideal para atletas e praticantes de esportes competitivos.
+    """
+    nivel_norm = normalizar_nivel(nivel)
+    cfg_nivel = NIVEIS.get(nivel_norm, NIVEIS["iniciante"])
+    div = DIVISOES.get(min(dias_semana, 6), DIVISOES[3])
+    blocos = BLOCOS_CONFIG.get(objetivo, BLOCOS_CONFIG["hipertrofia"])
+
+    inicio = data_inicio or date.today()
+
+    # Monta sessões prescritas
+    sessoes_prescritas = []
+    for i, sessao_cfg in enumerate(div["sessoes"]):
+        dia = div["dias_treino"][i] if i < len(div["dias_treino"]) else i
+        sessao = _montar_sessao(sessao_cfg, nivel_norm, dia)
+        sessoes_prescritas.append(sessao)
+
+    # Monta mesociclos por bloco
+    mesociclos = []
+    semana_atual = 0
+    total_deload = 0
+
+    for i, bloco in enumerate(blocos):
+        data_meso_inicio = inicio + timedelta(weeks=semana_atual)
+        data_meso_fim = data_meso_inicio + timedelta(weeks=bloco["semanas"]) - timedelta(days=1)
+        ultimo_meso = (i == len(blocos) - 1)
+
+        microciclos = []
+        for s in range(1, bloco["semanas"] + 1):
+            deload = (s == bloco["semanas"] and i < len(blocos) - 1)
+            if deload:
+                total_deload += 1
+                reps = _reps_deload(objetivo)
+                intensidade = round(bloco["intensidade"] * 0.60 * 100, 1)
+                desc = "🔄 Deload — Recuperação ativa entre blocos. Rhea et al. (2002)"
+            else:
+                reps = bloco["reps"]
+                intensidade = round(bloco["intensidade"] * (1 + 0.02 * s) * 100, 1)
+                desc = f"📦 {bloco['fase']} — Semana {s}. {bloco['descricao']}"
+
+            microciclos.append(Microciclo(
+                semana=s,
+                deload=deload,
+                intensidade_percentual=intensidade,
+                series=cfg_nivel["series_max"] if not deload else cfg_nivel["series_base"],
+                repeticoes=reps,
+                sessoes=[s_cfg["nome"] for s_cfg in div["sessoes"]],
+                descricao=desc,
+            ))
+
+        mesociclos.append(Mesociclo(
+            numero=i + 1,
+            fase=bloco["fase"],
+            semanas=bloco["semanas"],
+            data_inicio=data_meso_inicio,
+            data_fim=data_meso_fim,
+            microciclos=microciclos,
+            descricao_fase=f"📦 {bloco['fase']}: {bloco['descricao']} · Issurin (2010) · Sports Med",
+            alerta_reavaliacao=ultimo_meso,
+        ))
+        semana_atual += bloco["semanas"]
+
+    data_fim = inicio + timedelta(weeks=semana_atual)
+    cfg_obj = CONFIGS.get(objetivo, CONFIGS["hipertrofia"])
+
+    return Periodizacao(
+        objetivo=objetivo,
+        nivel=nivel_norm,
+        nivel_label=cfg_nivel["label"],
+        dias_semana=dias_semana,
+        semanas_total=semana_atual,
+        divisao_nome=div["nome"],
+        divisao_sessoes=[s["nome"] for s in div["sessoes"]],
+        divisao_descricao=div["descricao"],
+        objetivo_descricao="Periodização em Blocos — Acumulação → Transmutação → Realização. Issurin (2010) · Sports Med",
+        tecnicas_disponiveis=cfg_nivel["tecnicas"],
+        data_inicio=inicio,
+        data_fim=data_fim,
+        mesociclos=mesociclos,
+        sessoes_prescritas=sessoes_prescritas,
+        total_semanas_treino=semana_atual - total_deload,
+        total_semanas_deload=total_deload,
+        recomendacao_reavaliacao=f"Realizar nova avaliação ao final do bloco Realização ({data_fim.strftime('%d/%m/%Y')})",
+    )
 
 # ── Helpers de reps por fase ─────────────────────────────────────────────────
 

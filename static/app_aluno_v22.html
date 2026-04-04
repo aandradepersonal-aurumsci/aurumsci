@@ -1189,30 +1189,16 @@ function finalizarAppAposOnboarding(){
   localStorage.setItem('aurum_onb_done', '1');
   document.getElementById('screen-onboarding').style.display = 'none';
   mostrarApp();
+  // Garante aba TREINO e AURI visível
   setTimeout(function(){
     var tabTreino = document.querySelector('.tab[onclick*="treino"]');
     if(tabTreino) mudarTab('treino', tabTreino);
-  }, 500);
+    // Garante AURI visível
+    var auri = document.getElementById('auri-float');
+    if(auri) auri.style.display = 'block';
+  }, 800);
 }
-function _dummy(){
-  // Envia bioimpedância
-  if(onbData.peso){
-    fetch('/app-aluno/bioimpedancia', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-      body: JSON.stringify({peso:onbData.peso, percentual_gordura:onbData.gordura||null})})
-    .then(function(r){ return r.json(); }).catch(function(){});
-  }
-  // Envia fotos posturais
-  if(fotosOnb.frente || fotosOnb.lado || fotosOnb.costas){
-    var fd = new FormData();
-    if(fotosOnb.frente) fd.append('foto_frente', fotosOnb.frente.file, 'frente.jpg');
-    if(fotosOnb.lado) fd.append('foto_lado', fotosOnb.lado.file, 'lado.jpg');
-    if(fotosOnb.costas) fd.append('foto_costas', fotosOnb.costas.file, 'costas.jpg');
-    fetch('/app-aluno/postural', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd}).catch(function(){});
-  }
-  localStorage.setItem('aurum_onb_done', '1');
-  document.getElementById('screen-onboarding').style.display = 'none';
-  mostrarApp();
-}
+
 
 var modoMedidasAvancado = false;
 

@@ -83,8 +83,7 @@ async def onboarding(
     anamnese = db.query(Anamnese).filter(Anamnese.aluno_id == aluno.id).first()
     if not anamnese:
         anamnese = Anamnese(
-            aluno_id=aluno.id,
-            doencas_cronicas=dados.objetivo
+            aluno_id=aluno.id
         )
         db.add(anamnese)
     else:
@@ -131,7 +130,7 @@ async def onboarding(
             plano_id=plano.id,
             nome=sessao_nome,
             dia_semana=i,
-            ordem=i + 1
+            dia_semana=i + 1
         )
         db.add(sessao)
 

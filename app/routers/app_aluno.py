@@ -84,10 +84,10 @@ async def onboarding(
     if not anamnese:
         anamnese = Anamnese(
             aluno_id=aluno.id,
-            objetivo_principal=dados.objetivo,
-            nivel_atividade=dados.nivel_experiencia,
-            restricoes_medicas=dados.restricoes_medicas or "",
-            historico_lesoes=dados.historico_lesoes or "",
+            objetivo_detalhado=dados.objetivo,
+            
+            
+            
             data_anamnese=date.today()
         )
         db.add(anamnese)

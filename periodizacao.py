@@ -678,20 +678,35 @@ def gerar_periodizacao(
         microciclos = []
         for semana in range(1, 5):
             deload = (semana == 4)
+            choque = (semana == 3)
             if deload:
                 total_deload += 1
 
             intensidade_base = cfg_nivel["intensidade_base"]
             progressao = cfg_obj["progressao"] / 100
-            intensidade = round(
-                intensidade_base * (1 + progressao * semana) *
-                (cfg_obj["deload_reducao"] if deload else 1.0) * 100, 1
-            )
-
-            series = cfg_nivel["series_base"] if deload else cfg_nivel["series_max"]
 
             if deload:
-                desc_micro = "Semana de Deload — Reducao de volume e intensidade para recuperacao ativa."
+                # Deload: -40% intensidade, volume reduzido
+                intensidade = round(intensidade_base * cfg_obj["deload_reducao"] * 100, 1)
+                series = cfg_nivel["series_base"]
+                repeticoes = _reps_deload(objetivo)
+            elif choque:
+                # Choque: +15% intensidade, menos reps, mais carga
+                intensidade = round(intensidade_base * (1 + progressao * semana) * 1.15 * 100, 1)
+                series = cfg_nivel["series_max"]
+                repeticoes = _reps_choque(objetivo)
+            else:
+                # Normal: progressão padrão
+                intensidade = round(
+                    intensidade_base * (1 + progressao * semana) * 100, 1
+                )
+                series = cfg_nivel["series_max"]
+                repeticoes = cfg_obj["reps"]
+
+            if deload:
+                desc_micro = "🔄 Semana de Deload — Volume e carga reduzidos (-40%). Recuperacao ativa para maximizar adaptacao. Rhea et al. (2002)"
+            elif choque:
+                desc_micro = "⚡ Semana de Choque — Alta intensidade, menos repeticoes, mais carga. Estimulo maximo de forca e hipertrofia miofribilar. Schoenfeld (2010)"
             else:
                 desc_micro = _descricao_microciclo(objetivo, semana, intensidade, nivel_norm)
 
@@ -700,7 +715,7 @@ def gerar_periodizacao(
                 deload=deload,
                 intensidade_percentual=intensidade,
                 series=series,
-                repeticoes=cfg_obj["reps"],
+                repeticoes=repeticoes,
                 sessoes=[s["nome"] for s in div["sessoes"]],
                 descricao=desc_micro,
             ))
@@ -820,6 +835,30 @@ def _descricao_fase(objetivo: str, fase: str, indice: int) -> str:
     fases = descricoes.get(objetivo, [f"Fase {indice+1} do programa."] * 4)
     return fases[indice] if indice < len(fases) else f"Fase {indice+1} — continuidade do programa."
 
+
+# ── Helpers de reps por fase ─────────────────────────────────────────────────
+
+def _reps_choque(objetivo: str) -> str:
+    """Repetições para semana de choque — menos reps, mais carga."""
+    mapa = {
+        "hipertrofia":    "4-6",
+        "forca":          "2-4",
+        "emagrecimento":  "8-10",
+        "condicionamento": "10-12",
+        "reabilitacao":   "10-12",
+    }
+    return mapa.get(objetivo, "4-6")
+
+def _reps_deload(objetivo: str) -> str:
+    """Repetições para semana de deload — mais reps, menos carga."""
+    mapa = {
+        "hipertrofia":    "15-20",
+        "forca":          "12-15",
+        "emagrecimento":  "20-25",
+        "condicionamento": "20-25",
+        "reabilitacao":   "20-25",
+    }
+    return mapa.get(objetivo, "15-20")
 
 # ── Serialização ──────────────────────────────────────────────────────────────
 

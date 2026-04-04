@@ -2447,11 +2447,13 @@ if('serviceWorker' in navigator){
     <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:14px;margin-bottom:20px">
       <div style="font-size:11px;color:var(--ouro);letter-spacing:1px;font-weight:700;margin-bottom:6px">📋 QUESTIONÁRIO MENSAL DE RECUPERAÇÃO</div>
       <div style="font-size:12px;color:var(--cinza);line-height:1.7">Responda com honestidade. Isso nos ajuda a ajustar sua periodização para máxima performance sem lesões.</div>
+      <div style="margin-top:8px;font-size:10px;color:var(--ouro);opacity:.6">Kreher & Schwartz (2012) · Meeusen et al. (2013) · ACSM (2012)</div>
     </div>
     <div id="over-perguntas">
 
       <div style="margin-bottom:18px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5">1. Como está seu nível de energia geral nos últimos dias?</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.5">1. Como está seu nível de energia geral nos últimos dias?</div>
+        <div style="font-size:10px;color:var(--cinza);opacity:.6;margin-bottom:8px">Meeusen et al. (2013)</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button onclick="responderOver('energia',0,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😊 Ótimo</button>
           <button onclick="responderOver('energia',1,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😐 Regular</button>
@@ -2460,7 +2462,8 @@ if('serviceWorker' in navigator){
       </div>
 
       <div style="margin-bottom:18px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5">2. Como está sua qualidade de sono?</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.5">2. Como está sua qualidade de sono?</div>
+        <div style="font-size:10px;color:var(--cinza);opacity:.6;margin-bottom:8px">Hausswirth et al. (2014)</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button onclick="responderOver('sono',0,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😴 Dormindo bem</button>
           <button onclick="responderOver('sono',1,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">🌙 Irregular</button>
@@ -2469,7 +2472,8 @@ if('serviceWorker' in navigator){
       </div>
 
       <div style="margin-bottom:18px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5">3. Sente dores musculares persistentes (além da dor normal pós-treino)?</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.5">3. Sente dores musculares persistentes (além da dor normal pós-treino)?</div>
+        <div style="font-size:10px;color:var(--cinza);opacity:.6;margin-bottom:8px">Kreher & Schwartz (2012)</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button onclick="responderOver('dor',0,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">✅ Não</button>
           <button onclick="responderOver('dor',1,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">⚠️ Um pouco</button>
@@ -2478,7 +2482,8 @@ if('serviceWorker' in navigator){
       </div>
 
       <div style="margin-bottom:18px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5">4. Como está sua motivação para treinar?</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.5">4. Como está sua motivação para treinar?</div>
+        <div style="font-size:10px;color:var(--cinza);opacity:.6;margin-bottom:8px">Armstrong & VanHeest (2002)</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button onclick="responderOver('motivacao',0,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">🔥 Alta</button>
           <button onclick="responderOver('motivacao',1,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😐 Normal</button>
@@ -2487,7 +2492,8 @@ if('serviceWorker' in navigator){
       </div>
 
       <div style="margin-bottom:18px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5">5. Notou queda de desempenho nos seus treinos recentes?</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.5">5. Notou queda de desempenho nos seus treinos recentes?</div>
+        <div style="font-size:10px;color:var(--cinza);opacity:.6;margin-bottom:8px">ACSM (2012)</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button onclick="responderOver('desempenho',0,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">📈 Melhorando</button>
           <button onclick="responderOver('desempenho',1,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">➡️ Estável</button>
@@ -2496,7 +2502,8 @@ if('serviceWorker' in navigator){
       </div>
 
       <div style="margin-bottom:18px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5">6. Como está seu humor / irritabilidade nos últimos dias?</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.5">6. Como está seu humor / irritabilidade nos últimos dias?</div>
+        <div style="font-size:10px;color:var(--cinza);opacity:.6;margin-bottom:8px">Uusitalo (2001)</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button onclick="responderOver('humor',0,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😊 Bem</button>
           <button onclick="responderOver('humor',1,this)" style="flex:1;min-width:80px;padding:10px 8px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:12px;cursor:pointer">😤 Um pouco irritado</button>

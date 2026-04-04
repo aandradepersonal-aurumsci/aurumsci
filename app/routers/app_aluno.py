@@ -124,14 +124,37 @@ async def onboarding(
     db.add(plano)
     db.flush()
 
-    # Cria sessões baseadas na divisão
-    for i, sessao_nome in enumerate(periodizacao.divisao_sessoes):
+    # Cria sessões e popula exercícios do motor
+    from app.routers.treino import Exercicio, ExercicioSessao
+    for i, sessao_prescrita in enumerate(periodizacao.sessoes_prescritas):
         sessao = SessaoTreino(
             plano_id=plano.id,
-            nome=sessao_nome,
+            nome=sessao_prescrita.nome,
             dia_semana=i + 1
         )
         db.add(sessao)
+        db.flush()
+        for ex in sessao_prescrita.exercicios:
+            exercicio_cat = db.query(Exercicio).filter(Exercicio.nome == ex.nome).first()
+            if not exercicio_cat:
+                exercicio_cat = Exercicio(
+                    nome=ex.nome,
+                    grupo_muscular=ex.grupo,
+                    descricao=ex.tecnica_especial or ""
+                )
+                db.add(exercicio_cat)
+                db.flush()
+            ex_sessao = ExercicioSessao(
+                sessao_id=sessao.id,
+                exercicio_id=exercicio_cat.id,
+                ordem=ex.ordem,
+                series=ex.series,
+                repeticoes=str(ex.repeticoes),
+                carga_kg=0.0,
+                tempo_descanso_seg=ex.descanso_segundos,
+                observacoes=ex.tecnica_especial or ""
+            )
+            db.add(ex_sessao)
 
     db.commit()
 

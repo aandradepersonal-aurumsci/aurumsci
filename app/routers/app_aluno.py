@@ -129,7 +129,6 @@ async def onboarding(
         sessao = SessaoTreino(
             plano_id=plano.id,
             nome=sessao_nome,
-            dia_semana=i,
             dia_semana=i + 1
         )
         db.add(sessao)

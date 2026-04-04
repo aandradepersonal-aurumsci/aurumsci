@@ -349,7 +349,7 @@ async def treino_hoje(
         "data": str(date.today()),
         "exercicios": [{
             "ordem":       e.ordem,
-            "nome":        e.exercicio.nome if e.exercicio else "",
+            "nome":        db.query(__import__("app.routers.treino", fromlist=["Exercicio"]).Exercicio).filter_by(id=e.exercicio_id).first().nome if e.exercicio_id else "",
             "series":      e.series,
             "repeticoes":  e.repeticoes,
             "carga":       e.carga_sugerida,

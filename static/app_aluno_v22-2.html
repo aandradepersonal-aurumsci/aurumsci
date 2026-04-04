@@ -1153,12 +1153,48 @@ function fotoOnb(tipo, input){
 
 function finalizarOnboarding(){
   salvarPassoAtual();
-  // Envia onboarding
+  // Envia onboarding e ESPERA criar o plano antes de mostrar o app
   if(onbData.objetivo && onbData.nivel && onbData.dias){
+    var btnComecar = document.querySelector('.btn-next');
+    if(btnComecar){ btnComecar.disabled = true; btnComecar.textContent = 'Criando seu treino...'; }
     fetch('/app-aluno/onboarding', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
       body: JSON.stringify({objetivo:onbData.objetivo, nivel_experiencia:onbData.nivel, dias_disponiveis:parseInt(onbData.dias)})})
-    .then(function(r){ return r.json(); }).catch(function(){});
+    .then(function(r){ return r.json(); })
+    .then(function(){
+      finalizarAppAposOnboarding();
+    })
+    .catch(function(){ finalizarAppAposOnboarding(); });
+    return;
   }
+  finalizarAppAposOnboarding();
+}
+
+function finalizarAppAposOnboarding(){
+  if(onbData.peso){
+    fetch('/app-aluno/bioimpedancia', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body: JSON.stringify({peso:onbData.peso, percentual_gordura:onbData.gordura||null})}).catch(function(){});
+  }
+  if(fotosOnb.frente || fotosOnb.lado || fotosOnb.costas){
+    var fd = new FormData();
+    if(fotosOnb.frente) fd.append('foto_frente', fotosOnb.frente.file, 'frente.jpg');
+    if(fotosOnb.lado) fd.append('foto_lado', fotosOnb.lado.file, 'lado.jpg');
+    if(fotosOnb.costas) fd.append('foto_costas', fotosOnb.costas.file, 'costas.jpg');
+    fetch('/app-aluno/postural', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd}).catch(function(){});
+  }
+  if(onbData.patologias && onbData.patologias.length > 0){
+    fetch('/app-aluno/anamnese', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body: JSON.stringify({patologias: onbData.patologias, outras_condicoes: onbData.outras_condicoes||'', medicacoes: onbData.medicacoes||''})
+    }).catch(function(){});
+  }
+  localStorage.setItem('aurum_onb_done', '1');
+  document.getElementById('screen-onboarding').style.display = 'none';
+  mostrarApp();
+  setTimeout(function(){
+    var tabTreino = document.querySelector('.tab[onclick*="treino"]');
+    if(tabTreino) mudarTab('treino', tabTreino);
+  }, 500);
+}
+function _dummy(){
   // Envia bioimpedância
   if(onbData.peso){
     fetch('/app-aluno/bioimpedancia', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
@@ -1256,7 +1292,7 @@ function mostrarApp(){
   renderEvolucao();
   renderPeriodo();
   renderLoja();
-  renderFin();
+  renderFinanceiro();
   verificarOvertraining();
   // Auri flutuante
   setTimeout(function(){

@@ -280,7 +280,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 .btn-send{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;cursor:pointer;font-size:18px;flex-shrink:0}
 
 /* ── AURI FLUTUANTE ─────────────────────────────────── */
-.auri-float{position:fixed;bottom:90px;right:16px;z-index:500;display:none!important}
+.auri-float{position:fixed;bottom:76px;right:16px;z-index:500}
 .auri-avatar-btn{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:2px solid var(--bg);box-shadow:0 4px 20px rgba(201,168,76,.4);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:transform .2s}
 .auri-avatar-btn:active{transform:scale(.92)}
 .auri-dot-online{position:absolute;top:2px;right:2px;width:12px;height:12px;border-radius:50%;background:var(--verde);border:2px solid var(--bg)}
@@ -780,7 +780,7 @@ var TX = {
 function T(k){ return (TX[lang]||TX['pt'])[k] || (TX['pt'])[k] || k; }
 
 // ── PASSOS ONBOARDING ─────────────────────────────────
-var PASSOS = ['objetivo','nivel','dias','anamnese','pronto'];
+var PASSOS = ['objetivo','nivel','dias','periodizacao','anamnese','pronto'];
 
 // ── SPLASH ────────────────────────────────────────────
 window.onload = function(){
@@ -1007,6 +1007,22 @@ function renderOnbStep(){
     content += '</div>';
     footer = btnNext;
   }
+  else if(passo === 'periodizacao'){
+    content = '<div style="text-align:center;font-size:13px;color:var(--cinza);margin-bottom:16px;line-height:1.7">' +
+      'A periodização é a organização científica do treino ao longo do tempo para maximizar resultados e prevenir lesões.' +
+      '</div>' +
+      '<div class="opcao-nivel" onclick="selecionarPeriodizacao(this,\'ondulatoria\')" style="margin-bottom:12px;border-color:rgba(75,159,255,.4);background:rgba(75,159,255,.06)">' +
+        '<div class="nivel-titulo">🔀 Periodização Ondulatória <span class="nivel-badge" style="background:rgba(75,159,255,.2);color:var(--azul)">PADRÃO</span></div>' +
+        '<div class="nivel-desc" style="margin-top:6px">Varia volume e intensidade semanalmente. Ideal para hipertrofia, emagrecimento e condicionamento geral.</div>' +
+        '<div style="font-size:10px;color:var(--ouro);margin-top:6px;opacity:.8">Rhea et al. (2002) · J Strength Cond Res</div>' +
+      '</div>' +
+      '<div class="opcao-nivel" onclick="selecionarPeriodizacao(this,\'blocos\')" style="border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.06)">' +
+        '<div class="nivel-titulo">🧱 Periodização em Blocos <span class="nivel-badge badge-amarelo">ATLETA</span></div>' +
+        '<div class="nivel-desc" style="margin-top:6px">Fases específicas: Acumulação → Transmutação → Realização. Ideal para atletas e praticantes de esportes competitivos.</div>' +
+        '<div style="font-size:10px;color:var(--ouro);margin-top:6px;opacity:.8">Issurin (2010) · Sports Med · Bompa & Haff (2009)</div>' +
+      '</div>';
+    footer = btnNext;
+  }
   else if(passo === 'bio'){
     content = '<div class="onb-step-num">PASSO 7/' + total + '</div>' +
       '<div class="onb-titulo">' + T('onb7T') + '</div>' +
@@ -1141,6 +1157,11 @@ function selecionarOpcao(el, campo, val){
   el.classList.add('selected');
   onbData[campo] = val;
 }
+function selecionarPeriodizacao(el, val){
+  document.querySelectorAll('.opcao-nivel').forEach(function(o){ o.classList.remove('selected'); });
+  el.classList.add('selected');
+  onbData.tipo_periodizacao = val;
+}
 function selecionarNivel(el, val){
   document.querySelectorAll('.opcao-nivel').forEach(function(o){ o.classList.remove('selected'); });
   el.classList.add('selected');
@@ -1167,7 +1188,7 @@ function finalizarOnboarding(){
     var btnComecar = document.querySelector('.btn-next');
     if(btnComecar){ btnComecar.disabled = true; btnComecar.textContent = 'Criando seu treino...'; }
     fetch('/app-aluno/onboarding', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-      body: JSON.stringify({objetivo:onbData.objetivo, nivel_experiencia:onbData.nivel, dias_disponiveis:parseInt(onbData.dias)})})
+      body: JSON.stringify({objetivo:onbData.objetivo, nivel_experiencia:onbData.nivel, dias_disponiveis:parseInt(onbData.dias), tipo_periodizacao:onbData.tipo_periodizacao||'ondulatoria'})})
     .then(function(r){ return r.json(); })
     .then(function(){
       finalizarAppAposOnboarding();
@@ -1497,6 +1518,23 @@ function renderTreino(){
       treinoSeriesFeitas = {};
       exercicios.forEach(function(ex, i){ treinoSeriesFeitas[i] = 0; });
 
+      // Banner da fase da periodização
+      var faseInfo = d.fase_atual || null;
+      if(faseInfo){
+        var corFase = faseInfo.tipo === 'deload' ? 'var(--verde)' : faseInfo.tipo === 'choque' ? 'var(--vermelho)' : 'var(--azul)';
+        var bgFase = faseInfo.tipo === 'deload' ? 'rgba(0,229,160,.08)' : faseInfo.tipo === 'choque' ? 'rgba(255,75,75,.08)' : 'rgba(75,159,255,.08)';
+        var bordaFase = faseInfo.tipo === 'deload' ? 'rgba(0,229,160,.25)' : faseInfo.tipo === 'choque' ? 'rgba(255,75,75,.25)' : 'rgba(75,159,255,.25)';
+        var emoFase = faseInfo.tipo === 'deload' ? '🔄' : faseInfo.tipo === 'choque' ? '⚡' : '📈';
+        treinoHtml += '<div style="background:' + bgFase + ';border:1px solid ' + bordaFase + ';border-radius:14px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:flex-start;gap:12px">' +
+          '<div style="font-size:24px;flex-shrink:0">' + emoFase + '</div>' +
+          '<div>' +
+            '<div style="font-size:12px;font-weight:700;color:' + corFase + ';letter-spacing:1px;margin-bottom:3px">' + faseInfo.nome + '</div>' +
+            '<div style="font-size:12px;color:var(--cinza);line-height:1.6">' + faseInfo.descricao + '</div>' +
+            '<div style="font-size:10px;color:var(--ouro);opacity:.7;margin-top:4px">' + faseInfo.citacao + '</div>' +
+          '</div>' +
+        '</div>';
+      }
+
       treinoHtml += '<div class="card" style="margin-bottom:14px"><div class="card-line ouro"></div>' +
         '<div class="sessao-tag">TREINO DO DIA</div>' +
         '<div class="sessao-nome">' + sessaoNome + '</div>' +
@@ -1763,6 +1801,11 @@ function renderEvolucao(){
 }
 
 // ── PERIODIZAÇÃO ──────────────────────────────────────
+function getCorSemana(mc){
+  if(mc.deload) return {bg:'rgba(0,229,160,.15)',borda:'rgba(0,229,160,.4)',txt:'var(--verde)',label:'🔄 DELOAD'};
+  if(mc.semana === 3) return {bg:'rgba(255,75,75,.15)',borda:'rgba(255,75,75,.4)',txt:'var(--vermelho)',label:'⚡ CHOQUE'};
+  return {bg:'rgba(75,159,255,.1)',borda:'rgba(75,159,255,.3)',txt:'var(--azul)',label:'📈 NORMAL'};
+}
 function renderPeriodo(){
   fetch('/app-aluno/periodizacao', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })

@@ -311,7 +311,7 @@ async def treino_hoje(
     idx_sessao = dia_na_semana % dias_treino
     sessao = db.query(SessaoTreino).filter(
         SessaoTreino.plano_id == plano.id
-    ).order_by(SessaoTreino.ordem).offset(idx_sessao).first()
+    ).order_by(SessaoTreino.dia_semana).offset(idx_sessao).first()
 
     if not sessao:
         return {

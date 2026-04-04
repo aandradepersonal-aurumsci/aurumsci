@@ -311,7 +311,7 @@ async def treino_hoje(
     idx_sessao = dia_na_semana % dias_treino
     sessao = db.query(SessaoTreino).filter(
         SessaoTreino.plano_id == plano.id
-    ).order_by(SessaoTreino.dia_semana).offset(idx_sessao).first()
+    ).order_by(SessaoTreino.ordem).offset(idx_sessao).first()
 
     if not sessao:
         return {
@@ -381,7 +381,7 @@ async def registrar_presenca(
         personal_id=1,
         plano_id=plano.id if plano else None,
         sessao_id=dados.sessao_id,
-        data_presenca=date.today(),
+        data=date.today(),
         presente=True,
         duracao_minutos=dados.duracao_minutos,
         observacao=dados.observacao
@@ -429,7 +429,7 @@ async def dashboard(
     trinta_dias  = date.today() - timedelta(days=30)
     presencas_30 = db.query(PresencaTreino).filter(
         PresencaTreino.aluno_id == aluno.id,
-        PresencaTreino.data_presenca >= trinta_dias,
+        PresencaTreino.data >= trinta_dias,
         PresencaTreino.presente == True
     ).count()
 
@@ -539,7 +539,7 @@ async def chat_aluno(
 
     presencas_30 = db.query(PresencaTreino).filter(
         PresencaTreino.aluno_id == aluno.id,
-        PresencaTreino.data_presenca >= date.today() - timedelta(days=30),
+        PresencaTreino.data >= date.today() - timedelta(days=30),
         PresencaTreino.presente == True
     ).count()
 
@@ -576,14 +576,14 @@ def _calcular_sequencia(aluno_id: int, db: Session) -> int:
     presencas = db.query(PresencaTreino).filter(
         PresencaTreino.aluno_id == aluno_id,
         PresencaTreino.presente == True
-    ).order_by(PresencaTreino.data_presenca.desc()).limit(30).all()
+    ).order_by(PresencaTreino.data.desc()).limit(30).all()
 
     if not presencas:
         return 1
 
     sequencia = 1
     for i in range(len(presencas) - 1):
-        diff = (presencas[i].data_presenca - presencas[i+1].data_presenca).days
+        diff = (presencas[i].data - presencas[i+1].data).days
         if diff == 1:
             sequencia += 1
         else:
@@ -695,7 +695,7 @@ def checkin(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_
         aluno_id=aluno.id,
         personal_id=aluno.personal_id if hasattr(aluno, 'personal_id') else 1,
         plano_id=plano.id if plano else None,
-        data_presenca=date.today(),
+        data=date.today(),
         presente=True
     )
     db.add(presenca)

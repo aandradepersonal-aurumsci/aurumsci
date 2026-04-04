@@ -311,7 +311,7 @@ async def treino_hoje(
     idx_sessao = dia_na_semana % dias_treino
     sessao = db.query(SessaoTreino).filter(
         SessaoTreino.plano_id == plano.id
-    ).order_by(SessaoTreino.dia_semana).offset(idx_sessao).first()
+    ).order_by(SessaoTreino.ordem).offset(idx_sessao).first()
 
     if not sessao:
         return {
@@ -348,12 +348,12 @@ async def treino_hoje(
         "data": str(date.today()),
         "exercicios": [{
             "ordem":       e.ordem,
-            "nome":        db.query(__import__("app.routers.treino", fromlist=["Exercicio"]).Exercicio).filter_by(id=e.exercicio_id).first().nome if e.exercicio_id else "",
+            "nome":        e.exercicio.nome if e.exercicio else "",
             "series":      e.series,
             "repeticoes":  e.repeticoes,
-            "carga":       e.carga_kg,
-            "descanso":    e.tempo_descanso_seg,
-            "observacao":  e.observacoes,
+            "carga":       e.carga_sugerida,
+            "descanso":    e.descanso_segundos,
+            "observacao":  e.observacao,
             "corretivo":   False,
         } for e in exercicios],
         "total_exercicios": len(exercicios),
@@ -381,7 +381,7 @@ async def registrar_presenca(
         personal_id=1,
         plano_id=plano.id if plano else None,
         sessao_id=dados.sessao_id,
-        data=date.today(),
+        data_presenca=date.today(),
         presente=True,
         duracao_minutos=dados.duracao_minutos,
         observacao=dados.observacao
@@ -429,7 +429,7 @@ async def dashboard(
     trinta_dias  = date.today() - timedelta(days=30)
     presencas_30 = db.query(PresencaTreino).filter(
         PresencaTreino.aluno_id == aluno.id,
-        PresencaTreino.data >= trinta_dias,
+        PresencaTreino.data_presenca >= trinta_dias,
         PresencaTreino.presente == True
     ).count()
 
@@ -539,7 +539,7 @@ async def chat_aluno(
 
     presencas_30 = db.query(PresencaTreino).filter(
         PresencaTreino.aluno_id == aluno.id,
-        PresencaTreino.data >= date.today() - timedelta(days=30),
+        PresencaTreino.data_presenca >= date.today() - timedelta(days=30),
         PresencaTreino.presente == True
     ).count()
 
@@ -576,14 +576,14 @@ def _calcular_sequencia(aluno_id: int, db: Session) -> int:
     presencas = db.query(PresencaTreino).filter(
         PresencaTreino.aluno_id == aluno_id,
         PresencaTreino.presente == True
-    ).order_by(PresencaTreino.data.desc()).limit(30).all()
+    ).order_by(PresencaTreino.data_presenca.desc()).limit(30).all()
 
     if not presencas:
         return 1
 
     sequencia = 1
     for i in range(len(presencas) - 1):
-        diff = (presencas[i].data - presencas[i+1].data).days
+        diff = (presencas[i].data_presenca - presencas[i+1].data_presenca).days
         if diff == 1:
             sequencia += 1
         else:
@@ -668,7 +668,7 @@ def financeiro(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(g
             "status": st
         })
     return {
-        "plano": "Plano AurumSci",
+        "plano": "Plano Personal",
         "valor": str(ultimo.valor),
         "status": status,
         "vencimento": ultimo.data_vencimento.strftime("%d/%m/%Y") if ultimo.data_vencimento else None,
@@ -695,7 +695,7 @@ def checkin(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_
         aluno_id=aluno.id,
         personal_id=aluno.personal_id if hasattr(aluno, 'personal_id') else 1,
         plano_id=plano.id if plano else None,
-        data=date.today(),
+        data_presenca=date.today(),
         presente=True
     )
     db.add(presenca)

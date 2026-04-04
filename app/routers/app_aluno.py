@@ -31,7 +31,7 @@ class OnboardingSchema(BaseModel):
     objetivo: str                          # hipertrofia, emagrecimento, etc
     nivel_experiencia: str                 # iniciante, intermediario, avancado
     dias_disponiveis: int                  # 2 a 6
-    tipo_periodizacao: str = "ondulatoria"  # ondulatoria ou blocos
+    tipo_periodizacao: Optional[str] = "ondulatoria"  # ondulatoria ou blocos
     restricoes_medicas: Optional[str] = None
     historico_lesoes: Optional[str] = None
     peso: Optional[float] = None

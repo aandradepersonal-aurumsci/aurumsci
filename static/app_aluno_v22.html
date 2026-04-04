@@ -801,7 +801,7 @@ window.onload = function(){
           return r.json();
         })
         .then(function(d){
-          if(d && (d.sessao || d.mensagem)){
+          if(d && d.sessao){
             localStorage.setItem('aurum_onb_done','1');
             mostrarApp();
           } else {

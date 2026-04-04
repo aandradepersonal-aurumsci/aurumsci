@@ -84,16 +84,12 @@ async def onboarding(
     if not anamnese:
         anamnese = Anamnese(
             aluno_id=aluno.id,
-            objetivo_detalhado=dados.objetivo,
-            
-            
-            
-            data_anamnese=date.today()
+            doencas_cronicas=dados.objetivo
         )
         db.add(anamnese)
     else:
-        anamnese.objetivo_principal = dados.objetivo
-        anamnese.nivel_atividade    = dados.nivel_experiencia
+        anamnese.doencas_cronicas = dados.objetivo
+        
 
     # Gera periodização automática
     periodizacao = gerar_periodizacao(

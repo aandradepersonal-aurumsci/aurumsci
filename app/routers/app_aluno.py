@@ -668,7 +668,7 @@ def financeiro(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(g
             "status": st
         })
     return {
-        "plano": "Plano Personal",
+        "plano": "Plano AurumSci",
         "valor": str(ultimo.valor),
         "status": status,
         "vencimento": ultimo.data_vencimento.strftime("%d/%m/%Y") if ultimo.data_vencimento else None,

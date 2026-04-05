@@ -1557,16 +1557,16 @@ function renderTreino(){
         '</div>' +
         '<div class="aquec-body" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--borda)">' +
           '<div style="font-size:11px;color:var(--azul);letter-spacing:1px;font-weight:700;margin-bottom:10px">SUPERIOR</div>' +
-          '<div style="font-size:13px;color:var(--texto);margin-bottom:6px">• Rotação de ombros — 10x cada direção</div>' +
-          '<div style="font-size:13px;color:var(--texto);margin-bottom:6px">• Alongamento de peitoral na parede — 30s cada lado</div>' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:13px;color:var(--texto)">• Rotação de ombros — 10x cada direção</div><button onclick="abrirYoutube(0)" style="background:none;border:none;cursor:pointer;font-size:16px;padding:0">🎬</button></div>' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:13px;color:var(--texto)">• Alongamento de peitoral na parede — 30s cada lado</div><button onclick="abrirYoutube(1)" style="background:none;border:none;cursor:pointer;font-size:16px;padding:0">🎬</button></div>' +
           '<div style="font-size:13px;color:var(--texto);margin-bottom:12px">• Retração escapular — 15 reps</div>' +
           '<div style="font-size:11px;color:var(--azul);letter-spacing:1px;font-weight:700;margin-bottom:10px">INFERIOR</div>' +
-          '<div style="font-size:13px;color:var(--texto);margin-bottom:6px">• Agachamento livre leve — 15 reps</div>' +
-          '<div style="font-size:13px;color:var(--texto);margin-bottom:6px">• Alongamento de quadril — 30s cada lado</div>' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:13px;color:var(--texto)">• Agachamento livre leve — 15 reps</div><button onclick="abrirYoutube(3)" style="background:none;border:none;cursor:pointer;font-size:16px;padding:0">🎬</button></div>' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:13px;color:var(--texto)">• Alongamento de quadril — 30s cada lado</div><button onclick="abrirYoutube(4)" style="background:none;border:none;cursor:pointer;font-size:16px;padding:0">🎬</button></div>' +
           '<div style="font-size:13px;color:var(--texto);margin-bottom:12px">• Panturrilha na parede — 30s cada lado</div>' +
           '<div style="font-size:11px;color:var(--azul);letter-spacing:1px;font-weight:700;margin-bottom:10px">CORE</div>' +
-          '<div style="font-size:13px;color:var(--texto);margin-bottom:6px">• Prancha frontal — 30s</div>' +
-          '<div style="font-size:13px;color:var(--texto);margin-bottom:6px">• Abdominal infra — 15 reps</div>' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:13px;color:var(--texto)">• Prancha frontal — 30s</div><button onclick="abrirYoutube(6)" style="background:none;border:none;cursor:pointer;font-size:16px;padding:0">🎬</button></div>' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:13px;color:var(--texto)">• Abdominal infra — 15 reps</div><button onclick="abrirYoutube(7)" style="background:none;border:none;cursor:pointer;font-size:16px;padding:0">🎬</button></div>' +
           '<div style="font-size:13px;color:var(--texto);margin-bottom:10px">• Ponte glútea — 15 reps</div>' +
           '<div style="font-size:10px;color:var(--azul);opacity:.7;margin-top:6px">📚 Behm et al. (2016) · Br J Sports Med · McMillian et al. (2006)</div>' +
         '</div></div>';
@@ -1898,6 +1898,8 @@ function renderPeriodo(){
     document.getElementById('periodo-content').innerHTML=html;
   }).catch(function(){ document.getElementById('periodo-content').innerHTML='<div style="color:var(--cinza);text-align:center;padding:40px">Erro ao carregar.</div>'; });
 }
+var YT_AQUEC = ["Rotacao+de+ombros+como+fazer","Alongamento+de+peitoral+na+parede+como+fazer","Retracao+escapular+como+fazer","Agachamento+livre+como+fazer","Alongamento+de+quadril+como+fazer","Panturrilha+na+parede+como+fazer","Prancha+frontal+como+fazer","Abdominal+infra+como+fazer","Ponte+glutea+como+fazer"];
+function abrirYoutube(q){ var url = typeof q === "number" ? "https://www.youtube.com/results?search_query="+YT_AQUEC[q] : "https://www.youtube.com/results?search_query="+q; window.open(url,"_blank"); }
 function toggleCiclo(el){ el.querySelector('.ciclo-detalhe').classList.toggle('show'); }
 
 // ── LOJA ──────────────────────────────────────────────

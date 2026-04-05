@@ -6,8 +6,6 @@ from dataclasses import dataclass, field
 import anthropic
 import anthropic
 import os
-from dotenv import load_dotenv
-load_dotenv()
 @dataclass
 class ResultadoPostural:
     cabeca: str = ""

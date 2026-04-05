@@ -656,7 +656,10 @@ def periodizacao(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends
         ],
     }
     ciclos = ciclos_map.get(objetivo, ciclos_map["hipertrofia"])
-    return {"objetivo": objetivo, "nivel": nivel, "ciclos": ciclos}
+    ciclos = ciclos_map.get(objetivo, ciclos_map["hipertrofia"])
+    from app.routers.treino import PresencaTreino
+    total_checkins = db.query(PresencaTreino).filter(PresencaTreino.aluno_id == aluno.id).count()
+    return {"objetivo": objetivo, "nivel": nivel, "ciclos": ciclos, "total_checkins": total_checkins}
 
 
 @router.get("/financeiro")

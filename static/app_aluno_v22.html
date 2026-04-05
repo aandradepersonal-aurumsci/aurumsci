@@ -662,7 +662,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <div class="modal-header">
     <button class="modal-back" onclick="fecharModal('modal-auri')">←</button>
     <div>
-      <div class="modal-titulo">AURI</div>
+      <div class="modal-titulo">AURI</div><div style="font-size:11px;color:var(--cinza);text-align:center;padding:0 24px 8px">Assistente do personal André Andrade · disponível 24h</div>
       <div class="chat-status"><div class="status-dot"></div><span id="t-online">Online</span></div>
     </div>
   </div>
@@ -698,7 +698,7 @@ var TX = {
     emailLabel:'EMAIL', senhaLabel:'SENHA', entrar:'ENTRAR',
     tab1:'TREINO', tab2:'AVALIAÇÃO', tab3:'RESULTADOS', tab4:'PERIODIZAÇÃO', tab5:'LOJA', tab6:'FINANCEIRO',
     online:'Online',
-    auriMsg:'Oi! Sou o AURI 💪 Pode me perguntar qualquer coisa sobre seu treino!',
+    auriMsg:'Olá! Sou a AURI, assistente do seu personal André Andrade 💪 Estou aqui 24h para te ajudar com treino, evolução e dúvidas. Como posso te ajudar hoje?',
     auriSauda:'Como posso te ajudar hoje? 💪',
     bomDia:'BOM DIA', boaTarde:'BOA TARDE', boaNoite:'BOA NOITE',
     // Onboarding
@@ -729,7 +729,7 @@ var TX = {
   en: {
     emailLabel:'EMAIL', senhaLabel:'PASSWORD', entrar:'LOGIN',
     tab1:'WORKOUT', tab2:'ASSESSMENT', tab3:'RESULTS', tab4:'PERIODIZATION', tab5:'SHOP', tab6:'FINANCIAL',
-    online:'Online', auriMsg:'Hi! I am AURI 💪 Ask me anything about your workout!',
+    online:'Online', auriMsg:'Hi! I am AURI, your personal trainer\'s assistant 💪 Available 24/7 to help with training, progress and questions. How can I help you today?',
     auriSauda:'How can I help you today? 💪',
     bomDia:'GOOD MORNING', boaTarde:'GOOD AFTERNOON', boaNoite:'GOOD EVENING',
     onb1T:'WELCOME!', onb1S:'Let\'s personalize your journey. This takes just 5 minutes.',
@@ -754,7 +754,7 @@ var TX = {
   es: {
     emailLabel:'EMAIL', senhaLabel:'CONTRASEÑA', entrar:'ENTRAR',
     tab1:'ENTRENO', tab2:'EVALUACIÓN', tab3:'RESULTADOS', tab4:'PERIODIZACIÓN', tab5:'TIENDA', tab6:'FINANZAS',
-    online:'En línea', auriMsg:'¡Hola! Soy AURI 💪 ¡Pregúntame cualquier cosa sobre tu entrenamiento!',
+    online:'En línea', auriMsg:'¡Hola! Soy AURI, asistente de tu entrenador personal 💪 Disponible 24h para ayudarte con entrenamiento, evolución y dudas. ¿Cómo puedo ayudarte hoy?',
     auriSauda:'¿Cómo puedo ayudarte hoy? 💪',
     bomDia:'BUENOS DÍAS', boaTarde:'BUENAS TARDES', boaNoite:'BUENAS NOCHES',
     onb1T:'¡BIENVENIDO!', onb1S:'Vamos a personalizar tu viaje. Esto toma solo 5 minutos.',
@@ -944,7 +944,7 @@ function renderOnbStep(){
       '<div class="onb-titulo">' + T('onb1T') + '</div>' +
       '<div class="onb-sub">' + T('onb1S') + '</div>' +
       '<div style="text-align:center;font-size:80px;margin:32px 0">🏆</div>' +
-      '<div class="onb-dica">O AURI vai te acompanhar em cada treino, analisar sua postura e adaptar seu plano automaticamente!</div>';
+      '<div class="onb-dica">A AURI é sua assistente pessoal — criada pelo seu personal para te acompanhar 24h, tirar dúvidas e monitorar sua evolução!</div>';
     footer = btnNext;
   }
   else if(passo === 'anamnese'){

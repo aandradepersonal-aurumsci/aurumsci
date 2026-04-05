@@ -906,6 +906,8 @@ function fazerLogin(){
       token = d.access_token; nomeAluno = d.nome || '';
       localStorage.setItem('aurum_token', token);
       localStorage.setItem('aurum_nome', nomeAluno);
+      if(d.sexo) localStorage.setItem('aurum_sexo', d.sexo === 'FEMININO' ? 'F' : 'M');
+      if(d.idade) localStorage.setItem('aurum_idade', d.idade);
       var onbDone = localStorage.getItem('aurum_onb_done');
       if(onbDone){
         mostrarApp();

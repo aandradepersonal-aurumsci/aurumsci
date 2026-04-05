@@ -1008,18 +1008,24 @@ function renderOnbStep(){
     footer = btnNext;
   }
   else if(passo === 'periodizacao'){
-    content = '<div style="text-align:center;font-size:13px;color:var(--cinza);margin-bottom:16px;line-height:1.7">' +
-      'A periodização é a organização científica do treino ao longo do tempo para maximizar resultados e prevenir lesões.' +
+    var obj = onbData.objetivo || '';
+    var sugBlocos = (obj === 'forca' || obj === 'potencia' || obj === 'esporte');
+    var recOnd = !sugBlocos;
+    var msgSug = sugBlocos
+      ? '<div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--ouro);line-height:1.6">💡 <strong>Recomendamos Periodização em Blocos</strong> para seu objetivo de ' + obj + '. Fases de Acumulação → Transmutação → Realização maximizam força e potência. <span style="opacity:.7">Bompa & Haff (2009) · Issurin (2010)</span></div>'
+      : '<div style="background:rgba(75,159,255,.08);border:1px solid rgba(75,159,255,.25);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--azul);line-height:1.6">💡 <strong>Recomendamos Periodização Ondulatória</strong> para seu objetivo. Varia volume e intensidade semanalmente para máxima adaptação muscular. <span style="opacity:.7">Rhea et al. (2002) · J Strength Cond Res</span></div>';
+    content =
+      '<div style="text-align:center;font-size:13px;color:var(--cinza);margin-bottom:16px;line-height:1.7">A periodização é a organização científica do treino ao longo do tempo para maximizar resultados e prevenir lesões. <span style="color:var(--ouro);opacity:.8">Bompa & Periodization Theory (2009)</span></div>' +
+      msgSug +
+      '<div class="opcao-nivel" id="card-ond" onclick="selecionarPeriodizacao(this,\'ondulatoria\')" style="margin-bottom:12px;' + (recOnd ? 'border-color:rgba(75,159,255,.6);background:rgba(75,159,255,.08)' : 'border-color:var(--borda)') + '">' +
+        '<div class="nivel-titulo">🔀 Periodização Ondulatória ' + (recOnd ? '<span class="nivel-badge" style="background:rgba(75,159,255,.2);color:var(--azul)">✓ RECOMENDADA</span>' : '<span class="nivel-badge" style="background:rgba(255,255,255,.05);color:var(--cinza)">PADRÃO</span>') + '</div>' +
+        '<div class="nivel-desc" style="margin-top:6px">Varia volume e intensidade semanalmente. Semanas de volume → choque → deload. Ideal para hipertrofia, emagrecimento e condicionamento.</div>' +
+        '<div style="font-size:10px;color:var(--ouro);margin-top:6px;opacity:.8">Rhea et al. (2002) · J Strength Cond Res · Fleck & Kraemer (2004)</div>' +
       '</div>' +
-      '<div class="opcao-nivel" onclick="selecionarPeriodizacao(this,\'ondulatoria\')" style="margin-bottom:12px;border-color:rgba(75,159,255,.4);background:rgba(75,159,255,.06)">' +
-        '<div class="nivel-titulo">🔀 Periodização Ondulatória <span class="nivel-badge" style="background:rgba(75,159,255,.2);color:var(--azul)">PADRÃO</span></div>' +
-        '<div class="nivel-desc" style="margin-top:6px">Varia volume e intensidade semanalmente. Ideal para hipertrofia, emagrecimento e condicionamento geral.</div>' +
-        '<div style="font-size:10px;color:var(--ouro);margin-top:6px;opacity:.8">Rhea et al. (2002) · J Strength Cond Res</div>' +
-      '</div>' +
-      '<div class="opcao-nivel" onclick="selecionarPeriodizacao(this,\'blocos\')" style="border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.06)">' +
-        '<div class="nivel-titulo">🧱 Periodização em Blocos <span class="nivel-badge badge-amarelo">ATLETA</span></div>' +
-        '<div class="nivel-desc" style="margin-top:6px">Fases específicas: Acumulação → Transmutação → Realização. Ideal para atletas e praticantes de esportes competitivos.</div>' +
-        '<div style="font-size:10px;color:var(--ouro);margin-top:6px;opacity:.8">Issurin (2010) · Sports Med · Bompa & Haff (2009)</div>' +
+      '<div class="opcao-nivel" id="card-blocos" onclick="selecionarPeriodizacao(this,\'blocos\')" style="' + (sugBlocos ? 'border-color:rgba(201,168,76,.6);background:rgba(201,168,76,.08)' : 'border-color:var(--borda)') + '">' +
+        '<div class="nivel-titulo">🧱 Periodização em Blocos ' + (sugBlocos ? '<span class="nivel-badge badge-amarelo">✓ RECOMENDADA</span>' : '<span class="nivel-badge badge-amarelo">ATLETA</span>') + '</div>' +
+        '<div class="nivel-desc" style="margin-top:6px">Fases específicas: Acumulação → Transmutação → Realização. Inclui treino de força, potência e pliometria. Ideal para atletas e esportes competitivos.</div>' +
+        '<div style="font-size:10px;color:var(--ouro);margin-top:6px;opacity:.8">Issurin (2010) · Sports Med · Bompa & Haff (2009) · Stone et al. (2007)</div>' +
       '</div>';
     footer = btnNext;
   }

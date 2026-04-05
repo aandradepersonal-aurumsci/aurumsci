@@ -1547,6 +1547,29 @@ function renderTreino(){
         '<div class="sessao-nome">' + sessaoNome + '</div>' +
         '<div class="sessao-meta"><span>⏱ 45-60min</span><span>💪 ' + exercicios.length + ' exercícios</span></div></div>';
 
+      // Bloco de aquecimento
+      treinoHtml += '<div class="card" style="margin-bottom:14px;cursor:pointer" onclick="this.querySelector(\'.aquec-body\').style.display=this.querySelector(\'.aquec-body\').style.display===\'none\'?\'block\':\'none\'">' +
+        '<div class="card-line azul"></div>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between">' +
+          '<div><div style="font-size:10px;color:var(--azul);letter-spacing:2px;font-weight:700">🔥 AQUECIMENTO</div>' +
+          '<div style="font-size:13px;color:var(--cinza);margin-top:2px">5-10 min · Toque para expandir</div></div>' +
+          '<div style="font-size:18px;color:var(--cinza)">›</div>' +
+        '</div>' +
+        '<div class="aquec-body" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--borda)">' +
+          '<div style="font-size:11px;color:var(--azul);letter-spacing:1px;font-weight:700;margin-bottom:10px">SUPERIOR</div>' +
+          '<div style="font-size:13px;color:var(--texto);margin-bottom:6px">• Rotação de ombros — 10x cada direção</div>' +
+          '<div style="font-size:13px;color:var(--texto);margin-bottom:6px">• Alongamento de peitoral na parede — 30s cada lado</div>' +
+          '<div style="font-size:13px;color:var(--texto);margin-bottom:12px">• Retração escapular — 15 reps</div>' +
+          '<div style="font-size:11px;color:var(--azul);letter-spacing:1px;font-weight:700;margin-bottom:10px">INFERIOR</div>' +
+          '<div style="font-size:13px;color:var(--texto);margin-bottom:6px">• Agachamento livre leve — 15 reps</div>' +
+          '<div style="font-size:13px;color:var(--texto);margin-bottom:6px">• Alongamento de quadril — 30s cada lado</div>' +
+          '<div style="font-size:13px;color:var(--texto);margin-bottom:12px">• Panturrilha na parede — 30s cada lado</div>' +
+          '<div style="font-size:11px;color:var(--azul);letter-spacing:1px;font-weight:700;margin-bottom:10px">CORE</div>' +
+          '<div style="font-size:13px;color:var(--texto);margin-bottom:6px">• Prancha frontal — 30s</div>' +
+          '<div style="font-size:13px;color:var(--texto);margin-bottom:6px">• Abdominal infra — 15 reps</div>' +
+          '<div style="font-size:13px;color:var(--texto);margin-bottom:10px">• Ponte glútea — 15 reps</div>' +
+          '<div style="font-size:10px;color:var(--azul);opacity:.7;margin-top:6px">📚 Behm et al. (2016) · Br J Sports Med · McMillian et al. (2006)</div>' +
+        '</div></div>';
       treinoHtml += '<div class="card" id="card-exercicios"><div class="card-line verde"></div>';
       exercicios.forEach(function(ex, i){
         var series = ex.series || 4;

@@ -1826,16 +1826,53 @@ function renderPeriodo(){
   fetch('/app-aluno/periodizacao', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
-    if(!d || d.detail || !d.ciclos){ document.getElementById('periodo-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">Faça o onboarding primeiro!</div>'; return; }
-    var html = '';
-    d.ciclos.forEach(function(c, i){
-      html += '<div class="ciclo-card" onclick="toggleCiclo(this)">' +
-        '<div class="ciclo-header"><div class="ciclo-icon" style="background:rgba(201,168,76,.08)">' + (c.emoji||'💪') + '</div>' +
-        '<div class="ciclo-info"><div class="ciclo-nome">' + c.nome + '</div><div class="ciclo-desc">' + c.descricao + '</div></div></div>' +
-        '<div class="ciclo-detalhe">' + (c.detalhes||'').split('\n').map(function(l){ return '<div class="ciclo-item"><div class="ciclo-dot"></div>' + l + '</div>'; }).join('') + '</div></div>';
+    if(!d || d.detail || !d.ciclos){ document.getElementById('periodo-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">Faca o onboarding primeiro!</div>'; return; }
+    var dataInicio = localStorage.getItem('aurum_data_inicio');
+    var semanaAtual = 1;
+    if(dataInicio){ semanaAtual = Math.floor((Date.now()-parseInt(dataInicio))/(1000*60*60*24*7))+1; }
+    var refs = {'ADAPTACAO':'Kraemer & Ratamess (2004) · ACSM','HIPERTROFIA':'Schoenfeld (2010) · J Strength Cond Res · Rhea et al. (2002)','INTENSIFICACAO':'Zatsiorsky & Kraemer (2006) · Strength Training','DELOAD':'Rhea et al. (2002) · Bazgir et al. (2021)','ATIVACAO':'ACSM (2021) · Physical Activity Guidelines','ACELERACAO':'Gibala et al. (2012) · J Physiol','MANUTENCAO':'Bickel et al. (2011) · Med Sci Sports Exerc','BASE':'Seiler (2010) · Int J Sports Physiol','POTENCIA':'Laursen & Jenkins (2002) · Sports Med','ACUMULACAO':'Issurin (2010) · Sports Med · Bompa & Haff (2009)','TRANSMUTACAO':'Issurin (2010) · Sports Med','REALIZACAO':'Bompa & Haff (2009) · Periodization Theory'};
+    var cores = {'ADAPTACAO':['rgba(75,159,255,.08)','rgba(75,159,255,.4)','var(--azul)'],'HIPERTROFIA':['rgba(201,168,76,.08)','rgba(201,168,76,.4)','var(--ouro2)'],'INTENSIFICACAO':['rgba(255,75,75,.08)','rgba(255,75,75,.4)','#FF6B6B'],'DELOAD':['rgba(0,229,160,.08)','rgba(0,229,160,.4)','var(--verde)'],'ATIVACAO':['rgba(75,159,255,.08)','rgba(75,159,255,.4)','var(--azul)'],'ACELERACAO':['rgba(255,75,75,.08)','rgba(255,75,75,.4)','#FF6B6B'],'MANUTENCAO':['rgba(0,229,160,.08)','rgba(0,229,160,.4)','var(--verde)'],'BASE':['rgba(75,159,255,.08)','rgba(75,159,255,.4)','var(--azul)'],'POTENCIA':['rgba(255,75,75,.08)','rgba(255,75,75,.4)','#FF6B6B'],'ACUMULACAO':['rgba(75,159,255,.08)','rgba(75,159,255,.4)','var(--azul)'],'TRANSMUTACAO':['rgba(201,168,76,.08)','rgba(201,168,76,.4)','var(--ouro2)'],'REALIZACAO':['rgba(255,75,75,.08)','rgba(255,75,75,.4)','#FF6B6B']};
+    function getChave(nome){ return nome.replace(/FASE \d+ — /,'').split(' ')[0]; }
+    function getCor(chave){ return cores[chave]||['rgba(201,168,76,.08)','rgba(201,168,76,.4)','var(--ouro2)']; }
+    // Grafico
+    var totalSem = 0;
+    d.ciclos.forEach(function(c){ var m=(c.descricao||'').match(/-(\d+)/); if(m) totalSem=Math.max(totalSem,parseInt(m[1])); });
+    if(!totalSem) totalSem=17;
+    var grafico = '<div style="margin-bottom:20px"><div style="font-size:10px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:10px">MACROCICLO — VISAO GERAL</div><div style="display:flex;gap:3px;height:40px;border-radius:10px;overflow:hidden;margin-bottom:8px">';
+    d.ciclos.forEach(function(c){
+      var chave=getChave(c.nome); var cor=getCor(chave);
+      var m=(c.descricao||'').match(/Semanas? (\d+)(?:-(\d+))?/);
+      var s1=m?parseInt(m[1]):1; var s2=m&&m[2]?parseInt(m[2]):s1;
+      var larg=((s2-s1+1)/totalSem*100).toFixed(1);
+      var ativa=semanaAtual>=s1&&semanaAtual<=s2;
+      grafico+='<div style="flex:'+larg+';background:'+(ativa?cor[2]:cor[0])+';border:'+(ativa?'2px solid '+cor[2]:'1px solid rgba(255,255,255,.05)')+';display:flex;align-items:center;justify-content:center;font-size:16px" title="'+c.nome+'">'+c.emoji+'</div>';
     });
-    document.getElementById('periodo-content').innerHTML = html;
-  }).catch(function(){});
+    grafico+='</div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--cinza)"><span>Sem 1</span><span style="color:var(--ouro);font-weight:700">Sem '+semanaAtual+'</span><span>Sem '+totalSem+'</span></div>';
+    grafico+='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px">';
+    grafico+='<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--cinza)"><div style="width:10px;height:10px;border-radius:3px;background:rgba(75,159,255,.4)"></div>Geral</div>';
+    grafico+='<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--cinza)"><div style="width:10px;height:10px;border-radius:3px;background:rgba(201,168,76,.4)"></div>Volume</div>';
+    grafico+='<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--cinza)"><div style="width:10px;height:10px;border-radius:3px;background:rgba(255,75,75,.4)"></div>Choque</div>';
+    grafico+='<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--cinza)"><div style="width:10px;height:10px;border-radius:3px;background:rgba(0,229,160,.4)"></div>Deload</div>';
+    grafico+='</div></div>';
+    // Cards
+    var html=grafico;
+    d.ciclos.forEach(function(c){
+      var chave=getChave(c.nome); var cor=getCor(chave);
+      var ref=refs[chave]||'Bompa & Haff (2009) · Periodization Theory';
+      var m=(c.descricao||'').match(/Semanas? (\d+)(?:-(\d+))?/);
+      var s1=m?parseInt(m[1]):1; var s2=m&&m[2]?parseInt(m[2]):s1;
+      var ativa=semanaAtual>=s1&&semanaAtual<=s2;
+      html+='<div style="background:'+cor[0]+';border:1px solid '+cor[1]+(ativa?';box-shadow:0 0 0 2px '+cor[2]:'')+';border-radius:18px;padding:18px;margin-bottom:12px;cursor:pointer" onclick="this.querySelector(\'.ciclo-det\').classList.toggle(\'show\')">';
+      if(ativa) html+='<div style="font-size:9px;color:'+cor[2]+';letter-spacing:2px;font-weight:700;margin-bottom:8px">▶ VOCE ESTA AQUI</div>';
+      html+='<div style="display:flex;align-items:center;gap:12px"><div style="width:44px;height:44px;border-radius:12px;background:'+cor[0]+';border:1px solid '+cor[1]+';display:flex;align-items:center;justify-content:center;font-size:22px">'+c.emoji+'</div>';
+      html+='<div style="flex:1"><div style="font-family:Bebas Neue;font-size:18px;color:'+cor[2]+'">'+c.nome+'</div><div style="font-size:12px;color:var(--cinza);margin-top:2px">'+c.descricao+'</div></div>';
+      html+='<div style="font-size:18px;color:var(--cinza)">›</div></div>';
+      html+='<div class="ciclo-det" style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)">';
+      (c.detalhes||'').split('\n').forEach(function(l){ html+='<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px"><div style="width:6px;height:6px;border-radius:50%;background:'+cor[2]+';flex-shrink:0"></div>'+l+'</div>'; });
+      html+='<div style="margin-top:10px;font-size:10px;color:'+cor[2]+';opacity:.8;line-height:1.6">📚 '+ref+'</div></div></div>';
+    });
+    document.getElementById('periodo-content').innerHTML=html;
+  }).catch(function(){ document.getElementById('periodo-content').innerHTML='<div style="color:var(--cinza);text-align:center;padding:40px">Erro ao carregar.</div>'; });
 }
 function toggleCiclo(el){ el.querySelector('.ciclo-detalhe').classList.toggle('show'); }
 

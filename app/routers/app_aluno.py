@@ -111,7 +111,6 @@ async def onboarding(
     import json
     plano = PlanoTreino(
         aluno_id=aluno.id,
-        personal_id=aluno.personal_id if hasattr(aluno, 'personal_id') else 1,
         nome=f"Plano {dados.objetivo.capitalize()} — {dados.nivel_experiencia.capitalize()}",
         objetivo=dados.objetivo,
         nivel=dados.nivel_experiencia,
@@ -199,7 +198,6 @@ async def registrar_bioimpedancia(
     if not aval or aval.data_avaliacao != hoje:
         aval = AvaliacaoFisica(
             aluno_id=aluno.id,
-            personal_id=1,
             data_avaliacao=hoje,
             protocolo_composicao="bioimpedancia"
         )
@@ -265,7 +263,6 @@ async def analise_postural(
     if not aval:
         aval = AvaliacaoFisica(
             aluno_id=aluno.id,
-            personal_id=1,
             data_avaliacao=date.today()
         )
         db.add(aval)
@@ -396,7 +393,6 @@ async def registrar_presenca(
 
     presenca = PresencaTreino(
         aluno_id=aluno.id,
-        personal_id=1,
         plano_id=plano.id if plano else None,
         sessao_id=dados.sessao_id,
         data_presenca=date.today(),
@@ -748,6 +744,23 @@ def registrar_overtraining(
             aval.observacoes = json.dumps(obs, ensure_ascii=False)
         db.commit()
     return {"mensagem": "Questionário registrado!", "score": dados.score, "risco": dados.risco, "deload_recomendado": dados.risco == "alto"}
+
+@router.post("/medidas")
+def salvar_medidas(dados: dict, aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    from app.routers.avaliacao import AvaliacaoFisica
+    hoje = date.today()
+    aval = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno.id
+    ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+    if not aval or aval.data_avaliacao != hoje:
+        aval = AvaliacaoFisica(aluno_id=aluno.id, data_avaliacao=hoje)
+        db.add(aval)
+    campos = ['torax','cintura','abdomen','quadril','bracoD','bracoE','antebD','antebE','coxaD','coxaE','pantD','pantE']
+    for c in campos:
+        if c in dados and dados[c]:
+            setattr(aval, c, float(dados[c]))
+    db.commit()
+    return {"mensagem": "Medidas salvas!"}
 
 @router.get("/medidas")
 def get_medidas(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):

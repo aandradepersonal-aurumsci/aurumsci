@@ -714,7 +714,6 @@ def checkin(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_
     ).first()
     presenca = PresencaTreino(
         aluno_id=aluno.id,
-        personal_id=aluno.personal_id if hasattr(aluno, 'personal_id') else 1,
         plano_id=plano.id if plano else None,
         data_presenca=date.today(),
         presente=True

@@ -91,10 +91,8 @@ def email_boas_vindas_personal(nome: str, email: str, trial_fim: str = "14 dias"
     primeiro_nome = nome.split()[0]
     html = _base(f"""
   <div class="card">
-    <div style="font-size:11px;color:#555;letter-spacing:2px;text-align:center;margin-bottom:8px">PERSONAL TRAINER · CREF 62702-G/SP</div>
-    <div style="font-size:14px;color:#888;text-align:center;margin-bottom:24px">{primeiro_nome}</div>
-    <div class="titulo" style="text-align:center">Bem-vindo à família<br><span style="color:#F0C040">AurumSci PRO</span> 🏆</div>
-    <div class="sub" style="text-align:center">Seu período de teste gratuito começa agora. 14 dias para transformar a forma como você gerencia seus alunos.</div>
+    <div class="titulo">Seja bem-vindo à família, {primeiro_nome}! 🏆</div>
+    <div class="sub">Seu período de teste gratuito começa agora. 14 dias para transformar a forma como você gerencia seus alunos.</div>
 
     <div class="destaque">
       <div style="font-size:11px;color:#F0C040;letter-spacing:2px;font-weight:700;margin-bottom:12px">O QUE VOCÊ TEM AGORA</div>

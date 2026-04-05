@@ -263,4 +263,10 @@ def cadastro_rapido(dados: CadastroRapido, db: Session = Depends(get_db)):
     cred = AlunoCredencial(aluno_id=aluno.id, email=dados.email, senha_hash=pwd_context.hash(dados.senha))
     db.add(cred)
     db.commit()
+    # Envia email de boas vindas
+    try:
+        from app.services.email_service import email_boas_vindas_aluno
+        email_boas_vindas_aluno(dados.nome, dados.email)
+    except Exception:
+        pass
     return {"aluno_id": aluno.id, "mensagem": "Conta criada com sucesso!"}

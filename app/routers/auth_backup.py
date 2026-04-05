@@ -16,6 +16,12 @@ def registrar(dados: PersonalRegistro, db: Session = Depends(get_db)):
     db.add(personal)
     db.commit()
     db.refresh(personal)
+    # Envia email de boas vindas
+    try:
+        from app.services.email_service import email_boas_vindas_personal
+        email_boas_vindas_personal(personal.nome, personal.email)
+    except Exception:
+        pass
     return personal
 
 @router.post("/login", response_model=TokenResposta)

@@ -1847,7 +1847,8 @@ function renderPeriodo(){
       var ativa=semanaAtual>=s1&&semanaAtual<=s2;
       grafico+='<div style="flex:'+larg+';background:'+(ativa?cor[2]:cor[0])+';border:'+(ativa?'2px solid '+cor[2]:'1px solid rgba(255,255,255,.05)')+';display:flex;align-items:center;justify-content:center;font-size:16px" title="'+c.nome+'">'+c.emoji+'</div>';
     });
-    grafico+='</div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--cinza)"><span>Sem 1</span><span style="color:var(--ouro);font-weight:700">Sem '+semanaAtual+'</span><span>Sem '+totalSem+'</span></div>';
+    var labelAtual = semanaAtual > 1 && semanaAtual < totalSem ? '<span style="color:var(--ouro);font-weight:700">▲ Sem '+semanaAtual+'</span>' : '';
+    grafico+='</div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--cinza)"><span>Sem 1</span>'+labelAtual+'<span>Sem '+totalSem+'</span></div>';
     grafico+='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px">';
     grafico+='<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--cinza)"><div style="width:10px;height:10px;border-radius:3px;background:rgba(75,159,255,.4)"></div>Geral</div>';
     grafico+='<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--cinza)"><div style="width:10px;height:10px;border-radius:3px;background:rgba(201,168,76,.4)"></div>Volume</div>';

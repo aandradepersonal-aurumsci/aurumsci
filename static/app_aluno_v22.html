@@ -780,7 +780,7 @@ var TX = {
 function T(k){ return (TX[lang]||TX['pt'])[k] || (TX['pt'])[k] || k; }
 
 // ── PASSOS ONBOARDING ─────────────────────────────────
-var PASSOS = ['anamnese','objetivo','nivel','dias','periodizacao','pronto'];
+var PASSOS = ['objetivo','nivel','dias','anamnese','periodizacao','pronto'];
 
 // ── SPLASH ────────────────────────────────────────────
 window.onload = function(){
@@ -1223,6 +1223,7 @@ function finalizarAppAposOnboarding(){
     }).catch(function(){});
   }
   localStorage.setItem('aurum_onb_done', '1');
+  if(!localStorage.getItem('aurum_data_inicio')) localStorage.setItem('aurum_data_inicio', Date.now().toString());
   document.getElementById('screen-onboarding').style.display = 'none';
   mostrarApp();
   setTimeout(function(){
@@ -1670,6 +1671,15 @@ var OVERTRAINING_KEY = 'aurum_over_last';
 var OVERTRAINING_SEMANAS = 4;
 
 function verificarOvertraining(){
+  // Só mostra após 30 dias de treino
+  var dataInicio = localStorage.getItem('aurum_data_inicio');
+  if(dataInicio){
+    var diasTreino = (Date.now() - parseInt(dataInicio)) / (1000*60*60*24);
+    if(diasTreino < 30) return; // Menos de 30 dias — não mostra
+  } else {
+    return; // Sem data de início — não mostra
+  }
+  // Checa se já respondeu nas últimas 4 semanas
   var ultimo = localStorage.getItem(OVERTRAINING_KEY);
   if(ultimo){
     var diff = (Date.now() - parseInt(ultimo)) / (1000*60*60*24*7);

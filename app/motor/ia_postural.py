@@ -4,7 +4,10 @@ AurumSci Motor v1 - ia_postural.py
 from typing import Optional
 from dataclasses import dataclass, field
 import anthropic
-
+import anthropic
+import os
+from dotenv import load_dotenv
+load_dotenv()
 @dataclass
 class ResultadoPostural:
     cabeca: str = ""
@@ -19,7 +22,7 @@ class ResultadoPostural:
     erro: Optional[str] = None
 
 async def analisar_postural(foto_frente=None, foto_lado=None, foto_costas=None, mime_frente="image/jpeg", mime_lado="image/jpeg", mime_costas="image/jpeg"):
-    client = anthropic.Anthropic()
+    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
     
     imgs = []
     if foto_frente:

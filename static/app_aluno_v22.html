@@ -662,7 +662,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <div class="modal-header">
     <button class="modal-back" onclick="fecharModal('modal-auri')">←</button>
     <div>
-      <div class="modal-titulo">AURI</div><div style="font-size:11px;color:var(--cinza);text-align:center;padding:0 24px 8px">Assistente do personal André Andrade · disponível 24h</div>
+      <div class="modal-titulo">AURI</div>
       <div class="chat-status"><div class="status-dot"></div><span id="t-online">Online</span></div>
     </div>
   </div>
@@ -698,7 +698,7 @@ var TX = {
     emailLabel:'EMAIL', senhaLabel:'SENHA', entrar:'ENTRAR',
     tab1:'TREINO', tab2:'AVALIAÇÃO', tab3:'RESULTADOS', tab4:'PERIODIZAÇÃO', tab5:'LOJA', tab6:'FINANCEIRO',
     online:'Online',
-    auriMsg:'Olá! Sou a AURI, assistente do seu personal André Andrade 💪 Estou aqui 24h para te ajudar com treino, evolução e dúvidas. Como posso te ajudar hoje?',
+    auriMsg:'Oi! Sou o AURI 💪 Pode me perguntar qualquer coisa sobre seu treino!',
     auriSauda:'Como posso te ajudar hoje? 💪',
     bomDia:'BOM DIA', boaTarde:'BOA TARDE', boaNoite:'BOA NOITE',
     // Onboarding
@@ -729,7 +729,7 @@ var TX = {
   en: {
     emailLabel:'EMAIL', senhaLabel:'PASSWORD', entrar:'LOGIN',
     tab1:'WORKOUT', tab2:'ASSESSMENT', tab3:'RESULTS', tab4:'PERIODIZATION', tab5:'SHOP', tab6:'FINANCIAL',
-    online:'Online', auriMsg:'Hi! I am AURI, your personal trainer\'s assistant 💪 Available 24/7 to help with training, progress and questions. How can I help you today?',
+    online:'Online', auriMsg:'Hi! I am AURI 💪 Ask me anything about your workout!',
     auriSauda:'How can I help you today? 💪',
     bomDia:'GOOD MORNING', boaTarde:'GOOD AFTERNOON', boaNoite:'GOOD EVENING',
     onb1T:'WELCOME!', onb1S:'Let\'s personalize your journey. This takes just 5 minutes.',
@@ -754,7 +754,7 @@ var TX = {
   es: {
     emailLabel:'EMAIL', senhaLabel:'CONTRASEÑA', entrar:'ENTRAR',
     tab1:'ENTRENO', tab2:'EVALUACIÓN', tab3:'RESULTADOS', tab4:'PERIODIZACIÓN', tab5:'TIENDA', tab6:'FINANZAS',
-    online:'En línea', auriMsg:'¡Hola! Soy AURI, asistente de tu entrenador personal 💪 Disponible 24h para ayudarte con entrenamiento, evolución y dudas. ¿Cómo puedo ayudarte hoy?',
+    online:'En línea', auriMsg:'¡Hola! Soy AURI 💪 ¡Pregúntame cualquier cosa sobre tu entrenamiento!',
     auriSauda:'¿Cómo puedo ayudarte hoy? 💪',
     bomDia:'BUENOS DÍAS', boaTarde:'BUENAS TARDES', boaNoite:'BUENAS NOCHES',
     onb1T:'¡BIENVENIDO!', onb1S:'Vamos a personalizar tu viaje. Esto toma solo 5 minutos.',
@@ -944,7 +944,7 @@ function renderOnbStep(){
       '<div class="onb-titulo">' + T('onb1T') + '</div>' +
       '<div class="onb-sub">' + T('onb1S') + '</div>' +
       '<div style="text-align:center;font-size:80px;margin:32px 0">🏆</div>' +
-      '<div class="onb-dica">A AURI é sua assistente pessoal — criada pelo seu personal para te acompanhar 24h, tirar dúvidas e monitorar sua evolução!</div>';
+      '<div class="onb-dica">O AURI vai te acompanhar em cada treino, analisar sua postura e adaptar seu plano automaticamente!</div>';
     footer = btnNext;
   }
   else if(passo === 'anamnese'){
@@ -1488,10 +1488,6 @@ function renderTreino(){
 
   var html = '<div style="margin-bottom:16px">' +
     '<div style="font-family:Bebas Neue;font-size:36px;letter-spacing:1px;line-height:1">' + sauda + ',<br><span style="color:var(--ouro2)">' + nome + '!</span></div>' +
-    '<div style="display:flex;align-items:center;gap:8px;margin-top:8px">' +
-    '<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--ouro),var(--ouro2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#0A0A0F">A</div>' +
-    '<div><div style="font-size:11px;font-weight:700;color:var(--texto)">André Andrade · CREF 62702-G/SP</div>' +
-    '<div style="font-size:10px;color:var(--cinza)">Seu personal 24h no bolso 💪</div></div></div>' +
     '</div>';
 
   // Streak
@@ -1832,17 +1828,7 @@ function renderEvolucao(){
   fetch('/app-aluno/resultado', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
-    if(!d || d.detail){
-      document.getElementById('evolucao-content').innerHTML =
-        '<div style="text-align:center;padding:40px 20px">' +
-        '<div style="font-size:60px;margin-bottom:16px">📊</div>' +
-        '<div style="font-family:Bebas Neue;font-size:24px;color:var(--ouro2);margin-bottom:8px">FAÇA SUA PRIMEIRA AVALIAÇÃO</div>' +
-        '<div style="font-size:13px;color:var(--cinza);line-height:1.7;margin-bottom:20px">Com a avaliação física completa, seu personal consegue personalizar ainda mais seu treino e acompanhar sua evolução mês a mês.</div>' +
-        '<button onclick="irParaAvaliacao()" style="padding:14px 32px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:14px;color:#0A0A0F;font-family:Bebas Neue;font-size:18px;letter-spacing:2px;cursor:pointer">FAZER AVALIAÇÃO →</button>' +
-        '<div style="font-size:10px;color:var(--cinza);margin-top:16px;opacity:.7">📚 Heyward & Gibson (2014) · Advanced Fitness Assessment</div>' +
-        '</div>';
-      return;
-    }
+    if(!d || d.detail){ document.getElementById('evolucao-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">Complete sua avaliação para ver evolução!</div>'; return; }
     var html = '';
     if(d.peso_atual){ html += '<div class="metric-big"><div class="metric-label">PESO ATUAL</div><div class="metric-val">' + d.peso_atual + '<span class="metric-unit"> kg</span></div>' + (d.variacao_peso ? '<div class="metric-diff ' + (d.variacao_peso < 0 ? 'diff-pos' : 'diff-neg') + '">' + (d.variacao_peso > 0 ? '+' : '') + d.variacao_peso + ' kg</div>' : '') + '</div>'; }
     if(d.percentual_gordura){ html += '<div class="metric-big"><div class="metric-label">% GORDURA</div><div class="metric-val">' + d.percentual_gordura + '<span class="metric-unit"> %</span></div></div>'; }
@@ -2145,20 +2131,40 @@ function renderTesteVO2(area){
     '</div>';
 }
 
+function classificarVO2(vo2, idade, sexo){
+  var tM={'20-29':[{l:31.5,t:'Muito Fraco',c:'var(--vermelho)'},{l:37.1,t:'Fraco',c:'#FF6B6B'},{l:44.2,t:'Regular',c:'var(--ouro)'},{l:50.9,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'30-39':[{l:30.2,t:'Muito Fraco',c:'var(--vermelho)'},{l:35.7,t:'Fraco',c:'#FF6B6B'},{l:42.4,t:'Regular',c:'var(--ouro)'},{l:49.4,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'40-49':[{l:26.1,t:'Muito Fraco',c:'var(--vermelho)'},{l:31.5,t:'Fraco',c:'#FF6B6B'},{l:38.4,t:'Regular',c:'var(--ouro)'},{l:45.0,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'50-59':[{l:22.8,t:'Muito Fraco',c:'var(--vermelho)'},{l:27.1,t:'Fraco',c:'#FF6B6B'},{l:33.9,t:'Regular',c:'var(--ouro)'},{l:40.3,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'60+':[{l:20.5,t:'Muito Fraco',c:'var(--vermelho)'},{l:24.5,t:'Fraco',c:'#FF6B6B'},{l:30.9,t:'Regular',c:'var(--ouro)'},{l:37.4,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}]};
+  var tF={'20-29':[{l:23.6,t:'Muito Fraco',c:'var(--vermelho)'},{l:28.9,t:'Fraco',c:'#FF6B6B'},{l:35.6,t:'Regular',c:'var(--ouro)'},{l:41.0,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'30-39':[{l:22.8,t:'Muito Fraco',c:'var(--vermelho)'},{l:27.2,t:'Fraco',c:'#FF6B6B'},{l:33.7,t:'Regular',c:'var(--ouro)'},{l:38.9,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'40-49':[{l:21.0,t:'Muito Fraco',c:'var(--vermelho)'},{l:24.5,t:'Fraco',c:'#FF6B6B'},{l:30.1,t:'Regular',c:'var(--ouro)'},{l:35.7,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'50-59':[{l:20.2,t:'Muito Fraco',c:'var(--vermelho)'},{l:22.7,t:'Fraco',c:'#FF6B6B'},{l:27.4,t:'Regular',c:'var(--ouro)'},{l:32.2,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'60+':[{l:17.5,t:'Muito Fraco',c:'var(--vermelho)'},{l:20.1,t:'Fraco',c:'#FF6B6B'},{l:24.4,t:'Regular',c:'var(--ouro)'},{l:29.9,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}]};
+  var f=idade<30?'20-29':idade<40?'30-39':idade<50?'40-49':idade<60?'50-59':'60+';
+  var tab=(sexo==='F'?tF:tM)[f];
+  for(var i=0;i<tab.length;i++){if(vo2<=tab[i].l)return{txt:tab[i].t,cor:tab[i].c,faixa:f};}
+  return{txt:'Excelente',cor:'var(--verde)',faixa:f};
+}
+function classificarGordura(gord, idade, sexo){
+  var tM={'20-29':[{l:11,t:'Muito Magro'},{l:16,t:'Excelente'},{l:20,t:'Bom'},{l:24,t:'Regular'},{l:28,t:'Acima do ideal'},{l:999,t:'Muito Alto'}],'30-39':[{l:12,t:'Muito Magro'},{l:17,t:'Excelente'},{l:21,t:'Bom'},{l:25,t:'Regular'},{l:29,t:'Acima do ideal'},{l:999,t:'Muito Alto'}],'40-49':[{l:14,t:'Muito Magro'},{l:19,t:'Excelente'},{l:23,t:'Bom'},{l:27,t:'Regular'},{l:31,t:'Acima do ideal'},{l:999,t:'Muito Alto'}],'50+':[{l:15,t:'Muito Magro'},{l:20,t:'Excelente'},{l:24,t:'Bom'},{l:28,t:'Regular'},{l:32,t:'Acima do ideal'},{l:999,t:'Muito Alto'}]};
+  var tF={'20-29':[{l:16,t:'Muito Magra'},{l:21,t:'Excelente'},{l:25,t:'Bom'},{l:29,t:'Regular'},{l:33,t:'Acima do ideal'},{l:999,t:'Muito Alto'}],'30-39':[{l:17,t:'Muito Magra'},{l:22,t:'Excelente'},{l:26,t:'Bom'},{l:30,t:'Regular'},{l:34,t:'Acima do ideal'},{l:999,t:'Muito Alto'}],'40-49':[{l:19,t:'Muito Magra'},{l:24,t:'Excelente'},{l:28,t:'Bom'},{l:32,t:'Regular'},{l:36,t:'Acima do ideal'},{l:999,t:'Muito Alto'}],'50+':[{l:20,t:'Muito Magra'},{l:25,t:'Excelente'},{l:29,t:'Bom'},{l:33,t:'Regular'},{l:37,t:'Acima do ideal'},{l:999,t:'Muito Alto'}]};
+  var f=idade<30?'20-29':idade<40?'30-39':idade<50?'40-49':'50+';
+  var cores={'Muito Magro':'var(--azul)','Muito Magra':'var(--azul)','Excelente':'var(--verde)','Bom':'var(--verde)','Regular':'var(--ouro)','Acima do ideal':'#FF6B6B','Muito Alto':'var(--vermelho)'};
+  var tab=(sexo==='F'?tF:tM)[f];
+  for(var i=0;i<tab.length;i++){if(gord<=tab[i].l)return{txt:tab[i].t,cor:cores[tab[i].t]||'var(--cinza)',faixa:f};}
+  return{txt:'Muito Alto',cor:'var(--vermelho)',faixa:f};
+}
 function calcularVO2(){
   var dist = parseFloat(document.getElementById('vo2-dist').value);
   if(!dist){ mostrarToast('Informe a distância!'); return; }
   var vo2 = (dist - 504.9) / 44.73;
   vo2 = Math.max(10, Math.round(vo2*10)/10);
-  var classif = vo2 < 35 ? {txt:'Muito Fraco', cor:'var(--vermelho)'} : vo2 < 42 ? {txt:'Regular', cor:'var(--ouro)'} : vo2 < 50 ? {txt:'Bom', cor:'var(--verde)'} : {txt:'Excelente', cor:'var(--azul)'};
+  var idade = parseInt(localStorage.getItem('aurum_idade')||'30');
+  var sexo = localStorage.getItem('aurum_sexo')||'M';
+  var classif = classificarVO2(vo2, idade, sexo);
   var fcPos = parseFloat(document.getElementById('vo2-fc-pos').value)||0;
   var fcRep = parseFloat(document.getElementById('vo2-fc-rep').value)||0;
   document.getElementById('vo2-resultado').innerHTML =
     '<div class="classificacao-box" style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2)">' +
     '<div class="class-titulo" style="color:var(--verde)">VO2 MÁXIMO ESTIMADO</div>' +
     '<div class="class-val" style="color:' + classif.cor + '">' + vo2 + ' <span style="font-size:16px">ml/kg/min</span></div>' +
-    '<div class="class-desc" style="color:' + classif.cor + '">' + classif.txt + '</div>' +
+    '<div class="class-desc" style="color:' + classif.cor + '">' + classif.txt + ' · Faixa ' + classif.faixa + ' anos · ' + (sexo==='F'?'Feminino':'Masculino') + '</div>' +
     (fcPos && fcRep ? '<div style="margin-top:12px;font-size:12px;color:var(--cinza)">FC pico: ' + fcPos + ' bpm · FC repouso: ' + fcRep + ' bpm</div>' : '') +
+    '<div style="margin-top:10px;font-size:10px;color:var(--cinza);opacity:.8">📚 ACSM Guidelines for Exercise Testing (2022) · Cooper KH (1968) JAMA</div>' +
     '</div>';
 }
 
@@ -2210,17 +2216,29 @@ function renderTesteForca(area){
     '<div id="forca-resultado" style="margin-top:16px"></div></div>';
 }
 
+function classificarFlexao(reps, idade, sexo){
+  var tM={'20-29':[{l:16,t:'Fraco'},{l:22,t:'Regular'},{l:28,t:'Bom'},{l:34,t:'Muito Bom'},{l:999,t:'Excelente'}],'30-39':[{l:11,t:'Fraco'},{l:17,t:'Regular'},{l:21,t:'Bom'},{l:28,t:'Muito Bom'},{l:999,t:'Excelente'}],'40-49':[{l:9,t:'Fraco'},{l:13,t:'Regular'},{l:16,t:'Bom'},{l:24,t:'Muito Bom'},{l:999,t:'Excelente'}],'50+':[{l:6,t:'Fraco'},{l:10,t:'Regular'},{l:12,t:'Bom'},{l:20,t:'Muito Bom'},{l:999,t:'Excelente'}]};
+  var tF={'20-29':[{l:12,t:'Fraco'},{l:17,t:'Regular'},{l:22,t:'Bom'},{l:28,t:'Muito Bom'},{l:999,t:'Excelente'}],'30-39':[{l:8,t:'Fraco'},{l:12,t:'Regular'},{l:17,t:'Bom'},{l:23,t:'Muito Bom'},{l:999,t:'Excelente'}],'40-49':[{l:5,t:'Fraco'},{l:10,t:'Regular'},{l:14,t:'Bom'},{l:20,t:'Muito Bom'},{l:999,t:'Excelente'}],'50+':[{l:2,t:'Fraco'},{l:6,t:'Regular'},{l:10,t:'Bom'},{l:14,t:'Muito Bom'},{l:999,t:'Excelente'}]};
+  var f=idade<30?'20-29':idade<40?'30-39':idade<50?'40-49':'50+';
+  var cores={'Fraco':'var(--vermelho)','Regular':'var(--ouro)','Bom':'var(--verde)','Muito Bom':'var(--verde)','Excelente':'var(--azul)'};
+  var tab=(sexo==='F'?tF:tM)[f];
+  for(var i=0;i<tab.length;i++){if(reps<=tab[i].l)return{txt:tab[i].t,cor:cores[tab[i].t],faixa:f};}
+  return{txt:'Excelente',cor:'var(--azul)',faixa:f};
+}
 function salvarForca(){
-  var flexao = document.getElementById('f-flexao').value;
-  var barra = document.getElementById('f-barra').value;
-  var agach = document.getElementById('f-agach').value;
-  var classFlexao = parseInt(flexao) < 10 ? 'Fraco' : parseInt(flexao) < 20 ? 'Regular' : parseInt(flexao) < 35 ? 'Bom' : 'Excelente';
+  var flexao = parseInt(document.getElementById('f-flexao').value)||0;
+  var barra = parseInt(document.getElementById('f-barra').value)||0;
+  var agach = parseInt(document.getElementById('f-agach').value)||0;
+  var idade = parseInt(localStorage.getItem('aurum_idade')||'30');
+  var sexo = localStorage.getItem('aurum_sexo')||'M';
+  var cf = flexao ? classificarFlexao(flexao, idade, sexo) : null;
   document.getElementById('forca-resultado').innerHTML =
     '<div class="classificacao-box" style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2)">' +
-    '<div class="class-titulo" style="color:var(--ouro)">RESULTADO</div>' +
-    (flexao ? '<div style="font-size:13px;margin-top:4px">Flexão: <strong>' + flexao + ' reps</strong> — ' + classFlexao + '</div>' : '') +
-    (barra ? '<div style="font-size:13px;margin-top:4px">Barra: <strong>' + barra + ' reps</strong></div>' : '') +
-    (agach ? '<div style="font-size:13px;margin-top:4px">Agachamento: <strong>' + agach + ' reps</strong></div>' : '') +
+    '<div class="class-titulo" style="color:var(--ouro)">RESULTADO · Faixa ' + (cf?cf.faixa:'—') + ' anos</div>' +
+    (flexao ? '<div style="font-size:13px;margin-top:8px;display:flex;justify-content:space-between"><span>💪 Flexão: <strong>' + flexao + ' reps</strong></span><span style="color:' + (cf?cf.cor:'var(--cinza)') + ';font-weight:700">' + (cf?cf.txt:'—') + '</span></div>' : '') +
+    (barra ? '<div style="font-size:13px;margin-top:6px">🏋️ Barra fixa: <strong>' + barra + ' reps</strong></div>' : '') +
+    (agach ? '<div style="font-size:13px;margin-top:6px">🦵 Agachamento: <strong>' + agach + ' reps</strong></div>' : '') +
+    '<div style="margin-top:10px;font-size:10px;color:var(--cinza);opacity:.8">📚 ACSM Guidelines for Exercise Testing (2022) · Canadian Fitness Survey</div>' +
     '</div>';
   mostrarToast('Força registrada!');
 }

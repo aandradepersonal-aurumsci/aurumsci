@@ -1832,7 +1832,17 @@ function renderEvolucao(){
   fetch('/app-aluno/resultado', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
-    if(!d || d.detail){ document.getElementById('evolucao-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">Complete sua avaliação para ver evolução!</div>'; return; }
+    if(!d || d.detail){
+      document.getElementById('evolucao-content').innerHTML =
+        '<div style="text-align:center;padding:40px 20px">' +
+        '<div style="font-size:60px;margin-bottom:16px">📊</div>' +
+        '<div style="font-family:Bebas Neue;font-size:24px;color:var(--ouro2);margin-bottom:8px">FAÇA SUA PRIMEIRA AVALIAÇÃO</div>' +
+        '<div style="font-size:13px;color:var(--cinza);line-height:1.7;margin-bottom:20px">Com a avaliação física completa, seu personal consegue personalizar ainda mais seu treino e acompanhar sua evolução mês a mês.</div>' +
+        '<button onclick="irParaAvaliacao()" style="padding:14px 32px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:14px;color:#0A0A0F;font-family:Bebas Neue;font-size:18px;letter-spacing:2px;cursor:pointer">FAZER AVALIAÇÃO →</button>' +
+        '<div style="font-size:10px;color:var(--cinza);margin-top:16px;opacity:.7">📚 Heyward & Gibson (2014) · Advanced Fitness Assessment</div>' +
+        '</div>';
+      return;
+    }
     var html = '';
     if(d.peso_atual){ html += '<div class="metric-big"><div class="metric-label">PESO ATUAL</div><div class="metric-val">' + d.peso_atual + '<span class="metric-unit"> kg</span></div>' + (d.variacao_peso ? '<div class="metric-diff ' + (d.variacao_peso < 0 ? 'diff-pos' : 'diff-neg') + '">' + (d.variacao_peso > 0 ? '+' : '') + d.variacao_peso + ' kg</div>' : '') + '</div>'; }
     if(d.percentual_gordura){ html += '<div class="metric-big"><div class="metric-label">% GORDURA</div><div class="metric-val">' + d.percentual_gordura + '<span class="metric-unit"> %</span></div></div>'; }

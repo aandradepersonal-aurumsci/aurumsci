@@ -530,10 +530,10 @@ function atualizarTextos(){
   if(el) el.textContent = sauda + ',';
   var el2 = document.getElementById('t-online');
   if(el2) el2.textContent = T('online');
-  document.getElementById('t-tab1').textContent = T('tab1');
-  document.getElementById('t-tab2').textContent = T('tab2');
-  document.getElementById('t-tab3').textContent = T('tab3');
-  document.getElementById('t-tab4').textContent = T('tab4');
+  var t1=document.getElementById('t-tab1'); if(t1) t1.textContent = T('tab1');
+  var t2=document.getElementById('t-tab2'); if(t2) t2.textContent = T('tab2');
+  var t3=document.getElementById('t-tab3'); if(t3) t3.textContent = T('tab3');
+  var t4=document.getElementById('t-tab4'); if(t4) t4.textContent = T('tab4');
 }
 
 // ── THEME ─────────────────────────────────────────────────────

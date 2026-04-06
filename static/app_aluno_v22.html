@@ -26,7 +26,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 /* ── SPLASH ────────────────────────────────────────── */
 #splash{position:fixed;inset:0;background:#0A0A0F;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:400;transition:opacity .6s}
 #splash.hide{opacity:0;pointer-events:none}
-.splash-logo{font-family:'Bebas Neue';font-size:72px;letter-spacing:6px;color:var(--ouro2);animation:glow 2s infinite alternate}
+.splash-logo{animation:glow 2s infinite alternate;display:flex;align-items:baseline;gap:6px}
 .splash-sub{color:#555;letter-spacing:4px;font-size:11px;margin-top:8px}
 .splash-bar{width:200px;height:3px;background:#1A1A26;border-radius:2px;margin-top:40px;overflow:hidden}
 .splash-prog{height:100%;background:linear-gradient(90deg,var(--ouro),var(--ouro2));width:0;animation:load 2.2s ease forwards}
@@ -307,14 +307,14 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 
 <!-- SPLASH -->
 <div id="splash">
-  <div class="splash-logo">AURUMSCI</div>
+  <div class="splash-logo"><svg viewBox="0 0 44 44" width="52" height="52" style="margin-right:8px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:58px;font-weight:400;letter-spacing:6px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:22px;font-style:italic;color:#fff;margin-left:4px;margin-bottom:8px">sci.</span></div>
   <div class="splash-sub">CIÊNCIA QUE VIRA RESULTADO</div>
   <div class="splash-bar"><div class="splash-prog"></div></div>
 </div>
 
 <!-- LOGIN -->
 <div id="screen-login" style="display:flex">
-  <div class="login-logo">AURUMSCI</div>
+  <div class="login-logo" style="display:flex;align-items:baseline;gap:4px"><svg viewBox="0 0 44 44" width="36" height="36" style="margin-right:6px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:42px;font-weight:400;letter-spacing:4px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:16px;font-style:italic;color:#fff;margin-left:3px">sci.</span></div>
   <div class="login-tag" id="l-tag">CIÊNCIA QUE VIRA RESULTADO</div>
   <div class="lang-row">
     <button class="lang-btn active" onclick="setLang('pt',this)">🇧🇷 PT</button>
@@ -337,7 +337,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <div id="app">
   <!-- TOPBAR -->
   <div class="topbar">
-    <div class="topbar-logo">AURUMSCI</div>
+    <div class="topbar-logo" style="display:flex;align-items:center;gap:2px"><svg viewBox="0 0 44 44" width="22" height="22" style="margin-right:4px;overflow:hidden"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="2"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:20px;font-weight:400;letter-spacing:2px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:10px;font-style:italic;color:#fff;margin-left:2px">sci.</span></div>
     <div class="topbar-right">
       <div class="lang-mini-row">
         <button class="lang-mini active" onclick="setLangApp('pt',this)">PT</button>

@@ -1932,28 +1932,28 @@ function toggleCiclo(el){ el.querySelector('.ciclo-detalhe').classList.toggle('s
 function renderLoja(){
   var categorias = [
     {cat:'📏 PARA SUA AVALIAÇÃO', itens:[
-      {emoji:'📏', nome:'Fita Métrica Profissional', desc:'Indispensável para medir circunferências com precisão. Flexível e graduada em cm.', preco:'R$ 15', link:'https://amzn.to/aurumsci'},
-      {emoji:'⚖️', nome:'Balança de Bioimpedância', desc:'Mede peso, % gordura, massa magra, massa óssea e água corporal. Essencial para acompanhar sua evolução!', preco:'R$ 180', link:'https://amzn.to/aurumsci'},
-      {emoji:'🩺', nome:'Esfigmomanômetro Digital', desc:'Mede pressão arterial (sistólica e diastólica) em casa. Use antes e após o treino.', preco:'R$ 120', link:'https://amzn.to/aurumsci'},
+      {emoji:'📏', nome:'Fita Métrica Profissional', desc:'Indispensável para medir circunferências com precisão. Flexível e graduada em cm.', preco:'R$ 15', link:'https://www.amazon.com.br/s?k=fita+metrica+corporal+academia'},
+      {emoji:'⚖️', nome:'Balança de Bioimpedância', desc:'Mede peso, % gordura, massa magra, massa óssea e água corporal. Essencial para acompanhar sua evolução!', preco:'R$ 180', link:'https://www.amazon.com.br/s?k=balanca+bioimpedancia'},
+      {emoji:'🩺', nome:'Esfigmomanômetro Digital', desc:'Mede pressão arterial (sistólica e diastólica) em casa. Use antes e após o treino.', preco:'R$ 120', link:'https://www.amazon.com.br/s?k=esfigmomanometro+digital'},
     ]},
     {cat:'🏋️ EQUIPAMENTOS', itens:[
-      {emoji:'🏋️', nome:'Kit Halteres Ajustáveis', desc:'2kg a 24kg — perfeito para treinar em casa. Substitui vários pares de halteres!', preco:'R$ 299', link:'https://amzn.to/aurumsci'},
-      {emoji:'🧘', nome:'Colchonete de Exercício', desc:'Para abdominais, alongamentos e exercícios no chão. Antiderrapante e confortável.', preco:'R$ 89', link:'https://amzn.to/aurumsci'},
+      {emoji:'🏋️', nome:'Kit Halteres Ajustáveis', desc:'2kg a 24kg — perfeito para treinar em casa. Substitui vários pares de halteres!', preco:'R$ 299', link:'https://www.amazon.com.br/s?k=halteres+ajustaveis'},
+      {emoji:'🧘', nome:'Colchonete de Exercício', desc:'Para abdominais, alongamentos e exercícios no chão. Antiderrapante e confortável.', preco:'R$ 89', link:'https://www.amazon.com.br/s?k=colchonete+exercicio+academia'},
     ]},
     {cat:'💊 SUPLEMENTAÇÃO', itens:[
-      {emoji:'🥛', nome:'Whey Protein', desc:'25g de proteína por dose. Tome até 30min após o treino para recuperação muscular máxima.', preco:'R$ 149', link:'https://amzn.to/aurumsci'},
-      {emoji:'🤲', nome:'Magnésio Líquido (Grip)', desc:'Magnésio líquido para as mãos — evita que a barra escorregue nos exercícios pesados. Essencial para remada e terra.', preco:'R$ 35', link:'https://amzn.to/aurumsci'},
-      {emoji:'💊', nome:'Creatina Monohidratada', desc:'5g por dia — maior evidência científica para ganho de força e massa muscular.', preco:'R$ 79', link:'https://amzn.to/aurumsci'},
-      {emoji:'💊', nome:'Magnésio Quelato', desc:'Auxilia na contração muscular, qualidade do sono e recuperação. Tome à noite.', preco:'R$ 45', link:'https://amzn.to/aurumsci'},
+      {emoji:'🥛', nome:'Whey Protein', desc:'25g de proteína por dose. Tome até 30min após o treino para recuperação muscular máxima.', preco:'R$ 149', link:'https://www.amazon.com.br/s?k=whey+protein'},
+      {emoji:'🤲', nome:'Magnésio Líquido (Grip)', desc:'Magnésio líquido para as mãos — evita que a barra escorregue nos exercícios pesados. Essencial para remada e terra.', preco:'R$ 35', link:'https://www.amazon.com.br/s?k=magnesio+liquido+grip+academia'},
+      {emoji:'💊', nome:'Creatina Monohidratada', desc:'5g por dia — maior evidência científica para ganho de força e massa muscular.', preco:'R$ 79', link:'https://www.amazon.com.br/s?k=creatina+monohidratada'},
+      {emoji:'💊', nome:'Magnésio Quelato', desc:'Auxilia na contração muscular, qualidade do sono e recuperação. Tome à noite.', preco:'R$ 45', link:'https://www.amazon.com.br/s?k=magnesio+quelato'},
     ]},
     {cat:'🎽 ACESSÓRIOS', itens:[
-      {emoji:'🧤', nome:'Luva de Musculação', desc:'Protege as mãos e melhora a pegada nos exercícios. Essencial para quem treina pesado.', preco:'R$ 49', link:'https://amzn.to/aurumsci'},
-      {emoji:'🥤', nome:'Garrafinha Squeeze', desc:'Hidratação durante o treino. Beba pelo menos 500ml por hora de treino!', preco:'R$ 25', link:'https://amzn.to/aurumsci'},
-      {emoji:'🪢', nome:'Strap de Pulso', desc:'Para exercícios pesados como levantamento terra e remadas. Garante melhor pegada.', preco:'R$ 39', link:'https://amzn.to/aurumsci'},
-      {emoji:'🏋️', nome:'Cinta de Couro', desc:'Para levantamentos pesados (avançados). Dá suporte lombar extra em cargas máximas.', preco:'R$ 89', link:'https://amzn.to/aurumsci'},
-      {emoji:'❤️', nome:'Frequencímetro Cardíaco', desc:'Monitora sua frequência cardíaca em tempo real. Essencial para o teste HRR e treinos de alta intensidade.', preco:'R$ 399', link:'https://amzn.to/aurumsci'},
-      {emoji:'🩳', nome:'Bermuda de Treino', desc:'Leve e confortável para musculação e cardio. Com bolso lateral e elástico ajustável.', preco:'R$ 69', link:'https://amzn.to/aurumsci'},
-      {emoji:'🎽', nome:'Camiseta Dry-Fit', desc:'Tecnologia de secagem rápida. Confortável para treinar e usar no dia a dia.', preco:'R$ 79', link:'https://amzn.to/aurumsci'},
+      {emoji:'🧤', nome:'Luva de Musculação', desc:'Protege as mãos e melhora a pegada nos exercícios. Essencial para quem treina pesado.', preco:'R$ 49', link:'https://www.amazon.com.br/s?k=luva+musculacao'},
+      {emoji:'🥤', nome:'Garrafinha Squeeze', desc:'Hidratação durante o treino. Beba pelo menos 500ml por hora de treino!', preco:'R$ 25', link:'https://www.amazon.com.br/s?k=garrafinha+squeeze+academia'},
+      {emoji:'🪢', nome:'Strap de Pulso', desc:'Para exercícios pesados como levantamento terra e remadas. Garante melhor pegada.', preco:'R$ 39', link:'https://www.amazon.com.br/s?k=strap+pulso+musculacao'},
+      {emoji:'🏋️', nome:'Cinta de Couro', desc:'Para levantamentos pesados (avançados). Dá suporte lombar extra em cargas máximas.', preco:'R$ 89', link:'https://www.amazon.com.br/s?k=cinta+couro+musculacao'},
+      {emoji:'❤️', nome:'Frequencímetro Cardíaco', desc:'Monitora sua frequência cardíaca em tempo real. Essencial para o teste HRR e treinos de alta intensidade.', preco:'R$ 399', link:'https://www.amazon.com.br/s?k=frequencimetro+cardiaco'},
+      {emoji:'🩳', nome:'Bermuda de Treino', desc:'Leve e confortável para musculação e cardio. Com bolso lateral e elástico ajustável.', preco:'R$ 69', link:'https://www.amazon.com.br/s?k=bermuda+treino+academia'},
+      {emoji:'🎽', nome:'Camiseta Dry-Fit', desc:'Tecnologia de secagem rápida. Confortável para treinar e usar no dia a dia.', preco:'R$ 79', link:'https://www.amazon.com.br/s?k=camiseta+dry+fit+treino'},
     ]},
   ];
   var html = '<div style="font-size:11px;color:var(--cinza);margin-bottom:12px;line-height:1.6">🛒 Links de afiliado — ao comprar você apoia o AurumSci sem custo adicional!</div>';

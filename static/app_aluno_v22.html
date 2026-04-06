@@ -1448,7 +1448,18 @@ function renderFinanceiro(){
   fetch('/app-aluno/financeiro', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
-    if(d.detail){ el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--cinza)">Nenhum plano ativo ainda.</div>'; return; }
+    if(d.detail){ el.innerHTML = '<div style="padding:20px">' +
+'<div class="card" style="margin-bottom:12px"><div class="card-line ouro"></div>' +
+'<div style="font-size:10px;color:var(--cinza);letter-spacing:1px;margin-bottom:8px">SEU PLANO</div>' +
+'<div style="font-size:15px;font-weight:600;margin-bottom:4px">André Andrade · CREF 62702-G/SP</div>' +
+'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">' +
+'<div style="display:flex;align-items:center;gap:8px">' +
+'<div style="width:10px;height:10px;border-radius:50%;background:#FF4B4B"></div>' +
+'<div style="font-size:13px;color:#FF4B4B;font-weight:600">INATIVO</div></div>' +
+'<div style="font-family:Bebas Neue;font-size:28px;color:var(--ouro2)">R$ 49,90<span style="font-size:12px;color:var(--cinza)">/mês</span></div>' +
+'</div></div>' +
+'<div style="font-size:12px;color:var(--cinza);text-align:center;line-height:1.7">Converse com seu personal para mais informações sobre seu plano.</div>' +
+'</div>'; return; }
     var statusCor = d.status === 'pago' ? 'var(--verde)' : d.status === 'atrasado' ? '#FF6B6B' : 'var(--ouro)';
     var statusLabel = d.status === 'pago' ? '✅ PAGO' : d.status === 'atrasado' ? '⚠️ ATRASADO' : '🕐 PENDENTE';
     var html = '<div class="card" style="margin-bottom:12px"><div class="card-line ouro"></div>';
@@ -1475,7 +1486,18 @@ function renderFinanceiro(){
     }
     el.innerHTML = html;
   }).catch(function(){
-    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--cinza)">Nenhum plano ativo ainda.</div>';
+    el.innerHTML = '<div style="padding:20px">' +
+'<div class="card" style="margin-bottom:12px"><div class="card-line ouro"></div>' +
+'<div style="font-size:10px;color:var(--cinza);letter-spacing:1px;margin-bottom:8px">SEU PLANO</div>' +
+'<div style="font-size:15px;font-weight:600;margin-bottom:4px">André Andrade · CREF 62702-G/SP</div>' +
+'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">' +
+'<div style="display:flex;align-items:center;gap:8px">' +
+'<div style="width:10px;height:10px;border-radius:50%;background:#FF4B4B"></div>' +
+'<div style="font-size:13px;color:#FF4B4B;font-weight:600">INATIVO</div></div>' +
+'<div style="font-family:Bebas Neue;font-size:28px;color:var(--ouro2)">R$ 49,90<span style="font-size:12px;color:var(--cinza)">/mês</span></div>' +
+'</div></div>' +
+'<div style="font-size:12px;color:var(--cinza);text-align:center;line-height:1.7">Converse com seu personal para mais informações sobre seu plano.</div>' +
+'</div>';
   });
 }
 

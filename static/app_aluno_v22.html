@@ -184,7 +184,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 .timer-prox{font-size:12px;color:rgba(255,255,255,.5);margin-top:8px;text-align:center;padding:0 24px}
 .timer-badge{font-size:10px;letter-spacing:2px;color:var(--ouro);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:4px 14px;margin-bottom:20px}
 .btn-pular-timer{padding:14px 40px;background:var(--bg2);border:1px solid var(--borda);border-radius:14px;color:var(--cinza);font-size:14px;cursor:pointer;font-family:'DM Sans'}
-.btn-ajuda{position:fixed;top:14px;right:70px;width:30px;height:30px;border-radius:50%;background:rgba(201,168,76,.15);border:1.5px solid var(--ouro);color:var(--ouro);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:150;transition:all .2s;font-weight:700}
+.btn-ajuda{position:fixed;top:72px;right:16px;width:30px;height:30px;border-radius:50%;background:rgba(201,168,76,.15);border:1.5px solid var(--ouro);color:var(--ouro);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:150;transition:all .2s;font-weight:700}
 .btn-ajuda:active{transform:scale(.92)}
 .ajuda-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;display:none;align-items:flex-end;justify-content:center}
 .ajuda-overlay.show{display:flex}
@@ -1941,17 +1941,19 @@ function renderLoja(){
       {emoji:'🧘', nome:'Colchonete de Exercício', desc:'Para abdominais, alongamentos e exercícios no chão. Antiderrapante e confortável.', preco:'R$ 89', link:'https://amzn.to/aurumsci'},
     ]},
     {cat:'💊 SUPLEMENTAÇÃO', itens:[
-      {emoji:'🧴', nome:'Whey Protein Growth', desc:'25g de proteína por dose. Tome até 30min após o treino para recuperação muscular máxima.', preco:'R$ 149', link:'https://amzn.to/aurumsci'},
-      {emoji:'💊', nome:'Creatina Growth', desc:'5g por dia — maior evidência científica para ganho de força e massa muscular.', preco:'R$ 79', link:'https://amzn.to/aurumsci'},
-      {emoji:'🫀', nome:'Magnésio', desc:'Auxilia na contração muscular, qualidade do sono e recuperação. Tome à noite.', preco:'R$ 45', link:'https://amzn.to/aurumsci'},
+      {emoji:'🥛', nome:'Whey Protein', desc:'25g de proteína por dose. Tome até 30min após o treino para recuperação muscular máxima.', preco:'R$ 149', link:'https://amzn.to/aurumsci'},
+      {emoji:'🤲', nome:'Magnésio Líquido (Grip)', desc:'Magnésio líquido para as mãos — evita que a barra escorregue nos exercícios pesados. Essencial para remada e terra.', preco:'R$ 35', link:'https://amzn.to/aurumsci'},
+      {emoji:'💊', nome:'Creatina Monohidratada', desc:'5g por dia — maior evidência científica para ganho de força e massa muscular.', preco:'R$ 79', link:'https://amzn.to/aurumsci'},
+      {emoji:'💊', nome:'Magnésio Quelato', desc:'Auxilia na contração muscular, qualidade do sono e recuperação. Tome à noite.', preco:'R$ 45', link:'https://amzn.to/aurumsci'},
     ]},
     {cat:'🎽 ACESSÓRIOS', itens:[
       {emoji:'🧤', nome:'Luva de Musculação', desc:'Protege as mãos e melhora a pegada nos exercícios. Essencial para quem treina pesado.', preco:'R$ 49', link:'https://amzn.to/aurumsci'},
-      {emoji:'🪣', nome:'Garrafinha Squeeze', desc:'Hidratação durante o treino. Beba pelo menos 500ml por hora de treino!', preco:'R$ 25', link:'https://amzn.to/aurumsci'},
+      {emoji:'🥤', nome:'Garrafinha Squeeze', desc:'Hidratação durante o treino. Beba pelo menos 500ml por hora de treino!', preco:'R$ 25', link:'https://amzn.to/aurumsci'},
       {emoji:'🪢', nome:'Strap de Pulso', desc:'Para exercícios pesados como levantamento terra e remadas. Garante melhor pegada.', preco:'R$ 39', link:'https://amzn.to/aurumsci'},
       {emoji:'🏋️', nome:'Cinta de Couro', desc:'Para levantamentos pesados (avançados). Dá suporte lombar extra em cargas máximas.', preco:'R$ 89', link:'https://amzn.to/aurumsci'},
-      {emoji:'❤️', nome:'Frequencímetro Polar', desc:'Monitora sua FC em tempo real durante o treino. Essencial para o teste HRR!', preco:'R$ 399', link:'https://amzn.to/aurumsci'},
-      {emoji:'🎽', nome:'Camiseta Dry-Fit ALPHAco', desc:'Tecnologia de secagem rápida, visual premium. Confortável para treinar e usar no dia a dia.', preco:'R$ 79', link:'https://amzn.to/aurumsci'},
+      {emoji:'❤️', nome:'Frequencímetro Cardíaco', desc:'Monitora sua frequência cardíaca em tempo real. Essencial para o teste HRR e treinos de alta intensidade.', preco:'R$ 399', link:'https://amzn.to/aurumsci'},
+      {emoji:'🩳', nome:'Bermuda de Treino', desc:'Leve e confortável para musculação e cardio. Com bolso lateral e elástico ajustável.', preco:'R$ 69', link:'https://amzn.to/aurumsci'},
+      {emoji:'🎽', nome:'Camiseta Dry-Fit', desc:'Tecnologia de secagem rápida. Confortável para treinar e usar no dia a dia.', preco:'R$ 79', link:'https://amzn.to/aurumsci'},
     ]},
   ];
   var html = '<div style="font-size:11px;color:var(--cinza);margin-bottom:12px;line-height:1.6">🛒 Links de afiliado — ao comprar você apoia o AurumSci sem custo adicional!</div>';

@@ -561,15 +561,15 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       </div>
     </div>
 
-    <!-- FC RECUPERAÇÃO -->
-    <div class="teste-card" onclick="abrirTeste('fc')">
+    <!-- POTÊNCIA MMII -->
+    <div class="teste-card" onclick="abrirTeste('mmii')">
       <div class="teste-header">
-        <div class="teste-icon">❤️</div>
+        <div class="teste-icon">🦵</div>
         <div class="teste-info">
-          <div class="teste-nome">FC RECUPERAÇÃO</div>
-          <div class="teste-desc">HRR — Risco Cardiovascular</div>
+          <div class="teste-nome">POTÊNCIA MMII</div>
+          <div class="teste-desc">Sentar e levantar — Jones et al. (1999)</div>
         </div>
-        <span class="teste-badge badge-vermelho">Importante</span>
+        <span class="teste-badge badge-verde">Funcional</span>
       </div>
     </div>
 
@@ -2135,6 +2135,7 @@ function abrirTeste(tipo){
   if(tipo === 'vo2') renderTesteVO2(area);
   else if(tipo === 'forca') renderTesteForca(area);
   else if(tipo === 'fc') renderTesteFC(area);
+  else if(tipo === 'mmii') renderTesteMMII(area);
 }
 
 function renderTesteVO2(area){
@@ -2354,6 +2355,29 @@ function salvarForca(){
   mostrarToast('Resultados calculados!');
 }
 
+function renderTesteMMII(area){
+  area.innerHTML = '<div class="card"><div class="card-line verde"></div>' +
+    '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2);margin-bottom:8px">POTÊNCIA DE MEMBROS INFERIORES</div>' +
+    '<div class="onb-dica" style="margin-bottom:14px">Sente e levante de uma cadeira sem apoio das mãos, joelho a 90°, o máximo de vezes em <strong>30 segundos</strong>. Avalia força funcional de pernas e risco de quedas.</div>' +
+    '<div class="result-input-row"><div class="result-input-label">Sentar e levantar (30s)</div><input class="result-input-val" type="number" id="mmii-reps" placeholder="12"><div class="result-input-un">reps</div></div>' +
+    '<br><button class="btn-gold" onclick="calcularMMII()">CALCULAR POTÊNCIA</button>' +
+    '<div id="mmii-resultado" style="margin-top:16px"></div>' +
+    '</div>';
+}
+function calcularMMII(){
+  var reps = parseInt(document.getElementById('mmii-reps').value)||0;
+  var idade = parseInt(localStorage.getItem('aurum_idade')||'30');
+  var sexo = localStorage.getItem('aurum_sexo')||'M';
+  if(!reps){ mostrarToast('Informe o número de repetições!'); return; }
+  var cm = classificarMMII(reps, idade, sexo);
+  document.getElementById('mmii-resultado').innerHTML =
+    '<div class="classificacao-box" style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2)">' +
+    '<div class="class-titulo" style="color:var(--verde)">POTÊNCIA MMII — RESULTADO</div>' +
+    '<div class="class-val" style="color:' + cm.cor + '">' + reps + ' <span style="font-size:16px">reps / 30s</span></div>' +
+    '<div class="class-desc" style="color:' + cm.cor + '">' + cm.txt + ' · Faixa ' + cm.faixa + '</div>' +
+    '<div style="margin-top:10px;font-size:10px;color:var(--cinza);opacity:.8">📚 Jones et al. (1999) Res Q Exerc Sport · Rikli & Jones Senior Fitness Test</div>' +
+    '</div>';
+}
 function renderTesteFC(area){
   area.innerHTML = '<div class="card"><div class="card-line vermelho" style="background:linear-gradient(90deg,var(--vermelho),#FF8C00)"></div>' +
     '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2);margin-bottom:8px">FC DE RECUPERAÇÃO (HRR)</div>' +

@@ -606,8 +606,8 @@ function carregarDashboard(){
     // fallback: carrega alunos diretamente
     fetch('/alunos', {headers: {'Authorization': 'Bearer ' + token}})
     .then(function(r){ return r.json(); })
-    .then(function(alunos){
-      todosAlunos = alunos;
+    .then(function(resp){
+      todosAlunos = resp.alunos || resp;
       document.getElementById('stat-alunos').textContent = alunos.filter(function(a){ return a.ativo; }).length;
     }).catch(function(){});
   });
@@ -618,7 +618,7 @@ function carregarAlunos(){
   fetch('/alunos', {headers: {'Authorization': 'Bearer ' + token}})
   .then(function(r){ return r.json(); })
   .then(function(alunos){
-    todosAlunos = alunos;
+    todosAlunos = alunos.alunos || alunos;
     renderAlunos(alunos);
   }).catch(function(){ document.getElementById('lista-alunos').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px">Erro ao carregar</div>'; });
 }

@@ -146,6 +146,7 @@ async def onboarding(
     # Cria plano
     plano = PlanoTreino(
         aluno_id=aluno.id,
+        personal_id=aluno.personal_id,
         nome=f"Plano {dados.objetivo.capitalize()} — {dados.nivel_experiencia.capitalize()}",
         objetivo=dados.objetivo,
         nivel=dados.nivel_experiencia,

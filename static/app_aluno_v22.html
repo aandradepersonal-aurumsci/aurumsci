@@ -2307,9 +2307,7 @@ function renderTesteForca(area){
     '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;font-weight:700;margin-top:14px;margin-bottom:8px">CORE</div>' +
     '<div class="result-input-row"><div class="result-input-label">Abdominal remador (1 min)</div><input class="result-input-val" type="number" id="f-abdom" placeholder="25"><div class="result-input-un">reps</div></div>' +
 
-    '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;font-weight:700;margin-top:14px;margin-bottom:8px">POTÊNCIA MEMBROS INFERIORES</div>' +
-    '<div class="onb-dica" style="margin-bottom:10px">Sentar e levantar de uma cadeira sem apoio das mãos, joelho a 90°, o máximo de vezes em 30 segundos. Jones et al. (1999) Res Q Exerc Sport.</div>' +
-    '<div class="result-input-row"><div class="result-input-label">Sentar e levantar (30s)</div><input class="result-input-val" type="number" id="f-mmii" placeholder="12"><div class="result-input-un">reps</div></div>' +
+
 
     '<br><button class="btn-gold" onclick="salvarForca()">CALCULAR RESULTADOS</button>' +
     '<div id="forca-resultado" style="margin-top:16px"></div></div>';
@@ -2338,18 +2336,15 @@ function salvarForca(){
   var flexao = parseInt(document.getElementById('f-flexao').value)||0;
   var barra = parseInt(document.getElementById('f-barra').value)||0;
   var abdom = parseInt(document.getElementById('f-abdom').value)||0;
-  var mmii = parseInt(document.getElementById('f-mmii').value)||0;
   var idade = parseInt(localStorage.getItem('aurum_idade')||'30');
   var sexo = localStorage.getItem('aurum_sexo')||'M';
   var cf = flexao ? classificarFlexao(flexao, idade, sexo) : null;
-  var cm = mmii ? classificarMMII(mmii, idade, sexo) : null;
   document.getElementById('forca-resultado').innerHTML =
     '<div class="classificacao-box" style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2)">' +
     '<div class="class-titulo" style="color:var(--ouro)">RESULTADO · Faixa ' + (cf?cf.faixa:'—') + ' anos</div>' +
     (flexao ? '<div style="font-size:13px;margin-top:8px;display:flex;justify-content:space-between"><span>💪 Flexão: <strong>' + flexao + ' reps</strong></span><span style="color:' + (cf?cf.cor:'var(--cinza)') + ';font-weight:700">' + (cf?cf.txt:'—') + '</span></div>' : '') +
     (barra ? '<div style="font-size:13px;margin-top:6px">🏋️ Barra fixa: <strong>' + barra + ' reps/s</strong></div>' : '') +
     (abdom ? '<div style="font-size:13px;margin-top:6px">🧘 Abdominal remador: <strong>' + abdom + ' reps</strong></div>' : '') +
-    (mmii ? '<div style="font-size:13px;margin-top:6px;display:flex;justify-content:space-between"><span>🦵 Sentar e levantar (30s): <strong>' + mmii + ' reps</strong></span><span style="color:' + (cm?cm.cor:'var(--cinza)') + ';font-weight:700">' + (cm?cm.txt:'—') + '</span></div>' : '') +
     '<div style="margin-top:10px;font-size:10px;color:var(--cinza);opacity:.8">📚 ACSM 2022 · Canadian Fitness Survey · Jones et al. (1999) Res Q Exerc Sport</div>' +
     '</div>';
   mostrarToast('Resultados calculados!');

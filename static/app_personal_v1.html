@@ -969,7 +969,7 @@ function renderMontadorTreino(){
   html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="filtros-grupo">';
   var grupos = ['Peito','Costas','Ombros','Bíceps','Tríceps','Pernas','Glúteos','Abdômen','Corretivo','Funcional'];
   grupos.forEach(function(g){
-    html += '<button onclick="filtrarGrupo('' + g + '')" style="padding:4px 10px;border-radius:20px;background:var(--bg);border:1px solid var(--borda);color:var(--cinza);font-size:11px;cursor:pointer">' + g + '</button>';
+    html += '<button onclick="filtrarGrupo(\'' + g + '\')" style="padding:4px 10px;border-radius:20px;background:var(--bg);border:1px solid var(--borda);color:var(--cinza);font-size:11px;cursor:pointer">' + g + '</button>';
   });
   html += '</div>';
   html += '<div id="lista-exercicios-busca" style="max-height:400px;overflow-y:auto"></div>';
@@ -1034,7 +1034,7 @@ function renderListaExercicios(lista){
   if(lista.length === 0){ el.innerHTML = '<div style="text-align:center;color:var(--cinza);padding:20px">Nenhum exercício encontrado</div>'; return; }
   var html = '';
   lista.forEach(function(e){
-    html += '<div onclick="adicionarExercicio(' + e.id + ','' + e.nome.replace(/'/g,"\'") + '')" style="padding:12px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;border-radius:8px" onmouseover="this.style.background='rgba(201,168,76,.06)'" onmouseout="this.style.background='none'">';
+    html += '<div onclick="adicionarExercicio(' + e.id + ',"' + e.nome + '")" style="padding:12px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;border-radius:8px">';
     html += '<div style="font-size:14px;font-weight:600">' + e.nome + '</div>';
     html += '<div style="font-size:11px;color:var(--cinza);margin-top:2px">' + (e.grupo_muscular||'') + (e.equipamento ? ' · ' + e.equipamento : '') + '</div>';
     html += '</div>';

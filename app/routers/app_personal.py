@@ -120,3 +120,10 @@ def resumo_aluno(aluno_id: int, personal: Personal = Depends(get_personal_atual)
         "frequencia_mes": presencas,
         "postural": {"cabeca": aval.postura_cabeca if aval else None, "ombros": aval.postura_ombros if aval else None, "coluna": aval.postura_coluna if aval else None} if aval else None
     }
+
+
+@router.get("/exercicios-banco")
+def listar_exercicios(personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    from app.routers.treino import Exercicio
+    exercicios = db.query(Exercicio).order_by(Exercicio.grupo_muscular, Exercicio.nome).all()
+    return {"exercicios": [{"id": e.id, "nome": e.nome, "grupo_muscular": e.grupo_muscular, "equipamento": e.equipamento, "descricao": e.descricao, "video_url": e.video_url} for e in exercicios]}

@@ -174,7 +174,7 @@ def salvar_treino_aluno(aluno_id: int, dados: SalvarTreinoSchema, personal: Pers
         for j, ex in enumerate(sessao_dados.exercicios):
             ex_sessao = ExercicioSessao(
                 sessao_id=sessao.id,
-                exercicio_id=ex.get("id"),
+                exercicio_id=ex.get("exercicio_id") or ex.get("id"),
                 ordem=j+1,
                 series=ex.get("series", 3),
                 repeticoes=str(ex.get("repeticoes", "10-12")),

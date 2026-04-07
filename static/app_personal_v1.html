@@ -909,7 +909,7 @@ function renderMontadorTreino(){
   var html = '<div class="card"><div class="card-line ouro"></div>';
   html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
   html += '<div style="font-family:Bebas Neue;font-size:20px">' + treinoAlunoNome + '</div>';
-  html += '<button onclick="salvarTreino()" style="padding:8px 16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:14px;cursor:pointer">💾 SALVAR</button>';
+  
   html += '</div>';
 
   // Configuração do plano
@@ -955,7 +955,7 @@ function renderMontadorTreino(){
     });
   }
   html += '</div>';
-  html += '<button onclick="adicionarSessao()" style="width:100%;padding:10px;background:rgba(201,168,76,.08);border:1px dashed rgba(201,168,76,.4);border-radius:10px;color:var(--ouro2);font-family:Bebas Neue;font-size:16px;cursor:pointer;margin-top:8px">+ ADICIONAR SESSÃO</button>';
+  html += '<div style="display:flex;gap:10px;margin-top:8px"><button onclick="adicionarSessao()" style="flex:1;padding:10px;background:rgba(201,168,76,.08);border:1px dashed rgba(201,168,76,.4);border-radius:10px;color:var(--ouro2);font-family:Bebas Neue;font-size:16px;cursor:pointer">+ SESSÃO</button><button onclick="salvarTreino()" style="padding:10px 20px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer">💾 SALVAR</button></div>';
   html += '</div>';
 
   // Busca de exercícios (modal)

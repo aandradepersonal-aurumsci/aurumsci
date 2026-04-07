@@ -2139,23 +2139,84 @@ function abrirTeste(tipo){
 
 function renderTesteVO2(area){
   area.innerHTML = '<div class="card"><div class="card-line verde"></div>' +
-    '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2);margin-bottom:12px">TESTE DE VO2 MÁX</div>' +
-    '<div class="onb-dica">Cooper: corra 12 minutos e registre a distância. Milha: caminhada de 1 milha (idosos). Step: para adolescentes.</div>' +
+    '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2);margin-bottom:8px">TESTE DE VO2 MÁX</div>' +
+    '<div style="font-size:10px;color:var(--cinza);letter-spacing:1px;margin-bottom:12px">Escolha o protocolo mais adequado ao seu perfil</div>' +
+
+    // COOPER
+    '<div style="background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);border-radius:12px;padding:14px;margin-bottom:10px">' +
+    '<div style="font-size:11px;color:var(--verde);font-weight:700;letter-spacing:1px;margin-bottom:4px">🏃 COOPER — 12 MINUTOS</div>' +
+    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.6">Corra o máximo possível em 12 minutos e registre a distância percorrida. Indicado para adultos ativos.</div>' +
     '<div class="result-input-row"><div class="result-input-label">Distância percorrida</div><input class="result-input-val" type="number" id="vo2-dist" placeholder="2400"><div class="result-input-un">m</div></div>' +
-    '<div class="result-input-row"><div class="result-input-label">FC antes (repouso)</div><input class="result-input-val" type="number" id="vo2-fc-rep" placeholder="65"><div class="result-input-un">bpm</div></div>' +
-    '<div class="result-input-row"><div class="result-input-label">FC após esforço</div><input class="result-input-val" type="number" id="vo2-fc-pos" placeholder="160"><div class="result-input-un">bpm</div></div>' +
-    '<div class="result-input-row"><div class="result-input-label">PA repouso (sistólica)</div><input class="result-input-val" type="number" id="vo2-pa-rep" placeholder="120"><div class="result-input-un">mmHg</div></div>' +
-    '<div class="result-input-row"><div class="result-input-label">PA pós imediato</div><input class="result-input-val" type="number" id="vo2-pa-pos" placeholder="160"><div class="result-input-un">mmHg</div></div>' +
-    '<br><button class="btn-gold" onclick="calcularVO2()">CALCULAR VO2 MÁX</button>' +
-    '<div id="vo2-resultado" style="margin-top:16px"></div>' +
-    '<div style="margin-top:16px;background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2);border-radius:12px;padding:12px">' +
-    '<div style="font-size:10px;color:var(--azul);letter-spacing:1px;font-weight:700;margin-bottom:8px">❤️ FC DE RECUPERAÇÃO (HRR) — faça logo após o teste</div>' +
-    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.6">Pare o teste, meça a FC imediatamente e após 1 minuto de repouso parado.</div>' +
+    '<button class="btn-gold" style="margin-top:8px" onclick="calcularVO2()">CALCULAR VO2 — COOPER</button>' +
+    '<div id="vo2-resultado" style="margin-top:10px"></div>' +
+    '</div>' +
+
+    // MILHA
+    '<div style="background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.15);border-radius:12px;padding:14px;margin-bottom:10px">' +
+    '<div style="font-size:11px;color:var(--ouro);font-weight:700;letter-spacing:1px;margin-bottom:4px">🚶 TESTE DA MILHA — CAMINHADA</div>' +
+    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.6">Caminhe 1 milha (1.609m) o mais rápido possível. Indicado para idosos e iniciantes. Registre o tempo e a FC ao final.</div>' +
+    '<div class="result-input-row"><div class="result-input-label">Tempo (minutos)</div><input class="result-input-val" type="number" id="milha-tempo" placeholder="15" step="0.1"><div class="result-input-un">min</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">FC ao final</div><input class="result-input-val" type="number" id="milha-fc" placeholder="120"><div class="result-input-un">bpm</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">Peso corporal</div><input class="result-input-val" type="number" id="milha-peso" placeholder="70"><div class="result-input-un">kg</div></div>' +
+    '<button class="btn-gold" style="margin-top:8px;background:linear-gradient(135deg,var(--ouro),var(--ouro2))" onclick="calcularMilha()">CALCULAR VO2 — MILHA</button>' +
+    '<div id="milha-resultado" style="margin-top:10px"></div>' +
+    '</div>' +
+
+    // STEP UP
+    '<div style="background:rgba(75,159,255,.04);border:1px solid rgba(75,159,255,.15);border-radius:12px;padding:14px;margin-bottom:14px">' +
+    '<div style="font-size:11px;color:var(--azul);font-weight:700;letter-spacing:1px;margin-bottom:4px">📦 STEP UP — BANCO</div>' +
+    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.6">Suba e desça de um banco de 30cm por 3 minutos (24 ciclos/min). Meça a FC 1 minuto após. Indicado para adolescentes e populações especiais.</div>' +
+    '<div class="result-input-row"><div class="result-input-label">FC após 1 minuto</div><input class="result-input-val" type="number" id="step-fc" placeholder="100"><div class="result-input-un">bpm</div></div>' +
+    '<button class="btn-gold" style="margin-top:8px;background:linear-gradient(135deg,var(--azul),#357ABD)" onclick="calcularStep()">CALCULAR VO2 — STEP</button>' +
+    '<div id="step-resultado" style="margin-top:10px"></div>' +
+    '</div>' +
+
+    // HRR
+    '<div style="background:rgba(255,75,75,.04);border:1px solid rgba(255,75,75,.2);border-radius:12px;padding:14px">' +
+    '<div style="font-size:11px;color:#FF6B6B;font-weight:700;letter-spacing:1px;margin-bottom:4px">❤️ FC DE RECUPERAÇÃO (HRR)</div>' +
+    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.6">Faça logo após qualquer teste acima. Pare, meça a FC imediatamente e após 1 minuto. A queda avalia seu músculo cardíaco. Cole et al. (1999) NEJM.</div>' +
     '<div class="result-input-row"><div class="result-input-label">FC pico (fim do teste)</div><input class="result-input-val" type="number" id="vo2-hrr-pico" placeholder="165"><div class="result-input-un">bpm</div></div>' +
     '<div class="result-input-row"><div class="result-input-label">FC após 1 minuto</div><input class="result-input-val" type="number" id="vo2-hrr-1min" placeholder="140"><div class="result-input-un">bpm</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">PA repouso (sistólica)</div><input class="result-input-val" type="number" id="vo2-pa-rep" placeholder="120"><div class="result-input-un">mmHg</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">PA pós imediato</div><input class="result-input-val" type="number" id="vo2-pa-pos" placeholder="160"><div class="result-input-un">mmHg</div></div>' +
+    '<button class="btn-gold" style="margin-top:8px;background:linear-gradient(135deg,#FF4B4B,#FF8C00)" onclick="calcularVO2comHRR()">CALCULAR HRR ❤️</button>' +
+    '<div id="vo2-hrr-resultado" style="margin-top:10px"></div>' +
     '</div>' +
-    '<br><button class="btn-gold" style="background:linear-gradient(135deg,var(--azul),#357ABD)" onclick="calcularVO2comHRR()">CALCULAR VO2 + HRR ❤️</button>' +
-    '<div id="vo2-hrr-resultado" style="margin-top:16px"></div>' +
+    '</div>';
+}
+function calcularMilha(){
+  var tempo = parseFloat(document.getElementById('milha-tempo').value)||0;
+  var fc = parseFloat(document.getElementById('milha-fc').value)||0;
+  var peso = parseFloat(document.getElementById('milha-peso').value)||70;
+  var idade = parseInt(localStorage.getItem('aurum_idade')||'30');
+  var sexo = localStorage.getItem('aurum_sexo')||'M';
+  if(!tempo || !fc){ mostrarToast('Informe o tempo e a FC!'); return; }
+  var sexoNum = sexo === 'F' ? 0 : 1;
+  var vo2 = 132.853 - (0.0769*peso*2.205) - (0.3877*idade) + (6.315*sexoNum) - (3.2649*tempo) - (0.1565*fc);
+  vo2 = Math.max(10, Math.round(vo2*10)/10);
+  var classif = classificarVO2(vo2, idade, sexo);
+  document.getElementById('milha-resultado').innerHTML =
+    '<div class="classificacao-box" style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2)">' +
+    '<div class="class-titulo" style="color:var(--ouro)">VO2 MÁX — TESTE DA MILHA</div>' +
+    '<div class="class-val" style="color:' + classif.cor + '">' + vo2 + ' <span style="font-size:16px">ml/kg/min</span></div>' +
+    '<div class="class-desc" style="color:' + classif.cor + '">' + classif.txt + ' · Faixa ' + classif.faixa + ' anos</div>' +
+    '<div style="margin-top:8px;font-size:10px;color:var(--cinza);opacity:.8">📚 Kline et al. (1987) Med Sci Sports Exerc · ACSM 2022</div>' +
+    '</div>';
+}
+function calcularStep(){
+  var fc = parseFloat(document.getElementById('step-fc').value)||0;
+  var idade = parseInt(localStorage.getItem('aurum_idade')||'16');
+  var sexo = localStorage.getItem('aurum_sexo')||'M';
+  if(!fc){ mostrarToast('Informe a FC após 1 minuto!'); return; }
+  var vo2 = (sexo === 'F') ? (65.81 - (0.1847*fc)) : (111.33 - (0.42*fc));
+  vo2 = Math.max(10, Math.round(vo2*10)/10);
+  var classif = classificarVO2(vo2, idade, sexo);
+  document.getElementById('step-resultado').innerHTML =
+    '<div class="classificacao-box" style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2)">' +
+    '<div class="class-titulo" style="color:var(--azul)">VO2 MÁX — STEP UP</div>' +
+    '<div class="class-val" style="color:' + classif.cor + '">' + vo2 + ' <span style="font-size:16px">ml/kg/min</span></div>' +
+    '<div class="class-desc" style="color:' + classif.cor + '">' + classif.txt + ' · Faixa ' + classif.faixa + ' anos</div>' +
+    '<div style="margin-top:8px;font-size:10px;color:var(--cinza);opacity:.8">📚 McArdle et al. (1972) Res Q · ACSM Guidelines 2022</div>' +
     '</div>';
 }
 
@@ -2235,12 +2296,21 @@ function calcularVO2comHRR(){
 
 function renderTesteForca(area){
   area.innerHTML = '<div class="card"><div class="card-line ouro"></div>' +
-    '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2);margin-bottom:12px">TESTES DE FORÇA</div>' +
-    '<div class="onb-dica">Execute cada teste com a forma correta. Conta o máximo de repetições em 1 minuto (flexão/agachamento) ou até soltar a barra.</div>' +
+    '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2);margin-bottom:6px">TESTES DE FORÇA</div>' +
+    '<div style="font-size:11px;color:var(--cinza);margin-bottom:14px;line-height:1.6">Execute com a forma correta. Máximo de repetições em 1 minuto para cada teste.</div>' +
+
+    '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;font-weight:700;margin-bottom:8px">MEMBROS SUPERIORES</div>' +
     '<div class="result-input-row"><div class="result-input-label">Flexão de braço (1 min)</div><input class="result-input-val" type="number" id="f-flexao" placeholder="20"><div class="result-input-un">reps</div></div>' +
-    '<div class="result-input-row"><div class="result-input-label">Barra fixa (máx ou tempo)</div><input class="result-input-val" type="number" id="f-barra" placeholder="5"><div class="result-input-un">reps</div></div>' +
-    '<div class="result-input-row"><div class="result-input-label">Agachamento livre (1 min)</div><input class="result-input-val" type="number" id="f-agach" placeholder="30"><div class="result-input-un">reps</div></div>' +
-    '<br><button class="btn-gold" onclick="salvarForca()">SALVAR RESULTADOS</button>' +
+    '<div class="result-input-row"><div class="result-input-label">Barra fixa (máx reps ou isometria)</div><input class="result-input-val" type="number" id="f-barra" placeholder="5"><div class="result-input-un">reps/s</div></div>' +
+
+    '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;font-weight:700;margin-top:14px;margin-bottom:8px">CORE</div>' +
+    '<div class="result-input-row"><div class="result-input-label">Abdominal remador (1 min)</div><input class="result-input-val" type="number" id="f-abdom" placeholder="25"><div class="result-input-un">reps</div></div>' +
+
+    '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;font-weight:700;margin-top:14px;margin-bottom:8px">POTÊNCIA MEMBROS INFERIORES</div>' +
+    '<div class="onb-dica" style="margin-bottom:10px">Sentar e levantar de uma cadeira sem apoio das mãos, joelho a 90°, o máximo de vezes em 30 segundos. Jones et al. (1999) Res Q Exerc Sport.</div>' +
+    '<div class="result-input-row"><div class="result-input-label">Sentar e levantar (30s)</div><input class="result-input-val" type="number" id="f-mmii" placeholder="12"><div class="result-input-un">reps</div></div>' +
+
+    '<br><button class="btn-gold" onclick="salvarForca()">CALCULAR RESULTADOS</button>' +
     '<div id="forca-resultado" style="margin-top:16px"></div></div>';
 }
 
@@ -2253,22 +2323,35 @@ function classificarFlexao(reps, idade, sexo){
   for(var i=0;i<tab.length;i++){if(reps<=tab[i].l)return{txt:tab[i].t,cor:cores[tab[i].t],faixa:f};}
   return{txt:'Excelente',cor:'var(--azul)',faixa:f};
 }
+function classificarMMII(reps, idade, sexo){
+  // Jones et al. (1999) — Sentar e levantar 30s
+  var tM={'60-64':[{l:11,t:'Fraco'},{l:14,t:'Regular'},{l:17,t:'Bom'},{l:999,t:'Excelente'}],'65-69':[{l:10,t:'Fraco'},{l:13,t:'Regular'},{l:16,t:'Bom'},{l:999,t:'Excelente'}],'70-74':[{l:9,t:'Fraco'},{l:12,t:'Regular'},{l:15,t:'Bom'},{l:999,t:'Excelente'}],'adulto':[{l:10,t:'Fraco'},{l:14,t:'Regular'},{l:18,t:'Bom'},{l:999,t:'Excelente'}]};
+  var tF={'60-64':[{l:10,t:'Fraco'},{l:13,t:'Regular'},{l:16,t:'Bom'},{l:999,t:'Excelente'}],'65-69':[{l:9,t:'Fraco'},{l:12,t:'Regular'},{l:15,t:'Bom'},{l:999,t:'Excelente'}],'70-74':[{l:8,t:'Fraco'},{l:11,t:'Regular'},{l:14,t:'Bom'},{l:999,t:'Excelente'}],'adulto':[{l:9,t:'Fraco'},{l:12,t:'Regular'},{l:16,t:'Bom'},{l:999,t:'Excelente'}]};
+  var f = idade>=70&&idade<75?'70-74':idade>=65?'65-69':idade>=60?'60-64':'adulto';
+  var cores={'Fraco':'var(--vermelho)','Regular':'var(--ouro)','Bom':'var(--verde)','Excelente':'var(--azul)'};
+  var tab=(sexo==='F'?tF:tM)[f];
+  for(var i=0;i<tab.length;i++){if(reps<=tab[i].l)return{txt:tab[i].t,cor:cores[tab[i].t],faixa:f};}
+  return{txt:'Excelente',cor:'var(--azul)',faixa:f};
+}
 function salvarForca(){
   var flexao = parseInt(document.getElementById('f-flexao').value)||0;
   var barra = parseInt(document.getElementById('f-barra').value)||0;
-  var agach = parseInt(document.getElementById('f-agach').value)||0;
+  var abdom = parseInt(document.getElementById('f-abdom').value)||0;
+  var mmii = parseInt(document.getElementById('f-mmii').value)||0;
   var idade = parseInt(localStorage.getItem('aurum_idade')||'30');
   var sexo = localStorage.getItem('aurum_sexo')||'M';
   var cf = flexao ? classificarFlexao(flexao, idade, sexo) : null;
+  var cm = mmii ? classificarMMII(mmii, idade, sexo) : null;
   document.getElementById('forca-resultado').innerHTML =
     '<div class="classificacao-box" style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2)">' +
     '<div class="class-titulo" style="color:var(--ouro)">RESULTADO · Faixa ' + (cf?cf.faixa:'—') + ' anos</div>' +
     (flexao ? '<div style="font-size:13px;margin-top:8px;display:flex;justify-content:space-between"><span>💪 Flexão: <strong>' + flexao + ' reps</strong></span><span style="color:' + (cf?cf.cor:'var(--cinza)') + ';font-weight:700">' + (cf?cf.txt:'—') + '</span></div>' : '') +
-    (barra ? '<div style="font-size:13px;margin-top:6px">🏋️ Barra fixa: <strong>' + barra + ' reps</strong></div>' : '') +
-    (agach ? '<div style="font-size:13px;margin-top:6px">🦵 Agachamento: <strong>' + agach + ' reps</strong></div>' : '') +
-    '<div style="margin-top:10px;font-size:10px;color:var(--cinza);opacity:.8">📚 ACSM Guidelines for Exercise Testing (2022) · Canadian Fitness Survey</div>' +
+    (barra ? '<div style="font-size:13px;margin-top:6px">🏋️ Barra fixa: <strong>' + barra + ' reps/s</strong></div>' : '') +
+    (abdom ? '<div style="font-size:13px;margin-top:6px">🧘 Abdominal remador: <strong>' + abdom + ' reps</strong></div>' : '') +
+    (mmii ? '<div style="font-size:13px;margin-top:6px;display:flex;justify-content:space-between"><span>🦵 Sentar e levantar (30s): <strong>' + mmii + ' reps</strong></span><span style="color:' + (cm?cm.cor:'var(--cinza)') + ';font-weight:700">' + (cm?cm.txt:'—') + '</span></div>' : '') +
+    '<div style="margin-top:10px;font-size:10px;color:var(--cinza);opacity:.8">📚 ACSM 2022 · Canadian Fitness Survey · Jones et al. (1999) Res Q Exerc Sport</div>' +
     '</div>';
-  mostrarToast('Força registrada!');
+  mostrarToast('Resultados calculados!');
 }
 
 function renderTesteFC(area){

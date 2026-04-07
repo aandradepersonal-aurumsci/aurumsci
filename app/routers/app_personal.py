@@ -127,3 +127,61 @@ def listar_exercicios(personal: Personal = Depends(get_personal_atual), db: Sess
     from app.routers.treino import Exercicio
     exercicios = db.query(Exercicio).order_by(Exercicio.grupo_muscular, Exercicio.nome).all()
     return {"exercicios": [{"id": e.id, "nome": e.nome, "grupo_muscular": e.grupo_muscular, "equipamento": e.equipamento, "descricao": e.descricao, "video_url": e.video_url} for e in exercicios]}
+
+
+class SessaoSchema(BaseModel):
+    nome: str
+    exercicios: List[dict]
+
+class SalvarTreinoSchema(BaseModel):
+    objetivo: str
+    nivel: str = "intermediario"
+    dias_disponiveis: int = 3
+    sessoes: List[SessaoSchema]
+
+@router.post("/aluno/{aluno_id}/salvar-treino")
+def salvar_treino_aluno(aluno_id: int, dados: SalvarTreinoSchema, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    from app.models import Aluno
+    from app.routers.treino import PlanoTreino, SessaoTreino, ExercicioSessao
+    from datetime import date
+    import json
+
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal.id).first()
+    if not aluno:
+        raise HTTPException(status_code=404, detail="Aluno nao encontrado")
+
+    db.query(PlanoTreino).filter(PlanoTreino.aluno_id == aluno_id, PlanoTreino.ativo == True).update({"ativo": False})
+
+    plano = PlanoTreino(
+        aluno_id=aluno_id,
+        personal_id=personal.id,
+        nome=f"Plano {dados.objetivo.capitalize()} — Por {personal.nome.split()[0]}",
+        objetivo=dados.objetivo,
+        nivel=dados.nivel,
+        dias_semana=dados.dias_disponiveis,
+        semanas_total=12,
+        data_inicio=date.today(),
+        ativo=True,
+        periodizacao=json.dumps({"tipo": "manual", "personal": personal.nome})
+    )
+    db.add(plano)
+    db.flush()
+
+    for i, sessao_dados in enumerate(dados.sessoes):
+        sessao = SessaoTreino(plano_id=plano.id, nome=sessao_dados.nome, dia_semana=i+1)
+        db.add(sessao)
+        db.flush()
+        for j, ex in enumerate(sessao_dados.exercicios):
+            ex_sessao = ExercicioSessao(
+                sessao_id=sessao.id,
+                exercicio_id=ex.get("id"),
+                ordem=j+1,
+                series=ex.get("series", 3),
+                repeticoes=str(ex.get("repeticoes", "10-12")),
+                carga_kg=0.0,
+                tempo_descanso_seg=ex.get("descanso", 90),
+            )
+            db.add(ex_sessao)
+
+    db.commit()
+    return {"mensagem": f"Treino salvo para {aluno.nome}!", "plano_id": plano.id}

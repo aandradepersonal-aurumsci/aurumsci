@@ -349,6 +349,38 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div style="font-size:13px;color:var(--cinza);margin-bottom:16px">Análise completa dos alunos</div>
     <div id="aval-lista-alunos" style="margin-bottom:16px"></div>
     <div id="aval-content"><div style="color:var(--cinza);text-align:center;padding:40px">Selecione um aluno acima</div></div>
+    <!-- DINAMÔMETRO -->
+    <div class="card" style="margin-top:16px">
+      <div class="card-line verde"></div>
+      <div style="font-family:Bebas Neue;font-size:20px;color:var(--ouro2);margin-bottom:6px">🤝 PREENSÃO MANUAL</div>
+      <div style="font-size:11px;color:var(--cinza);margin-bottom:14px;line-height:1.6">Meça com dinamômetro — 3 tentativas por mão, registre o maior valor. Preditor de força global e mortalidade cardiovascular. <strong style="color:var(--ouro)">Bohannon (2019) JAMA · Rijk et al. (2016)</strong></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div>
+          <div style="font-size:10px;color:var(--cinza);margin-bottom:4px">MÃO DOMINANTE (kgf)</div>
+          <input type="number" id="pren-dom" placeholder="35" step="0.1" style="width:100%;padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:16px;text-align:center">
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--cinza);margin-bottom:4px">MÃO NÃO DOMINANTE (kgf)</div>
+          <input type="number" id="pren-ndom" placeholder="32" step="0.1" style="width:100%;padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:16px;text-align:center">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        <div>
+          <div style="font-size:10px;color:var(--cinza);margin-bottom:4px">SEXO</div>
+          <select id="pren-sexo" style="width:100%;padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:13px">
+            <option value="M">Masculino</option>
+            <option value="F">Feminino</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--cinza);margin-bottom:4px">IDADE</div>
+          <input type="number" id="pren-idade" placeholder="30" style="width:100%;padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:16px;text-align:center">
+        </div>
+      </div>
+      <button onclick="calcularPreensao()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--verde),#00B37E);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:18px;cursor:pointer">CALCULAR PREENSÃO MANUAL</button>
+      <div id="pren-resultado" style="margin-top:14px"></div>
+      <div style="margin-top:10px;font-size:10px;color:var(--cinza)">🛒 <a href="https://www.amazon.com.br/s?k=dinamometro+preensao+manual" target="_blank" style="color:var(--ouro)">Comprar Dinamômetro — R$ 180~250</a></div>
+    </div>
   </div>
 
 </div>
@@ -915,7 +947,7 @@ function renderMontadorTreino(){
   // Configuração do plano
   html += '<div style="background:var(--bg);border-radius:12px;padding:14px;margin-bottom:14px">';
   html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin-bottom:10px">CONFIGURAR PLANO</div>';
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">';
   html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:4px">OBJETIVO</div>';
   html += '<select id="treino-obj" style="width:100%;padding:8px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:13px">';
   html += '<option value="hipertrofia">Hipertrofia</option><option value="forca">Força</option><option value="emagrecimento">Emagrecimento</option><option value="condicionamento">Condicionamento</option>';
@@ -923,7 +955,17 @@ function renderMontadorTreino(){
   html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:4px">DIAS/SEMANA</div>';
   html += '<select id="treino-dias" style="width:100%;padding:8px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:13px">';
   html += '<option value="3">3x</option><option value="4">4x</option><option value="5">5x</option><option value="6">6x</option>';
-  html += '</select></div></div></div>';
+  html += '</select></div></div>';
+  // Tipo de sessão
+  html += '<div style="font-size:10px;color:var(--cinza);margin-bottom:6px">TIPO DE TREINO</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+  html += '<button onclick="definirTipoSessao(\'musculacao\')" id="tipo-musculacao" style="padding:10px;border-radius:10px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;color:#0A0A0F;font-family:Bebas Neue;font-size:13px;cursor:pointer">💪 MUSCULAÇÃO</button>';
+  html += '<button onclick="definirTipoSessao(\'grupamento\')" id="tipo-grupamento" style="padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:13px;cursor:pointer">🏋️ GRUPAMENTO</button>';
+  html += '<button onclick="definirTipoSessao(\'hit\')" id="tipo-hit" style="padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:13px;cursor:pointer">🔥 HIT</button>';
+  html += '<button onclick="definirTipoSessao(\'funcional\')" id="tipo-funcional" style="padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:13px;cursor:pointer">⏱️ FUNCIONAL</button>';
+  html += '</div>';
+  html += '<div id="tipo-descricao" style="font-size:11px;color:var(--cinza);margin-top:8px;line-height:1.5">Treino tradicional com séries e repetições por grupamento muscular.</div>';
+  html += '</div>';
 
   // Sessões
   html += '<div id="sessoes-container">';
@@ -933,18 +975,25 @@ function renderMontadorTreino(){
     treinoSessoes.forEach(function(s, si){
       html += '<div style="background:var(--bg);border-radius:12px;padding:14px;margin-bottom:10px">';
       html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
-      html += '<input value="' + s.nome + '" onchange="treinoSessoes[' + si + '].nome=this.value" style="font-family:Bebas Neue;font-size:16px;background:none;border:none;color:var(--ouro2);width:60%;outline:none">';
+      var tipoLabel = {musculacao:'💪',grupamento:'🏋️',hit:'🔥',funcional:'⏱️'}[s.tipo||'musculacao'];
+      html += '<div style="display:flex;align-items:center;gap:6px;width:65%">';
+      html += '<span style="font-size:14px">' + (tipoLabel||'💪') + '</span>';
+      html += '<input value="' + s.nome + '" onchange="treinoSessoes[' + si + '].nome=this.value" style="font-family:Bebas Neue;font-size:16px;background:none;border:none;color:var(--ouro2);width:100%;outline:none">';
+      html += '</div>';
       html += '<button onclick="removerSessao(' + si + ')" style="background:none;border:none;color:#FF6B6B;cursor:pointer;font-size:18px">✕</button>';
       html += '</div>';
       s.exercicios.forEach(function(e, ei){
         html += '<div style="background:var(--bg2);border-radius:10px;padding:10px;margin-bottom:8px">';
         html += '<div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--texto)">' + e.nome + '</div>';
         html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">';
-        html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">SÉRIES</div>';
-        html += '<input type="number" value="' + e.series + '" min="1" max="10" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].series=parseInt(this.value)" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
-        html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">REPS</div>';
+        var label1 = (s.tipo==='funcional') ? 'ROUNDS' : 'SÉRIES';
+        var label2 = (s.tipo==='funcional') ? 'TEMPO' : (s.tipo==='hit') ? 'TRAB/DESC' : 'REPS';
+        var label3 = (s.tipo==='funcional') ? 'DESCANSO' : 'DESCANSO(s)';
+        html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">' + label1 + '</div>';
+        html += '<input type="number" value="' + e.series + '" min="1" max="30" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].series=parseInt(this.value)" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
+        html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">' + label2 + '</div>';
         html += '<input value="' + e.repeticoes + '" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].repeticoes=this.value" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
-        html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">DESCANSO</div>';
+        html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">' + label3 + '</div>';
         html += '<input type="number" value="' + e.descanso + '" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].descanso=parseInt(this.value)" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
         html += '</div>';
         html += '<button onclick="removerExercicio(' + si + ',' + ei + ')" style="margin-top:6px;background:none;border:none;color:#FF6B6B;cursor:pointer;font-size:11px">✕ remover</button>';
@@ -981,9 +1030,53 @@ function renderMontadorTreino(){
 
 var sessaoAtual = null;
 
+var tipoSessaoAtual = 'musculacao';
+function definirTipoSessao(tipo){
+  tipoSessaoAtual = tipo;
+  var descricoes = {
+    musculacao: 'Treino tradicional com séries e repetições por grupamento muscular.',
+    grupamento: 'Divisão por grupamento: ABC, ABCDE, PPL. Cada sessão foca em um grupo específico.',
+    hit: 'Alta intensidade: combina exercícios de musculação com aeróbio (HIIT, Tabata, circuito).',
+    funcional: 'CrossFit e funcional: AMRAP, EMOM, rounds por tempo. Ideal para condicionamento total.'
+  };
+  var cores = {musculacao:'var(--ouro)', grupamento:'var(--verde)', hit:'#FF6B6B', funcional:'var(--azul)'};
+  var btns = ['musculacao','grupamento','hit','funcional'];
+  btns.forEach(function(t){
+    var btn = document.getElementById('tipo-'+t);
+    if(btn){
+      if(t === tipo){
+        btn.style.background = 'linear-gradient(135deg,'+cores[t]+','+cores[t]+'99)';
+        btn.style.color = t === 'musculacao' ? '#0A0A0F' : '#fff';
+        btn.style.border = 'none';
+      } else {
+        btn.style.background = 'var(--bg2)';
+        btn.style.color = 'var(--texto)';
+        btn.style.border = '1px solid var(--borda)';
+      }
+    }
+  });
+  var desc = document.getElementById('tipo-descricao');
+  if(desc) desc.textContent = descricoes[tipo];
+}
 function adicionarSessao(){
-  var nomes = ['A — Peito','B — Costas','C — Pernas','D — Ombros','E — Braços','F — Full Body'];
-  treinoSessoes.push({nome: nomes[treinoSessoes.length] || 'Sessão ' + (treinoSessoes.length+1), exercicios:[]});
+  var nomesPorTipo = {
+    musculacao: ['A — Peito','B — Costas','C — Pernas','D — Ombros','E — Braços','F — Full Body'],
+    grupamento: ['Peito + Tríceps','Costas + Bíceps','Pernas + Glúteos','Ombros + Core','Full Body'],
+    hit: ['HIT — Superiores','HIT — Inferiores','HIT — Full Body','Tabata','Circuito'],
+    funcional: ['AMRAP 20min','EMOM 15min','For Time','Rounds (5x)','Chipper']
+  };
+  var nomes = nomesPorTipo[tipoSessaoAtual] || nomesPorTipo.musculacao;
+  var campos = tipoSessaoAtual === 'funcional' ? 
+    {series: 'Rounds', repeticoes: 'Reps/Tempo', descanso: 90} :
+    tipoSessaoAtual === 'hit' ?
+    {series: 'Séries', repeticoes: '40s/20s', descanso: 60} :
+    {series: 3, repeticoes: '10-12', descanso: 90};
+  treinoSessoes.push({
+    nome: nomes[treinoSessoes.length] || 'Sessão ' + (treinoSessoes.length+1),
+    tipo: tipoSessaoAtual,
+    exercicios: [],
+    campos: campos
+  });
   renderMontadorTreino();
 }
 
@@ -1138,6 +1231,61 @@ function renderMiniListaAlunos(tela){
   });
   html += '</div>';
   return html;
+}
+
+function calcularPreensao(){
+  var dom = parseFloat(document.getElementById('pren-dom').value)||0;
+  var ndom = parseFloat(document.getElementById('pren-ndom').value)||0;
+  var sexo = document.getElementById('pren-sexo').value;
+  var idade = parseInt(document.getElementById('pren-idade').value)||30;
+  if(!dom){ mostrarToast('Informe o valor da mão dominante!'); return; }
+  
+  // Valores de referência — Bohannon (2019) JAMA / Normativas por faixa etária
+  var refM = {
+    '20-29':{fraco:36,regular:41,bom:47,excelente:54},
+    '30-39':{fraco:36,regular:41,bom:47,excelente:54},
+    '40-49':{fraco:33,regular:38,bom:44,excelente:50},
+    '50-59':{fraco:29,regular:34,bom:39,excelente:46},
+    '60-69':{fraco:24,regular:28,bom:34,excelente:40},
+    '70+'  :{fraco:20,regular:24,bom:29,excelente:35}
+  };
+  var refF = {
+    '20-29':{fraco:20,regular:23,bom:27,excelente:32},
+    '30-39':{fraco:20,regular:23,bom:27,excelente:32},
+    '40-49':{fraco:18,regular:21,bom:25,excelente:30},
+    '50-59':{fraco:16,regular:19,bom:22,excelente:27},
+    '60-69':{fraco:13,regular:16,bom:19,excelente:24},
+    '70+'  :{fraco:11,regular:13,bom:16,excelente:20}
+  };
+  
+  var faixa = idade<30?'20-29':idade<40?'30-39':idade<50?'40-49':idade<60?'50-59':idade<70?'60-69':'70+';
+  var ref = sexo==='M' ? refM[faixa] : refF[faixa];
+  
+  var classif, cor;
+  if(dom >= ref.excelente){ classif='Excelente'; cor='var(--azul)'; }
+  else if(dom >= ref.bom){ classif='Bom'; cor='var(--verde)'; }
+  else if(dom >= ref.regular){ classif='Regular'; cor='var(--ouro)'; }
+  else { classif='Abaixo do esperado'; cor='var(--vermelho)'; }
+  
+  var alerta = dom < ref.regular ? 
+    '<div style="margin-top:10px;padding:10px;background:rgba(255,75,75,.06);border:1px solid rgba(255,75,75,.2);border-radius:10px;font-size:11px;line-height:1.7">' +
+    '<strong style="color:#FF6B6B">⚠️ Atenção:</strong> Força de preensão abaixo do esperado para faixa etária. ' +
+    'Associada a maior risco de sarcopenia e mortalidade cardiovascular. ' +
+    'Considere avaliação médica complementar e progressão de carga resistida. ' +
+    '<em style="color:rgba(255,120,120,.7)">Bohannon (2019) JAMA · Leandro et al. (2015)</em></div>' : '';
+  
+  document.getElementById('pren-resultado').innerHTML =
+    '<div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:12px;padding:14px">' +
+    '<div style="font-size:10px;color:var(--verde);letter-spacing:1px;margin-bottom:8px">RESULTADO — PREENSÃO MANUAL</div>' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:6px">' +
+    '<span style="font-size:13px">🤝 Mão dominante</span>' +
+    '<span style="font-size:16px;font-weight:700;color:' + cor + '">' + dom + ' kgf — ' + classif + '</span></div>' +
+    (ndom ? '<div style="font-size:13px;color:var(--cinza);margin-bottom:6px">Mão não dominante: <strong>' + ndom + ' kgf</strong></div>' : '') +
+    '<div style="font-size:11px;color:var(--cinza)">Referência faixa ' + faixa + ' anos (' + (sexo==='M'?'Masculino':'Feminino') + '): ' +
+    'Regular ≥' + ref.regular + ' · Bom ≥' + ref.bom + ' · Excelente ≥' + ref.excelente + ' kgf</div>' +
+    alerta +
+    '<div style="margin-top:8px;font-size:10px;color:var(--cinza);opacity:.8">📚 Bohannon (2019) JAMA · Rijk et al. (2016) · Leandro et al. (2015)</div>' +
+    '</div>';
 }
 
 </script>

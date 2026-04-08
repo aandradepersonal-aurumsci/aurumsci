@@ -949,7 +949,7 @@ function renderAvalTabsContent(id, nome){
   html += '<button onclick="avalAba(\'forca\')" id="aval-tab-forca" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">💪 TESTES</button>';
   html += '<button onclick="avalAba(\'mmii\')" id="aval-tab-mmii" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">🦵 MMII</button>';
   html += '<button onclick="avalAba(\'vo2\')" id="aval-tab-vo2" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">🫁 VO2</button>';
-  html += '<button onclick="avalAba(\'hrr\')" id="aval-tab-hrr" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">❤️ HRR</button>';
+
   html += '</div>';
   html += '<div id="aval-aba-content"></div>';
   html += '</div>';
@@ -975,7 +975,7 @@ function renderAvalTabs(id, nome){
 }
 
 function avalAba(aba){
-  var btns = ['anamnese','postural','circunf','composicao','forca','mmii','vo2','hrr','resultados'];
+  var btns = ['anamnese','postural','circunf','composicao','forca','mmii','vo2','resultados'];
   btns.forEach(function(b){
     var el = document.getElementById('aval-tab-'+b);
     if(!el) return;

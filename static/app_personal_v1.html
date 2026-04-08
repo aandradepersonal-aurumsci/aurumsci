@@ -715,12 +715,7 @@ function abrirPerfilAluno(id){
     var po = d.postural || {};
     var html = '<div class="modal-titulo">' + (a.nome||'Aluno') + '</div>';
     html += '<div class="modal-sub">' + (a.objetivo||'—') + ' · ' + (a.nivel||'—') + '</div>';
-    // Stats
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">';
-    html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center"><div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2)">' + (av.peso||'—') + '</div><div style="font-size:10px;color:var(--cinza)">kg</div></div>';
-    html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center"><div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2)">' + (av.gordura||'—') + '</div><div style="font-size:10px;color:var(--cinza)">% gordura</div></div>';
-    html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center"><div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2)">' + (d.frequencia_mes||0) + '</div><div style="font-size:10px;color:var(--cinza)">treinos/mês</div></div>';
-    html += '</div>';
+
     // Plano
     if(pl.nome) html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;margin-bottom:12px;font-size:13px"><span style="color:var(--ouro);font-size:10px;letter-spacing:1px">PLANO ATIVO</span><br>' + pl.nome + ' · ' + (pl.dias_semana||0) + 'x/semana</div>';
     // Postural resumo
@@ -2047,7 +2042,7 @@ function calcHRRP2(){
 <!-- MODAL POSTURAL DO ALUNO (pelo personal) -->
 <div class="modal-overlay" id="modal-postural-aluno" style="align-items:center;padding:0">
   <div class="modal" style="border-radius:20px;max-height:90vh;margin:20px">
-    <span class="modal-close" onclick="fecharModal('modal-postural-aluno')">×</span>
+    <span class="modal-close" onclick="fecharModal('modal-postural-aluno');setTimeout(function(){if(avalAlunoId)subAba(avalAlunoId,'aval');},100)">×</span>
     <div class="modal-titulo">ANÁLISE POSTURAL</div>
     <div class="modal-sub" id="postural-aluno-nome">Selecione o aluno</div>
     <div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--cinza);line-height:1.6">

@@ -734,8 +734,8 @@ function abrirPerfilAluno(id){
     // Sub-abas do perfil
     html += '<div style="display:flex;gap:8px;margin-top:14px;overflow-x:auto;padding-bottom:2px">';
     html += '<button onclick="subAba(' + id + ',\'resumo\')" id="sab-resumo" style="padding:8px 14px;border-radius:10px;background:var(--ouro);border:none;color:#0A0A0F;font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">RESUMO</button>';
-    html += '<button onclick="subAba(' + id + ',\'aval\')" id="sab-aval" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📋 AVAL.</button>';
     html += '<button onclick="subAba(' + id + ',\'treino\')" id="sab-treino" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">🏋️ TREINO</button>';
+    html += '<button onclick="subAba(' + id + ',\'aval\')" id="sab-aval" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📋 AVAL.</button>';
     html += '<button onclick="subAba(' + id + ',\'period\')" id="sab-period" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📅 PERIOD.</button>';
     html += '<button onclick="subAba(' + id + ',\'result\')" id="sab-result" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📈 RESULT.</button>';
     html += '</div>';
@@ -1622,7 +1622,7 @@ function subAba(id, aba){
     else { btn.style.background='var(--bg)'; btn.style.color='var(--texto)'; btn.style.border='1px solid var(--borda)'; }
   });
   if(aba === 'resumo'){
-    el.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px">Selecione uma aba acima para ver os dados do aluno.</div>';
+    el.innerHTML = '<button onclick="abrirPosturalAluno(' + id + ', \''+((todosAlunos.find(function(a){return a.id===id;})||{}).nome||'')+'\')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:17px;letter-spacing:2px;cursor:pointer">🤖 ANÁLISE POSTURAL COM IA</button>';
   } else if(aba === 'treino'){
     var nomAluno = (todosAlunos.find(function(a){return a.id===id;})||{}).nome||'Aluno';
     el.innerHTML = '<div id="treino-content"></div>';

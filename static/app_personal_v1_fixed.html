@@ -734,8 +734,8 @@ function abrirPerfilAluno(id){
     // Sub-abas do perfil
     html += '<div style="display:flex;gap:8px;margin-top:14px;overflow-x:auto;padding-bottom:2px">';
     html += '<button onclick="subAba(' + id + ',\'resumo\')" id="sab-resumo" style="padding:8px 14px;border-radius:10px;background:var(--ouro);border:none;color:#0A0A0F;font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">RESUMO</button>';
-    html += '<button onclick="subAba(' + id + ',\'aval\')" id="sab-aval" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📋 AVAL.</button>';
     html += '<button onclick="subAba(' + id + ',\'treino\')" id="sab-treino" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">🏋️ TREINO</button>';
+    html += '<button onclick="subAba(' + id + ',\'aval\')" id="sab-aval" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📋 AVAL.</button>';
     html += '<button onclick="subAba(' + id + ',\'period\')" id="sab-period" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📅 PERIOD.</button>';
     html += '<button onclick="subAba(' + id + ',\'result\')" id="sab-result" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📈 RESULT.</button>';
     html += '</div>';
@@ -942,23 +942,6 @@ function selecionarAvalAluno(id, nome){
   renderAvalTabs(id, nome);
 }
 
-function renderAvalTabsContent(id, nome){
-  var html = '<div class="card"><div class="card-line ouro"></div>';
-  html += '<div style="font-family:Bebas Neue;font-size:18px;margin-bottom:12px">' + nome + '</div>';
-  html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;overflow-x:auto;padding-bottom:4px">';
-  html += '<button onclick="avalAba(\'anamnese\')" id="aval-tab-anamnese" style="padding:7px 12px;border-radius:8px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;color:#0A0A0F;font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📝 ANAMNESE</button>';
-  html += '<button onclick="avalAba(\'postural\')" id="aval-tab-postural" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📸 POSTURAL</button>';
-  html += '<button onclick="avalAba(\'circunf\')" id="aval-tab-circunf" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📏 CIRCUNF.</button>';
-  html += '<button onclick="avalAba(\'composicao\')" id="aval-tab-composicao" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">⚖️ GORDURA</button>';
-  html += '<button onclick="avalAba(\'forca\')" id="aval-tab-forca" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">💪 TESTES</button>';
-  html += '<button onclick="avalAba(\'mmii\')" id="aval-tab-mmii" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">🦵 MMII</button>';
-  html += '<button onclick="avalAba(\'vo2\')" id="aval-tab-vo2" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">🫁 VO2</button>';
-  html += '<button onclick="avalAba(\'hrr\')" id="aval-tab-hrr" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">❤️ HRR</button>';
-  html += '</div>';
-  html += '<div id="aval-aba-content"></div>';
-  html += '</div>';
-  return html;
-}
 function renderAvalTabs(id, nome){
   var html = '<div class="card"><div class="card-line ouro"></div>';
   html += '<div style="font-family:Bebas Neue;font-size:18px;margin-bottom:12px">' + nome + '</div>';
@@ -979,7 +962,7 @@ function renderAvalTabs(id, nome){
 }
 
 function avalAba(aba){
-  var btns = ['anamnese','postural','circunf','composicao','forca','mmii','vo2','hrr','resultados'];
+  var btns = ['anamnese','postural','circunf','composicao','forca','vo2','resultados'];
   btns.forEach(function(b){
     var el = document.getElementById('aval-tab-'+b);
     if(!el) return;
@@ -1010,12 +993,8 @@ function avalAba(aba){
       '<div id="comp-aba-content"></div>';
     setTimeout(function(){ compAba('bio'); }, 50);
 
-  } else if(aba==='mmii'){
-    el.innerHTML = renderMMIIPersonal();
   } else if(aba==='vo2'){
     el.innerHTML = renderVO2Personal();
-  } else if(aba==='hrr'){
-    el.innerHTML = renderHRRPersonal();
 
   } else if(aba==='forca'){
     el.innerHTML = renderForcaPersonal();
@@ -1622,7 +1601,7 @@ function subAba(id, aba){
     else { btn.style.background='var(--bg)'; btn.style.color='var(--texto)'; btn.style.border='1px solid var(--borda)'; }
   });
   if(aba === 'resumo'){
-    el.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px">Selecione uma aba acima para ver os dados do aluno.</div>';
+    el.innerHTML = '<button onclick="abrirPosturalAluno(' + id + ', \''+((todosAlunos.find(function(a){return a.id===id;})||{}).nome||'')+'\')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:17px;letter-spacing:2px;cursor:pointer">🤖 ANÁLISE POSTURAL COM IA</button>';
   } else if(aba === 'treino'){
     var nomAluno = (todosAlunos.find(function(a){return a.id===id;})||{}).nome||'Aluno';
     el.innerHTML = '<div id="treino-content"></div>';
@@ -1632,8 +1611,8 @@ function subAba(id, aba){
   } else if(aba === 'aval'){
     var nomAval = (todosAlunos.find(function(a){return a.id===id;})||{}).nome||'Aluno';
     avalAlunoId = id; avalAlunoNome = nomAval;
-    el.innerHTML = renderAvalTabsContent(id, nomAval);
-    setTimeout(function(){ avalAba('anamnese'); }, 50);
+    el.innerHTML = '<div id="aval-content"></div>';
+    setTimeout(function(){ renderAvalTabs(id, nomAval); }, 50);
   } else if(aba === 'period'){
     el.innerHTML = renderPeriodizacaoPersonal(id);
   } else if(aba === 'result'){
@@ -1963,73 +1942,6 @@ function salvarCircunferencias(){
     '<div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:12px;font-size:13px;color:var(--verde)">' +
     '✅ Circunferências registradas!' +
     '</div>';
-}
-
-function renderMMIIPersonal(){
-  return '<div style="background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);border-radius:12px;padding:14px">' +
-    '<div style="font-size:11px;color:var(--verde);font-weight:700;letter-spacing:1px;margin-bottom:8px">🦵 POTÊNCIA DE MEMBROS INFERIORES</div>' +
-    '<div style="font-size:11px;color:var(--cinza);margin-bottom:12px;line-height:1.6">Sentar e levantar de uma cadeira sem apoio das mãos, joelho a 90°, máximo de vezes em <strong>30 segundos</strong>. Jones et al. (1999) Res Q Exerc Sport.</div>' +
-    field('p-mmii-reps','REPETIÇÕES EM 30s','number','12') +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">' +
-    '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">SEXO</div><select id="p-mmii-sexo" style="width:100%;padding:8px;border-radius:8px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px"><option value="M">Masculino</option><option value="F">Feminino</option></select></div>' +
-    field('p-mmii-idade','IDADE','number','30') +
-    '</div>' +
-    '<button onclick="calcMMIIP()" style="width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,var(--verde),#00B37E);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">CALCULAR POTÊNCIA MMII</button>' +
-    '<div id="p-mmii-res" style="margin-top:10px"></div>' +
-    '</div>';
-}
-function calcMMIIP(){
-  var reps = parseInt(document.getElementById('p-mmii-reps').value)||0;
-  var sexo = document.getElementById('p-mmii-sexo').value;
-  var idade = parseInt(document.getElementById('p-mmii-idade').value)||30;
-  if(!reps){ mostrarToast('Informe as repetições!'); return; }
-  var refM = {'adulto':{fraco:10,regular:14,bom:18},'60-64':{fraco:11,regular:14,bom:17},'65-69':{fraco:10,regular:13,bom:16},'70-74':{fraco:9,regular:12,bom:15}};
-  var refF = {'adulto':{fraco:9,regular:12,bom:16},'60-64':{fraco:10,regular:13,bom:16},'65-69':{fraco:9,regular:12,bom:15},'70-74':{fraco:8,regular:11,bom:14}};
-  var faixa = idade>=70&&idade<75?'70-74':idade>=65?'65-69':idade>=60?'60-64':'adulto';
-  var ref = sexo==='M'?refM[faixa]:refF[faixa];
-  var classif, cor;
-  if(reps>=ref.bom){classif='Bom/Excelente';cor='var(--verde)';}
-  else if(reps>=ref.regular){classif='Regular';cor='var(--ouro)';}
-  else{classif='Abaixo do esperado';cor='var(--vermelho)';}
-  document.getElementById('p-mmii-res').innerHTML = resultBox('POTÊNCIA MMII — RESULTADO','var(--verde)',[
-    {label:'Repetições',val:reps+' reps/30s'},{label:'Classificação',val:classif,cor:cor}
-  ],'Jones et al. (1999) Res Q Exerc Sport · Rikli & Jones');
-}
-function renderHRRPersonal(){
-  return '<div style="background:rgba(255,75,75,.04);border:1px solid rgba(255,75,75,.2);border-radius:12px;padding:14px">' +
-    '<div style="font-size:11px;color:#FF6B6B;font-weight:700;letter-spacing:1px;margin-bottom:8px">❤️ FC DE RECUPERAÇÃO (HRR)</div>' +
-    '<div style="font-size:11px;color:var(--cinza);margin-bottom:12px;line-height:1.6">Faça logo após o teste de VO2. Pare, meça a FC imediatamente e após 1 e 2 minutos. Avalia a saúde do músculo cardíaco. Cole et al. (1999) NEJM.</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-    field('p-hrr2-pico','FC PICO (fim)','number','165') + field('p-hrr2-1min','FC APÓS 1 MIN','number','140') +
-    field('p-hrr2-2min','FC APÓS 2 MIN','number','120') +
-    field('p-hrr2-pa-rs','PA REPOS. SIST.','number','120') + field('p-hrr2-pa-rd','PA REPOS. DIAST.','number','80') +
-    field('p-hrr2-pa-ps','PA PÓS SIST.','number','160') + field('p-hrr2-pa-pd','PA PÓS DIAST.','number','90') +
-    '</div>' +
-    '<button onclick="calcHRRP2()" style="width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,#FF4B4B,#FF8C00);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">CALCULAR HRR ❤️</button>' +
-    '<div id="p-hrr2-res" style="margin-top:10px"></div>' +
-    '</div>';
-}
-function calcHRRP2(){
-  var pico = parseFloat(document.getElementById('p-hrr2-pico').value)||0;
-  var min1 = parseFloat(document.getElementById('p-hrr2-1min').value)||0;
-  var min2 = parseFloat(document.getElementById('p-hrr2-2min').value)||0;
-  var pas = parseFloat(document.getElementById('p-hrr2-pa-rs').value)||0;
-  var pad = parseFloat(document.getElementById('p-hrr2-pa-rd').value)||0;
-  var poss = parseFloat(document.getElementById('p-hrr2-pa-ps').value)||0;
-  var posd = parseFloat(document.getElementById('p-hrr2-pa-pd').value)||0;
-  if(!pico||!min1){ mostrarToast('Informe FC pico e após 1 min!'); return; }
-  var hrr1 = pico-min1;
-  var hrr2 = min2 ? pico-min2 : null;
-  var cor = hrr1>=20?'var(--verde)':hrr1>=12?'var(--ouro)':'var(--vermelho)';
-  var classif = hrr1>=20?'Boa recuperação ✅':hrr1>=12?'Regular ⚠️':'Lenta 🔴 — avaliar cardiologista';
-  var linhas = [
-    {label:'HRR 1 minuto',val:hrr1+' bpm',cor:cor},
-    {label:'Classificação',val:classif,cor:cor}
-  ];
-  if(hrr2) linhas.push({label:'HRR 2 minutos',val:hrr2+' bpm'});
-  if(pas) linhas.push({label:'PA repouso',val:pas+'/'+pad+' mmHg'});
-  if(poss) linhas.push({label:'PA pós esforço',val:poss+'/'+posd+' mmHg'});
-  document.getElementById('p-hrr2-res').innerHTML = resultBox('HRR — FC DE RECUPERAÇÃO',cor,linhas,'Cole et al. (1999) NEJM');
 }
 
 </script>

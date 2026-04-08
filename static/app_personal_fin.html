@@ -877,107 +877,40 @@ function renderFinanceiro(){
   document.getElementById('lista-pagamentos').innerHTML = html;
 }
 
-function calcTotalPag(){
-  var tipo = document.querySelector('input[name="pag-tipo"]:checked');
-  if(!tipo) return;
-  var total = 0;
-  if(tipo.value === 'aulas'){
-    var qtd = parseFloat(document.getElementById('pag-qtd-aulas').value)||0;
-    var val = parseFloat(document.getElementById('pag-val-aula').value)||0;
-    total = qtd * val;
-    document.getElementById('pag-total-label').textContent = qtd + ' aulas × R$' + val.toFixed(0) + ' = R$' + total.toFixed(0);
-  } else if(tipo.value === 'mensal'){
-    var val2 = parseFloat(document.getElementById('pag-val-mensal').value)||0;
-    total = val2;
-    document.getElementById('pag-total-label').textContent = 'Mensalidade: R$' + total.toFixed(0);
-  } else {
-    var qtd2 = parseFloat(document.getElementById('pag-qtd-serv').value)||0;
-    var val3 = parseFloat(document.getElementById('pag-val-serv').value)||0;
-    total = qtd2 * val3;
-    document.getElementById('pag-total-label').textContent = qtd2 + 'x R$' + val3.toFixed(0) + ' = R$' + total.toFixed(0);
-  }
-  document.getElementById('pag-total-val').textContent = total.toFixed(0);
-}
-
 function abrirModalPagamento(){
-  var alunosOpts = todosAlunos.map(function(a){ return '<option value="'+a.nome+'" data-aulas="'+(a.dias_semana*4||12)+'">'+a.nome+'</option>'; }).join('');
-  var sel = 'width:100%;padding:8px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:13px';
-  var inp = 'width:100%;padding:8px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:13px;box-sizing:border-box';
+  var alunosOpts = todosAlunos.map(function(a){ return '<option value="'+a.nome+'">'+a.nome+'</option>'; }).join('');
   var html = '<div style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;padding:20px;overflow-y:auto" onclick="this.remove()">';
   html += '<div style="background:#12121A;border-radius:20px;padding:24px;max-width:400px;margin:40px auto;border:1px solid var(--borda)" onclick="event.stopPropagation()">';
-  html += '<div style="font-family:Bebas Neue;font-size:20px;color:var(--ouro2);margin-bottom:14px">➕ REGISTRAR COBRANÇA</div>';
-
-  // Aluno
-  html += '<div style="margin-bottom:12px"><div style="font-size:10px;color:var(--cinza);margin-bottom:4px">ALUNO</div>';
-  html += '<select id="pag-aluno" style="'+sel+'">'+alunosOpts+'</select></div>';
-
-  // Tipo de cobrança
-  html += '<div style="font-size:10px;color:var(--cinza);margin-bottom:8px">MODALIDADE DE COBRANÇA</div>';
-
-  // AULAS
-  html += '<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:12px;margin-bottom:8px">';
-  html += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px"><input type="radio" name="pag-tipo" value="aulas" onchange="document.getElementById(&quot;campos-aulas&quot;).style.display=&quot;block&quot;;document.getElementById(&quot;campos-mensal&quot;).style.display=&quot;none&quot;;document.getElementById(&quot;campos-serv&quot;).style.display=&quot;none&quot;;calcTotalPag()"> <span style="font-family:Bebas Neue;font-size:15px;color:var(--ouro2)">🏋️ POR AULAS</span></label>';
-  html += '<div id="campos-aulas" style="display:none"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
-  html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">AULAS NO MÊS</div><input id="pag-qtd-aulas" type="number" placeholder="12" oninput="calcTotalPag()" style="'+inp+'"></div>';
-  html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">VALOR POR AULA (R$)</div><input id="pag-val-aula" type="number" placeholder="150" oninput="calcTotalPag()" style="'+inp+'"></div>';
-  html += '</div></div></div>';
-
-  // MENSALIDADE
-  html += '<div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:12px;padding:12px;margin-bottom:8px">';
-  html += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px"><input type="radio" name="pag-tipo" value="mensal" onchange="document.getElementById(&quot;campos-aulas&quot;).style.display=&quot;none&quot;;document.getElementById(&quot;campos-mensal&quot;).style.display=&quot;block&quot;;document.getElementById(&quot;campos-serv&quot;).style.display=&quot;none&quot;;calcTotalPag()"> <span style="font-family:Bebas Neue;font-size:15px;color:var(--verde)">📅 MENSALIDADE</span></label>';
-  html += '<div id="campos-mensal" style="display:none"><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">VALOR MENSAL (R$)</div>';
-  html += '<input id="pag-val-mensal" type="number" placeholder="600" oninput="calcTotalPag()" style="'+inp+'"></div></div>';
-
-  // SERVIÇO
-  html += '<div style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2);border-radius:12px;padding:12px;margin-bottom:12px">';
-  html += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px"><input type="radio" name="pag-tipo" value="servico" onchange="document.getElementById(&quot;campos-aulas&quot;).style.display=&quot;none&quot;;document.getElementById(&quot;campos-mensal&quot;).style.display=&quot;none&quot;;document.getElementById(&quot;campos-serv&quot;).style.display=&quot;block&quot;;calcTotalPag()"> <span style="font-family:Bebas Neue;font-size:15px;color:var(--azul)">📋 SERVIÇO</span></label>';
-  html += '<div id="campos-serv" style="display:none"><div style="margin-bottom:6px"><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">DESCRIÇÃO</div>';
-  html += '<input id="pag-desc-serv" placeholder="Ex: Avaliação física, consultoria..." style="'+inp+'"></div>';
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
-  html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">QUANTIDADE</div><input id="pag-qtd-serv" type="number" placeholder="1" oninput="calcTotalPag()" style="'+inp+'"></div>';
-  html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">VALOR UNIT. (R$)</div><input id="pag-val-serv" type="number" placeholder="200" oninput="calcTotalPag()" style="'+inp+'"></div>';
-  html += '</div></div></div>';
-
-  // Total
-  html += '<div style="background:rgba(201,168,76,.1);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center">';
-  html += '<div style="font-size:11px;color:var(--cinza);margin-bottom:4px" id="pag-total-label">Selecione uma modalidade acima</div>';
-  html += '<div style="font-family:Bebas Neue;font-size:28px;color:var(--ouro2)">R$ <span id="pag-total-val">0</span></div>';
-  html += '</div>';
-
-  // Vencimento e status
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">';
-  html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">VENCIMENTO</div>';
-  html += '<input id="pag-venc" type="date" style="'+inp+'"></div>';
-  html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">STATUS</div>';
-  html += '<select id="pag-status" style="'+sel+'"><option value="pendente">⏳ Pendente</option><option value="pago">✅ Pago</option><option value="atrasado">🔴 Atrasado</option></select></div></div>';
-
-  html += '<button onclick="salvarPagamento()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:18px;cursor:pointer">💾 SALVAR COBRANÇA</button>';
+  html += '<div style="font-family:Bebas Neue;font-size:20px;color:var(--ouro2);margin-bottom:16px">➕ REGISTRAR PAGAMENTO</div>';
+  html += '<div style="margin-bottom:10px"><div style="font-size:10px;color:var(--cinza);margin-bottom:4px">ALUNO</div>';
+  html += '<select id="pag-aluno" style="width:100%;padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:14px">'+alunosOpts+'</select></div>';
+  html += '<div style="margin-bottom:10px"><div style="font-size:10px;color:var(--cinza);margin-bottom:4px">DESCRIÇÃO</div>';
+  html += '<input id="pag-desc" placeholder="Ex: Mensalidade Abril 2026" style="width:100%;padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:14px;box-sizing:border-box"></div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">';
+  html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:4px">VALOR (R$)</div>';
+  html += '<input id="pag-valor" type="number" placeholder="150" style="width:100%;padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:14px;box-sizing:border-box"></div>';
+  html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:4px">VENCIMENTO</div>';
+  html += '<input id="pag-venc" type="date" style="width:100%;padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:14px;box-sizing:border-box"></div></div>';
+  html += '<div style="margin-bottom:14px"><div style="font-size:10px;color:var(--cinza);margin-bottom:4px">STATUS</div>';
+  html += '<select id="pag-status" style="width:100%;padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:14px">';
+  html += '<option value="pendente">⏳ Pendente</option><option value="pago">✅ Pago</option><option value="atrasado">🔴 Atrasado</option></select></div>';
+  html += '<button onclick="salvarPagamento()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:18px;cursor:pointer">💾 SALVAR</button>';
   html += '</div></div>';
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
 function salvarPagamento(){
   var aluno = (document.getElementById('pag-aluno')||{}).value||'';
-  var tipo = document.querySelector('input[name="pag-tipo"]:checked');
-  var total = parseFloat(document.getElementById('pag-total-val').textContent)||0;
+  var desc = (document.getElementById('pag-desc')||{}).value||'';
+  var valor = (document.getElementById('pag-valor')||{}).value||'0';
   var venc = (document.getElementById('pag-venc')||{}).value||'';
   var status = (document.getElementById('pag-status')||{}).value||'pendente';
-  if(!aluno||!tipo||!total){ mostrarToast('Preencha aluno, modalidade e valor!'); return; }
-  var desc = '';
-  if(tipo.value==='aulas'){
-    var qtd = document.getElementById('pag-qtd-aulas').value;
-    var val = document.getElementById('pag-val-aula').value;
-    desc = qtd + ' aulas × R$' + val;
-  } else if(tipo.value==='mensal'){
-    desc = 'Mensalidade';
-  } else {
-    desc = (document.getElementById('pag-desc-serv')||{}).value || 'Serviço';
-  }
-  pagamentosLocal.push({aluno:aluno, descricao:desc, valor:total, vencimento:venc, status:status, data:new Date().toISOString().split('T')[0]});
+  if(!aluno||!valor){ mostrarToast('Preencha aluno e valor!'); return; }
+  pagamentosLocal.push({aluno:aluno, descricao:desc, valor:valor, vencimento:venc, status:status, data:new Date().toISOString().split('T')[0]});
   localStorage.setItem('aurum_pagamentos', JSON.stringify(pagamentosLocal));
   document.querySelector('[style*="position:fixed"]').remove();
   renderFinanceiro();
-  mostrarToast('✅ Cobrança registrada!');
+  mostrarToast('✅ Pagamento registrado!');
 }
 
 function marcarPago(i){

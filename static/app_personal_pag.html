@@ -916,7 +916,7 @@ function abrirModalPagamento(){
 
   // AULAS
   html += '<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:12px;margin-bottom:8px">';
-  html += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px"><input type="radio" name="pag-tipo" value="aulas" onchange="document.getElementById(&quot;campos-aulas&quot;).style.display=&quot;block&quot;;document.getElementById(&quot;campos-mensal&quot;).style.display=&quot;none&quot;;document.getElementById(&quot;campos-serv&quot;).style.display=&quot;none&quot;;calcTotalPag()"> <span style="font-family:Bebas Neue;font-size:15px;color:var(--ouro2)">🏋️ POR AULAS</span></label>';
+  html += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px"><input type="radio" name="pag-tipo" value="aulas" onchange="document.getElementById('campos-aulas').style.display='block';document.getElementById('campos-mensal').style.display='none';document.getElementById('campos-serv').style.display='none';calcTotalPag()"> <span style="font-family:Bebas Neue;font-size:15px;color:var(--ouro2)">🏋️ POR AULAS</span></label>';
   html += '<div id="campos-aulas" style="display:none"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
   html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">AULAS NO MÊS</div><input id="pag-qtd-aulas" type="number" placeholder="12" oninput="calcTotalPag()" style="'+inp+'"></div>';
   html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">VALOR POR AULA (R$)</div><input id="pag-val-aula" type="number" placeholder="150" oninput="calcTotalPag()" style="'+inp+'"></div>';
@@ -924,13 +924,13 @@ function abrirModalPagamento(){
 
   // MENSALIDADE
   html += '<div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:12px;padding:12px;margin-bottom:8px">';
-  html += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px"><input type="radio" name="pag-tipo" value="mensal" onchange="document.getElementById(&quot;campos-aulas&quot;).style.display=&quot;none&quot;;document.getElementById(&quot;campos-mensal&quot;).style.display=&quot;block&quot;;document.getElementById(&quot;campos-serv&quot;).style.display=&quot;none&quot;;calcTotalPag()"> <span style="font-family:Bebas Neue;font-size:15px;color:var(--verde)">📅 MENSALIDADE</span></label>';
+  html += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px"><input type="radio" name="pag-tipo" value="mensal" onchange="document.getElementById('campos-aulas').style.display='none';document.getElementById('campos-mensal').style.display='block';document.getElementById('campos-serv').style.display='none';calcTotalPag()"> <span style="font-family:Bebas Neue;font-size:15px;color:var(--verde)">📅 MENSALIDADE</span></label>';
   html += '<div id="campos-mensal" style="display:none"><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">VALOR MENSAL (R$)</div>';
   html += '<input id="pag-val-mensal" type="number" placeholder="600" oninput="calcTotalPag()" style="'+inp+'"></div></div>';
 
   // SERVIÇO
   html += '<div style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2);border-radius:12px;padding:12px;margin-bottom:12px">';
-  html += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px"><input type="radio" name="pag-tipo" value="servico" onchange="document.getElementById(&quot;campos-aulas&quot;).style.display=&quot;none&quot;;document.getElementById(&quot;campos-mensal&quot;).style.display=&quot;none&quot;;document.getElementById(&quot;campos-serv&quot;).style.display=&quot;block&quot;;calcTotalPag()"> <span style="font-family:Bebas Neue;font-size:15px;color:var(--azul)">📋 SERVIÇO</span></label>';
+  html += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px"><input type="radio" name="pag-tipo" value="servico" onchange="document.getElementById('campos-aulas').style.display='none';document.getElementById('campos-mensal').style.display='none';document.getElementById('campos-serv').style.display='block';calcTotalPag()"> <span style="font-family:Bebas Neue;font-size:15px;color:var(--azul)">📋 SERVIÇO</span></label>';
   html += '<div id="campos-serv" style="display:none"><div style="margin-bottom:6px"><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">DESCRIÇÃO</div>';
   html += '<input id="pag-desc-serv" placeholder="Ex: Avaliação física, consultoria..." style="'+inp+'"></div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';

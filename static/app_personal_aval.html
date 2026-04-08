@@ -405,7 +405,11 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <span>ALUNOS</span>
     <div class="tab-dot"></div>
   </div>
-
+  <div class="tab" onclick="mudarTab('aval',this)">
+    <span class="tab-icon">📋</span>
+    <span>AVALIAÇÃO</span>
+    <div class="tab-dot"></div>
+  </div>
   <div class="tab" onclick="mudarTab('loja',this)">
     <span class="tab-icon">🛒</span>
     <span>LOJA</span>
@@ -709,11 +713,10 @@ function abrirPerfilAluno(id){
     // Botões
     // Sub-abas do perfil
     html += '<div style="display:flex;gap:8px;margin-top:14px;overflow-x:auto;padding-bottom:2px">';
-    html += '<button onclick="subAba(' + id + ',\'resumo\')" id="sab-resumo" style="padding:8px 14px;border-radius:10px;background:var(--ouro);border:none;color:#0A0A0F;font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">RESUMO</button>';
-    html += '<button onclick="subAba(' + id + ',\'treino\')" id="sab-treino" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">🏋️ TREINO</button>';
-    html += '<button onclick="subAba(' + id + ',\'aval\')" id="sab-aval" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📋 AVAL.</button>';
-    html += '<button onclick="subAba(' + id + ',\'period\')" id="sab-period" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📅 PERIOD.</button>';
-    html += '<button onclick="subAba(' + id + ',\'result\')" id="sab-result" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📈 RESULT.</button>';
+    html += '<button onclick="subAba(' + id + ',\'resumo\')" style="padding:8px 14px;border-radius:10px;background:var(--ouro);border:none;color:#0A0A0F;font-family:Bebas Neue;font-size:13px;cursor:pointer;flex-shrink:0">RESUMO</button>';
+    html += '<button onclick="subAba(' + id + ',\'treino\')" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:13px;cursor:pointer;flex-shrink:0">🏋️ TREINO</button>';
+    html += '<button onclick="subAba(' + id + ',\'period\')" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:13px;cursor:pointer;flex-shrink:0">📅 PERIOD.</button>';
+    html += '<button onclick="subAba(' + id + ',\'result\')" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:13px;cursor:pointer;flex-shrink:0">📈 RESULT.</button>';
     html += '</div>';
     html += '<div id="sub-aba-content" style="margin-top:12px"></div>';
     document.getElementById('perfil-aluno-content').innerHTML = html;
@@ -1560,13 +1563,6 @@ function selecionarResultAluno(id, nome){
 function subAba(id, aba){
   var el = document.getElementById('sub-aba-content');
   if(!el) return;
-  // Highlight botão ativo
-  ['resumo','treino','aval','period','result'].forEach(function(b){
-    var btn = document.getElementById('sab-'+b);
-    if(!btn) return;
-    if(b===aba){ btn.style.background='linear-gradient(135deg,var(--ouro),var(--ouro2))'; btn.style.color='#0A0A0F'; btn.style.border='none'; }
-    else { btn.style.background='var(--bg)'; btn.style.color='var(--texto)'; btn.style.border='1px solid var(--borda)'; }
-  });
   if(aba === 'resumo'){
     el.innerHTML = '<button onclick="abrirPosturalAluno(' + id + ', \''+((todosAlunos.find(function(a){return a.id===id;})||{}).nome||'')+'\')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:17px;letter-spacing:2px;cursor:pointer">🤖 ANÁLISE POSTURAL COM IA</button>';
   } else if(aba === 'treino'){
@@ -1575,13 +1571,8 @@ function subAba(id, aba){
     setTimeout(function(){
       selecionarTreinoAluno(id, nomAluno);
     }, 50);
-  } else if(aba === 'aval'){
-    var nomAval = (todosAlunos.find(function(a){return a.id===id;})||{}).nome||'Aluno';
-    avalAlunoId = id; avalAlunoNome = nomAval;
-    el.innerHTML = '<div id="aval-content"></div>';
-    setTimeout(function(){ renderAvalTabs(id, nomAval); }, 50);
   } else if(aba === 'period'){
-    el.innerHTML = renderPeriodizacaoPersonal(id);
+    el.innerHTML = '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:16px;font-size:13px;color:var(--cinza);line-height:1.7">Periodização automática com IA em breve.<br><br>Será possível gerar macrociclos, mesociclos e microciclos individualizados por aluno. 📅</div>';
   } else if(aba === 'result'){
     fetch('/app-personal/aluno/' + id + '/resumo', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.json(); })
@@ -1709,49 +1700,6 @@ function renderLojaPro(){
     });
   });
   document.getElementById('loja-pro-content').innerHTML = html;
-}
-
-function renderPeriodizacaoPersonal(id){
-  return '<div class="card"><div class="card-line azul"></div>' +
-    '<div style="font-family:Bebas Neue;font-size:20px;color:var(--ouro2);margin-bottom:8px">PERIODIZAÇÃO</div>' +
-    '<div style="font-size:11px;color:var(--cinza);margin-bottom:14px;line-height:1.6">Escolha o modelo de periodização para este aluno. O sistema gera macrociclos e mesociclos automaticamente.</div>' +
-    '<div style="display:flex;flex-direction:column;gap:10px">' +
-    // ONDULATÓRIA
-    '<div onclick="selecionarPeriod(\'ondulatorio\', ' + id + ')" style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2);border-radius:14px;padding:16px;cursor:pointer">' +
-    '<div style="font-family:Bebas Neue;font-size:17px;color:var(--azul);margin-bottom:4px">〰️ ONDULATÓRIA</div>' +
-    '<div style="font-size:12px;color:var(--cinza);line-height:1.6">Variação de volume e intensidade em ondas semanais. Ideal para intermediários e avançados. Maior variabilidade de estímulo. Fleck & Kraemer (2004).</div>' +
-    '</div>' +
-    // POR BLOCOS
-    '<div onclick="selecionarPeriod(\'blocos\', ' + id + ')" style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:14px;padding:16px;cursor:pointer">' +
-    '<div style="font-family:Bebas Neue;font-size:17px;color:var(--verde);margin-bottom:4px">📦 POR BLOCOS</div>' +
-    '<div style="font-size:12px;color:var(--cinza);line-height:1.6">Mesociclos sequenciais: Acumulação → Transmutação → Realização. Alta especialização por fase. Ideal para atletas. Issurin (2008) Sports Med.</div>' +
-    '</div>' +
-    // MISTA
-    '<div onclick="selecionarPeriod(\'mista\', ' + id + ')" style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:16px;cursor:pointer">' +
-    '<div style="font-family:Bebas Neue;font-size:17px;color:var(--ouro2);margin-bottom:4px">🔀 MISTA</div>' +
-    '<div style="font-size:12px;color:var(--cinza);line-height:1.6">Combina blocos fixos com ondulação semanal. Flexível e adaptável. Indicada para a maioria dos alunos de personal. ACSM 2022.</div>' +
-    '</div>' +
-    '</div>' +
-    '<div id="period-resultado" style="margin-top:14px"></div>' +
-    '</div>';
-}
-
-function selecionarPeriod(tipo, id){
-  var nomes = {ondulatorio:'Ondulatória', blocos:'Por Blocos', mista:'Mista'};
-  var cores = {ondulatorio:'var(--azul)', blocos:'var(--verde)', mista:'var(--ouro2)'};
-  var descricoes = {
-    ondulatorio:'Semana 1: Volume Alto (3x12-15) → Semana 2: Intensidade Média (4x8-10) → Semana 3: Intensidade Alta (5x4-6) → Semana 4: Deload (3x15-20)',
-    blocos:'Bloco 1 (4 sem): Acumulação — Volume alto, intensidade moderada → Bloco 2 (4 sem): Transmutação — Volume médio, intensidade alta → Bloco 3 (4 sem): Realização — Volume baixo, pico de força',
-    mista:'Mês 1-2: Base (volume + técnica) → Mês 3-4: Hipertrofia (volume alto) → Mês 5-6: Força (intensidade) → Reavaliação e novo ciclo'
-  };
-  var el = document.getElementById('period-resultado');
-  if(!el) return;
-  el.innerHTML =
-    '<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:14px">' +
-    '<div style="font-size:10px;color:' + cores[tipo] + ';letter-spacing:1px;margin-bottom:8px">PERIODIZAÇÃO ' + nomes[tipo].toUpperCase() + ' — SELECIONADA ✅</div>' +
-    '<div style="font-size:12px;color:var(--cinza);line-height:1.8">' + descricoes[tipo] + '</div>' +
-    '<div style="margin-top:10px;font-size:10px;color:var(--cinza);opacity:.8">📚 ACSM 2022 · Fleck & Kraemer (2004) · Issurin (2008) Sports Med</div>' +
-    '</div>';
 }
 
 </script>

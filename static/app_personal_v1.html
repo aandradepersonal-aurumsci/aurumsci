@@ -1946,11 +1946,16 @@ function renderCircunferencias(){
 }
 
 function salvarAnamnese(){
-  mostrarToast('✅ Anamnese salva!');
-  document.getElementById('anamnese-resultado').innerHTML =
-    '<div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:12px;font-size:13px;color:var(--verde)">' +
-    '✅ Anamnese registrada! Prossiga para a avaliação postural.' +
-    '</div>';
+  var obs = (document.getElementById('an-obs')||{}).value||'';
+  var dores = (document.getElementById('an-dores')||{}).value||'';
+  var obs_final = 'Dores: ' + dores + ' | ' + obs;
+  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({observacoes: obs_final})
+  }).then(function(r){ return r.json(); }).then(function(d){
+    mostrarToast('✅ Anamnese salva!');
+    document.getElementById('anamnese-resultado').innerHTML = '<div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:12px;font-size:13px;color:var(--verde)">✅ Anamnese registrada! Prossiga para a análise postural.</div>';
+  }).catch(function(){ mostrarToast('Erro ao salvar!'); });
 }
 
 function salvarCircunferencias(){

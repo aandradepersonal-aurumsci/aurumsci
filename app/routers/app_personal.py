@@ -185,3 +185,68 @@ def salvar_treino_aluno(aluno_id: int, dados: SalvarTreinoSchema, personal: Pers
 
     db.commit()
     return {"mensagem": f"Treino salvo para {aluno.nome}!", "plano_id": plano.id}
+
+
+class SalvarAvaliacaoSchema(BaseModel):
+    peso: float = None
+    altura: float = None
+    percentual_gordura: float = None
+    metodo_gordura: str = None
+    circ_pescoco: float = None
+    circ_ombro: float = None
+    circ_torax: float = None
+    circ_cintura: float = None
+    circ_abdom: float = None
+    circ_quadril: float = None
+    circ_braco_d: float = None
+    circ_braco_e: float = None
+    circ_coxa_d: float = None
+    circ_coxa_e: float = None
+    circ_pant_d: float = None
+    circ_pant_e: float = None
+    flexao_reps: int = None
+    barra_reps: int = None
+    abdom_reps: int = None
+    mmii_reps: int = None
+    preensao_dom: float = None
+    preensao_ndom: float = None
+    vo2max: float = None
+    protocolo_vo2: str = None
+    hrr_1min: float = None
+    hrr_2min: float = None
+    pa_rep_s: float = None
+    pa_rep_d: float = None
+    pa_pos_s: float = None
+    pa_pos_d: float = None
+    observacoes: str = None
+
+@router.post("/aluno/{aluno_id}/salvar-avaliacao")
+def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    from app.models import Aluno
+    from app.routers.avaliacao import AvaliacaoFisica
+    from datetime import date
+
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal.id).first()
+    if not aluno:
+        raise HTTPException(status_code=404, detail="Aluno nao encontrado")
+
+    av = AvaliacaoFisica(
+        aluno_id=aluno_id,
+        data_avaliacao=date.today(),
+        peso=dados.peso,
+        estatura=dados.altura,
+        percentual_gordura=dados.percentual_gordura,
+        circ_cintura=dados.circ_cintura,
+        circ_quadril=dados.circ_quadril,
+        teste_flexao_num=dados.flexao_reps,
+        teste_barra_num=dados.barra_reps,
+        vo2max=dados.vo2max,
+        observacoes=dados.observacoes,
+    )
+    if dados.peso and dados.percentual_gordura:
+        av.massa_gorda_kg = round(dados.peso * (dados.percentual_gordura/100), 2)
+        av.massa_magra_kg = round(dados.peso - av.massa_gorda_kg, 2)
+
+    db.add(av)
+    db.commit()
+    return {"mensagem": f"Avaliação salva para {aluno.nome}!", "data": str(date.today())}

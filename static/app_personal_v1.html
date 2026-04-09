@@ -783,7 +783,7 @@ function analisarPosturalP(){
   if(fotosPosturalP.frente) fd.append('foto_frente', fotosPosturalP.frente);
   if(fotosPosturalP.lado) fd.append('foto_lado', fotosPosturalP.lado);
   if(fotosPosturalP.costas) fd.append('foto_costas', fotosPosturalP.costas);
-  fetch('/app-personal/postural/' + alunoSelecionadoId, {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
+  fetch('/postural-ia/analisar', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
   .then(function(r){ return r.json(); })
   .then(function(d){
     loading.style.display = 'none'; btn.disabled = false; btn.style.opacity = '1';
@@ -1509,7 +1509,7 @@ function renderForcaPersonal(){
     '<div style="font-size:10px;color:var(--cinza);margin-bottom:12px;line-height:1.5;margin-top:12px">Testes de força padronizados. Máximo de repetições em 1 minuto.</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
     field('p-flexao','FLEXÃO (1 MIN)','reps','20') + field('p-barra','BARRA FIXA','reps','5') +
-    field('p-abdom','ABDOMINAL (1 MIN)','reps','25') + field('p-mmii','SENTAR/LEVANTAR (30s)','reps','12') +
+    field('p-abdom','ABDOMINAL (1 MIN)','reps','25') +
     field('p-pren-dom','PREENSÃO DOM.','kgf','35') + field('p-pren-ndom','PREENSÃO N-DOM.','kgf','32') +
     '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">' +
@@ -1523,7 +1523,7 @@ function calcForcaP(){
   var fl = parseInt(document.getElementById('p-flexao').value)||0;
   var ba = parseInt(document.getElementById('p-barra').value)||0;
   var ab = parseInt(document.getElementById('p-abdom').value)||0;
-  var mm = parseInt(document.getElementById('p-mmii').value)||0;
+  var mm = parseInt((document.getElementById('p-mmii-reps')||{}).value)||0;
   var pd = parseFloat(document.getElementById('p-pren-dom').value)||0;
   var sexo = document.getElementById('p-forca-sexo').value;
   var idade = parseInt(document.getElementById('p-forca-idade').value)||30;

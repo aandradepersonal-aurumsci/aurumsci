@@ -38,13 +38,17 @@ class Personal(Base):
     telefone = Column(String(20))
     cpf = Column(String(14), unique=True)
     ativo = Column(Boolean, default=True)
+    plano = Column(String(20), default="bronze")  # bronze/prata/ouro/diamante
+    assinatura_status = Column(String(20), default="trial")  # trial/ativa/cancelada/expirada
+    stripe_customer_id = Column(String(100))
+    stripe_subscription_id = Column(String(100))
     criado_em = Column(DateTime, default=datetime.utcnow)
     alunos = relationship("Aluno", back_populates="personal")
 
 class Aluno(Base):
     __tablename__ = "alunos"
     id = Column(Integer, primary_key=True)
-    personal_id = Column(Integer, ForeignKey("personals.id"), nullable=False)
+    personal_id = Column(Integer, ForeignKey("personals.id"), nullable=True)
     nome = Column(String(150), nullable=False)
     email = Column(String(200))
     telefone = Column(String(20))

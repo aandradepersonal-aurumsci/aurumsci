@@ -244,6 +244,7 @@ class CadastroRapido(BaseModel):
     nome: str
     email: str
     senha: str
+    cpf: str = None
 
 @router.post("/cadastro")
 def cadastro_rapido(dados: CadastroRapido, db: Session = Depends(get_db)):

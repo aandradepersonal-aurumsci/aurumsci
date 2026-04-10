@@ -48,7 +48,7 @@ Seja técnico, direto e baseado em evidências científicas."""
 def dashboard(personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
     from app.models import Aluno
     from app.routers.treino import PresencaTreino
-    from app.routers.financeiro import Pagamento, calc_status
+    from app.routers.financeiro import Pagamento, cs as calc_status
 
     alunos = db.query(Aluno).filter(Aluno.personal_id == personal.id, Aluno.ativo == True).all()
     total_alunos = len(alunos)

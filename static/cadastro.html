@@ -157,7 +157,7 @@ function cadastrar(){
   .then(function(d){
     if(d.detail){ mostrarToast('Erro: ' + d.detail, '#FF4B4B'); btn.disabled=false; loading.style.display='none'; return; }
     var aluno_id = d.aluno_id;
-    loading.textContent = '💳 Redirecionando para pagamento...';
+    loading.textContent = '💳 Redirecionando para pagamento... Isso pode levar alguns segundos na primeira vez, aguarde!';
     return fetch('/pagamento/criar-sessao', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},

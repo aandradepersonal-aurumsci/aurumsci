@@ -36,7 +36,7 @@ from app.routers.admin import router as admin_router
 from app.routers.chatbot import router as chatbot_router
 from app.routers.postural_ia import router as postural_ia_router
 from app.routers.app_aluno import router as app_aluno_router
-from app.routers.app_personal_final import router as app_personal_router
+from app.routers.app_personal import router as app_personal_router
 from app.routers.pagamento import router as pagamento_router
 
 # ── Logging ───────────────────────────────────────────────────

@@ -761,16 +761,34 @@ function abrirPosturalAluno(id, nome){
 function fotoPosturalP(tipo, input){
   if(!input.files[0]) return;
   var file = input.files[0];
-  var reader = new FileReader();
-  reader.onload = function(e){
-    fotosPosturalP[tipo] = file;
-    var slot = document.getElementById('slot-p-'+tipo);
-    slot.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover">';
-    var tem = fotosPosturalP.frente || fotosPosturalP.lado || fotosPosturalP.costas;
-    var btn = document.getElementById('btn-analisar-p');
-    btn.disabled = !tem; btn.style.opacity = tem ? '1' : '0.4';
+  var slot = document.getElementById('slot-p-'+tipo);
+  slot.innerHTML = '<div style="color:var(--cinza);font-size:11px;text-align:center;padding-top:30px">⏳ Processando...</div>';
+  // Redimensiona e comprime igual ao app do aluno
+  var img = new Image();
+  var url = URL.createObjectURL(file);
+  img.onload = function(){
+    var canvas = document.createElement('canvas');
+    var MAX = 1200;
+    var w = img.width, h = img.height;
+    if(w > h){ if(w > MAX){ h = Math.round(h*MAX/w); w = MAX; } }
+    else { if(h > MAX){ w = Math.round(w*MAX/h); h = MAX; } }
+    canvas.width = w; canvas.height = h;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+    URL.revokeObjectURL(url);
+    canvas.toBlob(function(blob){
+      fotosPosturalP[tipo] = new File([blob], 'foto_' + tipo + '.jpg', {type:'image/jpeg'});
+      var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      slot.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:10px">';
+      var tem = fotosPosturalP.frente || fotosPosturalP.lado || fotosPosturalP.costas;
+      var btn = document.getElementById('btn-analisar-p');
+      btn.disabled = !tem; btn.style.opacity = tem ? '1' : '0.4';
+    }, 'image/jpeg', 0.85);
   };
-  reader.readAsDataURL(file);
+  img.onerror = function(){ slot.innerHTML = '<div style="color:var(--vermelho);font-size:11px;text-align:center;padding-top:30px">Erro na foto</div>'; };
+  img.src = url;
 }
 
 function analisarPosturalP(){
@@ -783,7 +801,7 @@ function analisarPosturalP(){
   if(fotosPosturalP.frente) fd.append('foto_frente', fotosPosturalP.frente);
   if(fotosPosturalP.lado) fd.append('foto_lado', fotosPosturalP.lado);
   if(fotosPosturalP.costas) fd.append('foto_costas', fotosPosturalP.costas);
-  fetch('/postural-ia/analisar', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
+  fetch('/app-personal/postural/' + alunoSelecionadoId, {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
   .then(function(r){ return r.json(); })
   .then(function(d){
     loading.style.display = 'none'; btn.disabled = false; btn.style.opacity = '1';
@@ -824,57 +842,68 @@ function filtroStatus(status, el){
 }
 
 // ── FINANCEIRO ────────────────────────────────────────────────
-var pagamentosLocal = JSON.parse(localStorage.getItem('aurum_pagamentos') || '[]');
+// ── FINANCEIRO — banco de dados ───────────────────────────────
+var pagamentosDB = [];
 
 function carregarFinanceiro(){
-  renderFinanceiro();
+  // Busca todos os pagamentos de todos os alunos do personal
+  var promises = todosAlunos.map(function(a){
+    return fetch('/financeiro/pagamento/aluno/' + a.id, {headers:{'Authorization':'Bearer '+token}})
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(d){
+        var pags = d.pagamentos || d || [];
+        return pags.map(function(p){ return Object.assign({}, p, {aluno_nome: a.nome, aluno_id: a.id}); });
+      })      .catch(function(){ return []; });
+  });
+  Promise.all(promises).then(function(results){
+    pagamentosDB = [].concat.apply([], results);
+    renderFinanceiro();
+  });
 }
 
 function renderFinanceiro(){
   var recebido = 0, pendente = 0, atrasado = 0;
-  var hoje = new Date();
-  
-  pagamentosLocal.forEach(function(p){
+  pagamentosDB.forEach(function(p){
     var val = parseFloat(p.valor)||0;
     if(p.status === 'pago') recebido += val;
     else if(p.status === 'atrasado') atrasado += val;
     else pendente += val;
   });
-
   document.getElementById('fin-pago').textContent = 'R$' + recebido.toFixed(0);
   document.getElementById('fin-pendente').textContent = 'R$' + pendente.toFixed(0);
   document.getElementById('fin-atrasado').textContent = 'R$' + atrasado.toFixed(0);
 
-  var html = '';
-  // Botão novo pagamento
-  html += '<button onclick="abrirModalPagamento()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer;margin-bottom:14px">➕ REGISTRAR PAGAMENTO</button>';
-  
-  if(pagamentosLocal.length === 0){
+  var html = '<button onclick="abrirModalPagamento()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer;margin-bottom:14px">➕ REGISTRAR PAGAMENTO</button>';
+
+  if(pagamentosDB.length === 0){
     html += '<div style="color:var(--cinza);text-align:center;padding:30px">Nenhum pagamento registrado ainda.</div>';
   } else {
-    // Agrupa por status
     ['atrasado','pendente','pago'].forEach(function(status){
-      var filtrados = pagamentosLocal.filter(function(p){ return p.status === status; });
+      var filtrados = pagamentosDB.filter(function(p){ return p.status === status; });
       if(filtrados.length === 0) return;
       var cor = status==='pago'?'var(--verde)':status==='atrasado'?'var(--vermelho)':'var(--ouro)';
       var label = status==='pago'?'✅ PAGOS':status==='atrasado'?'🔴 ATRASADOS':'⏳ PENDENTES';
       html += '<div style="font-size:10px;color:'+cor+';letter-spacing:2px;font-weight:700;margin:12px 0 8px">'+label+'</div>';
-      filtrados.forEach(function(p, idx){
-        var i = pagamentosLocal.indexOf(p);
+      filtrados.forEach(function(p){
         html += '<div style="background:var(--bg2);border-radius:14px;border:1px solid var(--borda);padding:14px;margin-bottom:8px">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center">';
-        html += '<div><div style="font-size:15px;font-weight:700">'+p.aluno+'</div>';
-        html += '<div style="font-size:11px;color:var(--cinza);margin-top:2px">'+p.descricao+' · Venc: '+p.vencimento+'</div></div>';
+        html += '<div><div style="font-size:15px;font-weight:700">'+(p.aluno_nome||'—')+'</div>';
+        html += '<div style="font-size:11px;color:var(--cinza);margin-top:2px">'+(p.descricao||'—')+' · Venc: '+(p.vencimento||p.data_vencimento||'—')+'</div></div>';
         html += '<div style="text-align:right"><div style="font-family:Bebas Neue;font-size:20px;color:'+cor+'">R$'+parseFloat(p.valor).toFixed(0)+'</div>';
         html += '<div style="display:flex;gap:4px;margin-top:4px">';
-        if(p.status !== 'pago') html += '<button onclick="marcarPago('+i+')" style="padding:4px 8px;background:var(--verde);border:none;border-radius:6px;color:#fff;font-size:11px;cursor:pointer">✓ PAGO</button>';
-        if(p.status === 'pendente') html += '<button onclick="marcarAtrasado('+i+')" style="padding:4px 8px;background:var(--vermelho);border:none;border-radius:6px;color:#fff;font-size:11px;cursor:pointer">ATRASADO</button>';
-        html += '<button onclick="removerPagamento('+i+')" style="padding:4px 8px;background:var(--bg);border:1px solid var(--borda);border-radius:6px;color:var(--cinza);font-size:11px;cursor:pointer">✕</button>';
+        if(p.status !== 'pago') html += '<button onclick="marcarPagoDB('+p.id+')" style="padding:4px 8px;background:var(--verde);border:none;border-radius:6px;color:#fff;font-size:11px;cursor:pointer">✓ PAGO</button>';
         html += '</div></div></div></div>';
       });
     });
   }
   document.getElementById('lista-pagamentos').innerHTML = html;
+}
+
+function marcarPagoDB(pid){
+  fetch('/financeiro/pagamento/' + pid + '/pagar', {method:'PUT', headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(){ mostrarToast('✅ Marcado como pago!'); carregarFinanceiro(); })
+  .catch(function(){ mostrarToast('Erro ao atualizar'); });
 }
 
 function calcTotalPag(){
@@ -947,7 +976,23 @@ function abrirModalPagamento(){
   // Vencimento e status
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">';
   html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">VENCIMENTO</div>';
-  html += '<input id="pag-venc" type="date" style="'+inp+'"></div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">';
+  // Dia
+  var dias = '<select id="pag-venc-dia" style="'+sel+'"><option value="">Dia</option>';
+  for(var d=1;d<=31;d++) dias += '<option value="'+(d<10?'0'+d:d)+'">'+(d<10?'0'+d:d)+'</option>';
+  dias += '</select>';
+  // Mês
+  var meses = '<select id="pag-venc-mes" style="'+sel+'"><option value="">Mês</option>';
+  var nomMeses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  for(var m=0;m<12;m++) meses += '<option value="'+(m+1<10?'0'+(m+1):(m+1))+'">'+nomMeses[m]+'</option>';
+  meses += '</select>';
+  // Ano
+  var anos = '<select id="pag-venc-ano" style="'+sel+'"><option value="">Ano</option>';
+  var anoAtual = new Date().getFullYear();
+  for(var a=anoAtual;a<=anoAtual+2;a++) anos += '<option value="'+a+'">'+a+'</option>';
+  anos += '</select>';
+  html += dias + meses + anos;
+  html += '</div></div>';
   html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">STATUS</div>';
   html += '<select id="pag-status" style="'+sel+'"><option value="pendente">⏳ Pendente</option><option value="pago">✅ Pago</option><option value="atrasado">🔴 Atrasado</option></select></div></div>';
 
@@ -957,12 +1002,20 @@ function abrirModalPagamento(){
 }
 
 function salvarPagamento(){
-  var aluno = (document.getElementById('pag-aluno')||{}).value||'';
+  var alunoNome = (document.getElementById('pag-aluno')||{}).value||'';
   var tipo = document.querySelector('input[name="pag-tipo"]:checked');
   var total = parseFloat(document.getElementById('pag-total-val').textContent)||0;
-  var venc = (document.getElementById('pag-venc')||{}).value||'';
+  var dia = (document.getElementById('pag-venc-dia')||{}).value||'';
+  var mes = (document.getElementById('pag-venc-mes')||{}).value||'';
+  var ano = (document.getElementById('pag-venc-ano')||{}).value||'';
+  var venc = (dia && mes && ano) ? (ano+'-'+mes+'-'+dia) : '';
   var status = (document.getElementById('pag-status')||{}).value||'pendente';
-  if(!aluno||!tipo||!total){ mostrarToast('Preencha aluno, modalidade e valor!'); return; }
+  if(!alunoNome||!tipo||!total||!venc){ mostrarToast('Preencha todos os campos!'); return; }
+
+  // Acha o aluno_id pelo nome
+  var aluno = todosAlunos.find(function(a){ return a.nome === alunoNome; });
+  if(!aluno){ mostrarToast('Aluno não encontrado!'); return; }
+
   var desc = '';
   if(tipo.value==='aulas'){
     var qtd = document.getElementById('pag-qtd-aulas').value;
@@ -973,31 +1026,24 @@ function salvarPagamento(){
   } else {
     desc = (document.getElementById('pag-desc-serv')||{}).value || 'Serviço';
   }
-  pagamentosLocal.push({aluno:aluno, descricao:desc, valor:total, vencimento:venc, status:status, data:new Date().toISOString().split('T')[0]});
-  localStorage.setItem('aurum_pagamentos', JSON.stringify(pagamentosLocal));
-  document.querySelector('[style*="position:fixed"]').remove();
-  renderFinanceiro();
-  mostrarToast('✅ Cobrança registrada!');
+
+  fetch('/financeiro/pagamento', {
+    method: 'POST',
+    headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
+    body: JSON.stringify({aluno_id: aluno.id, valor: total, descricao: desc, data_vencimento: venc})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    document.querySelector('[style*="position:fixed"]').remove();
+    mostrarToast('✅ Cobrança registrada!');
+    carregarFinanceiro();
+  })
+  .catch(function(){ mostrarToast('Erro ao salvar cobrança'); });
 }
 
-function marcarPago(i){
-  pagamentosLocal[i].status = 'pago';
-  localStorage.setItem('aurum_pagamentos', JSON.stringify(pagamentosLocal));
-  renderFinanceiro();
-  mostrarToast('✅ Marcado como pago!');
-}
-
-function marcarAtrasado(i){
-  pagamentosLocal[i].status = 'atrasado';
-  localStorage.setItem('aurum_pagamentos', JSON.stringify(pagamentosLocal));
-  renderFinanceiro();
-}
-
-function removerPagamento(i){
-  pagamentosLocal.splice(i, 1);
-  localStorage.setItem('aurum_pagamentos', JSON.stringify(pagamentosLocal));
-  renderFinanceiro();
-}
+function marcarPago(i){ marcarPagoDB(pagamentosDB[i] ? pagamentosDB[i].id : i); }
+function marcarAtrasado(i){ mostrarToast('Use o botão ✓ PAGO quando receber'); }
+function removerPagamento(i){ mostrarToast('Remoção disponível em breve'); }
 
 // ── NOVO ALUNO ────────────────────────────────────────────────
 function abrirModalNovoAluno(){
@@ -1055,7 +1101,7 @@ function enviarMsg(){
   msgs.scrollTop = msgs.scrollHeight;
 
   fetch('/app-personal/chat', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body: JSON.stringify({mensagem:msg, historico:chatHist.slice(-10)})})
+    body: JSON.stringify({mensagem:msg, historico:chatHist.slice(-10), idioma:lang})})
   .then(function(r){ return r.json(); })
   .then(function(d){ 
     typing.innerHTML = '<span class="msg-tag">AURI</span>' + (d.resposta || 'Tente novamente');
@@ -2314,5 +2360,6 @@ function mostrarRoteiro(){
   </div>
 </div>
 
+<div style="text-align:center;padding:12px;font-size:10px;color:var(--cinza);border-top:1px solid var(--borda);margin-top:20px">Powered by <a href="https://aurumsc.com.br" style="color:var(--ouro2);text-decoration:none">AurumSci</a></div>
 </body>
 </html>

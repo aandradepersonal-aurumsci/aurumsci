@@ -50,3 +50,16 @@ async def upload_foto(aluno_id: int, foto: UploadFile = File(...), personal: Per
         raise HTTPException(status_code=400, detail=f"Arquivo muito grande. Máximo: {settings.MAX_FILE_SIZE_MB}MB")
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     ext
+
+@router.delete("/{aluno_id}/permanente")
+def excluir_permanente(aluno_id: int, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    from app.routers.portal_aluno import AlunoCredencial
+    from app.routers.treino import PresencaTreino
+    from app.routers.financeiro import Pagamento
+    aluno = buscar_aluno(aluno_id, personal.id, db)
+    db.query(AlunoCredencial).filter(AlunoCredencial.aluno_id == aluno_id).delete()
+    db.query(PresencaTreino).filter(PresencaTreino.aluno_id == aluno_id).delete()
+    db.query(Pagamento).filter(Pagamento.aluno_id == aluno_id).delete()
+    db.delete(aluno)
+    db.commit()
+    return {"mensagem": f"Aluno {aluno.nome} excluído permanentemente"}

@@ -165,6 +165,11 @@ def landing():
     with open("static/landing.html", "r", encoding="utf-8") as f:
         return f.read()
 
+@app.get("/pro", response_class=HTMLResponse, include_in_schema=False)
+def landing_pro():
+    with open("static/landing_pro.html", "r", encoding="utf-8") as f:
+        return f.read()
+
 @app.get("/personal", response_class=HTMLResponse, include_in_schema=False)
 def app_personal():
     with open("static/app_personal_v1.html", "r", encoding="utf-8") as f:

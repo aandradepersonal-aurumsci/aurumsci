@@ -139,6 +139,28 @@ def criar_sessao(dados: CheckoutSchema):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
+class CheckoutPersonalSchema(BaseModel):
+    personal_id: int
+    plano: str = "bronze"
+    valor: int = 4990
+
+@router.post("/criar-sessao-personal")
+def criar_sessao_personal(dados: CheckoutPersonalSchema):
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[{"price_data": {"currency": "brl", "product_data": {"name": f"AurumSci PRO — Plano {dados.plano.capitalize()}"}, "unit_amount": dados.valor, "recurring": {"interval": "month"}}, "quantity": 1}],
+            mode="subscription",
+            subscription_data={"trial_period_days": 14},
+            success_url="https://www.aurumsc.com.br/personal?cadastro=sucesso",
+            cancel_url="https://www.aurumsc.com.br/pro",
+            metadata={"personal_id": str(dados.personal_id), "plano": dados.plano},
+        )
+        return {"url": session.url, "session_id": session.id}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 @router.post("/webhook")
 async def webhook(request: Request, db: Session = Depends(get_db)):
     payload = await request.body()
@@ -161,4 +183,18 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                 aluno.ativo = True
                 db.commit()
                 enviar_email_boas_vindas(aluno.nome, aluno.email)
+        personal_id = None
+        try:
+            personal_id = session["metadata"]["personal_id"]
+            plano = session["metadata"].get("plano", "bronze")
+        except Exception:
+            pass
+        if personal_id:
+            from app.models import Personal
+            personal = db.query(Personal).filter(Personal.id == int(personal_id)).first()
+            if personal:
+                personal.ativo = True
+                personal.plano = plano
+                personal.assinatura_status = "ativa"
+                db.commit()
     return {"status": "ok"}

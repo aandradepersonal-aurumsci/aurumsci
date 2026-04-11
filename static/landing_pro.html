@@ -316,6 +316,23 @@ footer a{color:#444;text-decoration:none}
 
 <!-- CTA FINAL -->
 <div class="cta">
+  <h2 class="cta-titulo">Tem alguma dúvida ou sugestão?</h2>
+  <p class="cta-sub">Deixe seu email e o desenvolvedor — um personal trainer como você — vai te responder pessoalmente.</p>
+  <div style="display:flex;gap:10px;max-width:400px;margin:0 auto">
+    <input type="email" id="email-lead" placeholder="seu@email.com" style="flex:1;padding:14px 16px;border-radius:12px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);font-size:14px;outline:none">
+    <button onclick="capturarLead()" style="background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;padding:14px 20px;border-radius:12px;border:none;cursor:pointer">ENVIAR →</button>
+  </div>
+  <div id="lead-msg" style="margin-top:12px;font-size:13px;color:var(--verde);display:none">Recebido! Entrarei em contato em breve. 💪 — André</div>
+</div>
+<script>
+function capturarLead(){
+  var email = document.getElementById('email-lead').value.trim();
+  if(!email || !email.includes('@')){ return; }
+  document.getElementById('lead-msg').style.display = 'block';
+  document.getElementById('email-lead').value = '';
+}
+</script>
+<div class="cta">
   <h2 class="cta-titulo">Pronto para transformar seu negócio?</h2>
   <p class="cta-sub">14 dias grátis. Cancele quando quiser. Sem burocracia.</p>
   <a href="/cadastro-pro" class="btn-principal" style="max-width:320px;margin:0 auto;display:block">COMEÇAR AGORA →</a>

@@ -436,3 +436,26 @@ async def postural_aluno(
         "observacoes": resultado.observacoes,
         "recomendacoes": resultado.recomendacoes or []
     }
+
+@router.post("/white-label")
+async def salvar_white_label(
+    nome: str = None,
+    slogan: str = None,
+    logo: UploadFile = File(None),
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    import os, shutil
+    if logo:
+        ext = logo.filename.split('.')[-1].lower()
+        path = f"static/uploads/wl_{personal.id}.{ext}"
+        os.makedirs("static/uploads", exist_ok=True)
+        with open(path, "wb") as f:
+            shutil.copyfileobj(logo.file, f)
+        personal.logo_url = f"/{path}"
+    if nome:
+        personal.nome_empresa = nome
+    if slogan:
+        personal.slogan = slogan
+    db.commit()
+    return {"status": "ok", "logo_url": personal.logo_url if logo else None}

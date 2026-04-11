@@ -42,6 +42,9 @@ class Personal(Base):
     assinatura_status = Column(String(20), default="trial")  # trial/ativa/cancelada/expirada
     stripe_customer_id = Column(String(100))
     stripe_subscription_id = Column(String(100))
+    logo_url = Column(String(300))
+    nome_empresa = Column(String(150))
+    slogan = Column(String(200))
     criado_em = Column(DateTime, default=datetime.utcnow)
     alunos = relationship("Aluno", back_populates="personal")
 

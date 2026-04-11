@@ -2512,7 +2512,7 @@ function carregarLogoPersonal(){
   .then(function(d){
     if(d.logo_url){
       var tl = document.getElementById('topbar-logo');
-      if(tl) tl.innerHTML = '<img src="'+d.logo_url+'" style="height:32px;max-width:140px;object-fit:contain">';
+      if(tl) tl.innerHTML = '<img src="'+d.logo_url+'" style="height:44px;max-width:180px;object-fit:contain">';
     }
   }).catch(function(){});
 }
@@ -2536,7 +2536,7 @@ function salvarWL(){
     document.getElementById('wl-ok').style.display='block';
     if(d.logo_url){
       var tl = document.getElementById('topbar-logo');
-      tl.innerHTML = '<img src="'+d.logo_url+'" style="height:32px;max-width:140px;object-fit:contain" onerror="this.style.display=\'none\'">';
+      tl.innerHTML = '<img src="'+d.logo_url+'" style="height:44px;max-width:180px;object-fit:contain" onerror="this.style.display=\'none\'">';
     }
     setTimeout(fecharModalWL, 1500);
   }).catch(function(e){ alert('Erro: ' + e); fecharModalWL(); });

@@ -135,6 +135,8 @@ def login(request: Request, dados: PersonalLogin, db: Session = Depends(get_db))
 
     if not personal.ativo:
         raise HTTPException(status_code=403, detail="Conta desativada")
+    if personal.assinatura_status not in ('trial', 'ativa'):
+        raise HTTPException(status_code=403, detail='Assinatura inativa. Acesse aurumsc.com.br para renovar.')
 
     token_data = {"sub": str(personal.id)}
     logger.info(f"LOGIN OK | IP: {client_ip} | Personal ID: {personal.id}")

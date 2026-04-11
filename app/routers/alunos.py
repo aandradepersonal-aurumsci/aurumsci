@@ -9,6 +9,9 @@ from app.services.aluno_service import criar_aluno, listar_alunos, buscar_aluno,
 from app.utils.auth import get_personal_atual
 from app.config import settings
 
+
+LIMITES_PLANO = {'bronze': 10, 'prata': 20, 'ouro': 50, 'diamante': 999999}
+
 router = APIRouter(prefix="/alunos", tags=["Alunos"])
 
 @router.get("", response_model=PaginacaoAlunos)
@@ -21,7 +24,12 @@ def stats(personal: Personal = Depends(get_personal_atual), db: Session = Depend
 
 @router.post("", response_model=AlunoResposta, status_code=201)
 def criar(dados: AlunoCriar, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
-    aluno = criar_aluno(personal_id=personal.id, dados=dados, db=db)
+    from app.models import Aluno as AlunoModel
+    total = db.query(AlunoModel).filter(AlunoModel.personal_id == personal.id, AlunoModel.ativo == True).count()
+    limite = LIMITES_PLANO.get(personal.plano or 'bronze', 10)
+    if total >= limite:
+        raise HTTPException(status_code=403, detail=f'Limite de {limite} alunos atingido para o plano {(personal.plano or "bronze").upper()}. Faça upgrade em aurumsc.com.br')
+        aluno = criar_aluno(personal_id=personal.id, dados=dados, db=db)
     return AlunoResposta.from_orm_com_idade(aluno)
 
 @router.get("/{aluno_id}", response_model=AlunoResposta)

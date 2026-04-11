@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AurumSci PRO — Cadastro</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ouro:#C9A84C;--ouro2:#F0C040;--azul:#4B9FFF;--verde:#00E5A0;--vermelho:#FF4B4B;--bg:#0A0A0F;--bg2:#12121A;--texto:#F0EDE8;--cinza:#888;--borda:rgba(201,168,76,0.15)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+.container{width:100%;max-width:400px}
+.logo{display:flex;align-items:baseline;gap:4px;justify-content:center;margin-bottom:8px}
+.logo-aurum{font-family:Georgia,serif;font-size:32px;font-weight:400;letter-spacing:4px;color:var(--ouro)}
+.logo-sci{font-family:Georgia,serif;font-size:13px;font-style:italic;color:#fff;margin-left:2px}
+.logo-pro{font-family:Arial,sans-serif;font-size:12px;font-weight:700;color:var(--azul);margin-left:2px}
+.tag{text-align:center;font-size:11px;letter-spacing:3px;color:var(--cinza);margin-bottom:32px}
+.card{background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:28px}
+.card-titulo{font-family:'Bebas Neue';font-size:24px;letter-spacing:1px;margin-bottom:4px}
+.card-sub{font-size:13px;color:var(--cinza);margin-bottom:24px;line-height:1.6}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;letter-spacing:2px;color:var(--cinza);margin-bottom:6px;font-weight:600}
+.field input{width:100%;background:#0A0A0F;border:1px solid var(--borda);border-radius:10px;padding:13px 14px;color:var(--texto);font-size:14px;outline:none;transition:border-color .2s;font-family:'DM Sans',sans-serif}
+.field input:focus{border-color:var(--ouro)}
+.field input::placeholder{color:#444}
+.btn-gold{width:100%;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:20px;letter-spacing:3px;padding:16px;border-radius:12px;border:none;cursor:pointer;margin-top:8px;transition:transform .2s}
+.btn-gold:active{transform:scale(.98)}
+.btn-gold:disabled{opacity:.6;cursor:not-allowed}
+.loading{text-align:center;font-size:13px;color:var(--cinza);margin-top:12px;display:none}
+.error{background:rgba(255,75,75,.08);border:1px solid rgba(255,75,75,.2);border-radius:10px;padding:12px;font-size:13px;color:var(--vermelho);margin-top:12px;display:none}
+.trial-badge{background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:12px;padding:14px;text-align:center;margin-bottom:20px}
+.trial-badge div:first-child{font-family:'Bebas Neue';font-size:18px;color:var(--verde);letter-spacing:1px}
+.trial-badge div:last-child{font-size:12px;color:var(--cinza);margin-top:2px}
+.login-link{text-align:center;font-size:13px;color:var(--cinza);margin-top:16px}
+.login-link a{color:var(--ouro);text-decoration:none}
+.plano-badge{text-align:center;background:rgba(75,159,255,.08);border:1px solid rgba(75,159,255,.2);border-radius:10px;padding:10px;font-size:12px;color:var(--azul);margin-bottom:20px;letter-spacing:1px;display:none}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">
+    <svg viewBox="0 0 44 44" width="36" height="36" style="margin-right:6px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#C9A84C" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#C9A84C">A</text></svg>
+    <span class="logo-aurum">AURUM</span><span class="logo-sci">sci.</span><span class="logo-pro">PRO</span>
+  </div>
+  <div class="tag">CADASTRO DO PERSONAL TRAINER</div>
+
+  <div class="card">
+    <div id="plano-badge" class="plano-badge"></div>
+
+    <div class="trial-badge">
+      <div>🎯 14 DIAS GRÁTIS</div>
+      <div>Sem cobrança agora. Cancele quando quiser.</div>
+    </div>
+
+    <div class="card-titulo">Crie sua conta PRO</div>
+    <div class="card-sub">Preencha seus dados e escolha o plano na próxima etapa.</div>
+
+    <div class="field"><label>NOME COMPLETO</label><input type="text" id="nome" placeholder="André Andrade"></div>
+    <div class="field"><label>EMAIL</label><input type="email" id="email" placeholder="seu@email.com"></div>
+    <div class="field"><label>CREF</label><input type="text" id="cref" placeholder="000000-G/SP"></div>
+    <div class="field"><label>TELEFONE</label><input type="tel" id="telefone" placeholder="(11) 99999-9999"></div>
+    <div class="field"><label>CPF</label><input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)"></div>
+    <div class="field"><label>SENHA</label><input type="password" id="senha" placeholder="mínimo 8 caracteres"></div>
+
+    <button class="btn-gold" onclick="cadastrar()" id="btn-cadastrar">CRIAR CONTA E ESCOLHER PLANO →</button>
+    <div class="loading" id="loading">⏳ Criando sua conta... Aguarde!</div>
+    <div class="error" id="error"></div>
+  </div>
+
+  <div class="login-link">Já tem conta? <a href="/personal">Fazer login</a></div>
+</div>
+
+<script>
+var planos = {
+  'bronze': {nome:'Bronze', valor:4990, label:'🥉 PLANO BRONZE — Até 10 alunos · R$49,90/mês'},
+  'prata': {nome:'Prata', valor:8990, label:'🥈 PLANO PRATA — Até 20 alunos · R$89,90/mês'},
+  'ouro': {nome:'Ouro', valor:14990, label:'🥇 PLANO OURO — Até 50 alunos · R$149,90/mês'},
+  'diamante': {nome:'Diamante', valor:24990, label:'💎 PLANO DIAMANTE — Ilimitado · R$249,90/mês'}
+};
+
+var planoSelecionado = 'bronze';
+
+window.onload = function(){
+  var params = new URLSearchParams(window.location.search);
+  var p = params.get('plano');
+  if(p && planos[p]){
+    planoSelecionado = p;
+    var badge = document.getElementById('plano-badge');
+    badge.textContent = planos[p].label;
+    badge.style.display = 'block';
+  }
+};
+
+function mascaraCPF(el){
+  var v = el.value.replace(/\D/g,'');
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  el.value = v;
+}
+
+function mostrarErro(msg){
+  var el = document.getElementById('error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function cadastrar(){
+  var nome = document.getElementById('nome').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var cref = document.getElementById('cref').value.trim();
+  var telefone = document.getElementById('telefone').value.trim();
+  var cpf = document.getElementById('cpf').value.trim();
+  var senha = document.getElementById('senha').value;
+
+  document.getElementById('error').style.display = 'none';
+
+  if(!nome){ mostrarErro('Informe seu nome completo'); return; }
+  if(!email || !email.includes('@')){ mostrarErro('Informe um email válido'); return; }
+  if(!cref){ mostrarErro('Informe seu CREF'); return; }
+  if(!senha || senha.length < 8){ mostrarErro('Senha deve ter pelo menos 8 caracteres'); return; }
+
+  var btn = document.getElementById('btn-cadastrar');
+  var loading = document.getElementById('loading');
+  btn.disabled = true;
+  loading.style.display = 'block';
+
+  fetch('/auth/registro', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({nome:nome, email:email, senha:senha, cref:cref, telefone:telefone||null, cpf:cpf||null})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.detail){
+      mostrarErro('Erro: ' + d.detail);
+      btn.disabled = false;
+      loading.style.display = 'none';
+      return;
+    }
+    loading.textContent = '💳 Redirecionando para pagamento... Isso pode levar alguns segundos!';
+    var plano = planos[planoSelecionado];
+    return fetch('/pagamento/criar-sessao-personal', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({personal_id: d.id, plano: planoSelecionado, valor: plano.valor})
+    });
+  })
+  .then(function(r){ if(r) return r.json(); })
+  .then(function(d){
+    if(d && d.url){ window.location.href = d.url; }
+    else{
+      mostrarErro('Erro ao criar sessão de pagamento. Tente novamente.');
+      document.getElementById('btn-cadastrar').disabled = false;
+      document.getElementById('loading').style.display = 'none';
+    }
+  })
+  .catch(function(e){
+    mostrarErro('Erro de conexão. Tente novamente.');
+    document.getElementById('btn-cadastrar').disabled = false;
+    document.getElementById('loading').style.display = 'none';
+  });
+}
+</script>
+</body>
+</html>

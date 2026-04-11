@@ -89,7 +89,9 @@ def dashboard(personal: Personal = Depends(get_personal_atual), db: Session = De
         "checkins_hoje": checkins_hoje,
         "pagamentos_pendentes": pendentes,
         "receita_mes": round(receita_mes, 2),
-        "alunos_recentes": recentes
+        "alunos_recentes": recentes,
+        "logo_url": personal.logo_url,
+        "nome_empresa": personal.nome_empresa
     }
 
 

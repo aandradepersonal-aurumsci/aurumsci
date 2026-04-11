@@ -218,7 +218,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <div id="app">
   <!-- TOPBAR -->
   <div class="topbar">
-    <div class="topbar-logo" id="topbar-logo" style="display:flex;align-items:center;gap:2px"><svg viewBox="0 0 44 44" width="22" height="22" style="margin-right:4px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:20px;font-weight:400;letter-spacing:2px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:10px;font-style:italic;color:#fff;margin-left:2px">sci.</span><span style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:#4B9FFF;margin-left:2px">PRO</span></div>
+    <div class="topbar-logo" id="topbar-logo" onclick="abrirConfigWL()" style="cursor:pointer" style="display:flex;align-items:center;gap:2px"><svg viewBox="0 0 44 44" width="22" height="22" style="margin-right:4px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:20px;font-weight:400;letter-spacing:2px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:10px;font-style:italic;color:#fff;margin-left:2px">sci.</span><span style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:#4B9FFF;margin-left:2px">PRO</span></div>
     <div class="topbar-right">
       <div class="lang-mini-row">
         <button class="lang-mini active" onclick="setLangApp('pt',this)">PT</button>
@@ -480,10 +480,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <span>FINANÇAS</span>
     <div class="tab-dot"></div>
   </div>
-  <div class="tab" onclick="mudarTab('config',this)">
-    <span class="tab-icon">⚙️</span>
-    <span>CONFIG</span><div class="tab-dot"></div>
-  </div>
+
   <div class="tab" onclick="mudarTab('chat',this)">
     <span class="tab-icon"><svg viewBox="0 0 100 100" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#12121A"/><circle cx="50" cy="50" r="44" fill="#1A1A2E"/><ellipse cx="50" cy="56" rx="26" ry="28" fill="#F5DEB3"/><ellipse cx="50" cy="34" rx="28" ry="7" fill="#1A3A6B"/><path d="M22 34 Q24 16 50 14 Q76 16 78 34 Z" fill="#1E4DB7"/><ellipse cx="50" cy="34" rx="28" ry="7" fill="#1545A8"/><circle cx="38" cy="52" r="10" fill="#FFFFFF"/><circle cx="62" cy="52" r="10" fill="#FFFFFF"/><circle cx="38" cy="52" r="6" fill="#1A0A00"/><circle cx="62" cy="52" r="6" fill="#1A0A00"/><circle cx="38" cy="52" r="3" fill="#4B9FFF"/><circle cx="62" cy="52" r="3" fill="#4B9FFF"/><path d="M38 68 Q50 78 62 68" fill="none" stroke="#1A0A00" stroke-width="2" stroke-linecap="round"/><circle cx="86" cy="16" r="5" fill="#00E5A0" stroke="#12121A" stroke-width="1.5"/></svg></span>
     <span>AURI</span><div class="tab-dot"></div>
@@ -2486,5 +2483,47 @@ function carregarConfig(){
     <button onclick="fecharModal('modal-upgrade')" style="background:none;border:none;color:#666;font-size:13px;cursor:pointer">Fechar</button>
   </div>
 </div>
+
+<div id="modal-wl" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#12121A;border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:28px;max-width:340px;width:90%">
+    <div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;color:#F0C040;margin-bottom:4px">WHITE LABEL</div>
+    <div style="font-size:12px;color:#888;margin-bottom:20px">Seu aluno verá sua marca no app</div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:11px;letter-spacing:2px;color:#888;display:block;margin-bottom:6px">NOME DA EMPRESA</label>
+      <input type="text" id="wl-nome" placeholder="Ex: Lucas Cavalcanti PT" style="width:100%;background:#0A0A0F;border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:12px;color:#F0EDE8;font-size:14px;outline:none">
+    </div>
+    <div style="margin-bottom:16px">
+      <label style="font-size:11px;letter-spacing:2px;color:#888;display:block;margin-bottom:6px">LOGO (PNG ou JPG)</label>
+      <input type="file" id="wl-logo" accept="image/*" style="width:100%;background:#0A0A0F;border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:10px;color:#888;font-size:12px">
+    </div>
+    <button onclick="salvarWL()" style="width:100%;background:linear-gradient(135deg,#C9A84C,#F0C040);color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;padding:14px;border-radius:12px;border:none;cursor:pointer;margin-bottom:10px">SALVAR</button>
+    <button onclick="fecharModalWL()" style="width:100%;background:none;border:none;color:#666;font-size:13px;cursor:pointer">Cancelar</button>
+    <div id="wl-ok" style="text-align:center;color:#00E5A0;font-size:13px;margin-top:8px;display:none">✅ Salvo!</div>
+  </div>
+</div>
+
+<script>
+function abrirConfigWL(){
+  document.getElementById('modal-wl').style.display='flex';
+}
+function fecharModalWL(){
+  document.getElementById('modal-wl').style.display='none';
+}
+function salvarWL(){
+  var nome = document.getElementById('wl-nome').value.trim();
+  var logo = document.getElementById('wl-logo').files[0];
+  if(!nome && !logo){ fecharModalWL(); return; }
+  var fd = new FormData();
+  if(nome) fd.append('nome', nome);
+  if(logo) fd.append('logo', logo);
+  fetch('/app-personal/white-label', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    document.getElementById('wl-ok').style.display='block';
+    setTimeout(fecharModalWL, 1500);
+  }).catch(function(){ fecharModalWL(); });
+}
+</script>
+
 </body>
 </html>

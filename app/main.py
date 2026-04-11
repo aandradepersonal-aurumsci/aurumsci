@@ -167,7 +167,7 @@ def landing():
 
 @app.get("/cadastro-pro", response_class=HTMLResponse, include_in_schema=False)
 def cadastro_pro_page():
-    with open("static/cadastro.html", "r", encoding="utf-8") as f:
+    with open("static/cadastro_pro.html", "r", encoding="utf-8") as f:
         return f.read()
 
 @app.get("/pro", response_class=HTMLResponse, include_in_schema=False)

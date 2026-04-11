@@ -440,7 +440,7 @@ async def postural_aluno(
     }
 
 @router.post("/white-label")
-async async def salvar_white_label(
+async def salvar_white_label(
     nome: str = None,
     slogan: str = None,
     logo: UploadFile = File(None),
@@ -449,11 +449,12 @@ async async def salvar_white_label(
 ):
     import os, shutil
     if logo:
-        import base64
-        conteudo = await logo.read()
         ext = logo.filename.split('.')[-1].lower()
-        b64 = base64.b64encode(conteudo).decode('utf-8')
-        personal.logo_url = f"data:image/{ext};base64,{b64}"
+        path = f"static/uploads/wl_{personal.id}.{ext}"
+        os.makedirs("static/uploads", exist_ok=True)
+        with open(path, "wb") as f:
+            shutil.copyfileobj(logo.file, f)
+        personal.logo_url = f"/{path}"
     if nome:
         personal.nome_empresa = nome
     if slogan:

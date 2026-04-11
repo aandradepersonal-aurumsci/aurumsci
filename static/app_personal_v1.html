@@ -739,6 +739,7 @@ function renderAlunos(alunos){
     html += '<div class="aluno-meta">' + (a.objetivo||'—') + ' · ' + (a.nivel_experiencia||'—') + '</div></div>';
     html += '<div style="display:flex;align-items:center;gap:8px">';
     html += '<div class="aluno-status ' + (a.ativo ? 'status-ativo' : 'status-inativo') + '"></div>';
+    if(a.precisa_reavaliar) html += '<span style="font-size:11px;background:#FF4B4B;color:#fff;border-radius:8px;padding:2px 6px">⚡ REAVALIAR</span>';
     html += '<span style="font-size:18px;color:var(--cinza)">›</span></div></div>';
   });
   document.getElementById('lista-alunos').innerHTML = html || '<div style="color:var(--cinza);text-align:center;padding:30px">Nenhum aluno encontrado</div>';

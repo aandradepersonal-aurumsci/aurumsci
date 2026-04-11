@@ -120,7 +120,9 @@ def resumo_aluno(aluno_id: int, personal: Personal = Depends(get_personal_atual)
         "avaliacao": {"peso": aval.peso if aval else None, "gordura": aval.percentual_gordura if aval else None, "data": str(aval.data_avaliacao) if aval else None},
         "plano": {"nome": plano.nome if plano else None, "dias_semana": plano.dias_semana if plano else None},
         "frequencia_mes": presencas,
-        "postural": {"cabeca": aval.postura_cabeca if aval else None, "ombros": aval.postura_ombros if aval else None, "coluna": aval.postura_coluna if aval else None} if aval else None
+        "postural": {"cabeca": aval.postura_cabeca if aval else None, "ombros": aval.postura_ombros if aval else None, "coluna": aval.postura_coluna if aval else None} if aval else None,
+        "precisa_reavaliar": (not aval) or ((date.today() - aval.data_avaliacao).days >= 56),
+        "dias_desde_avaliacao": (date.today() - aval.data_avaliacao).days if aval else None
     }
 
 

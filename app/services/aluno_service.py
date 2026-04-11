@@ -36,10 +36,20 @@ def listar_alunos(personal_id, db, pagina=1, por_pagina=20, busca=None, apenas_a
         query = query.filter(Aluno.objetivo == objetivo)
     total = query.count()
     alunos = query.order_by(Aluno.nome).offset((pagina - 1) * por_pagina).limit(por_pagina).all()
+    from app.routers.avaliacao import AvaliacaoFisica
+    from datetime import date
     alunos_lista = []
     for a in alunos:
         d = AlunoListagem.model_validate(a)
         d.idade = calcular_idade(a.data_nascimento)
+        ultima_aval = db.query(AvaliacaoFisica).filter(
+            AvaliacaoFisica.aluno_id == a.id
+        ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+        if not ultima_aval:
+            d.precisa_reavaliar = True
+        else:
+            dias = (date.today() - ultima_aval.data_avaliacao).days
+            d.precisa_reavaliar = dias >= 56
         alunos_lista.append(d)
     return PaginacaoAlunos(total=total, pagina=pagina, por_pagina=por_pagina, alunos=alunos_lista)
 

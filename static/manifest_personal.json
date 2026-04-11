@@ -9,7 +9,7 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/static/aurumsci_logo2-2.png",
+      "src": "/static/aurumsci_logo_personal.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

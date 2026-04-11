@@ -449,12 +449,11 @@ async def salvar_white_label(
 ):
     import os, shutil
     if logo:
+        import base64
+        conteudo = logo.file.read()
         ext = logo.filename.split('.')[-1].lower()
-        path = f"static/uploads/wl_{personal.id}.{ext}"
-        os.makedirs("static/uploads", exist_ok=True)
-        with open(path, "wb") as f:
-            shutil.copyfileobj(logo.file, f)
-        personal.logo_url = f"/{path}"
+        b64 = base64.b64encode(conteudo).decode('utf-8')
+        personal.logo_url = f"data:image/{ext};base64,{b64}"
     if nome:
         personal.nome_empresa = nome
     if slogan:

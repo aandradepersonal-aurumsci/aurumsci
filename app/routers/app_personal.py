@@ -449,12 +449,15 @@ async def salvar_white_label(
 ):
     import os, shutil
     if logo:
-        import base64
+        import base64, io
+        from PIL import Image
         conteudo = logo.file.read()
-        # sync read ok for small files
-        ext = logo.filename.split('.')[-1].lower()
-        b64 = base64.b64encode(conteudo).decode('utf-8')
-        personal.logo_url = f"data:image/{ext};base64,{b64}"
+        img = Image.open(io.BytesIO(conteudo)).convert('RGBA')
+        img.thumbnail((200, 200))
+        buf = io.BytesIO()
+        img.save(buf, format='PNG', optimize=True)
+        b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+        personal.logo_url = f"data:image/png;base64,{b64}"
     if nome:
         personal.nome_empresa = nome
     if slogan:

@@ -685,6 +685,7 @@ function carregarApp(){
 
   atualizarTextos();
   carregarDashboard();
+  carregarLogoPersonal();
   carregarAlunos();
   carregarFinanceiro();
 }
@@ -1119,6 +1120,7 @@ function criarAluno(){
         fecharModal('modal-novo-aluno');
         carregarAlunos();
         carregarDashboard();
+  carregarLogoPersonal();
       });
     } else {
       if(d.detail && d.detail.includes('Limite')){
@@ -2503,6 +2505,18 @@ function carregarConfig(){
 </div>
 
 <script>
+
+function carregarLogoPersonal(){
+  fetch('/app-personal/dashboard', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.logo_url){
+      var tl = document.getElementById('topbar-logo');
+      if(tl) tl.innerHTML = '<img src="'+d.logo_url+'" style="height:32px;max-width:140px;object-fit:contain">';
+    }
+  }).catch(function(){});
+}
+
 function abrirConfigWL(){
   document.getElementById('modal-wl').style.display='flex';
 }
@@ -2520,6 +2534,10 @@ function salvarWL(){
   .then(function(r){ return r.json(); })
   .then(function(d){
     document.getElementById('wl-ok').style.display='block';
+    if(d.logo_url){
+      var tl = document.getElementById('topbar-logo');
+      tl.innerHTML = '<img src="'+d.logo_url+'" style="height:32px;max-width:140px;object-fit:contain" onerror="this.style.display=\'none\'">';
+    }
     setTimeout(fecharModalWL, 1500);
   }).catch(function(){ fecharModalWL(); });
 }

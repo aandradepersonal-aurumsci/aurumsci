@@ -2539,7 +2539,7 @@ function salvarWL(){
       tl.innerHTML = '<img src="'+d.logo_url+'" style="height:32px;max-width:140px;object-fit:contain" onerror="this.style.display=\'none\'">';
     }
     setTimeout(fecharModalWL, 1500);
-  }).catch(function(){ fecharModalWL(); });
+  }).catch(function(e){ alert('Erro: ' + e); fecharModalWL(); });
 }
 </script>
 

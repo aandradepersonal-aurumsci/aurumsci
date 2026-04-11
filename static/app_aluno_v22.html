@@ -896,6 +896,28 @@ function toggleTheme(){
 }
 
 // ── LOGIN ─────────────────────────────────────────────
+
+function carregarWhiteLabel(){
+  fetch('/app-aluno/white-label', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.logo_url){
+      var imgs = document.querySelectorAll('.wl-logo');
+      imgs.forEach(function(img){ img.src = d.logo_url; img.style.display='block'; });
+      var hexs = document.querySelectorAll('.wl-hex');
+      hexs.forEach(function(h){ h.style.display='none'; });
+    }
+    if(d.nome_empresa){
+      var nomes = document.querySelectorAll('.wl-nome');
+      nomes.forEach(function(n){ n.textContent = d.nome_empresa; });
+    }
+    if(d.slogan){
+      var slogans = document.querySelectorAll('.wl-slogan');
+      slogans.forEach(function(s){ s.textContent = d.slogan; });
+    }
+  }).catch(function(){});
+}
+
 function fazerLogin(){
   var email = document.getElementById('login-email').value.trim();
   var senha = document.getElementById('login-senha').value;

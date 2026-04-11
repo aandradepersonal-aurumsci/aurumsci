@@ -725,3 +725,17 @@ async def chat_aluno(
     )
 
     return {"resposta": resposta}
+
+@router.get("/white-label")
+def white_label(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    from app.models import Personal
+    if not aluno.personal_id:
+        return {"logo_url": None, "nome_empresa": None, "slogan": None}
+    personal = db.query(Personal).filter(Personal.id == aluno.personal_id).first()
+    if not personal:
+        return {"logo_url": None, "nome_empresa": None, "slogan": None}
+    return {
+        "logo_url": personal.logo_url,
+        "nome_empresa": personal.nome_empresa,
+        "slogan": personal.slogan
+    }

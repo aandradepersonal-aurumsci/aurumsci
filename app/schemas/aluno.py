@@ -32,6 +32,7 @@ class AlunoResposta(AlunoBase):
     ativo: bool
     foto_url: Optional[str] = None
     idade: Optional[int] = None
+    precisa_reavaliar: Optional[bool] = None
     model_config = {"from_attributes": True}
 
     @classmethod
@@ -54,6 +55,7 @@ class AlunoListagem(BaseModel):
     ativo: bool
     foto_url: Optional[str] = None
     idade: Optional[int] = None
+    precisa_reavaliar: Optional[bool] = None
     model_config = {"from_attributes": True}
 
 class PaginacaoAlunos(BaseModel):

@@ -198,3 +198,21 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                 personal.assinatura_status = "ativa"
                 db.commit()
     return {"status": "ok"}
+
+@router.post("/contato")
+async def contato(request: Request):
+    from app.services.email_service import enviar_email
+    try:
+        dados = await request.json()
+        email = dados.get("email", "")
+        mensagem = dados.get("mensagem", "Sem mensagem")
+        if not email:
+            raise HTTPException(status_code=400, detail="Email obrigatorio")
+        enviar_email(
+            para="a.andrade_personal@hotmail.com",
+            assunto=f"AurumSci — Contato de {email}",
+            html=f"<p><strong>Email:</strong> {email}</p><p><strong>Mensagem:</strong> {mensagem}</p>"
+        )
+        return {"status": "ok"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

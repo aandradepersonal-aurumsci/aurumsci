@@ -409,8 +409,17 @@
 function capturarLead(){
   var email = document.getElementById('email-lead').value.trim();
   if(!email || !email.includes('@')){ return; }
-  document.getElementById('lead-msg').style.display = 'block';
-  document.getElementById('email-lead').value = '';
+  fetch('/pagamento/contato', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({email: email, mensagem: 'Contato via landing page'})
+  }).then(function(r){ return r.json(); }).then(function(d){
+    document.getElementById('lead-msg').style.display = 'block';
+    document.getElementById('email-lead').value = '';
+  }).catch(function(){ 
+    document.getElementById('lead-msg').style.display = 'block';
+    document.getElementById('email-lead').value = '';
+  });
 }
 </script>
 

@@ -1050,6 +1050,7 @@ function abrirModalNovoAluno(){
   document.getElementById('modal-novo-aluno').classList.add('show');
 }
 
+function mostrarModal(id){ var m=document.getElementById(id); if(m){ m.style.display="flex"; } }
 function fecharModal(id){
   document.getElementById(id).classList.remove('show');
 }
@@ -1079,7 +1080,11 @@ function criarAluno(){
         carregarDashboard();
       });
     } else {
-      mostrarToast(d.detail || 'Erro ao criar aluno');
+      if(d.detail && d.detail.includes('Limite')){
+        mostrarModal('modal-upgrade');
+      } else {
+        mostrarToast(d.detail || 'Erro ao criar aluno');
+      }
     }
   }).catch(function(){ mostrarToast('Erro de conexão'); });
 }
@@ -2361,5 +2366,21 @@ function mostrarRoteiro(){
 </div>
 
 <div style="text-align:center;padding:12px;font-size:10px;color:var(--cinza);border-top:1px solid var(--borda);margin-top:20px">Powered by <a href="https://aurumsc.com.br" style="color:var(--ouro2);text-decoration:none">AurumSci</a></div>
+
+<div id="modal-upgrade" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#12121A;border:1px solid #F0C040;border-radius:20px;padding:32px;max-width:340px;width:90%;text-align:center">
+    <div style="font-size:40px;margin-bottom:12px">🏆</div>
+    <div style="font-family:'Bebas Neue';font-size:24px;color:#F0C040;letter-spacing:2px;margin-bottom:8px">LIMITE ATINGIDO!</div>
+    <div style="font-size:13px;color:#aaa;line-height:1.6;margin-bottom:20px">Você atingiu o limite de alunos do seu plano atual.<br>Faça upgrade e continue crescendo!</div>
+    <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:16px;margin-bottom:20px;font-size:12px;color:#ccc;line-height:1.8">
+      🥉 Bronze → 10 alunos · R$49,90<br>
+      🥈 Prata → 20 alunos · R$89,90<br>
+      🥇 Ouro → 50 alunos · R$149,90<br>
+      💎 Diamante → Ilimitado · R$249,90
+    </div>
+    <a href="https://aurumsc.com.br" target="_blank" style="display:block;background:linear-gradient(135deg,#C9A84C,#F0C040);color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;padding:14px;border-radius:12px;text-decoration:none;margin-bottom:12px">FAZER UPGRADE →</a>
+    <button onclick="fecharModal('modal-upgrade')" style="background:none;border:none;color:#666;font-size:13px;cursor:pointer">Fechar</button>
+  </div>
+</div>
 </body>
 </html>

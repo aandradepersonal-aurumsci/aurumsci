@@ -1,7 +1,7 @@
 """
 Router — App Personal (expandido)
 """
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
 from pydantic import BaseModel
 from typing import Optional, List
 from sqlalchemy.orm import Session
@@ -441,8 +441,8 @@ async def postural_aluno(
 
 @router.post("/white-label")
 async def salvar_white_label(
-    nome: str = None,
-    slogan: str = None,
+    nome: str = Form(None),
+    slogan: str = Form(None),
     logo: UploadFile = File(None),
     personal: Personal = Depends(get_personal_atual),
     db: Session = Depends(get_db)
@@ -451,6 +451,7 @@ async def salvar_white_label(
     if logo:
         import base64
         conteudo = logo.file.read()
+        # sync read ok for small files
         ext = logo.filename.split('.')[-1].lower()
         b64 = base64.b64encode(conteudo).decode('utf-8')
         personal.logo_url = f"data:image/{ext};base64,{b64}"

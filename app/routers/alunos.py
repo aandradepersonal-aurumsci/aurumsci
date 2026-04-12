@@ -29,7 +29,7 @@ def criar(dados: AlunoCriar, personal: Personal = Depends(get_personal_atual), d
     limite = LIMITES_PLANO.get(personal.plano or 'bronze', 10)
     if total >= limite:
         raise HTTPException(status_code=403, detail=f'Limite de {limite} alunos atingido para o plano {(personal.plano or "bronze").upper()}. Faça upgrade em aurumsc.com.br')
-        aluno = criar_aluno(personal_id=personal.id, dados=dados, db=db)
+    aluno = criar_aluno(personal_id=personal.id, dados=dados, db=db)
     return AlunoResposta.from_orm_com_idade(aluno)
 
 @router.get("/{aluno_id}", response_model=AlunoResposta)

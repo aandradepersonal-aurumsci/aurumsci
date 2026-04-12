@@ -177,7 +177,7 @@ def landing_pro():
 
 @app.get("/personal", response_class=HTMLResponse, include_in_schema=False)
 def app_personal():
-    with open("static/app_personal_v1.html", "r", encoding="utf-8") as f:
+    with open("static/app_personal.html", "r", encoding="utf-8") as f:
         return f.read()
 
 @app.get("/postural", response_class=HTMLResponse, include_in_schema=False)

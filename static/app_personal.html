@@ -836,6 +836,8 @@ function abrirPerfilAluno(id){
     var av = d.avaliacao || {};
     var pl = d.plano || {};
     var po = d.postural || {};
+    // Salva dados do aluno para TMB e outros cálculos
+    window._avalDados = {idade: a.idade||30, sexo: (a.sexo==='feminino'?'F':'M'), altura: av.altura||170};
     var html = '<div class="modal-titulo">' + (a.nome||'Aluno') + '</div>';
     html += '<div class="modal-sub">' + (a.objetivo||'—') + ' · ' + (a.nivel||'—') + '</div>';
 
@@ -1463,20 +1465,41 @@ function resultBox(titulo, cor, linhas, citacao){
 function calcBio(){
   var peso = parseFloat(document.getElementById('bio-peso').value)||0;
   var gord = parseFloat(document.getElementById('bio-gord').value)||0;
-  var mmag = parseFloat(document.getElementById('bio-mmag').value)||(peso*(1-gord/100));
   var agua = parseFloat(document.getElementById('bio-agua').value)||0;
-  var tmb  = parseFloat(document.getElementById('bio-tmb').value)||0;
+  var osso = parseFloat(document.getElementById('bio-osso').value)||0;
   if(!peso||!gord){ mostrarToast('Informe peso e % gordura!'); return; }
-  var gordKg = peso*gord/100;
-  var imc = peso / ((1.75*1.75)); // placeholder
+  var gordKg = parseFloat((peso*gord/100).toFixed(1));
+  var mmag = parseFloat((peso - gordKg).toFixed(1));
+  // TMB Harris-Benedict
+  var avalDados = window._avalDados || {};
+  var idade = avalDados.idade || 30;
+  var sexo = avalDados.sexo || 'M';
+  var altura = avalDados.altura || 170;
+  var tmb = sexo==='F'
+    ? Math.round(447.593 + (9.247*peso) + (3.098*altura) - (4.330*idade))
+    : Math.round(88.362 + (13.397*peso) + (4.799*altura) - (5.677*idade));
   var corGord = gord<10?'var(--azul)':gord<20?'var(--verde)':gord<25?'var(--ouro)':gord<30?'#FF6B6B':'var(--vermelho)';
+  window._bioResultado = {peso:peso, gordura:gord, gordura_kg:gordKg, massa_magra:mmag, agua_corporal:agua, massa_ossea:osso, tmb:tmb};
   document.getElementById('bio-resultado').innerHTML = resultBox('BIOIMPEDÂNCIA — RESULTADO','var(--azul)',[
     {label:'% Gordura',val:gord+'%',cor:corGord},
-    {label:'Gordura (kg)',val:gordKg.toFixed(1)+' kg'},
-    {label:'Massa Magra',val:mmag.toFixed(1)+' kg',cor:'var(--verde)'},
+    {label:'Gordura (kg)',val:gordKg+' kg'},
+    {label:'Massa Magra',val:mmag+' kg',cor:'var(--verde)'},
     {label:'Água Corporal',val:agua+'%'},
-    {label:'TMB',val:tmb+' kcal'},
-  ],'ACSM 2022 · Kushner et al. (1992)');
+    {label:'Massa Óssea',val:osso+' kg'},
+    {label:'TMB',val:tmb+' kcal',cor:'var(--ouro)'},
+  ],'ACSM 2022 · Kushner et al. (1992) · Harris & Benedict (1919)') +
+  '<button onclick="salvarComposicao()" style="width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,var(--verde),#00B37E);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">💾 SALVAR COMPOSIÇÃO CORPORAL</button>';
+}
+
+function salvarComposicao(){
+  var d = window._bioResultado;
+  if(!d){ mostrarToast('Calcule primeiro!'); return; }
+  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({peso:d.peso, percentual_gordura:d.gordura, massa_magra_kg:d.massa_magra, agua_corporal:d.agua_corporal, massa_ossea:d.massa_ossea, tmb:d.tmb})
+  }).then(function(r){ return r.json(); }).then(function(){
+    mostrarToast('✅ Composição corporal salva!');
+  }).catch(function(){ mostrarToast('Erro ao salvar!'); });
 }
 
 function calc3Dobras(){

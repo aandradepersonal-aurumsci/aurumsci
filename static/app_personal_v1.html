@@ -2416,6 +2416,45 @@ function carregarConfig(){
   });
 }
 
+
+
+
+function carregarLogoPersonal(){
+  fetch('/app-personal/dashboard', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.logo_url){
+      var tl = document.getElementById('topbar-logo');
+      if(tl) tl.innerHTML = '<img src="'+d.logo_url+'" style="height:38px;max-width:160px;object-fit:contain">';
+    }
+  }).catch(function(){});
+}
+
+function abrirConfigWL(){
+  document.getElementById('modal-wl').style.display='flex';
+}
+function fecharModalWL(){
+  document.getElementById('modal-wl').style.display='none';
+}
+function salvarWL(){
+  var nome = document.getElementById('wl-nome').value.trim();
+  var logo = document.getElementById('wl-logo').files[0];
+  if(!nome && !logo){ fecharModalWL(); return; }
+  var fd = new FormData();
+  if(nome) fd.append('nome', nome);
+  if(logo) fd.append('logo', logo);
+  fetch('/app-personal/white-label', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    document.getElementById('wl-ok').style.display='block';
+    if(d.logo_url){
+      var tl = document.getElementById('topbar-logo');
+      tl.innerHTML = '<img src="'+d.logo_url+'" style="height:38px;max-width:160px;object-fit:contain" onerror="this.style.display=\'none\'">';
+    }
+    setTimeout(fecharModalWL, 1500);
+  }).catch(function(e){ alert('Erro: ' + e); fecharModalWL(); });
+}
+
 </script>
 
 <!-- MODAL PERFIL ALUNO -->
@@ -2505,44 +2544,7 @@ function carregarConfig(){
   </div>
 </div>
 
-<script>
 
-function carregarLogoPersonal(){
-  fetch('/app-personal/dashboard', {headers:{'Authorization':'Bearer '+token}})
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    if(d.logo_url){
-      var tl = document.getElementById('topbar-logo');
-      if(tl) tl.innerHTML = '<img src="'+d.logo_url+'" style="height:38px;max-width:160px;object-fit:contain">';
-    }
-  }).catch(function(){});
-}
-
-function abrirConfigWL(){
-  document.getElementById('modal-wl').style.display='flex';
-}
-function fecharModalWL(){
-  document.getElementById('modal-wl').style.display='none';
-}
-function salvarWL(){
-  var nome = document.getElementById('wl-nome').value.trim();
-  var logo = document.getElementById('wl-logo').files[0];
-  if(!nome && !logo){ fecharModalWL(); return; }
-  var fd = new FormData();
-  if(nome) fd.append('nome', nome);
-  if(logo) fd.append('logo', logo);
-  fetch('/app-personal/white-label', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    document.getElementById('wl-ok').style.display='block';
-    if(d.logo_url){
-      var tl = document.getElementById('topbar-logo');
-      tl.innerHTML = '<img src="'+d.logo_url+'" style="height:38px;max-width:160px;object-fit:contain" onerror="this.style.display=\'none\'">';
-    }
-    setTimeout(fecharModalWL, 1500);
-  }).catch(function(e){ alert('Erro: ' + e); fecharModalWL(); });
-}
-</script>
 
 </body>
 </html>

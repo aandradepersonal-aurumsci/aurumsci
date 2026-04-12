@@ -1495,7 +1495,10 @@ function salvarComposicao(){
   if(!d){ mostrarToast('Calcule primeiro!'); return; }
   fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body: JSON.stringify({peso:d.peso, percentual_gordura:d.gordura, massa_magra_kg:d.massa_magra, agua_corporal:d.agua_corporal, massa_ossea:d.massa_ossea, tmb:d.tmb})
+    body: JSON.stringify({
+      secao: 'composicao',
+      composicao: {peso:d.peso, gordura_pct:d.gordura, massa_magra:d.massa_magra, agua_pct:d.agua_corporal, massa_ossea:d.massa_ossea, tmb:d.tmb}
+    })
   }).then(function(r){ return r.json(); }).then(function(){
     mostrarToast('✅ Composição corporal salva!');
   }).catch(function(){ mostrarToast('Erro ao salvar!'); });

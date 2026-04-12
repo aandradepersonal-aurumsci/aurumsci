@@ -157,7 +157,7 @@ def cadastro_page():
 
 @app.get("/aluno", response_class=HTMLResponse, include_in_schema=False)
 def app_aluno():
-    with open("static/app_aluno_v22.html", "r", encoding="utf-8") as f:
+    with open("static/app_aluno_v23.html", "r", encoding="utf-8") as f:
         return f.read()
 
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)

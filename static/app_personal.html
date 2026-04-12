@@ -1667,8 +1667,8 @@ function renderVO2Personal(){
     '<div style="font-size:11px;color:var(--cinza);margin-bottom:8px">Faça logo após o teste. Cole et al. (1999) NEJM.</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
     field('p-hrr-pico','FC PICO','bpm','165') + field('p-hrr-1min','FC APÓS 1 MIN','bpm','140') +
-    field('p-hrr-pa-rep-s','PA REPOUSO SIST.','mmHg','120') + field('p-hrr-pa-rep-d','PA REPOUSO DIAST.','mmHg','80') +
-    field('p-hrr-pa-pos-s','PA PÓS SIST.','mmHg','160') + field('p-hrr-pa-pos-d','PA PÓS DIAST.','mmHg','90') + '</div>' +
+    field('p-hrr-pa-rep-s','PA REPOUSO SIST. (valor maior)','mmHg','120') + field('p-hrr-pa-rep-d','PA REPOUSO DIAST. (valor menor)','mmHg','80') +
+    field('p-hrr-pa-pos-s','PA PÓS SIST. (valor maior)','mmHg','160') + field('p-hrr-pa-pos-d','PA PÓS DIAST. (valor menor)','mmHg','90') + '</div>' +
     '<button onclick="calcHRRP()" style="width:100%;margin-top:8px;padding:10px;background:linear-gradient(135deg,#FF4B4B,#FF8C00);border:none;border-radius:10px;color:#fff;font-family:Bebas Neue;font-size:15px;cursor:pointer">CALCULAR HRR ❤️</button>' +
     '<div id="p-hrr-res" style="margin-top:8px"></div></div>' +
     '</div>';
@@ -1780,7 +1780,7 @@ function renderForcaPersonal(){
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
     field('p-flexao','FLEXÃO (1 MIN)','reps','20') + field('p-barra','BARRA FIXA','reps','5') +
     field('p-abdom','ABDOMINAL (1 MIN)','reps','25') +
-    field('p-pren-dom','PREENSÃO DOM.','kgf','35') + field('p-pren-ndom','PREENSÃO N-DOM.','kgf','32') +
+    field('p-pren-dom','PREENSÃO MÃO DOMINANTE (que escreve)','kgf','35') + field('p-pren-ndom','PREENSÃO MÃO NÃO DOMINANTE','kgf','32') +
     '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">' +
     '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">SEXO</div><select id="p-forca-sexo" style="width:100%;padding:8px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:13px"><option value="M">Masculino</option><option value="F">Feminino</option></select></div>' +

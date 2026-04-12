@@ -226,7 +226,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <button class="lang-mini" onclick="setLangApp('es',this)">ES</button>
       </div>
       <div class="btn-icon" onclick="toggleTheme()" id="theme-btn">🌙</div>
-      <div class="avatar" id="avatar-inicial" onclick="toggleMenuPerfil(event)" style="cursor:pointer;position:relative">A</div>
+      <div class="avatar" id="avatar-inicial" onclick="toggleMenuPerfil()" style="cursor:pointer;position:relative">A</div>
     </div>
   </div>
 
@@ -247,8 +247,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         📁 Escolher imagem
         <input type="file" accept="image/*" style="display:none" onchange="uploadLogoWL(this)">
       </label>
-      <button onclick="removerLogoWL()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--borda);color:var(--cinza);border-radius:12px;cursor:pointer;margin-bottom:10px">Remover logo personalizado</button>
-      <button onclick="salvarLogoWL()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;cursor:pointer;margin-bottom:10px">✅ SALVAR E APLICAR</button>
+      <button onclick="removerLogoWL()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--borda);color:var(--cinza);border-radius:12px;cursor:pointer;margin-bottom:16px">Remover logo personalizado</button>
       <button onclick="document.getElementById('modal-whitelabel').style.display='none'" style="width:100%;padding:12px;background:var(--borda);color:var(--texto);border:none;border-radius:12px;cursor:pointer;font-weight:600">Fechar</button>
     </div>
   </div>
@@ -692,17 +691,16 @@ function fazerLogout(){
   document.getElementById('login-senha').value = '';
 }
 
-function toggleMenuPerfil(e){
-  if(e) e.stopPropagation();
+function toggleMenuPerfil(){
   var m = document.getElementById('menu-perfil');
-  m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+  m.style.display = (m.style.display === 'none' ? 'block' : 'none');
 }
 
 // Fecha menu ao clicar fora
 document.addEventListener('click', function(e){
   var m = document.getElementById('menu-perfil');
   var av = document.getElementById('avatar-inicial');
-  if(m && av && !av.contains(e.target) && !m.contains(e.target)){
+  if(m && av && !m.contains(e.target) && !av.contains(e.target)){
     m.style.display = 'none';
   }
 });
@@ -726,30 +724,13 @@ function uploadLogoWL(input){
   if(!file) return;
   var reader = new FileReader();
   reader.onload = function(e){
-    var img = new Image();
-    img.onload = function(){
-      var canvas = document.createElement('canvas');
-      var max = 300;
-      var w = img.width, h = img.height;
-      if(w > h){ if(w > max){ h = Math.round(h*max/w); w = max; } }
-      else { if(h > max){ w = Math.round(w*max/h); h = max; } }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      var data = canvas.toDataURL('image/png', 0.85);
-      localStorage.setItem('aurum_wl_logo', data);
-      document.getElementById('preview-logo-wl').innerHTML = '<img src="' + data + '" style="max-height:50px;max-width:200px;border-radius:8px">';
-    };
-    img.src = e.target.result;
+    var data = e.target.result;
+    localStorage.setItem('aurum_wl_logo', data);
+    aplicarLogoSalvo();
+    document.getElementById('preview-logo-wl').innerHTML = '<img src="' + data + '" style="max-height:50px;max-width:200px;border-radius:8px">';
+    mostrarToast('Logo personalizado aplicado! ✅');
   };
   reader.readAsDataURL(file);
-}
-
-function salvarLogoWL(){
-  var logoSalvo = localStorage.getItem('aurum_wl_logo');
-  if(!logoSalvo){ mostrarToast('Escolha uma imagem primeiro'); return; }
-  aplicarLogoSalvo();
-  document.getElementById('modal-whitelabel').style.display = 'none';
-  mostrarToast('Logo aplicado com sucesso! ✅');
 }
 
 function removerLogoWL(){
@@ -836,8 +817,6 @@ function abrirPerfilAluno(id){
     var av = d.avaliacao || {};
     var pl = d.plano || {};
     var po = d.postural || {};
-    // Salva dados do aluno para TMB e outros cálculos
-    window._avalDados = {idade: a.idade||30, sexo: (a.sexo==='feminino'?'F':'M'), altura: av.altura||170};
     var html = '<div class="modal-titulo">' + (a.nome||'Aluno') + '</div>';
     html += '<div class="modal-sub">' + (a.objetivo||'—') + ' · ' + (a.nivel||'—') + '</div>';
 
@@ -926,7 +905,7 @@ function analisarPosturalP(){
   if(fotosPosturalP.frente) fd.append('foto_frente', fotosPosturalP.frente);
   if(fotosPosturalP.lado) fd.append('foto_lado', fotosPosturalP.lado);
   if(fotosPosturalP.costas) fd.append('foto_costas', fotosPosturalP.costas);
-  fetch('/app-personal/aluno/' + alunoSelecionadoId + '/postural', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
+  fetch('/app-personal/postural/' + alunoSelecionadoId, {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
   .then(function(r){ return r.json(); })
   .then(function(d){
     loading.style.display = 'none'; btn.disabled = false; btn.style.opacity = '1';
@@ -1465,41 +1444,20 @@ function resultBox(titulo, cor, linhas, citacao){
 function calcBio(){
   var peso = parseFloat(document.getElementById('bio-peso').value)||0;
   var gord = parseFloat(document.getElementById('bio-gord').value)||0;
+  var mmag = parseFloat(document.getElementById('bio-mmag').value)||(peso*(1-gord/100));
   var agua = parseFloat(document.getElementById('bio-agua').value)||0;
-  var osso = parseFloat(document.getElementById('bio-osso').value)||0;
+  var tmb  = parseFloat(document.getElementById('bio-tmb').value)||0;
   if(!peso||!gord){ mostrarToast('Informe peso e % gordura!'); return; }
-  var gordKg = parseFloat((peso*gord/100).toFixed(1));
-  var mmag = parseFloat((peso - gordKg).toFixed(1));
-  // TMB Harris-Benedict
-  var avalDados = window._avalDados || {};
-  var idade = avalDados.idade || 30;
-  var sexo = avalDados.sexo || 'M';
-  var altura = avalDados.altura || 170;
-  var tmb = sexo==='F'
-    ? Math.round(447.593 + (9.247*peso) + (3.098*altura) - (4.330*idade))
-    : Math.round(88.362 + (13.397*peso) + (4.799*altura) - (5.677*idade));
+  var gordKg = peso*gord/100;
+  var imc = peso / ((1.75*1.75)); // placeholder
   var corGord = gord<10?'var(--azul)':gord<20?'var(--verde)':gord<25?'var(--ouro)':gord<30?'#FF6B6B':'var(--vermelho)';
-  window._bioResultado = {peso:peso, gordura:gord, gordura_kg:gordKg, massa_magra:mmag, agua_corporal:agua, massa_ossea:osso, tmb:tmb};
   document.getElementById('bio-resultado').innerHTML = resultBox('BIOIMPEDÂNCIA — RESULTADO','var(--azul)',[
     {label:'% Gordura',val:gord+'%',cor:corGord},
-    {label:'Gordura (kg)',val:gordKg+' kg'},
-    {label:'Massa Magra',val:mmag+' kg',cor:'var(--verde)'},
+    {label:'Gordura (kg)',val:gordKg.toFixed(1)+' kg'},
+    {label:'Massa Magra',val:mmag.toFixed(1)+' kg',cor:'var(--verde)'},
     {label:'Água Corporal',val:agua+'%'},
-    {label:'Massa Óssea',val:osso+' kg'},
-    {label:'TMB',val:tmb+' kcal',cor:'var(--ouro)'},
-  ],'ACSM 2022 · Kushner et al. (1992) · Harris & Benedict (1919)') +
-  '<button onclick="salvarComposicao()" style="width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,var(--verde),#00B37E);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">💾 SALVAR COMPOSIÇÃO CORPORAL</button>';
-}
-
-function salvarComposicao(){
-  var d = window._bioResultado;
-  if(!d){ mostrarToast('Calcule primeiro!'); return; }
-  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
-    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body: JSON.stringify({peso:d.peso, percentual_gordura:d.gordura, massa_magra_kg:d.massa_magra, agua_corporal:d.agua_corporal, massa_ossea:d.massa_ossea, tmb:d.tmb})
-  }).then(function(r){ return r.json(); }).then(function(){
-    mostrarToast('✅ Composição corporal salva!');
-  }).catch(function(){ mostrarToast('Erro ao salvar!'); });
+    {label:'TMB',val:tmb+' kcal'},
+  ],'ACSM 2022 · Kushner et al. (1992)');
 }
 
 function calc3Dobras(){

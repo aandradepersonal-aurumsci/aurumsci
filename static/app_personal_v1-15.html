@@ -2098,75 +2098,20 @@ function subAba(id, aba){
   } else if(aba === 'period'){
     el.innerHTML = renderPeriodizacaoPersonal(id);
   } else if(aba === 'result'){
-    fetch('/app-personal/aluno/' + id + '/resumo-completo', {headers:{'Authorization':'Bearer '+token}})
+    fetch('/app-personal/aluno/' + id + '/resumo', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.json(); })
     .then(function(d){
-      var av = d.avaliacao || {};
-      var tf = d.testes || {};
-      var html = '';
-      // Header
-      html += '<div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2);margin-bottom:12px;letter-spacing:1px">📈 DASHBOARD DE RESULTADOS</div>';
-      // Frequencia
-      html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;margin-bottom:10px">';
-      html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin-bottom:8px">🏃 FREQUÊNCIA</div>';
-      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
-      html += card(d.frequencia_mes||0, 'TREINOS/MÊS', 'var(--verde)');
-      html += card(d.frequencia_total||0, 'TOTAL DE TREINOS', 'var(--azul)');
-      html += '</div></div>';
-      // Composição corporal
-      if(av.peso||av.gordura){
-        html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;margin-bottom:10px">';
-        html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin-bottom:8px">⚖️ COMPOSIÇÃO CORPORAL</div>';
-        html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">';
-        html += card(av.peso||'—', 'PESO kg', 'var(--ouro2)');
-        html += card(av.gordura||'—', '% GORDURA', av.gordura>25?'var(--vermelho)':av.gordura>18?'var(--ouro)':'var(--verde)');
-        html += card(av.massa_magra||'—', 'MASSA MAGRA kg', 'var(--verde)');
-        html += '</div>';
-        if(av.tmb) html += '<div style="margin-top:8px;text-align:center;font-size:12px;color:var(--cinza)">TMB: <span style="color:var(--ouro2);font-weight:700">' + av.tmb + ' kcal</span></div>';
-        if(av.data) html += '<div style="margin-top:4px;text-align:center;font-size:10px;color:var(--cinza)">Avaliado em: ' + av.data + '</div>';
-        html += '</div>';
-      }
-      // VO2 e HRR
-      if(av.vo2max||av.hrr){
-        html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;margin-bottom:10px">';
-        html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin-bottom:8px">🫁 CAPACIDADE CARDIORRESPIRATÓRIA</div>';
-        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
-        if(av.vo2max) html += card(av.vo2max, 'VO2 MÁX ml/kg/min', av.vo2max>=50?'var(--azul)':av.vo2max>=40?'var(--verde)':av.vo2max>=30?'var(--ouro)':'var(--vermelho)');
-        if(av.hrr) html += card(av.hrr, 'HRR (queda FC) bpm', av.hrr>=20?'var(--verde)':av.hrr>=12?'var(--ouro)':'var(--vermelho)');
-        html += '</div></div>';
-      }
-      // Testes físicos
-      if(tf.flexao||tf.barra||tf.abdominal||tf.preensao_dom||tf.mmii_reps){
-        html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;margin-bottom:10px">';
-        html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin-bottom:8px">💪 TESTES FÍSICOS</div>';
-        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
-        if(tf.flexao) html += card(tf.flexao+' reps', 'FLEXÃO', 'var(--azul)');
-        if(tf.barra) html += card(tf.barra+' reps', 'BARRA FIXA', 'var(--azul)');
-        if(tf.abdominal) html += card(tf.abdominal+' reps', 'ABDOMINAL', 'var(--azul)');
-        if(tf.preensao_dom) html += card(tf.preensao_dom+' kgf', 'PREENSÃO DOM.', 'var(--verde)');
-        if(tf.mmii_reps) html += card(tf.mmii_reps+' reps/30s', 'POTÊNCIA MMII', 'var(--verde)');
-        html += '</div></div>';
-      }
-      // Postural
-      if(d.postural&&d.postural.cabeca){
-        html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;margin-bottom:10px">';
-        html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin-bottom:8px">🧍 ANÁLISE POSTURAL</div>';
-        html += '<div style="font-size:12px;color:var(--cinza);line-height:1.6">' + (d.postural.observacoes||d.postural.cabeca||'') + '</div>';
-        html += '</div>';
-      }
-      if(!av.peso && !tf.flexao){
-        html = '<div style="text-align:center;padding:30px;color:var(--cinza)"><div style="font-size:36px;margin-bottom:8px">📋</div><div>Nenhuma avaliação registrada ainda.</div><div style="font-size:12px;margin-top:4px">Vá para AVAL. e preencha os dados do aluno.</div></div>';
-      }
+      var html = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">';
+      html += '<div style="background:var(--bg);border-radius:10px;border:1px solid var(--borda);padding:12px;text-align:center"><div style="font-family:Bebas Neue;font-size:24px;color:var(--verde)">' + (d.frequencia_mes||0) + '</div><div style="font-size:10px;color:var(--cinza)">TREINOS/MÊS</div></div>';
+      html += '<div style="background:var(--bg);border-radius:10px;border:1px solid var(--borda);padding:12px;text-align:center"><div style="font-family:Bebas Neue;font-size:24px;color:var(--ouro2)">' + ((d.avaliacao&&d.avaliacao.peso)||'—') + '</div><div style="font-size:10px;color:var(--cinza)">PESO kg</div></div>';
+      html += '<div style="background:var(--bg);border-radius:10px;border:1px solid var(--borda);padding:12px;text-align:center"><div style="font-family:Bebas Neue;font-size:24px;color:var(--azul)">' + ((d.avaliacao&&d.avaliacao.gordura)||'—') + '</div><div style="font-size:10px;color:var(--cinza)">% GORD.</div></div>';
+      html += '</div>';
       el.innerHTML = html;
     });
   }
 }
 
 // ── MINI LISTA HELPER ─────────────────────────────────────────
-function card(val, label, cor){
-  return '<div style="background:var(--bg2);border-radius:10px;padding:10px;text-align:center"><div style="font-family:Bebas Neue;font-size:22px;color:' + cor + '">' + val + '</div><div style="font-size:9px;color:var(--cinza);margin-top:2px">' + label + '</div></div>';
-}
-
 function renderMiniListaAlunos(tela){
   if(!todosAlunos || !todosAlunos.length){
     return '<div style="color:var(--cinza);font-size:12px;padding:8px">Nenhum aluno cadastrado</div>';

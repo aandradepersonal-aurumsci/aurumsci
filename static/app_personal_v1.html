@@ -218,7 +218,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <div id="app">
   <!-- TOPBAR -->
   <div class="topbar">
-    <div class="topbar-logo" id="topbar-logo" onclick="abrirConfigWL()" style="cursor:pointer" style="display:flex;align-items:center;gap:2px"><svg viewBox="0 0 44 44" width="22" height="22" style="margin-right:4px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:20px;font-weight:400;letter-spacing:2px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:10px;font-style:italic;color:#fff;margin-left:2px">sci.</span><span style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:#4B9FFF;margin-left:2px">PRO</span></div>
+    <div class="topbar-logo" id="topbar-logo" style="display:flex;align-items:center;gap:2px"><svg viewBox="0 0 44 44" width="22" height="22" style="margin-right:4px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:20px;font-weight:400;letter-spacing:2px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:10px;font-style:italic;color:#fff;margin-left:2px">sci.</span><span style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:#4B9FFF;margin-left:2px">PRO</span></div>
     <div class="topbar-right">
       <div class="lang-mini-row">
         <button class="lang-mini active" onclick="setLangApp('pt',this)">PT</button>
@@ -288,8 +288,8 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <div style="font-family:Bebas Neue;font-size:16px;color:var(--azul)">FINANÇAS</div>
         <div style="font-size:11px;color:var(--cinza)">Pagamentos</div>
       </div>
-<!--
-        <div style="font-size:28px;margin-bottom:6px"><svg viewBox="0 0 100 100" width="36" height="36" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#12121A"/><circle cx="50" cy="50" r="44" fill="#1A1A2E"/><rect x="44" y="78" width="12" height="8" rx="3" fill="#F5DEB3"/><path d="M32 86 Q22 83 20 96 L20 100 L80 100 L80 96 Q78 83 68 86 Q60 92 50 92 Q40 92 32 86Z" fill="#1A1A1A"/><text x="50" y="97" text-anchor="middle" font-family="Georgia,serif" font-size="4" font-weight="700" fill="#F0C040" letter-spacing="1">AURI</text><ellipse cx="22" cy="52" rx="5" ry="10" fill="#1A0A00"/><ellipse cx="78" cy="52" rx="5" ry="10" fill="#1A0A00"/><ellipse cx="50" cy="56" rx="26" ry="28" fill="#F5DEB3"/><ellipse cx="50" cy="34" rx="28" ry="7" fill="#1A3A6B"/><path d="M22 34 Q24 16 50 14 Q76 16 78 34 Z" fill="#1E4DB7"/><ellipse cx="50" cy="34" rx="28" ry="7" fill="#1545A8"/><path d="M30 26 Q50 24 70 26" fill="none" stroke="#FF4422" stroke-width="1.2"/><circle cx="50" cy="14" r="3" fill="#1545A8"/><circle cx="38" cy="52" r="10" fill="#FFFFFF"/><circle cx="62" cy="52" r="10" fill="#FFFFFF"/><circle cx="38" cy="52" r="6" fill="#1A0A00"/><circle cx="62" cy="52" r="6" fill="#1A0A00"/><circle cx="38" cy="52" r="3" fill="#4B9FFF"/><circle cx="62" cy="52" r="3" fill="#4B9FFF"/><circle cx="40" cy="50" r="2" fill="#FFFFFF"/><circle cx="64" cy="50" r="2" fill="#FFFFFF"/><path d="M30 42 Q38 38 44 42" fill="none" stroke="#1A0A00" stroke-width="1.8" stroke-linecap="round"/><path d="M56 42 Q62 38 70 42" fill="none" stroke="#1A0A00" stroke-width="1.8" stroke-linecap="round"/><ellipse cx="50" cy="62" rx="3" ry="2" fill="#D4A96A"/><ellipse cx="30" cy="65" rx="7" ry="4.5" fill="#F4A460" opacity="0.4"/><ellipse cx="70" cy="65" rx="7" ry="4.5" fill="#F4A460" opacity="0.4"/><path d="M38 68 Q50 78 62 68" fill="none" stroke="#1A0A00" stroke-width="2" stroke-linecap="round"/><path d="M42 71 Q50 78 58 71 Q58 75 50 76 Q42 75 42 71Z" fill="#FFFFFF"/><circle cx="86" cy="16" r="5" fill="#00E5A0" stroke="#12121A" stroke-width="1.5"/></svg></div>
+      <div onclick="mudarTab('chat', document.querySelector('.tab:last-child'))" style="background:rgba(255,75,75,.06);border:1px solid rgba(255,75,75,.15);border-radius:14px;padding:16px;cursor:pointer;text-align:center">
+        <div style="font-size:28px;margin-bottom:6px">🤖</div>
         <div style="font-family:Bebas Neue;font-size:16px;color:#FF6B6B">AURI</div>
         <div style="font-size:11px;color:var(--cinza)">Assistente IA</div>
       </div>
@@ -349,46 +349,6 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 
     <div id="lista-pagamentos">
       <div style="text-align:center;padding:40px;color:var(--cinza)">Carregando...</div>
-    </div>
-  </div>
-
-
-  <!-- CONFIG / WHITE LABEL -->
-  <div class="screen" id="screen-config">
-    <div class="section-title">CONFIGURAÇÕES</div>
-    <div class="section-sub">Personalize o app dos seus alunos</div>
-
-    <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:16px;padding:20px;margin-bottom:16px">
-      <div style="font-size:11px;letter-spacing:2px;color:var(--ouro);margin-bottom:12px">🏷️ WHITE LABEL</div>
-      <div style="font-size:13px;color:var(--cinza);margin-bottom:16px;line-height:1.6">Seu aluno verá o nome e logo da sua empresa no app — não o AurumSci.</div>
-
-      <div style="margin-bottom:14px">
-        <label style="font-size:11px;letter-spacing:2px;color:var(--cinza);display:block;margin-bottom:6px">NOME DA SUA EMPRESA</label>
-        <input type="text" id="wl-nome" placeholder="Ex: Studio FitPro" style="width:100%;background:#0A0A0F;border:1px solid var(--borda);border-radius:10px;padding:12px 14px;color:var(--texto);font-size:14px;outline:none">
-      </div>
-
-      <div style="margin-bottom:14px">
-        <label style="font-size:11px;letter-spacing:2px;color:var(--cinza);display:block;margin-bottom:6px">SLOGAN (opcional)</label>
-        <input type="text" id="wl-slogan" placeholder="Ex: Treine com ciência" style="width:100%;background:#0A0A0F;border:1px solid var(--borda);border-radius:10px;padding:12px 14px;color:var(--texto);font-size:14px;outline:none">
-      </div>
-
-      <div style="margin-bottom:16px">
-        <label style="font-size:11px;letter-spacing:2px;color:var(--cinza);display:block;margin-bottom:6px">LOGO (PNG ou JPG)</label>
-        <input type="file" id="wl-logo" accept="image/*" style="width:100%;background:#0A0A0F;border:1px solid var(--borda);border-radius:10px;padding:12px 14px;color:var(--cinza);font-size:13px">
-      </div>
-
-      <button onclick="salvarWhiteLabel()" style="width:100%;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;padding:14px;border-radius:12px;border:none;cursor:pointer">SALVAR CONFIGURAÇÕES</button>
-      <div id="wl-msg" style="text-align:center;font-size:13px;color:var(--verde);margin-top:10px;display:none">✅ Salvo com sucesso!</div>
-    </div>
-
-    <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:16px;padding:20px">
-      <div style="font-size:11px;letter-spacing:2px;color:var(--ouro);margin-bottom:12px">📋 MINHA CONTA</div>
-      <div style="font-size:13px;color:var(--cinza);line-height:1.8">
-        <div id="config-nome" style="margin-bottom:4px"></div>
-        <div id="config-email" style="margin-bottom:4px"></div>
-        <div id="config-cref" style="margin-bottom:4px"></div>
-        <div id="config-plano" style="color:var(--ouro);margin-top:8px;font-weight:600"></div>
-      </div>
     </div>
   </div>
 
@@ -480,12 +440,11 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <span>FINANÇAS</span>
     <div class="tab-dot"></div>
   </div>
-
   <div class="tab" onclick="mudarTab('chat',this)">
-    <span class="tab-icon"><svg viewBox="0 0 100 100" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#12121A"/><circle cx="50" cy="50" r="44" fill="#1A1A2E"/><ellipse cx="50" cy="56" rx="26" ry="28" fill="#F5DEB3"/><ellipse cx="50" cy="34" rx="28" ry="7" fill="#1A3A6B"/><path d="M22 34 Q24 16 50 14 Q76 16 78 34 Z" fill="#1E4DB7"/><ellipse cx="50" cy="34" rx="28" ry="7" fill="#1545A8"/><circle cx="38" cy="52" r="10" fill="#FFFFFF"/><circle cx="62" cy="52" r="10" fill="#FFFFFF"/><circle cx="38" cy="52" r="6" fill="#1A0A00"/><circle cx="62" cy="52" r="6" fill="#1A0A00"/><circle cx="38" cy="52" r="3" fill="#4B9FFF"/><circle cx="62" cy="52" r="3" fill="#4B9FFF"/><path d="M38 68 Q50 78 62 68" fill="none" stroke="#1A0A00" stroke-width="2" stroke-linecap="round"/><circle cx="86" cy="16" r="5" fill="#00E5A0" stroke="#12121A" stroke-width="1.5"/></svg></span>
-    <span>AURI</span><div class="tab-dot"></div>
+    <span class="tab-icon">🤖</span>
+    <span>AURI</span>
+    <div class="tab-dot"></div>
   </div>
-</div>
 </div>
 
 <!-- AURI FLOAT -->
@@ -494,7 +453,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div class="auri-bubble-tag">AURI</div>
     <span id="auri-bubble-msg">Como posso te ajudar hoje? 💪</span>
   </div>
-  <div class="auri-avatar"><svg viewBox="0 0 100 100" width="36" height="36" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#12121A"/><circle cx="50" cy="50" r="44" fill="#1A1A2E"/><rect x="44" y="78" width="12" height="8" rx="3" fill="#F5DEB3"/><path d="M32 86 Q22 83 20 96 L20 100 L80 100 L80 96 Q78 83 68 86 Q60 92 50 92 Q40 92 32 86Z" fill="#1A1A1A"/><text x="50" y="97" text-anchor="middle" font-family="Georgia,serif" font-size="4" font-weight="700" fill="#F0C040" letter-spacing="1">AURI</text><ellipse cx="22" cy="52" rx="5" ry="10" fill="#1A0A00"/><ellipse cx="78" cy="52" rx="5" ry="10" fill="#1A0A00"/><ellipse cx="50" cy="56" rx="26" ry="28" fill="#F5DEB3"/><ellipse cx="50" cy="34" rx="28" ry="7" fill="#1A3A6B"/><path d="M22 34 Q24 16 50 14 Q76 16 78 34 Z" fill="#1E4DB7"/><ellipse cx="50" cy="34" rx="28" ry="7" fill="#1545A8"/><path d="M30 26 Q50 24 70 26" fill="none" stroke="#FF4422" stroke-width="1.2"/><circle cx="50" cy="14" r="3" fill="#1545A8"/><circle cx="38" cy="52" r="10" fill="#FFFFFF"/><circle cx="62" cy="52" r="10" fill="#FFFFFF"/><circle cx="38" cy="52" r="6" fill="#1A0A00"/><circle cx="62" cy="52" r="6" fill="#1A0A00"/><circle cx="38" cy="52" r="3" fill="#4B9FFF"/><circle cx="62" cy="52" r="3" fill="#4B9FFF"/><circle cx="40" cy="50" r="2" fill="#FFFFFF"/><circle cx="64" cy="50" r="2" fill="#FFFFFF"/><path d="M30 42 Q38 38 44 42" fill="none" stroke="#1A0A00" stroke-width="1.8" stroke-linecap="round"/><path d="M56 42 Q62 38 70 42" fill="none" stroke="#1A0A00" stroke-width="1.8" stroke-linecap="round"/><ellipse cx="50" cy="62" rx="3" ry="2" fill="#D4A96A"/><ellipse cx="30" cy="65" rx="7" ry="4.5" fill="#F4A460" opacity="0.4"/><ellipse cx="70" cy="65" rx="7" ry="4.5" fill="#F4A460" opacity="0.4"/><path d="M38 68 Q50 78 62 68" fill="none" stroke="#1A0A00" stroke-width="2" stroke-linecap="round"/><path d="M42 71 Q50 78 58 71 Q58 75 50 76 Q42 75 42 71Z" fill="#FFFFFF"/><circle cx="86" cy="16" r="5" fill="#00E5A0" stroke="#12121A" stroke-width="1.5"/></svg></div>
+  <div class="auri-avatar">🤖</div>
   <div class="auri-dot"></div>
 </div>
 
@@ -685,7 +644,6 @@ function carregarApp(){
 
   atualizarTextos();
   carregarDashboard();
-  carregarLogoPersonal();
   carregarAlunos();
   carregarFinanceiro();
 }
@@ -739,7 +697,6 @@ function renderAlunos(alunos){
     html += '<div class="aluno-meta">' + (a.objetivo||'—') + ' · ' + (a.nivel_experiencia||'—') + '</div></div>';
     html += '<div style="display:flex;align-items:center;gap:8px">';
     html += '<div class="aluno-status ' + (a.ativo ? 'status-ativo' : 'status-inativo') + '"></div>';
-    if(a.precisa_reavaliar) html += '<span style="font-size:11px;background:#FF4B4B;color:#fff;border-radius:8px;padding:2px 6px">📊 VER EVOLUÇÃO</span>';
     html += '<span style="font-size:18px;color:var(--cinza)">›</span></div></div>';
   });
   document.getElementById('lista-alunos').innerHTML = html || '<div style="color:var(--cinza);text-align:center;padding:30px">Nenhum aluno encontrado</div>';
@@ -1093,7 +1050,6 @@ function abrirModalNovoAluno(){
   document.getElementById('modal-novo-aluno').classList.add('show');
 }
 
-function mostrarModal(id){ var m=document.getElementById(id); if(m){ m.style.display="flex"; } }
 function fecharModal(id){
   document.getElementById(id).classList.remove('show');
 }
@@ -1121,14 +1077,9 @@ function criarAluno(){
         fecharModal('modal-novo-aluno');
         carregarAlunos();
         carregarDashboard();
-  carregarLogoPersonal();
       });
     } else {
-      if(d.detail && d.detail.includes('Limite')){
-        mostrarModal('modal-upgrade');
-      } else {
-        mostrarToast(d.detail || 'Erro ao criar aluno');
-      }
+      mostrarToast(d.detail || 'Erro ao criar aluno');
     }
   }).catch(function(){ mostrarToast('Erro de conexão'); });
 }
@@ -1161,12 +1112,12 @@ function enviarMsg(){
 }
 
 // ── TABS ──────────────────────────────────────────────────────
-function mudarTab(tab, el){ console.log("mudarTab:", tab);
+function mudarTab(tab, el){
   if(tab === 'loja') setTimeout(renderLojaPro, 50);
   document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
   document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
   document.getElementById('screen-' + tab).classList.add('active');
-  if(el) el.classList.add('active');
+  el.classList.add('active');
   if(tab === 'chat'){
     var b = document.getElementById('auri-bubble');
     if(b) b.classList.remove('show');
@@ -1178,9 +1129,9 @@ function toggleBubble(){
   var b = document.getElementById('auri-bubble');
   if(b.classList.contains('show')){
     b.classList.remove('show');
+    mudarTab('chat', document.querySelector('.tab:last-child'));
   } else {
     b.classList.add('show');
-    mudarTab('chat', null);
   }
 }
 
@@ -1254,7 +1205,7 @@ function avalAba(aba){
     el.innerHTML = renderAnamnese();
 
   } else if(aba==='postural'){
-    el.innerHTML = '<button onclick="abrirPosturalAluno(' + avalAlunoId + ', \'' + avalAlunoNome + '\')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:17px;letter-spacing:2px;cursor:pointer"><svg viewBox="0 0 100 100" width="36" height="36" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#12121A"/><circle cx="50" cy="50" r="44" fill="#1A1A2E"/><rect x="44" y="78" width="12" height="8" rx="3" fill="#F5DEB3"/><path d="M32 86 Q22 83 20 96 L20 100 L80 100 L80 96 Q78 83 68 86 Q60 92 50 92 Q40 92 32 86Z" fill="#1A1A1A"/><text x="50" y="97" text-anchor="middle" font-family="Georgia,serif" font-size="4" font-weight="700" fill="#F0C040" letter-spacing="1">AURI</text><ellipse cx="22" cy="52" rx="5" ry="10" fill="#1A0A00"/><ellipse cx="78" cy="52" rx="5" ry="10" fill="#1A0A00"/><ellipse cx="50" cy="56" rx="26" ry="28" fill="#F5DEB3"/><ellipse cx="50" cy="34" rx="28" ry="7" fill="#1A3A6B"/><path d="M22 34 Q24 16 50 14 Q76 16 78 34 Z" fill="#1E4DB7"/><ellipse cx="50" cy="34" rx="28" ry="7" fill="#1545A8"/><path d="M30 26 Q50 24 70 26" fill="none" stroke="#FF4422" stroke-width="1.2"/><circle cx="50" cy="14" r="3" fill="#1545A8"/><circle cx="38" cy="52" r="10" fill="#FFFFFF"/><circle cx="62" cy="52" r="10" fill="#FFFFFF"/><circle cx="38" cy="52" r="6" fill="#1A0A00"/><circle cx="62" cy="52" r="6" fill="#1A0A00"/><circle cx="38" cy="52" r="3" fill="#4B9FFF"/><circle cx="62" cy="52" r="3" fill="#4B9FFF"/><circle cx="40" cy="50" r="2" fill="#FFFFFF"/><circle cx="64" cy="50" r="2" fill="#FFFFFF"/><path d="M30 42 Q38 38 44 42" fill="none" stroke="#1A0A00" stroke-width="1.8" stroke-linecap="round"/><path d="M56 42 Q62 38 70 42" fill="none" stroke="#1A0A00" stroke-width="1.8" stroke-linecap="round"/><ellipse cx="50" cy="62" rx="3" ry="2" fill="#D4A96A"/><ellipse cx="30" cy="65" rx="7" ry="4.5" fill="#F4A460" opacity="0.4"/><ellipse cx="70" cy="65" rx="7" ry="4.5" fill="#F4A460" opacity="0.4"/><path d="M38 68 Q50 78 62 68" fill="none" stroke="#1A0A00" stroke-width="2" stroke-linecap="round"/><path d="M42 71 Q50 78 58 71 Q58 75 50 76 Q42 75 42 71Z" fill="#FFFFFF"/><circle cx="86" cy="16" r="5" fill="#00E5A0" stroke="#12121A" stroke-width="1.5"/></svg> ANÁLISE POSTURAL COM IA</button>';
+    el.innerHTML = '<button onclick="abrirPosturalAluno(' + avalAlunoId + ', \'' + avalAlunoNome + '\')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:17px;letter-spacing:2px;cursor:pointer">🤖 ANÁLISE POSTURAL COM IA</button>';
 
   } else if(aba==='circunf'){
     el.innerHTML = renderCircunferencias();
@@ -2356,105 +2307,6 @@ function mostrarRoteiro(){
   document.body.insertAdjacentHTML('beforeend', h);
 }
 
-
-function salvarWhiteLabel(){
-  var nome = document.getElementById('wl-nome').value.trim();
-  var slogan = document.getElementById('wl-slogan').value.trim();
-  var logoFile = document.getElementById('wl-logo').files[0];
-  if(!nome){ mostrarToast('Informe o nome da empresa'); return; }
-  var fd = new FormData();
-  fd.append('nome', nome);
-  fd.append('slogan', slogan);
-  if(logoFile) fd.append('logo', logoFile);
-  fetch('/app-personal/white-label', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    document.getElementById('wl-msg').style.display = 'block';
-    setTimeout(function(){ document.getElementById('wl-msg').style.display = 'none'; }, 3000);
-  }).catch(function(){ mostrarToast('Erro ao salvar'); });
-}
-function carregarConfig(){
-  fetch('/app-personal/dashboard', {headers:{'Authorization':'Bearer '+token}})
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    if(d.personal){
-      document.getElementById('config-nome').textContent = '👤 ' + (d.personal.nome || '');
-      document.getElementById('config-email').textContent = '📧 ' + (d.personal.email || '');
-      document.getElementById('config-cref').textContent = '🪪 ' + (d.personal.cref || '');
-      document.getElementById('config-plano').textContent = '💎 Plano: ' + (d.personal.plano || 'Bronze').toUpperCase();
-    }
-  });
-}
-
-
-function salvarWhiteLabel(){
-  var nome = document.getElementById('wl-nome').value.trim();
-  var slogan = document.getElementById('wl-slogan').value.trim();
-  var logoFile = document.getElementById('wl-logo').files[0];
-  if(!nome){ mostrarToast('Informe o nome da empresa'); return; }
-  var fd = new FormData();
-  fd.append('nome', nome);
-  fd.append('slogan', slogan);
-  if(logoFile) fd.append('logo', logoFile);
-  fetch('/app-personal/white-label', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    document.getElementById('wl-msg').style.display = 'block';
-    setTimeout(function(){ document.getElementById('wl-msg').style.display = 'none'; }, 3000);
-  }).catch(function(){ mostrarToast('Erro ao salvar'); });
-}
-function carregarConfig(){
-  fetch('/app-personal/dashboard', {headers:{'Authorization':'Bearer '+token}})
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    if(d.personal){
-      document.getElementById('config-nome').textContent = '👤 ' + (d.personal.nome || '');
-      document.getElementById('config-email').textContent = '📧 ' + (d.personal.email || '');
-      document.getElementById('config-cref').textContent = '🪪 ' + (d.personal.cref || '');
-      document.getElementById('config-plano').textContent = '💎 Plano: ' + (d.personal.plano || 'Bronze').toUpperCase();
-    }
-  });
-}
-
-
-
-
-function carregarLogoPersonal(){
-  fetch('/app-personal/dashboard', {headers:{'Authorization':'Bearer '+token}})
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    if(d.logo_url){
-      var tl = document.getElementById('topbar-logo');
-      if(tl) tl.innerHTML = '<img src="'+d.logo_url+'" style="height:38px;max-width:160px;object-fit:contain">';
-    }
-  }).catch(function(){});
-}
-
-function abrirConfigWL(){
-  document.getElementById('modal-wl').style.display='flex';
-}
-function fecharModalWL(){
-  document.getElementById('modal-wl').style.display='none';
-}
-function salvarWL(){
-  var nome = document.getElementById('wl-nome').value.trim();
-  var logo = document.getElementById('wl-logo').files[0];
-  if(!nome && !logo){ fecharModalWL(); return; }
-  var fd = new FormData();
-  if(nome) fd.append('nome', nome);
-  if(logo) fd.append('logo', logo);
-  fetch('/app-personal/white-label', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    document.getElementById('wl-ok').style.display='block';
-    if(d.logo_url){
-      var tl = document.getElementById('topbar-logo');
-      tl.innerHTML = '<img src="'+d.logo_url+'" style="height:38px;max-width:160px;object-fit:contain" onerror="this.style.display=\'none\'">';
-    }
-    setTimeout(fecharModalWL, 1500);
-  }).catch(function(e){ alert('Erro: ' + e); fecharModalWL(); });
-}
-
 </script>
 
 <!-- MODAL PERFIL ALUNO -->
@@ -2499,7 +2351,7 @@ function salvarWL(){
         <input type="file" id="in-p-costas" accept="image/*" style="display:none" onchange="fotoPosturalP('costas',this)">
       </div>
     </div>
-    <button id="btn-analisar-p" onclick="analisarPosturalP()" disabled style="width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:14px;color:#0A0A0F;font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;cursor:pointer;opacity:0.4;margin-bottom:12px"><svg viewBox="0 0 100 100" width="36" height="36" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#12121A"/><circle cx="50" cy="50" r="44" fill="#1A1A2E"/><rect x="44" y="78" width="12" height="8" rx="3" fill="#F5DEB3"/><path d="M32 86 Q22 83 20 96 L20 100 L80 100 L80 96 Q78 83 68 86 Q60 92 50 92 Q40 92 32 86Z" fill="#1A1A1A"/><text x="50" y="97" text-anchor="middle" font-family="Georgia,serif" font-size="4" font-weight="700" fill="#F0C040" letter-spacing="1">AURI</text><ellipse cx="22" cy="52" rx="5" ry="10" fill="#1A0A00"/><ellipse cx="78" cy="52" rx="5" ry="10" fill="#1A0A00"/><ellipse cx="50" cy="56" rx="26" ry="28" fill="#F5DEB3"/><ellipse cx="50" cy="34" rx="28" ry="7" fill="#1A3A6B"/><path d="M22 34 Q24 16 50 14 Q76 16 78 34 Z" fill="#1E4DB7"/><ellipse cx="50" cy="34" rx="28" ry="7" fill="#1545A8"/><path d="M30 26 Q50 24 70 26" fill="none" stroke="#FF4422" stroke-width="1.2"/><circle cx="50" cy="14" r="3" fill="#1545A8"/><circle cx="38" cy="52" r="10" fill="#FFFFFF"/><circle cx="62" cy="52" r="10" fill="#FFFFFF"/><circle cx="38" cy="52" r="6" fill="#1A0A00"/><circle cx="62" cy="52" r="6" fill="#1A0A00"/><circle cx="38" cy="52" r="3" fill="#4B9FFF"/><circle cx="62" cy="52" r="3" fill="#4B9FFF"/><circle cx="40" cy="50" r="2" fill="#FFFFFF"/><circle cx="64" cy="50" r="2" fill="#FFFFFF"/><path d="M30 42 Q38 38 44 42" fill="none" stroke="#1A0A00" stroke-width="1.8" stroke-linecap="round"/><path d="M56 42 Q62 38 70 42" fill="none" stroke="#1A0A00" stroke-width="1.8" stroke-linecap="round"/><ellipse cx="50" cy="62" rx="3" ry="2" fill="#D4A96A"/><ellipse cx="30" cy="65" rx="7" ry="4.5" fill="#F4A460" opacity="0.4"/><ellipse cx="70" cy="65" rx="7" ry="4.5" fill="#F4A460" opacity="0.4"/><path d="M38 68 Q50 78 62 68" fill="none" stroke="#1A0A00" stroke-width="2" stroke-linecap="round"/><path d="M42 71 Q50 78 58 71 Q58 75 50 76 Q42 75 42 71Z" fill="#FFFFFF"/><circle cx="86" cy="16" r="5" fill="#00E5A0" stroke="#12121A" stroke-width="1.5"/></svg> ANALISAR COM IA</button>
+    <button id="btn-analisar-p" onclick="analisarPosturalP()" disabled style="width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:14px;color:#0A0A0F;font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;cursor:pointer;opacity:0.4;margin-bottom:12px">🤖 ANALISAR COM IA</button>
     <div id="post-p-loading" style="display:none;text-align:center;padding:20px;color:var(--cinza)">
       <div style="font-size:36px;margin-bottom:8px">🔍</div>
       <div>Analisando com IA...</div>
@@ -2507,44 +2359,6 @@ function salvarWL(){
     <div id="post-p-resultado"></div>
   </div>
 </div>
-
-<div style="text-align:center;padding:12px;font-size:10px;color:var(--cinza);border-top:1px solid var(--borda);margin-top:20px">Powered by <a href="https://aurumsc.com.br" style="color:var(--ouro2);text-decoration:none">AurumSci</a></div>
-
-<div id="modal-upgrade" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center">
-  <div style="background:#12121A;border:1px solid #F0C040;border-radius:20px;padding:32px;max-width:340px;width:90%;text-align:center">
-    <div style="font-size:40px;margin-bottom:12px">🏆</div>
-    <div style="font-family:'Bebas Neue';font-size:24px;color:#F0C040;letter-spacing:2px;margin-bottom:8px">LIMITE ATINGIDO!</div>
-    <div style="font-size:13px;color:#aaa;line-height:1.6;margin-bottom:20px">Você atingiu o limite de alunos do seu plano atual.<br>Faça upgrade e continue crescendo!</div>
-    <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:16px;margin-bottom:20px;font-size:12px;color:#ccc;line-height:1.8">
-      🥉 Bronze → 10 alunos · R$49,90<br>
-      🥈 Prata → 20 alunos · R$89,90<br>
-      🥇 Ouro → 50 alunos · R$149,90<br>
-      💎 Diamante → Ilimitado · R$249,90
-    </div>
-    <a href="https://aurumsc.com.br" target="_blank" style="display:block;background:linear-gradient(135deg,#C9A84C,#F0C040);color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;padding:14px;border-radius:12px;text-decoration:none;margin-bottom:12px">FAZER UPGRADE →</a>
-    <button onclick="fecharModal('modal-upgrade')" style="background:none;border:none;color:#666;font-size:13px;cursor:pointer">Fechar</button>
-  </div>
-</div>
-
-<div id="modal-wl" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center">
-  <div style="background:#12121A;border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:28px;max-width:340px;width:90%">
-    <div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;color:#F0C040;margin-bottom:4px">WHITE LABEL</div>
-    <div style="font-size:12px;color:#888;margin-bottom:20px">Seu aluno verá sua marca no app</div>
-    <div style="margin-bottom:14px">
-      <label style="font-size:11px;letter-spacing:2px;color:#888;display:block;margin-bottom:6px">NOME DA EMPRESA</label>
-      <input type="text" id="wl-nome" placeholder="Ex: Lucas Cavalcanti PT" style="width:100%;background:#0A0A0F;border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:12px;color:#F0EDE8;font-size:14px;outline:none">
-    </div>
-    <div style="margin-bottom:16px">
-      <label style="font-size:11px;letter-spacing:2px;color:#888;display:block;margin-bottom:6px">LOGO (PNG ou JPG)</label>
-      <input type="file" id="wl-logo" accept="image/*" style="width:100%;background:#0A0A0F;border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:10px;color:#888;font-size:12px">
-    </div>
-    <button onclick="salvarWL()" style="width:100%;background:linear-gradient(135deg,#C9A84C,#F0C040);color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;padding:14px;border-radius:12px;border:none;cursor:pointer;margin-bottom:10px">SALVAR</button>
-    <button onclick="fecharModalWL()" style="width:100%;background:none;border:none;color:#666;font-size:13px;cursor:pointer">Cancelar</button>
-    <div id="wl-ok" style="text-align:center;color:#00E5A0;font-size:13px;margin-top:8px;display:none">✅ Salvo!</div>
-  </div>
-</div>
-
-
 
 </body>
 </html>

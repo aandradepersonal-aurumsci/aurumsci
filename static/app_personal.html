@@ -247,7 +247,8 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         📁 Escolher imagem
         <input type="file" accept="image/*" style="display:none" onchange="uploadLogoWL(this)">
       </label>
-      <button onclick="removerLogoWL()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--borda);color:var(--cinza);border-radius:12px;cursor:pointer;margin-bottom:16px">Remover logo personalizado</button>
+      <button onclick="removerLogoWL()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--borda);color:var(--cinza);border-radius:12px;cursor:pointer;margin-bottom:10px">Remover logo personalizado</button>
+      <button onclick="salvarLogoWL()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;cursor:pointer;margin-bottom:10px">✅ SALVAR E APLICAR</button>
       <button onclick="document.getElementById('modal-whitelabel').style.display='none'" style="width:100%;padding:12px;background:var(--borda);color:var(--texto);border:none;border-radius:12px;cursor:pointer;font-weight:600">Fechar</button>
     </div>
   </div>
@@ -725,13 +726,30 @@ function uploadLogoWL(input){
   if(!file) return;
   var reader = new FileReader();
   reader.onload = function(e){
-    var data = e.target.result;
-    localStorage.setItem('aurum_wl_logo', data);
-    aplicarLogoSalvo();
-    document.getElementById('preview-logo-wl').innerHTML = '<img src="' + data + '" style="max-height:50px;max-width:200px;border-radius:8px">';
-    mostrarToast('Logo personalizado aplicado! ✅');
+    var img = new Image();
+    img.onload = function(){
+      var canvas = document.createElement('canvas');
+      var max = 300;
+      var w = img.width, h = img.height;
+      if(w > h){ if(w > max){ h = Math.round(h*max/w); w = max; } }
+      else { if(h > max){ w = Math.round(w*max/h); h = max; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      var data = canvas.toDataURL('image/png', 0.85);
+      localStorage.setItem('aurum_wl_logo', data);
+      document.getElementById('preview-logo-wl').innerHTML = '<img src="' + data + '" style="max-height:50px;max-width:200px;border-radius:8px">';
+    };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
+}
+
+function salvarLogoWL(){
+  var logoSalvo = localStorage.getItem('aurum_wl_logo');
+  if(!logoSalvo){ mostrarToast('Escolha uma imagem primeiro'); return; }
+  aplicarLogoSalvo();
+  document.getElementById('modal-whitelabel').style.display = 'none';
+  mostrarToast('Logo aplicado com sucesso! ✅');
 }
 
 function removerLogoWL(){

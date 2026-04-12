@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AurumSci PRO — Para Personal Trainers</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ouro:#C9A84C;--ouro2:#F0C040;--azul:#4B9FFF;--verde:#00E5A0;--bg:#0A0A0F;--bg2:#12121A;--bg3:#1A1A26;--texto:#F0EDE8;--cinza:#888;--borda:rgba(201,168,76,0.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px 40px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.08),transparent 70%);pointer-events:none}
+
+/* LOGO */
+.logo{display:flex;align-items:baseline;gap:4px;justify-content:center;margin-bottom:8px}
+.logo-hex{width:44px;height:44px;margin-right:6px}
+.logo-aurum{font-family:Georgia,serif;font-size:36px;font-weight:400;letter-spacing:4px;color:var(--ouro)}
+.logo-sci{font-family:Georgia,serif;font-size:14px;font-style:italic;color:#fff;margin-left:2px}
+.logo-pro{font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:var(--azul);margin-left:2px}
+
+.badge{display:inline-block;background:rgba(75,159,255,0.1);border:1px solid rgba(75,159,255,0.3);color:var(--azul);font-size:11px;letter-spacing:3px;padding:6px 16px;border-radius:20px;margin-bottom:24px}
+.hero-titulo{font-family:'Bebas Neue';font-size:52px;letter-spacing:2px;line-height:1.1;margin-bottom:16px;color:#fff}
+.hero-titulo span{color:var(--ouro)}
+.hero-sub{font-size:16px;color:var(--cinza);line-height:1.7;max-width:480px;margin:0 auto 32px}
+
+/* BOTÕES */
+.btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px;margin:0 auto 40px}
+.btn-principal{display:block;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:20px;letter-spacing:3px;padding:18px;border-radius:14px;text-decoration:none;text-align:center;transition:transform .2s}
+.btn-principal:active{transform:scale(.98)}
+.btn-secundario{display:block;border:1px solid var(--borda);color:var(--cinza);font-size:14px;padding:14px;border-radius:14px;text-decoration:none;text-align:center}
+
+/* STATS */
+.stats{display:flex;gap:24px;justify-content:center;margin-bottom:0}
+.stat{text-align:center}
+.stat-num{font-family:'Bebas Neue';font-size:32px;color:var(--ouro)}
+.stat-label{font-size:11px;color:var(--cinza);letter-spacing:2px}
+
+/* SEÇÕES */
+section{padding:60px 24px;max-width:640px;margin:0 auto}
+.section-tag{font-size:11px;letter-spacing:3px;color:var(--ouro);margin-bottom:8px}
+.section-titulo{font-family:'Bebas Neue';font-size:36px;letter-spacing:1px;margin-bottom:8px}
+.section-sub{font-size:14px;color:var(--cinza);line-height:1.7;margin-bottom:32px}
+
+/* FEATURES */
+.features{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.feature-card{background:var(--bg2);border:1px solid var(--borda);border-radius:16px;padding:20px}
+.feature-icon{font-size:28px;margin-bottom:10px}
+.feature-titulo{font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--ouro);margin-bottom:6px}
+.feature-desc{font-size:12px;color:var(--cinza);line-height:1.6}
+
+/* PLANOS */
+.planos{display:flex;flex-direction:column;gap:16px}
+.plano{background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:24px;position:relative;transition:border-color .2s}
+.plano.destaque{border-color:var(--ouro);background:linear-gradient(135deg,rgba(201,168,76,0.05),var(--bg2))}
+.plano-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#0A0A0F;font-family:'Bebas Neue';font-size:12px;letter-spacing:2px;padding:4px 16px;border-radius:20px}
+.plano-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.plano-icon{font-size:28px}
+.plano-nome{font-family:'Bebas Neue';font-size:24px;letter-spacing:1px}
+.plano-alunos{font-size:12px;color:var(--cinza)}
+.plano-preco{margin-bottom:16px}
+.plano-valor{font-family:'Bebas Neue';font-size:42px;color:var(--ouro)}
+.plano-periodo{font-size:13px;color:var(--cinza)}
+.plano-items{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.plano-items li{font-size:13px;color:var(--cinza);display:flex;gap:8px;align-items:flex-start}
+.plano-items li::before{content:'✓';color:var(--verde);font-weight:700;flex-shrink:0}
+.btn-plano{display:block;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;padding:14px;border-radius:12px;text-decoration:none;text-align:center}
+.btn-plano.outline{background:none;border:1px solid var(--borda);color:var(--texto)}
+
+/* DIFERENCIAL */
+.diferenciais{display:flex;flex-direction:column;gap:16px}
+.diferencial{display:flex;gap:16px;align-items:flex-start;background:var(--bg2);border:1px solid var(--borda);border-radius:16px;padding:20px}
+.diferencial-icon{font-size:28px;flex-shrink:0}
+.diferencial-titulo{font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--ouro);margin-bottom:4px}
+.diferencial-desc{font-size:13px;color:var(--cinza);line-height:1.6}
+
+/* CTA FINAL */
+.cta{background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(75,159,255,0.04));border:1px solid var(--borda);border-radius:24px;padding:48px 24px;text-align:center;margin:0 24px 60px}
+.cta-titulo{font-family:'Bebas Neue';font-size:36px;letter-spacing:1px;margin-bottom:8px}
+.cta-sub{font-size:14px;color:var(--cinza);margin-bottom:24px}
+
+/* FOOTER */
+footer{text-align:center;padding:24px;font-size:12px;color:#333;border-top:1px solid var(--borda)}
+footer a{color:#444;text-decoration:none}
+
+/* DIVISOR */
+.divisor{height:1px;background:var(--borda);margin:0 24px}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="logo">
+    <svg class="logo-hex" viewBox="0 0 44 44"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#C9A84C" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#C9A84C">A</text></svg>
+    <span class="logo-aurum">AURUM</span><span class="logo-sci">sci.</span><span class="logo-pro">PRO</span>
+  </div>
+
+  <div class="badge">PARA PERSONAL TRAINERS</div>
+
+  <h1 class="hero-titulo">A plataforma que<br><span>transforma seu negócio</span></h1>
+  <p class="hero-sub">Gerencie seus alunos com ciência, IA e tecnologia de ponta. Periodização automática, análise postural com IA e muito mais — em todos os planos.</p>
+
+  <div class="btns">
+    <a href="/cadastro-pro" class="btn-principal">COMEÇAR 14 DIAS GRÁTIS →</a>
+    <a href="/personal" class="btn-secundario">Já tenho conta — fazer login</a>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num">IA</div><div class="stat-label">INTEGRADA</div></div>
+    <div class="stat"><div class="stat-num">24H</div><div class="stat-label">DISPONÍVEL</div></div>
+    <div class="stat"><div class="stat-num">3x</div><div class="stat-label">MAIS ALUNOS</div></div>
+  </div>
+</div>
+
+<div class="divisor"></div>
+
+<!-- FUNCIONALIDADES -->
+<section>
+  <div class="section-tag">FUNCIONALIDADES</div>
+  <h2 class="section-titulo">Tudo que você precisa</h2>
+  <p class="section-sub">Em todos os planos — sem restrições por funcionalidade.</p>
+
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <div class="feature-titulo">AURI PRO</div>
+      <div class="feature-desc">Assistente IA que conhece cada aluno e responde 24h por dia</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📅</div>
+      <div class="feature-titulo">PERIODIZAÇÃO</div>
+      <div class="feature-desc">Blocos e ondulação científica — Rhea et al. (2002)</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧍</div>
+      <div class="feature-titulo">POSTURAL IA</div>
+      <div class="feature-desc">Claude Vision analisa postura e prescreve corretivos</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">❤️</div>
+      <div class="feature-titulo">TESTE HRR</div>
+      <div class="feature-desc">Risco cardiovascular baseado em Cole et al. NEJM 1999</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <div class="feature-titulo">AVALIAÇÃO</div>
+      <div class="feature-desc">VO2 máx, composição corporal e força — ACSM 2022</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏷️</div>
+      <div class="feature-titulo">WHITE LABEL</div>
+      <div class="feature-desc">Sua marca no app — disponível em todos os planos</div>
+    </div>
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- PLANOS -->
+<section>
+  <div class="section-tag">PLANOS</div>
+  <h2 class="section-titulo">Escolha o seu plano</h2>
+  <p class="section-sub">A diferença é só o número de alunos. Todos têm acesso completo a todas as funcionalidades.</p>
+
+  <div class="planos">
+
+    <div class="plano">
+      <div class="plano-header">
+        <div class="plano-icon">🥉</div>
+        <div>
+          <div class="plano-nome">BRONZE</div>
+          <div class="plano-alunos">Até 10 alunos</div>
+        </div>
+      </div>
+      <div class="plano-preco">
+        <span class="plano-valor">R$49</span><span class="plano-periodo">,90/mês</span>
+      </div>
+      <ul class="plano-items">
+        <li>Acesso completo a todas as funcionalidades</li>
+        <li>AURI PRO — assistente IA 24h</li>
+        <li>Periodização científica automática</li>
+        <li>Análise postural com IA</li>
+        <li>White label — sua marca</li>
+        <li>14 dias grátis para testar</li>
+      </ul>
+      <a href="/cadastro-pro?plano=bronze" class="btn-plano outline">COMEÇAR GRÁTIS →</a>
+    </div>
+
+    <div class="plano destaque">
+      <div class="plano-badge">MAIS POPULAR</div>
+      <div class="plano-header">
+        <div class="plano-icon">🥈</div>
+        <div>
+          <div class="plano-nome">PRATA</div>
+          <div class="plano-alunos">Até 20 alunos</div>
+        </div>
+      </div>
+      <div class="plano-preco">
+        <span class="plano-valor">R$89</span><span class="plano-periodo">,90/mês</span>
+      </div>
+      <ul class="plano-items">
+        <li>Tudo do Bronze</li>
+        <li>Até 20 alunos simultâneos</li>
+        <li>Gestão financeira avançada</li>
+        <li>Alertas de reavaliação automáticos</li>
+        <li>Questionário overtraining mensal</li>
+        <li>14 dias grátis para testar</li>
+      </ul>
+      <a href="/cadastro-pro?plano=prata" class="btn-plano">COMEÇAR GRÁTIS →</a>
+    </div>
+
+    <div class="plano">
+      <div class="plano-header">
+        <div class="plano-icon">🥇</div>
+        <div>
+          <div class="plano-nome">OURO</div>
+          <div class="plano-alunos">Até 50 alunos</div>
+        </div>
+      </div>
+      <div class="plano-preco">
+        <span class="plano-valor">R$149</span><span class="plano-periodo">,90/mês</span>
+      </div>
+      <ul class="plano-items">
+        <li>Tudo do Prata</li>
+        <li>Até 50 alunos simultâneos</li>
+        <li>Suporte prioritário</li>
+        <li>Relatórios avançados de evolução</li>
+        <li>14 dias grátis para testar</li>
+      </ul>
+      <a href="/cadastro-pro?plano=ouro" class="btn-plano outline">COMEÇAR GRÁTIS →</a>
+    </div>
+
+    <div class="plano">
+      <div class="plano-header">
+        <div class="plano-icon">💎</div>
+        <div>
+          <div class="plano-nome">DIAMANTE</div>
+          <div class="plano-alunos">Alunos ilimitados</div>
+        </div>
+      </div>
+      <div class="plano-preco">
+        <span class="plano-valor">R$249</span><span class="plano-periodo">,90/mês</span>
+      </div>
+      <ul class="plano-items">
+        <li>Tudo do Ouro</li>
+        <li>Alunos ilimitados</li>
+        <li>Avaliação com ultrassom integrada</li>
+        <li>Suporte VIP direto com o desenvolvedor</li>
+        <li>14 dias grátis para testar</li>
+      </ul>
+      <a href="/cadastro-pro?plano=diamante" class="btn-plano outline">COMEÇAR GRÁTIS →</a>
+    </div>
+
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- DIFERENCIAIS -->
+<section>
+  <div class="section-tag">POR QUE AURUMSCI PRO</div>
+  <h2 class="section-titulo">Diferente dos outros</h2>
+  <p class="section-sub">Construído por um personal trainer com 20 anos de experiência.</p>
+
+  <div class="diferenciais">
+    <div class="diferencial">
+      <div class="diferencial-icon">🏷️</div>
+      <div>
+        <div class="diferencial-titulo">WHITE LABEL EM TODOS OS PLANOS</div>
+        <div class="diferencial-desc">Concorrentes cobram R$300+/mês pelo white label. Na AurumSci PRO está incluso desde o Bronze.</div>
+      </div>
+    </div>
+    <div class="diferencial">
+      <div class="diferencial-icon">📊</div>
+      <div>
+        <div class="diferencial-titulo">PLANOS PARA A REALIDADE BRASILEIRA</div>
+        <div class="diferencial-desc">Em época difícil, 10 a 16 alunos. Em época boa, acima de 20. Com equipe, acima de 50. Temos o plano certo pra cada momento.</div>
+      </div>
+    </div>
+    <div class="diferencial">
+      <div class="diferencial-icon">🧬</div>
+      <div>
+        <div class="diferencial-titulo">BASE CIENTÍFICA REAL</div>
+        <div class="diferencial-desc">Rhea et al. (2002), ACSM 2022, Cole NEJM 1999, Schoenfeld (2010). Cada funcionalidade tem embasamento científico citado.</div>
+      </div>
+    </div>
+    <div class="diferencial">
+      <div class="diferencial-icon">🤖</div>
+      <div>
+        <div class="diferencial-titulo">IA DE VERDADE</div>
+        <div class="diferencial-desc">AURI usa Claude da Anthropic — a mesma IA usada por empresas Fortune 500. Não é um chatbot genérico.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<div class="cta">
+  <h2 class="cta-titulo">Pronto para transformar seu negócio?</h2>
+  <p class="cta-sub">14 dias grátis. Cancele quando quiser. Sem burocracia.</p>
+  <a href="/cadastro-pro" class="btn-principal" style="max-width:320px;margin:0 auto;display:block">COMEÇAR AGORA →</a>
+</div>
+
+<footer>
+  André Andrade · CREF 62702-G/SP<br>
+  <a href="https://aurumsc.com.br">aurumsc.com.br</a> · <a href="/aluno">Área do Aluno</a>
+</footer>
+
+</body>
+</html>

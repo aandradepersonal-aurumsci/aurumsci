@@ -155,9 +155,7 @@ def resumo_completo_aluno(aluno_id: int, personal: Personal = Depends(get_person
         "testes": {
             "flexao": aval.teste_flexao_num if aval else None,
             "barra": aval.teste_barra_num if aval else None,
-            "abdominal": aval.teste_abdominal_num if aval else None,
-            "preensao_dom": None,
-            "mmii_reps": None,
+            "flexibilidade": aval.teste_flexibilidade_cm if aval else None,
         },
         "postural": {
             "cabeca": aval.postura_cabeca if aval else None,

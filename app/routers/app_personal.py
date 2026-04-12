@@ -409,7 +409,6 @@ async def postural_aluno(
 
     resultado = await analisar_postural(
         foto_frente=f64, foto_lado=l64, foto_costas=c64,
-        nome_aluno=aluno.nome, idade=None, sexo=aluno.sexo.value if aluno.sexo else "masculino"
     )
 
     if resultado.erro:

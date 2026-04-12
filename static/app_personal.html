@@ -1521,11 +1521,22 @@ function calc3Dobras(){
   gord = ((4.95/dc)-4.50)*100;
   gord = Math.max(3, Math.round(gord*10)/10);
   var corGord = gord<10?'var(--azul)':gord<20?'var(--verde)':gord<25?'var(--ouro)':'#FF6B6B';
+  window._3dobrasResultado = {gordura_pct: gord};
   document.getElementById('d3-resultado').innerHTML = resultBox('3 DOBRAS — RESULTADO','var(--verde)',[
     {label:'Densidade Corporal',val:dc.toFixed(4)+' g/ml'},
     {label:'% Gordura',val:gord+'%',cor:corGord},
     {label:'Soma das dobras',val:soma+' mm'},
-  ],'Jackson & Pollock (1978) Br J Nutr · Siri (1956)');
+  ],'Jackson & Pollock (1978) Br J Nutr · Siri (1956)') +
+  '<button onclick="salvarDobras3()" style="width:100%;margin-top:10px;padding:12px;background:linear-gradient(135deg,var(--verde),#00B37E);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">💾 SALVAR 3 DOBRAS</button>';
+}
+
+function salvarDobras3(){
+  var d = window._3dobrasResultado;
+  if(!d){ mostrarToast('Calcule primeiro!'); return; }
+  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({secao:'composicao', composicao:{gordura_pct: d.gordura_pct}})
+  }).then(function(){ mostrarToast('✅ 3 Dobras salvo!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
 }
 
 function calc7Dobras(){
@@ -1549,11 +1560,22 @@ function calc7Dobras(){
   gord = ((4.95/dc)-4.50)*100;
   gord = Math.max(3, Math.round(gord*10)/10);
   var corGord = gord<10?'var(--azul)':gord<20?'var(--verde)':gord<25?'var(--ouro)':'#FF6B6B';
+  window._7dobrasResultado = {gordura_pct: gord};
   document.getElementById('d7-resultado').innerHTML = resultBox('7 DOBRAS — RESULTADO','var(--ouro)',[
     {label:'Densidade Corporal',val:dc.toFixed(4)+' g/ml'},
     {label:'% Gordura',val:gord+'%',cor:corGord},
     {label:'Soma 7 dobras',val:soma+' mm'},
-  ],'Jackson & Pollock (1978) Br J Nutr · Siri (1956)');
+  ],'Jackson & Pollock (1978) Br J Nutr · Siri (1956)') +
+  '<button onclick="salvarDobras7()" style="width:100%;margin-top:10px;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer">💾 SALVAR 7 DOBRAS</button>';
+}
+
+function salvarDobras7(){
+  var d = window._7dobrasResultado;
+  if(!d){ mostrarToast('Calcule primeiro!'); return; }
+  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({secao:'composicao', composicao:{gordura_pct: d.gordura_pct}})
+  }).then(function(){ mostrarToast('✅ 7 Dobras salvo!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
 }
 
 function calcUltrassom(){
@@ -1576,12 +1598,23 @@ function calcUltrassom(){
   var gordKg = peso*gord/100;
   var mmag = peso - gordKg;
   var corGord = gord<10?'var(--azul)':gord<20?'var(--verde)':gord<25?'var(--ouro)':'#FF6B6B';
+  window._ultrassomResultado = {gordura_pct: gord, massa_magra: parseFloat(mmag.toFixed(1)), peso: peso};
   document.getElementById('us-resultado').innerHTML = resultBox('ULTRASSOM — RESULTADO','#9B59B6',[
     {label:'% Gordura',val:gord+'%',cor:corGord},
     {label:'Gordura (kg)',val:gordKg.toFixed(1)+' kg'},
     {label:'Massa Magra',val:mmag.toFixed(1)+' kg',cor:'var(--verde)'},
     {label:'Soma 9 pontos',val:soma.toFixed(1)+' mm'},
-  ],'BodyMetrix™ · Jackson & Pollock (1978) · Siri (1956)');
+  ],'BodyMetrix™ · Jackson & Pollock (1978) · Siri (1956)') +
+  '<button onclick="salvarUltrassom()" style="width:100%;margin-top:10px;padding:12px;background:linear-gradient(135deg,#9B59B6,#6C3483);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">💾 SALVAR ULTRASSOM</button>';
+}
+
+function salvarUltrassom(){
+  var d = window._ultrassomResultado;
+  if(!d){ mostrarToast('Calcule primeiro!'); return; }
+  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({secao:'composicao', composicao:{peso:d.peso, gordura_pct:d.gordura_pct, massa_magra:d.massa_magra}})
+  }).then(function(){ mostrarToast('✅ Ultrassom salvo!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
 }
 
 function renderVO2Personal(){
@@ -1653,7 +1686,22 @@ function calcVO2P(tipo){
   vo2 = Math.max(10, vo2);
   var cor = vo2>=50?'var(--azul)':vo2>=40?'var(--verde)':vo2>=30?'var(--ouro)':'#FF6B6B';
   var classif = vo2>=50?'Excelente':vo2>=40?'Bom':vo2>=30?'Regular':'Abaixo do esperado';
-  res.innerHTML = resultBox('VO2 MÁX',cor,[{label:'VO2 Máximo',val:vo2+' ml/kg/min',cor:cor},{label:'Classificação',val:classif,cor:cor}],'ACSM 2022');
+  window._vo2Resultado = {tipo:tipo, vo2:vo2};
+  res.innerHTML = resultBox('VO2 MÁX',cor,[{label:'VO2 Máximo',val:vo2+' ml/kg/min',cor:cor},{label:'Classificação',val:classif,cor:cor}],'ACSM 2022') +
+  '<button onclick="salvarVO2()" style="width:100%;margin-top:10px;padding:10px;background:linear-gradient(135deg,var(--verde),#00B37E);border:none;border-radius:10px;color:#fff;font-family:Bebas Neue;font-size:15px;cursor:pointer">💾 SALVAR VO2</button>';
+}
+
+function salvarVO2(){
+  var d = window._vo2Resultado;
+  if(!d){ mostrarToast('Calcule primeiro!'); return; }
+  var payload = {secao:'vo2_hrr', vo2_hrr:{}};
+  if(d.tipo==='cooper') payload.vo2_hrr.cooper_dist = parseFloat(document.getElementById('p-cooper-dist').value)||0;
+  else if(d.tipo==='milha'){ payload.vo2_hrr.milha_tempo=parseFloat(document.getElementById('p-milha-tempo').value)||0; payload.vo2_hrr.milha_fc=parseFloat(document.getElementById('p-milha-fc').value)||0; }
+  else if(d.tipo==='step') payload.vo2_hrr.step_fc = parseFloat(document.getElementById('p-step-fc').value)||0;
+  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  }).then(function(){ mostrarToast('✅ VO2 salvo!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
 }
 
 function calcHRRP(){
@@ -1670,7 +1718,18 @@ function calcHRRP(){
   var linhas = [{label:'HRR (queda FC)',val:hrr+' bpm',cor:cor},{label:'Classificação',val:classif,cor:cor}];
   if(pas) linhas.push({label:'PA repouso',val:pas+'/'+pad+' mmHg'});
   if(poss) linhas.push({label:'PA pós esforço',val:poss+'/'+posd+' mmHg'});
-  document.getElementById('p-hrr-res').innerHTML = resultBox('HRR — FC DE RECUPERAÇÃO',cor,linhas,'Cole et al. (1999) NEJM');
+  window._hrrResultado = {pico:pico, min1:min1, pas:pas, pad:pad, poss:poss, posd:posd};
+  document.getElementById('p-hrr-res').innerHTML = resultBox('HRR — FC DE RECUPERAÇÃO',cor,linhas,'Cole et al. (1999) NEJM') +
+  '<button onclick="salvarHRR()" style="width:100%;margin-top:10px;padding:10px;background:linear-gradient(135deg,#FF4B4B,#FF8C00);border:none;border-radius:10px;color:#fff;font-family:Bebas Neue;font-size:15px;cursor:pointer">💾 SALVAR HRR</button>';
+}
+
+function salvarHRR(){
+  var d = window._hrrResultado;
+  if(!d){ mostrarToast('Calcule primeiro!'); return; }
+  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({secao:'vo2_hrr', vo2_hrr:{hrr_fc_pico:d.pico, hrr_fc_1min:d.min1, pa_rep_s:d.pas, pa_rep_d:d.pad, pa_pos_s:d.poss, pa_pos_d:d.posd}})
+  }).then(function(){ mostrarToast('✅ HRR salvo!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
 }
 
 function calcWells(){
@@ -1730,7 +1789,18 @@ function calcForcaP(){
   if(ab) linhas.push({label:'🧘 Abdominal',val:ab+' reps'});
   if(mm) linhas.push({label:'🦵 Sentar/levantar',val:mm+' reps/30s'});
   if(pd) linhas.push({label:'🤝 Preensão dom.',val:pd+' kgf'});
-  document.getElementById('p-forca-res').innerHTML = resultBox('TESTES DE FORÇA — RESULTADO','var(--ouro)',linhas,'ACSM 2022 · Jones et al. (1999) · Bohannon (2019)');
+  window._forcaResultado = {flexao:fl, barra:ba, abdominal:ab, preensao_dom:pd, sexo:sexo, idade:idade};
+  document.getElementById('p-forca-res').innerHTML = resultBox('TESTES DE FORÇA — RESULTADO','var(--ouro)',linhas,'ACSM 2022 · Jones et al. (1999) · Bohannon (2019)') +
+  '<button onclick="salvarForca()" style="width:100%;margin-top:10px;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer">💾 SALVAR TESTES DE FORÇA</button>';
+}
+
+function salvarForca(){
+  var d = window._forcaResultado;
+  if(!d){ mostrarToast('Calcule primeiro!'); return; }
+  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({secao:'testes_fisicos', testes_fisicos:{flexao:d.flexao, barra:d.barra, abdominal:d.abdominal, preensao_dom:d.preensao_dom, sexo:d.sexo, idade:d.idade}})
+  }).then(function(){ mostrarToast('✅ Testes de força salvos!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
 }
 
 
@@ -2357,11 +2427,20 @@ function salvarAnamnese(){
 }
 
 function salvarCircunferencias(){
-  mostrarToast('✅ Circunferências salvas!');
-  document.getElementById('circ-resultado').innerHTML =
-    '<div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:12px;font-size:13px;color:var(--verde)">' +
-    '✅ Circunferências registradas!' +
-    '</div>';
+  var fields = ['cintura','quadril','torax','abdomen','braco_d','braco_e','antebraco_d','antebraco_e','coxa_d','coxa_e','panturrilha_d','panturrilha_e'];
+  var circ = {};
+  fields.forEach(function(f){
+    var el = document.getElementById('circ-'+f);
+    if(el && el.value) circ[f] = parseFloat(el.value);
+  });
+  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({secao:'circunferencias', circunferencias: circ})
+  }).then(function(r){ return r.json(); }).then(function(){
+    mostrarToast('✅ Circunferências salvas!');
+    document.getElementById('circ-resultado').innerHTML =
+      '<div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:12px;font-size:13px;color:var(--verde)">✅ Circunferências registradas!</div>';
+  }).catch(function(){ mostrarToast('Erro ao salvar!'); });
 }
 
 function renderMMIIPersonal(){
@@ -2390,9 +2469,20 @@ function calcMMIIP(){
   if(reps>=ref.bom){classif='Bom/Excelente';cor='var(--verde)';}
   else if(reps>=ref.regular){classif='Regular';cor='var(--ouro)';}
   else{classif='Abaixo do esperado';cor='var(--vermelho)';}
+  window._mmiiResultado = {repeticoes:reps, sexo:sexo, idade:idade};
   document.getElementById('p-mmii-res').innerHTML = resultBox('POTÊNCIA MMII — RESULTADO','var(--verde)',[
     {label:'Repetições',val:reps+' reps/30s'},{label:'Classificação',val:classif,cor:cor}
-  ],'Jones et al. (1999) Res Q Exerc Sport · Rikli & Jones');
+  ],'Jones et al. (1999) Res Q Exerc Sport · Rikli & Jones') +
+  '<button onclick="salvarMMII()" style="width:100%;margin-top:10px;padding:12px;background:linear-gradient(135deg,var(--verde),#00B37E);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">💾 SALVAR MMII</button>';
+}
+
+function salvarMMII(){
+  var d = window._mmiiResultado;
+  if(!d){ mostrarToast('Calcule primeiro!'); return; }
+  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({secao:'mmii', mmii:{repeticoes:d.repeticoes, sexo:d.sexo, idade:d.idade}})
+  }).then(function(){ mostrarToast('✅ MMII salvo!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
 }
 function renderHRRPersonal(){
   return '<div style="background:rgba(255,75,75,.04);border:1px solid rgba(255,75,75,.2);border-radius:12px;padding:14px">' +
@@ -2428,7 +2518,18 @@ function calcHRRP2(){
   if(hrr2) linhas.push({label:'HRR 2 minutos',val:hrr2+' bpm'});
   if(pas) linhas.push({label:'PA repouso',val:pas+'/'+pad+' mmHg'});
   if(poss) linhas.push({label:'PA pós esforço',val:poss+'/'+posd+' mmHg'});
-  document.getElementById('p-hrr2-res').innerHTML = resultBox('HRR — FC DE RECUPERAÇÃO',cor,linhas,'Cole et al. (1999) NEJM');
+  window._hrr2Resultado = {pico:pico, min1:min1, min2:min2, pas:pas, pad:pad, poss:poss, posd:posd};
+  document.getElementById('p-hrr2-res').innerHTML = resultBox('HRR — FC DE RECUPERAÇÃO',cor,linhas,'Cole et al. (1999) NEJM') +
+  '<button onclick="salvarHRR2()" style="width:100%;margin-top:10px;padding:12px;background:linear-gradient(135deg,#FF4B4B,#FF8C00);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">💾 SALVAR HRR</button>';
+}
+
+function salvarHRR2(){
+  var d = window._hrr2Resultado;
+  if(!d){ mostrarToast('Calcule primeiro!'); return; }
+  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({secao:'vo2_hrr', vo2_hrr:{hrr_fc_pico:d.pico, hrr_fc_1min:d.min1, pa_rep_s:d.pas, pa_rep_d:d.pad, pa_pos_s:d.poss, pa_pos_d:d.posd}})
+  }).then(function(){ mostrarToast('✅ HRR salvo!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
 }
 
 function mostrarRoteiro(){

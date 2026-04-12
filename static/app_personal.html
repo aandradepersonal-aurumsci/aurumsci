@@ -1331,6 +1331,20 @@ function avalAba(aba){
 
   if(aba==='anamnese'){
     el.innerHTML = renderAnamnese();
+    // Carrega dados salvos do aluno
+    fetch('/app-personal/aluno/' + avalAlunoId + '/resumo', {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var a = d.aluno || {};
+      var av = d.avaliacao || {};
+      // Preenche campos básicos
+      if(a.nome){ var el2=document.getElementById('an-nome'); if(el2) el2.value=a.nome; }
+      if(av.peso){ var el2=document.getElementById('an-peso'); if(el2) el2.value=av.peso; }
+      if(av.altura){ var el2=document.getElementById('an-altura'); if(el2) el2.value=av.altura; }
+      // Selects
+      if(a.nivel){ var el2=document.getElementById('an-nivel'); if(el2) el2.value=a.nivel.toLowerCase(); }
+      if(a.objetivo){ var el2=document.getElementById('an-objetivo'); if(el2) el2.value=a.objetivo.toLowerCase(); }
+    }).catch(function(){});
 
   } else if(aba==='postural'){
     el.innerHTML = '<button onclick="abrirPosturalAluno(' + avalAlunoId + ', \'' + avalAlunoNome + '\')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:17px;letter-spacing:2px;cursor:pointer">🤖 ANÁLISE POSTURAL COM IA</button>';
@@ -2502,10 +2516,10 @@ function renderMMIIPersonal(){
   return '<div style="background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);border-radius:12px;padding:14px">' +
     '<div style="font-size:11px;color:var(--verde);font-weight:700;letter-spacing:1px;margin-bottom:8px">🦵 POTÊNCIA DE MEMBROS INFERIORES</div>' +
     '<div style="font-size:11px;color:var(--cinza);margin-bottom:12px;line-height:1.6">Sentar e levantar de uma cadeira sem apoio das mãos, joelho a 90°, máximo de vezes em <strong>30 segundos</strong>. Jones et al. (1999) Res Q Exerc Sport.</div>' +
-    field('p-mmii-reps','REPETIÇÕES EM 30s','number','12') +
+    field('p-mmii-reps','REPETIÇÕES EM 30s','reps','12') +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">' +
     '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">SEXO</div><select id="p-mmii-sexo" style="width:100%;padding:8px;border-radius:8px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px"><option value="M">Masculino</option><option value="F">Feminino</option></select></div>' +
-    field('p-mmii-idade','IDADE','number','30') +
+    field('p-mmii-idade','IDADE','anos','30') +
     '</div>' +
     '<button onclick="calcMMIIP()" style="width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,var(--verde),#00B37E);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">CALCULAR POTÊNCIA MMII</button>' +
     '<div id="p-mmii-res" style="margin-top:10px"></div>' +
@@ -2544,10 +2558,10 @@ function renderHRRPersonal(){
     '<div style="font-size:11px;color:#FF6B6B;font-weight:700;letter-spacing:1px;margin-bottom:8px">❤️ FC DE RECUPERAÇÃO (HRR)</div>' +
     '<div style="font-size:11px;color:var(--cinza);margin-bottom:12px;line-height:1.6">Faça logo após o teste de VO2. Pare, meça a FC imediatamente e após 1 e 2 minutos. Avalia a saúde do músculo cardíaco. Cole et al. (1999) NEJM.</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-    field('p-hrr2-pico','FC PICO (fim)','number','165') + field('p-hrr2-1min','FC APÓS 1 MIN','number','140') +
-    field('p-hrr2-2min','FC APÓS 2 MIN','number','120') +
-    field('p-hrr2-pa-rs','PA REPOS. SIST.','number','120') + field('p-hrr2-pa-rd','PA REPOS. DIAST.','number','80') +
-    field('p-hrr2-pa-ps','PA PÓS SIST.','number','160') + field('p-hrr2-pa-pd','PA PÓS DIAST.','number','90') +
+    field('p-hrr2-pico','FC PICO (fim)','bpm','165') + field('p-hrr2-1min','FC APÓS 1 MIN','bpm','140') +
+    field('p-hrr2-2min','FC APÓS 2 MIN','bpm','120') +
+    field('p-hrr2-pa-rs','PA REPOS. SIST. (valor maior)','mmHg','120') + field('p-hrr2-pa-rd','PA REPOS. DIAST. (valor menor)','mmHg','80') +
+    field('p-hrr2-pa-ps','PA PÓS SIST. (valor maior)','mmHg','160') + field('p-hrr2-pa-pd','PA PÓS DIAST. (valor menor)','mmHg','90') +
     '</div>' +
     '<button onclick="calcHRRP2()" style="width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,#FF4B4B,#FF8C00);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">CALCULAR HRR ❤️</button>' +
     '<div id="p-hrr2-res" style="margin-top:10px"></div>' +

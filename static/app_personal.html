@@ -226,7 +226,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <button class="lang-mini" onclick="setLangApp('es',this)">ES</button>
       </div>
       <div class="btn-icon" onclick="toggleTheme()" id="theme-btn">🌙</div>
-      <div class="avatar" id="avatar-inicial" onclick="toggleMenuPerfil()" style="cursor:pointer;position:relative">A</div>
+      <div class="avatar" id="avatar-inicial" onclick="toggleMenuPerfil(event)" style="cursor:pointer;position:relative">A</div>
     </div>
   </div>
 
@@ -691,16 +691,17 @@ function fazerLogout(){
   document.getElementById('login-senha').value = '';
 }
 
-function toggleMenuPerfil(){
+function toggleMenuPerfil(e){
+  if(e) e.stopPropagation();
   var m = document.getElementById('menu-perfil');
-  m.style.display = (m.style.display === 'none' ? 'block' : 'none');
+  m.style.display = (m.style.display === 'block') ? 'none' : 'block';
 }
 
 // Fecha menu ao clicar fora
 document.addEventListener('click', function(e){
   var m = document.getElementById('menu-perfil');
   var av = document.getElementById('avatar-inicial');
-  if(m && av && !m.contains(e.target) && !av.contains(e.target)){
+  if(m && av && !av.contains(e.target) && !m.contains(e.target)){
     m.style.display = 'none';
   }
 });

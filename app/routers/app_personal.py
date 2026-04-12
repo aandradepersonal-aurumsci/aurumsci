@@ -423,19 +423,17 @@ async def postural_aluno(
         av = AvaliacaoFisica(aluno_id=aluno_id)
         db.add(av)
 
-    if resultado.desvios:
-        av.postura_cabeca   = resultado.desvios.get("cabeca")
-        av.postura_ombros   = resultado.desvios.get("ombros")
-        av.postura_coluna   = resultado.desvios.get("coluna")
-        av.postura_quadril  = resultado.desvios.get("quadril")
-        av.postura_joelhos  = resultado.desvios.get("joelhos")
-        av.postura_pes      = resultado.desvios.get("pes")
-    av.postura_observacoes = resultado.observacoes
+    av.postura_cabeca   = resultado.cabeca
+    av.postura_ombros   = resultado.ombros
+    av.postura_coluna   = resultado.coluna
+    av.postura_quadril  = resultado.quadril
+    av.postura_joelhos  = resultado.joelhos
+    av.postura_pes      = resultado.pes
     db.commit()
 
     return {
         "aluno": aluno.nome,
-        "desvios": resultado.desvios,
+        "desvios": {"cabeca": resultado.cabeca, "ombros": resultado.ombros, "coluna": resultado.coluna, "quadril": resultado.quadril, "joelhos": resultado.joelhos, "pes": resultado.pes},
         "observacoes": resultado.observacoes,
         "recomendacoes": resultado.recomendacoes or []
     }

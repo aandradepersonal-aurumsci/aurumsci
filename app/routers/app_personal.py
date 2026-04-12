@@ -141,26 +141,23 @@ def resumo_completo_aluno(aluno_id: int, personal: Personal = Depends(get_person
     trinta = date.today().replace(day=1)
     freq_mes = db.query(PresencaTreino).filter(PresencaTreino.aluno_id == aluno_id, PresencaTreino.data >= trinta, PresencaTreino.presente == True).count()
     freq_total = db.query(PresencaTreino).filter(PresencaTreino.aluno_id == aluno_id, PresencaTreino.presente == True).count()
-    hrr = None
-    if aval and aval.hrr_fc_pico and aval.hrr_fc_1min:
-        hrr = round(aval.hrr_fc_pico - aval.hrr_fc_1min, 1)
     return {
         "aluno": {"id": aluno.id, "nome": aluno.nome},
         "avaliacao": {
             "peso": aval.peso if aval else None,
             "gordura": aval.percentual_gordura if aval else None,
             "massa_magra": aval.massa_magra_kg if aval else None,
-            "tmb": aval.tmb if aval else None,
+            "tmb": None,
             "vo2max": aval.vo2max if aval else None,
-            "hrr": hrr,
+            "hrr": None,
             "data": str(aval.data_avaliacao) if aval else None,
         },
         "testes": {
             "flexao": aval.teste_flexao_num if aval else None,
             "barra": aval.teste_barra_num if aval else None,
             "abdominal": aval.teste_abdominal_num if aval else None,
-            "preensao_dom": aval.preensao_dom if aval else None,
-            "mmii_reps": aval.mmii_reps if aval else None,
+            "preensao_dom": None,
+            "mmii_reps": None,
         },
         "postural": {
             "cabeca": aval.postura_cabeca if aval else None,

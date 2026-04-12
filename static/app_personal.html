@@ -924,7 +924,7 @@ function analisarPosturalP(){
   if(fotosPosturalP.frente) fd.append('foto_frente', fotosPosturalP.frente);
   if(fotosPosturalP.lado) fd.append('foto_lado', fotosPosturalP.lado);
   if(fotosPosturalP.costas) fd.append('foto_costas', fotosPosturalP.costas);
-  fetch('/app-personal/postural/' + alunoSelecionadoId, {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
+  fetch('/app-personal/aluno/' + alunoSelecionadoId + '/postural', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
   .then(function(r){ return r.json(); })
   .then(function(d){
     loading.style.display = 'none'; btn.disabled = false; btn.style.opacity = '1';

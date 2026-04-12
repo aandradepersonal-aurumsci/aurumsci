@@ -262,6 +262,23 @@ def meus_resultados(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depe
         "postura_observacoes": av.postura_observacoes,
     }
 
+
+@router.get("/meus-resultados")
+def meus_resultados(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    from app.routers.avaliacao import AvaliacaoFisica
+    av = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno.id).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+    if not av:
+        return {}
+    return {
+        "peso": av.peso,
+        "percentual_gordura": av.percentual_gordura,
+        "massa_magra_kg": av.massa_magra_kg,
+        "vo2max": av.vo2max,
+        "data_avaliacao": str(av.data_avaliacao) if av.data_avaliacao else None,
+        "postura_cabeca": av.postura_cabeca,
+        "postura_observacoes": av.postura_observacoes,
+    }
+
 @router.post("/postural")
 async def analise_postural(
     aluno: Aluno = Depends(get_aluno_logado),

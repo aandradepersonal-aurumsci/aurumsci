@@ -526,8 +526,9 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       </select>
     </div>
     <div class="field-mini">
-      <label>SENHA DE ACESSO</label>
-      <input type="password" id="novo-senha" placeholder="Mínimo 6 caracteres">
+      <label>CPF DO ALUNO</label>
+      <input type="text" id="novo-cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)">
+      <div style="font-size:10px;color:var(--cinza);margin-top:4px">A senha de acesso será os 6 primeiros dígitos do CPF</div>
     </div>
     <br>
     <button class="btn-gold" onclick="criarAluno()">CRIAR ALUNO</button>
@@ -1179,6 +1180,14 @@ function fecharModal(id){
   document.getElementById(id).classList.remove('show');
 }
 
+function mascaraCPF(input){
+  var v = input.value.replace(/\D/g,'');
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  input.value = v;
+}
+
 function criarAluno(){
   var nome = document.getElementById('novo-nome').value.trim();
   var email = document.getElementById('novo-email').value.trim();
@@ -1186,22 +1195,31 @@ function criarAluno(){
   var objetivo = document.getElementById('novo-objetivo').value;
   var nivel = document.getElementById('novo-nivel').value;
   var sexo = document.getElementById('novo-sexo').value;
-  var senha = document.getElementById('novo-senha').value;
+  var cpf = document.getElementById('novo-cpf').value.replace(/\D/g,'');
 
-  if(!nome || !email || !senha){ mostrarToast('Preencha nome, email e senha'); return; }
+  if(!nome || !email){ mostrarToast('Preencha nome e email'); return; }
+  if(cpf.length < 6){ mostrarToast('Informe o CPF para gerar a senha'); return; }
+
+  // Senha = primeiros 6 dígitos do CPF
+  var senha = cpf.substring(0, 6);
 
   fetch('/alunos', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body: JSON.stringify({nome:nome, email:email, telefone:telefone, objetivo:objetivo, nivel_experiencia:nivel, sexo:sexo})})
+    body: JSON.stringify({nome:nome, email:email, telefone:telefone, objetivo:objetivo, nivel_experiencia:nivel, sexo:sexo, cpf:cpf})})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(d.id){
       fetch('/aluno-portal/criar-acesso', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
         body: JSON.stringify({aluno_id:d.id, email:email, senha:senha})})
-      .then(function(){ 
-        mostrarToast('Aluno criado com sucesso!');
+      .then(function(){
+        mostrarToast('✅ Aluno criado! Senha: 6 primeiros dígitos do CPF');
         fecharModal('modal-novo-aluno');
         carregarAlunos();
         carregarDashboard();
+        // Limpa campos
+        ['novo-nome','novo-email','novo-telefone','novo-cpf'].forEach(function(id){
+          var el = document.getElementById(id);
+          if(el) el.value = '';
+        });
       });
     } else {
       mostrarToast(d.detail || 'Erro ao criar aluno');

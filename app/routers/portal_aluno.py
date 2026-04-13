@@ -110,6 +110,14 @@ def criar_acesso_aluno(dados: CriarAcesso, db: Session = Depends(get_db)):
     )
     db.add(cred)
     db.commit()
+
+    # Email de boas-vindas para o aluno
+    try:
+        from app.routers.pagamento import enviar_email_boas_vindas_aluno
+        enviar_email_boas_vindas_aluno(aluno.nome, dados.email)
+    except Exception as e:
+        print(f"Email aluno falhou: {e}")
+
     return {"mensagem": f"Acesso criado para {aluno.nome}", "email": dados.email}
 
 

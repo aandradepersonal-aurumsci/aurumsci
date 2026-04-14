@@ -1195,11 +1195,9 @@ function abrirModalPagamento(){
   anos += '</select>';
   html += dias + meses + anos;
   html += '</div></div>';
-  html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">STATUS</div>';
-  html += '<select id="pag-status" style="'+sel+'"><option value="pendente">⏳ Pendente</option><option value="pago">✅ Pago</option><option value="atrasado">🔴 Atrasado</option></select></div></div>';
+  html += '</div>';
 
-  html += '<button onclick="salvarPagamento()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:18px;cursor:pointer;margin-bottom:8px">💾 SALVAR COBRANÇA</button>';
-  html += '<button onclick="gerarRecibo()" style="width:100%;padding:14px;background:linear-gradient(135deg,#12121A,#1a1a2e);border:1px solid var(--ouro);border-radius:12px;color:var(--ouro);font-family:Bebas Neue;font-size:18px;cursor:pointer">🧾 GERAR RECIBO PDF</button>';
+  html += '<button onclick="salvarPagamento()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:18px;cursor:pointer">💾 REGISTRAR RECEBIMENTO</button>';
   html += '</div></div>';
   document.body.insertAdjacentHTML('beforeend', html);
 }
@@ -1275,8 +1273,9 @@ function salvarPagamento(){
   var mes = (document.getElementById('pag-venc-mes')||{}).value||'';
   var ano = (document.getElementById('pag-venc-ano')||{}).value||'';
   var venc = (dia && mes && ano) ? (ano+'-'+mes+'-'+dia) : '';
-  var status = (document.getElementById('pag-status')||{}).value||'pendente';
-  if(!alunoNome||!tipo||!total||!venc){ mostrarToast('Preencha todos os campos!'); return; }
+  var status = 'pago';
+  if(!alunoNome||!tipo||!total){ mostrarToast('Preencha o aluno e o valor!'); return; }
+  if(!venc){ venc = new Date().toISOString().split('T')[0]; }
 
   // Acha o aluno_id pelo nome
   var aluno = todosAlunos.find(function(a){ return a.nome === alunoNome; });
@@ -1300,11 +1299,30 @@ function salvarPagamento(){
   })
   .then(function(r){ return r.json(); })
   .then(function(d){
-    document.querySelector('[style*="position:fixed"]').remove();
-    mostrarToast('✅ Cobrança registrada!');
-    carregarFinanceiro();
+    if(d.id){
+      // Marca como pago automaticamente
+      fetch('/financeiro/pagamento/' + d.id + '/pagar', {
+        method:'PUT', headers:{'Authorization':'Bearer '+token}
+      }).then(function(){
+        document.querySelector('[style*="position:fixed"]').remove();
+        mostrarToast('✅ Recebimento registrado!');
+        carregarFinanceiro();
+        // Gera recibo automaticamente
+        window._reciboData = {
+          alunoNome: alunoNome,
+          tipo: tipo,
+          total: total,
+          venc: (dia && mes && ano) ? (dia+'/'+mes+'/'+ano) : new Date().toLocaleDateString('pt-BR')
+        };
+        confirmarRecibo('cnpj');
+      });
+    } else {
+      document.querySelector('[style*="position:fixed"]').remove();
+      mostrarToast('✅ Recebimento registrado!');
+      carregarFinanceiro();
+    }
   })
-  .catch(function(){ mostrarToast('Erro ao salvar cobrança'); });
+  .catch(function(){ mostrarToast('Erro ao registrar'); });
 }
 
 function marcarPago(i){ marcarPagoDB(pagamentosDB[i] ? pagamentosDB[i].id : i); }

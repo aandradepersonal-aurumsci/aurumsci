@@ -535,6 +535,19 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   </div>
 </div>
 
+<!-- MODAL WHATSAPP -->
+<div id="modal-whatsapp" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:10000;align-items:center;justify-content:center">
+  <div style="background:var(--card);border-radius:20px;padding:28px;width:88%;max-width:360px">
+    <div style="font-family:'Bebas Neue';font-size:22px;color:var(--verde);margin-bottom:4px">✅ Aluno Criado!</div>
+    <div style="font-size:13px;color:var(--cinza);margin-bottom:20px">Agora avise o aluno por WhatsApp para ele acessar o app.</div>
+    <div id="wpp-preview" style="background:var(--bg);border-radius:12px;padding:14px;font-size:13px;color:var(--texto);line-height:1.7;margin-bottom:16px;border:1px solid var(--borda)"></div>
+    <a id="wpp-link" href="#" target="_blank" style="display:block;width:100%;padding:14px;background:linear-gradient(135deg,#25D366,#128C7E);border:none;border-radius:12px;color:#fff;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;cursor:pointer;text-align:center;text-decoration:none;margin-bottom:10px;box-sizing:border-box">
+      📱 ENVIAR POR WHATSAPP
+    </a>
+    <button onclick="document.getElementById('modal-whatsapp').style.display='none'" style="width:100%;padding:12px;background:var(--borda);color:var(--texto);border:none;border-radius:12px;cursor:pointer;font-weight:600">Fechar</button>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -1211,10 +1224,11 @@ function criarAluno(){
       fetch('/aluno-portal/criar-acesso', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
         body: JSON.stringify({aluno_id:d.id, email:email, senha:senha})})
       .then(function(){
-        mostrarToast('✅ Aluno criado! Senha: 6 primeiros dígitos do CPF');
         fecharModal('modal-novo-aluno');
         carregarAlunos();
         carregarDashboard();
+        // Abre modal WhatsApp
+        abrirModalWhatsApp(nome, email, telefone, cpf);
         // Limpa campos
         ['novo-nome','novo-email','novo-telefone','novo-cpf'].forEach(function(id){
           var el = document.getElementById(id);
@@ -1225,6 +1239,32 @@ function criarAluno(){
       mostrarToast(d.detail || 'Erro ao criar aluno');
     }
   }).catch(function(){ mostrarToast('Erro de conexão'); });
+}
+
+// ── WHATSAPP ──────────────────────────────────────────────────
+function abrirModalWhatsApp(nome, email, telefone, cpf){
+  var primeiroNome = (nome||'').split(' ')[0];
+  var msg = 'Olá ' + primeiroNome + '! Criei seu acesso no AurumSci 💪
+
+' +
+    '▶ Acesse: aurumsc.com.br/aluno
+' +
+    '▶ Email: ' + email + '
+' +
+    '▶ Senha: os 6 primeiros dígitos do seu CPF
+
+' +
+    'Adicione à tela inicial do celular para ter como app!
+' +
+    'Qualquer dúvida me chama 😊';
+  document.getElementById('wpp-preview').innerHTML = msg.replace(/
+/g,'<br>');
+  var tel = (telefone||'').replace(/\D/g,'');
+  if(tel.length === 11) tel = '55' + tel;
+  var url = 'https://wa.me/' + tel + '?text=' + encodeURIComponent(msg);
+  document.getElementById('wpp-link').href = url;
+  if(!tel){ document.getElementById('wpp-link').style.opacity='0.4'; document.getElementById('wpp-link').href='#'; }
+  document.getElementById('modal-whatsapp').style.display = 'flex';
 }
 
 // ── CHAT ──────────────────────────────────────────────────────

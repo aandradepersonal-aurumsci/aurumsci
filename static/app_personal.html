@@ -1090,6 +1090,23 @@ function calcTotalPag(){
     document.getElementById('pag-total-label').textContent = qtd2 + 'x R$' + val3.toFixed(0) + ' = R$' + total.toFixed(0);
   }
   document.getElementById('pag-total-val').textContent = total.toFixed(0);
+  // Atualiza simulador fiscal
+  var fiscoBox = document.getElementById('fisco-box');
+  if(total > 0 && fiscoBox){
+    fiscoBox.style.display = 'block';
+    var cnpj = total * 0.06;
+    var cpf = total * 0.40;
+    var liqCnpj = total - cnpj;
+    var liqCpf = total - cpf;
+    var economia = cpf - cnpj;
+    document.getElementById('fisco-cnpj').textContent = 'R$ ' + cnpj.toFixed(2).replace('.',',');
+    document.getElementById('fisco-cpf').textContent = 'R$ ' + cpf.toFixed(2).replace('.',',');
+    document.getElementById('fisco-cnpj-liq').textContent = 'Liquido: R$ ' + liqCnpj.toFixed(2).replace('.',',');
+    document.getElementById('fisco-cpf-liq').textContent = 'Liquido: R$ ' + liqCpf.toFixed(2).replace('.',',');
+    document.getElementById('fisco-economia').innerHTML = '💡 Abrindo CNPJ voce economiza <strong>R$ ' + economia.toFixed(2).replace('.',',') + '</strong> por mes neste aluno!';
+  } else if(fiscoBox) {
+    fiscoBox.style.display = 'none';
+  }
 }
 
 function abrirModalPagamento(){
@@ -1135,6 +1152,30 @@ function abrirModalPagamento(){
   html += '<div style="background:rgba(201,168,76,.1);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center">';
   html += '<div style="font-size:11px;color:var(--cinza);margin-bottom:4px" id="pag-total-label">Selecione uma modalidade acima</div>';
   html += '<div style="font-family:Bebas Neue;font-size:28px;color:var(--ouro2)">R$ <span id="pag-total-val">0</span></div>';
+  html += '</div>';
+
+  // Simulador fiscal
+  html += '<div id="fisco-box" style="border-radius:12px;padding:12px;margin-bottom:12px;display:none">';
+  html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:8px">💰 FISCO — QUANTO GUARDAR?</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+  // CNPJ
+  html += '<div style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:10px;text-align:center">';
+  html += '<div style="font-size:10px;color:var(--verde);font-weight:700;margin-bottom:4px">😎 CNPJ (~6%)</div>';
+  html += '<div style="font-family:Bebas Neue;font-size:20px;color:var(--verde)" id="fisco-cnpj">R$ 0</div>';
+  html += '<div style="font-size:9px;color:var(--cinza);margin-top:2px">DAS mensal</div>';
+  html += '<div style="font-size:10px;color:var(--verde);margin-top:4px;font-weight:700" id="fisco-cnpj-liq">Liquido: R$ 0</div>';
+  html += '</div>';
+  // CPF
+  html += '<div style="background:rgba(255,75,75,.08);border:1px solid rgba(255,75,75,.2);border-radius:10px;padding:10px;text-align:center">';
+  html += '<div style="font-size:10px;color:#FF4B4B;font-weight:700;margin-bottom:4px">😰 CPF (~40%)</div>';
+  html += '<div style="font-family:Bebas Neue;font-size:20px;color:#FF4B4B" id="fisco-cpf">R$ 0</div>';
+  html += '<div style="font-size:9px;color:var(--cinza);margin-top:2px">IR + ISS + INSS</div>';
+  html += '<div style="font-size:10px;color:#FF4B4B;margin-top:4px;font-weight:700" id="fisco-cpf-liq">Liquido: R$ 0</div>';
+  html += '</div>';
+  html += '</div>';
+  // Economia
+  html += '<div id="fisco-economia" style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:8px;margin-top:8px;text-align:center;font-size:11px;color:var(--ouro2)"></div>';
+  html += '<div style="font-size:9px;color:#444;margin-top:6px;text-align:center">Estimativa. ISS 5% SP. Consulte um contador.</div>';
   html += '</div>';
 
   // Vencimento e status

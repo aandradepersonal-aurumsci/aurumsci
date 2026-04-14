@@ -1012,6 +1012,31 @@ function renderFinanceiro(){
   document.getElementById('fin-pendente').textContent = 'R$' + pendente.toFixed(0);
   document.getElementById('fin-atrasado').textContent = 'R$' + atrasado.toFixed(0);
 
+  // Card tributário
+  var cardTrib = '<div style="background:#12121A;border:1px solid #2A2A3A;border-radius:16px;padding:16px;margin-bottom:14px">';
+  cardTrib += '<div style="font-size:10px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:12px">⚠️ QUANTO VOCÊ ESTÁ PAGANDO DE IMPOSTO?</div>';
+  cardTrib += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">';
+  // CPF
+  cardTrib += '<div style="background:rgba(255,75,75,.08);border:1px solid rgba(255,75,75,.25);border-radius:12px;padding:12px;text-align:center">';
+  cardTrib += '<div style="font-family:Bebas Neue;font-size:13px;color:#FF4B4B;margin-bottom:6px">😰 CPF (AUTÔNOMO)</div>';
+  cardTrib += '<div style="font-family:Bebas Neue;font-size:28px;color:#FF4B4B">35-40%</div>';
+  cardTrib += '<div style="font-size:10px;color:var(--cinza);margin-top:4px;line-height:1.5">IR até 27,5%<br>ISS 5% (São Paulo)<br>INSS 11-20%</div>';
+  cardTrib += '</div>';
+  // CNPJ
+  cardTrib += '<div style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);border-radius:12px;padding:12px;text-align:center">';
+  cardTrib += '<div style="font-family:Bebas Neue;font-size:13px;color:var(--verde);margin-bottom:6px">😎 CNPJ (SIMPLES)</div>';
+  cardTrib += '<div style="font-family:Bebas Neue;font-size:28px;color:var(--verde)">~6%</div>';
+  cardTrib += '<div style="font-size:10px;color:var(--cinza);margin-top:4px;line-height:1.5">Tudo incluso<br>numa guia única<br>DAS mensal</div>';
+  cardTrib += '</div>';
+  cardTrib += '</div>';
+  cardTrib += '<div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:10px;margin-bottom:8px">';
+  cardTrib += '<div style="font-size:11px;color:var(--ouro2);font-weight:700;margin-bottom:4px">💡 ATENÇÃO</div>';
+  cardTrib += '<div style="font-size:11px;color:var(--cinza);line-height:1.6">Personal trainer <strong style="color:#fff">NÃO pode ser MEI</strong> pois a atividade é regulamentada pelo CREF. A alternativa é abrir como <strong style="color:#fff">ME ou SLU</strong> (Sociedade Limitada Unipessoal) no Simples Nacional. Um bom contador pode reduzir sua carga de ~35% para ~6%!</div>';
+  cardTrib += '</div>';
+  cardTrib += '<div style="font-size:10px;color:#444;text-align:center">Valores estimados. Consulte um contador de confiança para planejamento tributário personalizado.</div>';
+  cardTrib += '</div>';
+  document.getElementById('lista-pagamentos').insertAdjacentHTML('beforebegin', cardTrib);
+
   var html = '<button onclick="abrirModalPagamento()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer;margin-bottom:14px">➕ REGISTRAR PAGAMENTO</button>';
 
   if(pagamentosDB.length === 0){
@@ -1135,9 +1160,73 @@ function abrirModalPagamento(){
   html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">STATUS</div>';
   html += '<select id="pag-status" style="'+sel+'"><option value="pendente">⏳ Pendente</option><option value="pago">✅ Pago</option><option value="atrasado">🔴 Atrasado</option></select></div></div>';
 
-  html += '<button onclick="salvarPagamento()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:18px;cursor:pointer">💾 SALVAR COBRANÇA</button>';
+  html += '<button onclick="salvarPagamento()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:18px;cursor:pointer;margin-bottom:8px">💾 SALVAR COBRANÇA</button>';
+  html += '<button onclick="gerarRecibo()" style="width:100%;padding:14px;background:linear-gradient(135deg,#12121A,#1a1a2e);border:1px solid var(--ouro);border-radius:12px;color:var(--ouro);font-family:Bebas Neue;font-size:18px;cursor:pointer">🧾 GERAR RECIBO PDF</button>';
   html += '</div></div>';
   document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function gerarRecibo(){
+  var alunoNome = (document.getElementById("pag-aluno")||{}).value||"";
+  var tipo = document.querySelector("input[name=pag-tipo]:checked");
+  var total = parseFloat(document.getElementById("pag-total-val").textContent)||0;
+  var dia = (document.getElementById("pag-venc-dia")||{}).value||"";
+  var mes = (document.getElementById("pag-venc-mes")||{}).value||"";
+  var ano = (document.getElementById("pag-venc-ano")||{}).value||"";
+  var venc = (dia && mes && ano) ? (dia+"/"+mes+"/"+ano) : "A combinar";
+  if(!alunoNome || !total){ mostrarToast("Preencha o aluno e o valor!"); return; }
+  var m = document.createElement("div");
+  m.id = "modal-tipo-recibo";
+  m.style = "position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:10001;display:flex;align-items:center;justify-content:center";
+  m.innerHTML = "<div style='background:var(--card);border-radius:20px;padding:24px;width:88%;max-width:340px'>"
+    + "<div style='font-family:Bebas Neue;font-size:20px;color:var(--ouro);margin-bottom:4px'>GERAR RECIBO</div>"
+    + "<div style='font-size:12px;color:var(--cinza);margin-bottom:16px'>Como voce presta servico atualmente?</div>"
+    + "<div onclick='confirmarRecibo("cpf")' style='background:rgba(255,75,75,.08);border:1px solid rgba(255,75,75,.3);border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer'>"
+    + "<div style='font-family:Bebas Neue;font-size:16px;color:#FF4B4B'>😰 CPF — AUTONOMO</div>"
+    + "<div style='font-size:11px;color:var(--cinza);margin-top:3px'>Carga estimada: 35-40% | IR + ISS + INSS</div>"
+    + "<div style='font-size:10px;color:#FF4B4B;margin-top:4px;font-weight:700'>⚠️ Abrir CNPJ pode reduzir para ~6%!</div>"
+    + "</div>"
+    + "<div onclick='confirmarRecibo("cnpj")' style='background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.3);border-radius:12px;padding:14px;margin-bottom:16px;cursor:pointer'>"
+    + "<div style='font-family:Bebas Neue;font-size:16px;color:var(--verde)'>😎 CNPJ — SIMPLES NACIONAL</div>"
+    + "<div style='font-size:11px;color:var(--cinza);margin-top:3px'>Carga estimada: ~6% | DAS mensal unificado</div>"
+    + "<div style='font-size:10px;color:var(--verde);margin-top:4px;font-weight:700'>✅ Melhor opcao para personal trainer!</div>"
+    + "</div>"
+    + "<button onclick='document.getElementById("modal-tipo-recibo").remove()' style='width:100%;padding:10px;background:var(--borda);color:var(--texto);border:none;border-radius:10px;cursor:pointer'>Cancelar</button>"
+    + "</div>";
+  window._reciboData = {alunoNome:alunoNome, tipo:tipo, total:total, venc:venc};
+  document.body.appendChild(m);
+}
+
+function confirmarRecibo(regime){
+  var el = document.getElementById("modal-tipo-recibo");
+  if(el) el.remove();
+  var d = window._reciboData || {};
+  var alunoNome = d.alunoNome||""; var total = d.total||0; var venc = d.venc||"A combinar"; var tipo = d.tipo;
+  var desc = tipo ? (tipo.value==="aulas" ? ((document.getElementById("pag-qtd-aulas")||{}).value||"")+" aulas x R$"+((document.getElementById("pag-val-aula")||{}).value||"") : tipo.value==="mensal" ? "Mensalidade de Personal Training" : ((document.getElementById("pag-desc-serv")||{}).value||"Servico")) : "Servico de Personal Training";
+  var nomePers = localStorage.getItem("aurum_wl_nome") || nomePersonal || "Personal Trainer";
+  var dataHoje = new Date().toLocaleDateString("pt-BR");
+  var num = "REC-"+Date.now().toString().slice(-6);
+  var tribHtml = "";
+  if(regime==="cpf"){
+    var iss=(total*0.05).toFixed(2).replace(".",","); var ir=(total*0.275).toFixed(2).replace(".",","); var inss=(total*0.20).toFixed(2).replace(".",","); var tot=(total*0.40).toFixed(2).replace(".",",");
+    tribHtml = "<div style='background:#fff5f5;border:1px solid #ffcccc;border-radius:8px;padding:14px;margin:14px 0'><div style='font-size:12px;font-weight:700;color:#cc0000;margin-bottom:8px'>TRIBUTOS ESTIMADOS - CPF (Autonomo)</div><table style='width:100%;font-size:12px;border-collapse:collapse'><tr><td>ISS (5% - Sao Paulo)</td><td style='text-align:right'>R$ "+iss+"</td></tr><tr><td>IR progressivo (ate 27,5%)</td><td style='text-align:right'>R$ "+ir+"</td></tr><tr><td>INSS contrib. individual (20%)</td><td style='text-align:right'>R$ "+inss+"</td></tr><tr style='font-weight:700;color:#cc0000;border-top:1px solid #ffcccc'><td>CARGA TOTAL ESTIMADA (~40%)</td><td style='text-align:right'>R$ "+tot+"</td></tr></table><div style='font-size:10px;color:#cc0000;margin-top:8px;font-weight:700'>⚠️ Abrir CNPJ (ME/SLU) no Simples Nacional pode reduzir para apenas ~6%!</div></div>";
+  } else {
+    var das=(total*0.06).toFixed(2).replace(".",",");
+    tribHtml = "<div style='background:#f0fff8;border:1px solid #99eedd;border-radius:8px;padding:14px;margin:14px 0'><div style='font-size:12px;font-weight:700;color:#007744;margin-bottom:8px'>TRIBUTOS ESTIMADOS - CNPJ (Simples Nacional)</div><table style='width:100%;font-size:12px;border-collapse:collapse'><tr><td>DAS - Simples Nacional (~6%)</td><td style='text-align:right'>R$ "+das+"</td></tr><tr><td>IR, ISS, INSS, PIS, COFINS</td><td style='text-align:right'>Inclusos</td></tr><tr style='font-weight:700;color:#007744;border-top:1px solid #99eedd'><td>CARGA TOTAL (~6%)</td><td style='text-align:right'>R$ "+das+"</td></tr></table><div style='font-size:10px;color:#007744;margin-top:8px'>✅ Voce esta no regime mais eficiente para personal trainer!</div></div>";
+  }
+  var regLabel = regime==="cpf" ? "CPF - Autonomo" : "CNPJ - Simples Nacional";
+  var pg = window.open("","_blank");
+  pg.document.write("<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Recibo "+num+"</title><style>body{font-family:Arial,sans-serif;padding:40px;color:#111}.hd{text-align:center;border-bottom:3px solid #C9A84C;padding-bottom:16px;margin-bottom:20px}.logo{font-size:24px;font-weight:900;color:#C9A84C;letter-spacing:6px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px}.lbl{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}.val{font-size:14px;font-weight:600}.tbox{background:#f8f4e8;border:2px solid #C9A84C;border-radius:8px;padding:14px;text-align:center;margin:14px 0}.ass{margin-top:48px;display:flex;justify-content:space-between}.ab{border-top:1px solid #111;width:200px;text-align:center;padding-top:6px;font-size:11px}.rod{border-top:1px solid #ddd;padding-top:10px;text-align:center;font-size:10px;color:#999;margin-top:20px}@media print{body{padding:20px}}</style></head><body>");
+  pg.document.write("<div class='hd'><div class='logo'>"+nomePers.toUpperCase()+"</div><div style='font-size:10px;color:#666;letter-spacing:3px;margin-top:4px'>PERSONAL TRAINER PROFISSIONAL</div><div style='font-size:11px;color:#888;margin-top:6px'>RECIBO N. "+num+" — "+dataHoje+" | "+regLabel+"</div></div>");
+  pg.document.write("<div class='grid'><div><div class='lbl'>Prestador</div><div class='val'>"+nomePers+"</div></div><div><div class='lbl'>Tomador</div><div class='val'>"+alunoNome+"</div></div></div>");
+  pg.document.write("<div style='margin-bottom:14px'><div class='lbl'>Descricao</div><div class='val'>"+desc+"</div></div>");
+  pg.document.write("<div class='grid'><div><div class='lbl'>Emissao</div><div class='val'>"+dataHoje+"</div></div><div><div class='lbl'>Vencimento</div><div class='val'>"+venc+"</div></div></div>");
+  pg.document.write("<div class='tbox'><div style='font-size:11px;color:#888;margin-bottom:4px'>VALOR DO SERVICO</div><div style='font-size:30px;font-weight:900;color:#C9A84C'>R$ "+total.toFixed(2).replace(".",",")+"</div><div style='font-size:11px;color:#888;margin-top:3px'>"+regLabel+"</div></div>");
+  pg.document.write(tribHtml);
+  pg.document.write("<div class='ass'><div class='ab'>"+nomePers+"<br><span style='color:#888'>Prestador</span></div><div class='ab'>"+alunoNome+"<br><span style='color:#888'>Tomador</span></div></div>");
+  pg.document.write("<div class='rod'>Recibo gerado pelo AurumSci PRO — aurumsc.com.br<br>Valores tributarios sao estimativas. Consulte um contador.</div></body></html>");
+  pg.document.close();
+  setTimeout(function(){ pg.print(); }, 600);
 }
 
 function salvarPagamento(){

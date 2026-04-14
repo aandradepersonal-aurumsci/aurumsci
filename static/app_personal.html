@@ -1161,7 +1161,7 @@ function abrirModalPagamento(){
   html += '<div style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2);border-radius:12px;padding:12px;margin-bottom:12px">';
   html += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px"><input type="radio" name="pag-tipo" value="servico" onchange="document.getElementById(&quot;campos-aulas&quot;).style.display=&quot;none&quot;;document.getElementById(&quot;campos-mensal&quot;).style.display=&quot;none&quot;;document.getElementById(&quot;campos-serv&quot;).style.display=&quot;block&quot;;calcTotalPag()"> <span style="font-family:Bebas Neue;font-size:15px;color:var(--azul)">📋 SERVIÇO</span></label>';
   html += '<div id="campos-serv" style="display:none"><div style="margin-bottom:6px"><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">DESCRIÇÃO</div>';
-  html += '<input id="pag-desc-serv" placeholder="Ex: Avaliação física, consultoria..." oninput="calcTotalPag()" style="'+inp+'"></div>';
+  html += '<input id="pag-desc-serv" placeholder="Ex: Avaliação física, consultoria..." style="'+inp+'"></div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
   html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">QUANTIDADE</div><input id="pag-qtd-serv" type="number" placeholder="1" oninput="calcTotalPag()" style="'+inp+'"></div>';
   html += '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">VALOR UNIT. (R$)</div><input id="pag-val-serv" type="number" placeholder="200" oninput="calcTotalPag()" style="'+inp+'"></div>';

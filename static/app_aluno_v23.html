@@ -934,6 +934,33 @@ function carregarWhiteLabel(){
   }).catch(function(){});
 }
 
+function verificarPagamentosAluno(){
+  fetch('/financeiro/pagamento/aluno-view', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.ok ? r.json() : null; })
+  .then(function(d){
+    if(!d || !d.pagamentos || d.pagamentos.length === 0) return;
+    var pagos = d.pagamentos.filter(function(p){ return p.status === 'pago'; });
+    var ultKey = 'aurum_ult_pag_visto';
+    var ultVisto = localStorage.getItem(ultKey) || '';
+    var novos = pagos.filter(function(p){ return p.id > parseInt(ultVisto||0); });
+    if(novos.length === 0) return;
+    // Atualiza ultimo visto
+    var maxId = Math.max.apply(null, novos.map(function(p){ return p.id; }));
+    localStorage.setItem(ultKey, maxId);
+    // Mostra notificação
+    var ult = novos[novos.length-1];
+    var val = parseFloat(ult.valor||0).toFixed(2).replace('.',',');
+    var notif = document.createElement('div');
+    notif.style = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:9999;width:90%;max-width:360px;background:#12121A;border:1px solid var(--verde);border-radius:16px;padding:16px;box-shadow:0 4px 24px rgba(0,229,160,.2)';
+    notif.innerHTML = '<div style="font-family:Bebas Neue;font-size:16px;color:var(--verde);margin-bottom:6px">✅ PAGAMENTO CONFIRMADO!</div>' +
+      '<div style="font-size:13px;color:var(--texto);margin-bottom:10px">' + (ult.descricao||'Servico') + ' — R$ ' + val + '</div>' +
+      '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px">Seu personal confirmou o recebimento.</div>' +
+      '<button onclick="this.parentElement.remove()" style="width:100%;padding:8px;background:var(--verde);border:none;border-radius:8px;color:#0A0A0F;font-family:Bebas Neue;font-size:14px;cursor:pointer">OK</button>';
+    document.body.appendChild(notif);
+    setTimeout(function(){ if(notif.parentElement) notif.remove(); }, 8000);
+  }).catch(function(){});
+}
+
 function fazerLogin(){
   var email = document.getElementById('login-email').value.trim();
   var senha = document.getElementById('login-senha').value;
@@ -951,6 +978,7 @@ function fazerLogin(){
       var onbDone = localStorage.getItem('aurum_onb_done');
       if(onbDone){
         mostrarApp();
+        verificarPagamentosAluno();
       } else {
         fetch('/app-aluno/treino-hoje', {headers:{'Authorization':'Bearer '+token}})
         .then(function(r){ return r.json(); })
@@ -958,6 +986,7 @@ function fazerLogin(){
           if(t && (t.sessao || t.mensagem)){
             localStorage.setItem('aurum_onb_done','1');
             mostrarApp();
+            verificarPagamentosAluno();
           } else { iniciarOnboarding(); }
         }).catch(function(){ iniciarOnboarding(); });
       }

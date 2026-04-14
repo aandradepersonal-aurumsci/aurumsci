@@ -1257,8 +1257,7 @@ function abrirModalWhatsApp(nome, email, telefone, cpf){
     'Adicione à tela inicial do celular para ter como app!
 ' +
     'Qualquer dúvida me chama 😊';
-  document.getElementById('wpp-preview').innerHTML = msg.replace(/
-/g,'<br>');
+  document.getElementById('wpp-preview').innerHTML = msg.replace(/\n/g,'<br>');
   var tel = (telefone||'').replace(/\D/g,'');
   if(tel.length === 11) tel = '55' + tel;
   var url = 'https://wa.me/' + tel + '?text=' + encodeURIComponent(msg);

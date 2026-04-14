@@ -1244,19 +1244,12 @@ function criarAluno(){
 // ── WHATSAPP ──────────────────────────────────────────────────
 function abrirModalWhatsApp(nome, email, telefone, cpf){
   var primeiroNome = (nome||'').split(' ')[0];
-  var msg = 'Olá ' + primeiroNome + '! Criei seu acesso no AurumSci 💪
-
-' +
-    '▶ Acesse: aurumsc.com.br/aluno
-' +
-    '▶ Email: ' + email + '
-' +
-    '▶ Senha: os 6 primeiros dígitos do seu CPF
-
-' +
-    'Adicione à tela inicial do celular para ter como app!
-' +
-    'Qualquer dúvida me chama 😊';
+  var msg = 'Ola ' + primeiroNome + '! Criei seu acesso no AurumSci!\n\n';
+  msg += 'Acesse: aurumsc.com.br/aluno\n';
+  msg += 'Email: ' + email + '\n';
+  msg += 'Senha: os 6 primeiros digitos do seu CPF\n\n';
+  msg += 'Adicione a tela inicial do celular para usar como app!\n';
+  msg += 'Qualquer duvida me chama!';
   document.getElementById('wpp-preview').innerHTML = msg.replace(/\n/g,'<br>');
   var tel = (telefone||'').replace(/\D/g,'');
   if(tel.length === 11) tel = '55' + tel;

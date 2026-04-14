@@ -694,6 +694,58 @@ def registrar_overtraining(
             aval.observacoes = json.dumps(obs, ensure_ascii=False)
         db.commit()
 
+    # Avisa personal se risco alto
+    if dados.risco == "alto":
+        try:
+            from app.routers.pagamento import enviar_email_boas_vindas
+            from app.models import Personal
+            personal = db.query(Personal).filter(Personal.id == aluno.personal_id).first()
+            if personal:
+                from email.mime.multipart import MIMEMultipart
+                from email.mime.text import MIMEText
+                import smtplib
+                from app.config import settings
+                msg = MIMEMultipart("alternative")
+                msg["Subject"] = f"⚠️ {aluno.nome} pode estar em overtraining!"
+                msg["From"] = settings.SMTP_USER
+                msg["To"] = personal.email
+                html = f"""<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#0A0A0F;font-family:Arial,sans-serif;">
+<div style="max-width:600px;margin:0 auto;padding:40px 24px;">
+  <div style="text-align:center;margin-bottom:24px;">
+    <div style="font-family:Georgia,serif;font-size:32px;font-weight:900;color:#C9A84C;letter-spacing:8px;">AURUMSCI</div>
+  </div>
+  <div style="background:#1a0a0a;border:1px solid #FF4B4B;border-radius:16px;padding:28px;margin-bottom:20px;">
+    <div style="font-size:22px;font-weight:700;color:#FF4B4B;margin-bottom:12px;">
+      ⚠️ Alerta de Overtraining
+    </div>
+    <p style="color:#ccc;font-size:15px;line-height:1.8;">
+      Seu aluno <strong style="color:#fff;">{aluno.nome}</strong> respondeu o questionário de overtraining 
+      e o resultado indica <strong style="color:#FF4B4B;">RISCO ALTO</strong>.
+    </p>
+    <div style="background:#0A0A0F;border-radius:12px;padding:16px;margin:16px 0;">
+      <div style="font-size:13px;color:#FF4B4B;font-weight:700;margin-bottom:8px;">RESULTADO:</div>
+      <div style="color:#ccc;font-size:14px;">Score: {dados.score} | Risco: {dados.risco.upper()}</div>
+    </div>
+    <p style="color:#ccc;font-size:13px;">
+      Considere adaptar o treino de <strong style="color:#fff;">{aluno.nome}</strong> 
+      com uma semana de deload ou redução de volume/intensidade.
+    </p>
+  </div>
+  <div style="text-align:center;color:#444;font-size:12px;">
+    AurumSci PRO — aurumsc.com.br
+  </div>
+</div>
+</body></html>"""
+                msg.attach(MIMEText(html, "html"))
+                with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
+                    server.starttls()
+                    server.login(settings.SMTP_USER, settings.SMTP_PASS)
+                    server.send_message(msg)
+        except Exception as e:
+            print(f"Erro email overtraining: {e}")
+
     return {
         "mensagem": "Questionário registrado!",
         "score": dados.score,

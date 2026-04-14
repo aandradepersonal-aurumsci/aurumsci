@@ -1307,14 +1307,19 @@ function salvarPagamento(){
         document.querySelector('[style*="position:fixed"]').remove();
         mostrarToast('✅ Recebimento registrado!');
         carregarFinanceiro();
-        // Gera recibo automaticamente
+        // Guarda dados para recibo
         window._reciboData = {
           alunoNome: alunoNome,
           tipo: tipo,
           total: total,
           venc: (dia && mes && ano) ? (dia+'/'+mes+'/'+ano) : new Date().toLocaleDateString('pt-BR')
         };
-        confirmarRecibo('cnpj');
+        // Mostra botao de recibo
+        var btnRec = document.createElement('div');
+        btnRec.style = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:9999;width:90%;max-width:360px';
+        btnRec.innerHTML = '<button onclick="gerarRecibo();this.parentElement.remove()" style="width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:14px;color:#0A0A0F;font-family:Bebas Neue;font-size:20px;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.4)">🧾 GERAR RECIBO PDF</button>';
+        document.body.appendChild(btnRec);
+        setTimeout(function(){ if(btnRec.parentElement) btnRec.remove(); }, 10000);
       });
     } else {
       document.querySelector('[style*="position:fixed"]').remove();

@@ -371,6 +371,8 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       </div>
     </div>
 
+    <div id="card-trib"></div>
+    <div id="card-soma"></div>
     <div id="lista-pagamentos">
       <div style="text-align:center;padding:40px;color:var(--cinza)">Carregando...</div>
     </div>
@@ -1035,15 +1037,7 @@ function renderFinanceiro(){
   cardTrib += '</div>';
   cardTrib += '<div style="font-size:10px;color:#444;text-align:center">Valores estimados. Consulte um contador de confiança para planejamento tributário personalizado.</div>';
   cardTrib += '</div>';
-  // Remove cards anteriores para evitar duplicação
-  ['card-trib','card-soma'].forEach(function(id){
-    var el = document.getElementById(id);
-    if(el) el.remove();
-  });
-  var cardTribEl = document.createElement('div');
-  cardTribEl.id = 'card-trib';
-  cardTribEl.innerHTML = cardTrib;
-  document.getElementById('lista-pagamentos').before(cardTribEl);
+  document.getElementById('card-trib').innerHTML = cardTrib;
 
   // Somatoria mensal
   if(recebido > 0 || pendente > 0){
@@ -1078,10 +1072,7 @@ function renderFinanceiro(){
     cardSoma += '<div style="font-size:10px;color:var(--cinza);margin-top:4px">Separe numa conta reserva para pagar o DAS em dia</div>';
     cardSoma += '</div>';
     cardSoma += '</div>';
-    var cardSomaEl = document.createElement('div');
-    cardSomaEl.id = 'card-soma';
-    cardSomaEl.innerHTML = cardSoma;
-    document.getElementById('lista-pagamentos').before(cardSomaEl);
+    document.getElementById('card-soma').innerHTML = cardSoma;
   }
 
   var html = '<button onclick="abrirModalPagamento()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer;margin-bottom:14px">➕ REGISTRAR PAGAMENTO</button>';

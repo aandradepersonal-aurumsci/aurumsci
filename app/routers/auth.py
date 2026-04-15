@@ -145,7 +145,9 @@ def login(request: Request, dados: PersonalLogin, db: Session = Depends(get_db))
         access_token=criar_access_token(token_data),
         refresh_token=criar_refresh_token(token_data),
         personal_id=personal.id,
-        nome=personal.nome
+        nome=personal.nome,
+        logo_url=personal.logo_url or '',
+        nome_empresa=personal.nome_empresa or ''
     )
 
 
@@ -172,7 +174,9 @@ def renovar_token(dados: RefreshTokenRequest, db: Session = Depends(get_db)):
         access_token=criar_access_token(token_data),
         refresh_token=criar_refresh_token(token_data),
         personal_id=personal.id,
-        nome=personal.nome
+        nome=personal.nome,
+        logo_url=personal.logo_url or '',
+        nome_empresa=personal.nome_empresa or ''
     )
 
 

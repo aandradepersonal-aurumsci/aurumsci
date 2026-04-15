@@ -19,6 +19,8 @@ class TokenResposta(BaseModel):
     token_type: str = "bearer"
     personal_id: int
     nome: str
+    logo_url: str = ""
+    nome_empresa: str = ""
 
 class RefreshTokenRequest(BaseModel):
     refresh_token: str

@@ -778,10 +778,25 @@ function salvarLogoWL(){
   var nomeInput = (document.getElementById('wl-nome-input')||{}).value||'';
   if(nomeInput.trim()) localStorage.setItem('aurum_wl_nome', nomeInput.trim());
   var logoSalvo = localStorage.getItem('aurum_wl_logo');
-  if(!logoSalvo){ mostrarToast('Escolha uma imagem primeiro'); return; }
-  aplicarLogoSalvo();
-  document.getElementById('modal-whitelabel').style.display = 'none';
-  mostrarToast('Logo aplicado com sucesso! ✅');
+  // Salva no banco
+  var fd = new FormData();
+  if(nomeInput.trim()) fd.append('nome', nomeInput.trim());
+  if(logoSalvo && logoSalvo.startsWith('data:')){
+    var arr = logoSalvo.split(','), mime = arr[0].match(/:(.*?);/)[1];
+    var bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while(n--){ u8arr[n] = bstr.charCodeAt(n); }
+    fd.append('logo', new Blob([u8arr], {type:mime}), 'logo.png');
+  }
+  fetch('/app-personal/white-label', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
+  .then(function(){
+    aplicarLogoSalvo();
+    document.getElementById('modal-whitelabel').style.display = 'none';
+    mostrarToast('White label salvo! ✅');
+  }).catch(function(){
+    aplicarLogoSalvo();
+    document.getElementById('modal-whitelabel').style.display = 'none';
+    mostrarToast('Logo aplicado! ✅');
+  });
 }
 
 function removerLogoWL(){

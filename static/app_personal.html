@@ -794,7 +794,7 @@ function aplicarLogoSalvo(){
   var el = document.getElementById('topbar-logo');
   if(!el) return;
   if(logoSalvo){
-    el.innerHTML = '<img src="' + logoSalvo + '" style="max-height:32px;max-width:130px;object-fit:contain">';
+    el.innerHTML = '<img src="' + logoSalvo + '" style="max-height:48px;max-width:160px;object-fit:contain">';
   } else {
     el.innerHTML = '<svg viewBox="0 0 44 44" width="22" height="22" style="margin-right:4px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:20px;font-weight:400;letter-spacing:2px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:10px;font-style:italic;color:#fff;margin-left:2px">sci.</span><span style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:#4B9FFF;margin-left:2px">PRO</span>';
   }

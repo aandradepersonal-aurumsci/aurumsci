@@ -247,6 +247,11 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         📁 Escolher imagem
         <input type="file" accept="image/*" style="display:none" onchange="uploadLogoWL(this)">
       </label>
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--cinza);margin-bottom:6px">NOME DO SEU NEGÓCIO (opcional)</div>
+        <input id="wl-nome-input" placeholder="Ex: João Fitness, Studio Silva..." style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);font-size:14px;box-sizing:border-box">
+      </div>
+      <button onclick="usarAurumSci()" style="width:100%;padding:10px;background:rgba(201,168,76,.1);border:1px solid var(--ouro);color:var(--ouro);border-radius:12px;cursor:pointer;margin-bottom:10px;font-weight:700;font-size:13px">⚡ Usar logo AurumSci (padrão)</button>
       <button onclick="removerLogoWL()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--borda);color:var(--cinza);border-radius:12px;cursor:pointer;margin-bottom:10px">Remover logo personalizado</button>
       <button onclick="salvarLogoWL()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;cursor:pointer;margin-bottom:10px">✅ SALVAR E APLICAR</button>
       <button onclick="document.getElementById('modal-whitelabel').style.display='none'" style="width:100%;padding:12px;background:var(--borda);color:var(--texto);border:none;border-radius:12px;cursor:pointer;font-weight:600">Fechar</button>
@@ -760,7 +765,16 @@ function uploadLogoWL(input){
   reader.readAsDataURL(file);
 }
 
+function usarAurumSci(){
+  localStorage.removeItem('aurum_wl_nome');
+  localStorage.removeItem('aurum_wl_logo');
+  document.getElementById('modal-whitelabel').style.display = 'none';
+  location.reload();
+}
+
 function salvarLogoWL(){
+  var nomeInput = (document.getElementById('wl-nome-input')||{}).value||'';
+  if(nomeInput.trim()) localStorage.setItem('aurum_wl_nome', nomeInput.trim());
   var logoSalvo = localStorage.getItem('aurum_wl_logo');
   if(!logoSalvo){ mostrarToast('Escolha uma imagem primeiro'); return; }
   aplicarLogoSalvo();

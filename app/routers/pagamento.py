@@ -354,7 +354,33 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                 personal.assinatura_status = "ativa"
                 db.commit()
                 enviar_email_boas_vindas_personal(personal.nome, personal.email, plano)
+    # Cancelamento
+    if event["type"] in ["customer.subscription.deleted", "customer.subscription.paused"]:
+        sub = event["data"]["object"]
+        stripe_sub_id = sub.get("id")
+        if stripe_sub_id:
+            from app.models import Personal
+            personal = db.query(Personal).filter(Personal.stripe_subscription_id == stripe_sub_id).first()
+            if personal:
+                personal.ativo = False
+                personal.assinatura_status = "cancelada"
+                db.commit()
+                try:
+                    msg = MIMEMultipart("alternative")
+                    msg["Subject"] = "Sua assinatura AurumSci foi cancelada"
+                    msg["From"] = settings.SMTP_USER
+                    msg["To"] = personal.email
+                    html = f"<html><body style='background:#0A0A0F;font-family:Arial;padding:40px'><h2 style='color:#C9A84C'>Assinatura cancelada, {personal.nome.split()[0]}</h2><p style='color:#ccc'>Seus dados ficam salvos por 30 dias. Reative quando quiser!</p><a href='https://aurumsc.com.br/pro' style='display:block;text-align:center;background:#C9A84C;color:#000;padding:16px;border-radius:12px;text-decoration:none;font-weight:900;margin-top:16px'>REATIVAR ASSINATURA</a></body></html>"
+                    msg.attach(MIMEText(html, "html"))
+                    with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
+                        server.starttls()
+                        server.login(settings.SMTP_USER, settings.SMTP_PASS)
+                        server.send_message(msg)
+                except Exception as e:
+                    print(f"Erro email cancelamento: {e}")
+
     return {"status": "ok"}
+
 
 @router.post("/contato")
 async def contato(request: Request):

@@ -5,7 +5,7 @@ import os
 import requests
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
-EMAIL_FROM = "AurumSci <onboarding@resend.dev>"
+EMAIL_FROM = "AurumSci <noreply@aurumsc.com.br>"
 
 def enviar_email(para: str, assunto: str, html: str) -> bool:
     try:

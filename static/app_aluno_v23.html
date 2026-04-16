@@ -382,6 +382,38 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       </div>
     </div>
     <div id="avaliacao-personal-dados" style="margin-bottom:16px"></div>
+    <!-- ROTEIRO -->
+    <div style="background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.3);border-radius:14px;padding:16px;margin-bottom:16px">
+      <div style="font-family:'Bebas Neue';font-size:16px;color:var(--ouro);margin-bottom:10px;letter-spacing:1px">📋 ROTEIRO DA AVALIAÇÃO</div>
+      <div style="font-size:12px;color:var(--cinza);line-height:2">
+        <span style="color:var(--ouro)">1.</span> Preencha os <strong style="color:var(--texto)">DOCUMENTOS</strong> — PAR-Q e consentimento<br>
+        <span style="color:var(--ouro)">2.</span> Preencha a <strong style="color:var(--texto)">ANAMNESE</strong> — histórico de saúde<br>
+        <span style="color:var(--ouro)">3.</span> Seu personal fará <strong style="color:var(--texto)">presencialmente:</strong><br>
+        <span style="margin-left:16px;color:var(--cinza)">• Análise postural com IA</span><br>
+        <span style="margin-left:16px;color:var(--cinza)">• Medidas e composição corporal</span><br>
+        <span style="margin-left:16px;color:var(--cinza)">• Testes físicos e de potência</span><br>
+        <span style="margin-left:16px;color:var(--cinza)">• VO2 máximo e HRR cardiovascular</span>
+      </div>
+    </div>
+
+    <!-- O QUE VOCÊ PREENCHE -->
+    <div style="font-size:11px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:8px">✏️ VOCÊ PREENCHE</div>
+    <div class="aval-grid" style="margin-bottom:16px">
+      <div class="aval-card" onclick="abrirModalDocumentos()" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));border-color:rgba(201,168,76,.25);position:relative">
+        <div class="aval-icon">📄</div>
+        <div class="aval-titulo">DOCUMENTOS</div>
+        <div class="aval-sub">PAR-Q · Consentimento · Termo</div>
+        <div id="docs-badge" style="display:none;position:absolute;top:8px;right:8px;background:#FF4B4B;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px">PENDENTE</div>
+      </div>
+      <div class="aval-card" onclick="abrirModal('modal-anamnese')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(75,159,255,.08),rgba(75,159,255,.02));border-color:rgba(75,159,255,.25)">
+        <div class="aval-icon">📝</div>
+        <div class="aval-titulo">ANAMNESE</div>
+        <div class="aval-sub">Histórico de saúde e condições</div>
+      </div>
+    </div>
+
+    <!-- O QUE O PERSONAL FAZ -->
+    <div style="font-size:11px;color:var(--azul);letter-spacing:2px;font-weight:700;margin-bottom:8px">👨‍💼 SEU PERSONAL REALIZA</div>
     <div class="aval-grid">
       <div class="aval-card" onclick="abrirModal('modal-postural')">
         <div class="aval-icon">🧍</div>
@@ -407,17 +439,6 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <div class="aval-icon">🥗</div>
         <div class="aval-titulo">NUTRIÇÃO</div>
         <div class="aval-sub">Sugestão baseada em evidências</div>
-      </div>
-      <div class="aval-card" onclick="abrirModalDocumentos()" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));border-color:rgba(201,168,76,.25);position:relative">
-        <div class="aval-icon">📄</div>
-        <div class="aval-titulo">DOCUMENTOS</div>
-        <div class="aval-sub">PAR-Q · Consentimento · Termo</div>
-        <div id="docs-badge" style="display:none;position:absolute;top:8px;right:8px;background:#FF4B4B;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px">PENDENTE</div>
-      </div>
-      <div class="aval-card" onclick="abrirModal('modal-anamnese')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(75,159,255,.08),rgba(75,159,255,.02));border-color:rgba(75,159,255,.25)">
-        <div class="aval-icon">📝</div>
-        <div class="aval-titulo">ANAMNESE</div>
-        <div class="aval-sub">Histórico de saúde e condições</div>
       </div>
     </div>
   </div>

@@ -433,40 +433,46 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div style="font-size:11px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:8px">✏️ VOCÊ PREENCHE</div>
     <div class="aval-grid" style="margin-bottom:16px">
       <div class="aval-card" onclick="abrirModalDocumentos()" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));border-color:rgba(201,168,76,.25);position:relative">
+        <div style="position:absolute;top:8px;left:8px;background:var(--ouro);color:#000;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">0️⃣</div>
         <div class="aval-icon">📄</div>
         <div class="aval-titulo">DOCUMENTOS</div>
         <div class="aval-sub">PAR-Q · Consentimento · Termo</div>
         <div id="docs-badge" style="display:none;position:absolute;top:8px;right:8px;background:#FF4B4B;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px">PENDENTE</div>
       </div>
-      <div class="aval-card" onclick="abrirModal('modal-anamnese')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(75,159,255,.08),rgba(75,159,255,.02));border-color:rgba(75,159,255,.25)">
+      <div class="aval-card" onclick="abrirModal('modal-anamnese')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(75,159,255,.08),rgba(75,159,255,.02));border-color:rgba(75,159,255,.25);position:relative">
+        <div style="position:absolute;top:8px;left:8px;background:var(--azul);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">1️⃣</div>
         <div class="aval-icon">📝</div>
         <div class="aval-titulo">ANAMNESE</div>
-        <div class="aval-sub">Histórico de saúde e condições</div>
+        <div class="aval-sub">Objetivo · Nível · Saúde</div>
       </div>
     </div>
 
     <!-- O QUE O PERSONAL FAZ -->
     <div style="font-size:11px;color:var(--azul);letter-spacing:2px;font-weight:700;margin-bottom:8px">👨‍💼 SEU PERSONAL REALIZA</div>
     <div class="aval-grid">
-      <div class="aval-card" onclick="abrirModal('modal-postural')">
+      <div class="aval-card" onclick="abrirModal('modal-postural')" style="position:relative">
+        <div style="position:absolute;top:8px;left:8px;background:var(--azul);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">2️⃣</div>
         <div class="aval-icon">🧍</div>
         <div class="aval-titulo">POSTURAL</div>
         <div class="aval-sub" id="t-aval1">Análise com IA</div>
       </div>
-      <div class="aval-card" onclick="abrirModal('modal-testes')">
-        <div class="aval-icon">❤️</div>
-        <div class="aval-titulo">TESTES</div>
-        <div class="aval-sub" id="t-aval2">VO2, FC, Força</div>
-      </div>
-      <div class="aval-card" onclick="abrirModal('modal-medidas')">
+      <div class="aval-card" onclick="abrirModal('modal-medidas')" style="position:relative">
+        <div style="position:absolute;top:8px;left:8px;background:var(--azul);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">3️⃣</div>
         <div class="aval-icon">📏</div>
         <div class="aval-titulo">MEDIDAS</div>
         <div class="aval-sub" id="t-aval3">Circunferências</div>
       </div>
-      <div class="aval-card" onclick="abrirModal('modal-composicao')">
+      <div class="aval-card" onclick="abrirModal('modal-composicao')" style="position:relative">
+        <div style="position:absolute;top:8px;left:8px;background:var(--azul);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">4️⃣</div>
         <div class="aval-icon">⚖️</div>
         <div class="aval-titulo">COMPOSIÇÃO</div>
         <div class="aval-sub" id="t-aval4">Peso e gordura</div>
+      </div>
+      <div class="aval-card" onclick="abrirModal('modal-testes')" style="position:relative">
+        <div style="position:absolute;top:8px;left:8px;background:var(--azul);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">5️⃣</div>
+        <div class="aval-icon">❤️</div>
+        <div class="aval-titulo">TESTES</div>
+        <div class="aval-sub" id="t-aval2">VO2, FC, Força</div>
       </div>
       <div class="aval-card" onclick="abrirModalNutri()" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.04));border-color:rgba(201,168,76,.3)">
         <div class="aval-icon">🥗</div>
@@ -728,13 +734,33 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <div class="modal-full" id="modal-anamnese">
   <div class="modal-header">
     <button class="modal-back" onclick="fecharModal('modal-anamnese')">←</button>
-    <div class="modal-titulo">ANAMNESE</div>
+    <div class="modal-titulo">1️⃣ ANAMNESE</div>
   </div>
   <div class="modal-body" id="body-anamnese">
     <div style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;line-height:1.7;color:var(--cinza)">
       <strong style="color:var(--azul)">📝 Por que isso é importante?</strong><br>
-      Conhecer seu histórico de saúde nos ajuda a adaptar seu treino com segurança e personalização máxima.
+      Conhecer seu histórico de saúde nos ajuda a adaptar seu treino com segurança. Os dados básicos já estão preenchidos — complete o restante!
     </div>
+
+    <!-- DADOS DO ONBOARDING JA PREENCHIDOS -->
+    <div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:12px;padding:14px;margin-bottom:16px">
+      <div style="font-size:11px;color:var(--verde);font-weight:700;letter-spacing:1px;margin-bottom:10px">✅ SEUS DADOS JÁ PREENCHIDOS</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+        <div style="background:var(--bg);border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:var(--cinza);margin-bottom:4px">OBJETIVO</div>
+          <div id="anam-objetivo" style="font-size:13px;font-weight:700;color:var(--verde)">—</div>
+        </div>
+        <div style="background:var(--bg);border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:var(--cinza);margin-bottom:4px">NÍVEL</div>
+          <div id="anam-nivel" style="font-size:13px;font-weight:700;color:var(--verde)">—</div>
+        </div>
+        <div style="background:var(--bg);border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:var(--cinza);margin-bottom:4px">DIAS/SEM</div>
+          <div id="anam-dias" style="font-size:13px;font-weight:700;color:var(--verde)">—</div>
+        </div>
+      </div>
+    </div>
+
     <div style="font-size:13px;color:var(--ouro);font-weight:600;margin-bottom:10px;letter-spacing:1px">CONDIÇÕES DE SAÚDE</div>
     <div id="anam-checks"></div>
     <div style="margin-top:16px">
@@ -885,7 +911,7 @@ var TX = {
 function T(k){ return (TX[lang]||TX['pt'])[k] || (TX['pt'])[k] || k; }
 
 // ── PASSOS ONBOARDING ─────────────────────────────────
-var PASSOS = ['consentimento','contrato','objetivo','nivel','dias','anamnese','periodizacao','pronto'];
+var PASSOS = ['consentimento','contrato','objetivo','nivel','dias','periodizacao','pronto'];
 
 // ── SPLASH ────────────────────────────────────────────
 window.onload = function(){
@@ -2967,12 +2993,37 @@ function renderAnamnese(){
     {key:'Osteoporose',label:'Osteoporose'},
     {key:'Asma/DPOC',label:'Asma / DPOC'}
   ];
-  var html = '';
-  pats.forEach(function(p){
-    html += '<div class="check-item" onclick="toggleCheck(this,\'' + p.key + '\')" data-key="' + p.key + '">' +
-      '<div class="check-box"></div><div class="check-label">' + p.label + '</div></div>';
+  // Carrega dados do onboarding
+  var objMap = {hipertrofia:'Hipertrofia',emagrecimento:'Emagrecimento',condicionamento:'Condicionamento',saude:'Saúde',forca:'Força',flexibilidade:'Flexibilidade'};
+  var objSalvo = localStorage.getItem('aurum_objetivo') || '';
+  var nivelSalvo = localStorage.getItem('aurum_nivel') || '';
+  var diasSalvo = localStorage.getItem('aurum_dias') || '';
+  var elObj = document.getElementById('anam-objetivo');
+  var elNiv = document.getElementById('anam-nivel');
+  var elDias = document.getElementById('anam-dias');
+  if(elObj) elObj.textContent = objMap[objSalvo] || objSalvo || '—';
+  if(elNiv) elNiv.textContent = nivelSalvo ? nivelSalvo.charAt(0).toUpperCase()+nivelSalvo.slice(1) : '—';
+  if(elDias) elDias.textContent = diasSalvo ? diasSalvo+'x' : '—';
+  // Carrega dados do banco
+  fetch('/app-aluno/minha-anamnese', {headers:{Authorization:'Bearer '+token}})
+  .then(function(r){ return r.ok ? r.json() : {}; })
+  .then(function(d){
+    var salvos = d.patologias || [];
+    var html = '';
+    pats.forEach(function(p){
+      var m = salvos.indexOf(p.key) !== -1;
+      html += '<div class="check-item'+(m?' checked':'')+'" onclick="toggleCheck(this,\''+p.key+'\')" data-key="'+p.key+'"><div class="check-box">'+(m?'✓':'')+'</div><div class="check-label">'+p.label+'</div></div>';
+    });
+    document.getElementById('anam-checks').innerHTML = html;
+    var elO = document.getElementById('anam-outras'); if(elO && d.outras_condicoes) elO.value = d.outras_condicoes;
+    var elM = document.getElementById('anam-med'); if(elM && d.medicamentos) elM.value = d.medicamentos;
+  }).catch(function(){
+    var html = '';
+    pats.forEach(function(p){
+      html += '<div class="check-item" onclick="toggleCheck(this,\''+p.key+'\')" data-key="'+p.key+'"><div class="check-box"></div><div class="check-label">'+p.label+'</div></div>';
+    });
+    document.getElementById('anam-checks').innerHTML = html;
   });
-  document.getElementById('anam-checks').innerHTML = html;
 }
 
 function salvarAnamnese(){

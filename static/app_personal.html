@@ -488,6 +488,39 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <div class="auri-dot"></div>
 </div>
 
+<!-- MODAL CONTRATO SERVICOS -->
+<div class="modal-overlay" id="modal-contrato-servico" style="display:none">
+  <div class="modal-card" style="max-height:90vh;overflow-y:auto">
+    <span class="modal-close" onclick="fecharModal('modal-contrato-servico')">×</span>
+    <div class="modal-titulo">📄 CONTRATO DE SERVIÇOS</div>
+    <div style="font-size:11px;color:var(--cinza);text-align:center;margin-bottom:16px;font-style:italic">(sugerido, com base em comum acordo entre as partes)</div>
+
+    <div style="background:var(--bg);border:1px solid var(--borda);border-radius:12px;padding:16px;margin-bottom:16px;font-size:12px;color:var(--cinza);line-height:1.8">
+      <strong style="color:var(--ouro)">PERSONAL:</strong> <span id="cont-personal-nome">—</span> — CREF <span id="cont-personal-cref">—</span><br>
+      <strong style="color:var(--ouro)">ALUNO:</strong> <span id="cont-aluno-nome">—</span><br>
+      <strong style="color:var(--ouro)">DATA:</strong> <span id="cont-data">—</span>
+    </div>
+
+    <div style="font-size:12px;color:var(--cinza);line-height:2">
+      <div style="margin-bottom:12px"><strong style="color:var(--texto);font-size:13px">1. CANCELAMENTO DE AULA</strong><br>
+      Aviso mínimo de 12 horas. Sem aviso, a aula é cobrada normalmente.</div>
+      <div style="margin-bottom:12px"><strong style="color:var(--texto);font-size:13px">2. REPOSIÇÃO</strong><br>
+      Aulas canceladas com aviso podem ser repostas dentro do mês corrente, conforme disponibilidade.</div>
+      <div style="margin-bottom:12px"><strong style="color:var(--texto);font-size:13px">3. PAGAMENTO</strong><br>
+      Mensalidade conforme acordado. Atraso gera juros de 1% ao mês.</div>
+      <div style="margin-bottom:12px"><strong style="color:var(--texto);font-size:13px">4. RESCISÃO</strong><br>
+      Qualquer parte pode cancelar com 15 dias de aviso. Sem multa.</div>
+      <div style="margin-bottom:16px"><strong style="color:var(--texto);font-size:13px">5. RESPONSABILIDADE</strong><br>
+      O aluno declara estar apto para atividade física. O AurumSci é ferramenta de apoio tecnológico.</div>
+    </div>
+
+    <div style="font-size:10px;color:#444;text-align:center;margin-bottom:16px">Código Civil Brasileiro · Resolução CONFEF 307/2015 · LGPD Lei 13.709/2018</div>
+
+    <button onclick="enviarContratoWhatsApp()" style="width:100%;padding:14px;background:linear-gradient(135deg,#25D366,#128C7E);border:none;border-radius:12px;color:#fff;font-family:'Bebas Neue';font-size:18px;cursor:pointer;margin-bottom:8px">📱 ENVIAR POR WHATSAPP</button>
+    <button onclick="fecharModal('modal-contrato-servico')" style="width:100%;padding:12px;background:transparent;border:1px solid var(--borda);border-radius:12px;color:var(--cinza);font-size:14px;cursor:pointer">Fechar</button>
+  </div>
+</div>
+
 <!-- MODAL NOVO ALUNO -->
 <div class="modal-overlay" id="modal-novo-aluno">
   <div class="modal">
@@ -551,6 +584,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <a id="wpp-link" href="#" target="_blank" style="display:block;width:100%;padding:14px;background:linear-gradient(135deg,#25D366,#128C7E);border:none;border-radius:12px;color:#fff;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;cursor:pointer;text-align:center;text-decoration:none;margin-bottom:10px;box-sizing:border-box">
       📱 ENVIAR POR WHATSAPP
     </a>
+    <button onclick="abrirContrato()" style="width:100%;padding:12px;background:rgba(201,168,76,.1);border:1px solid var(--ouro);color:var(--ouro);border-radius:12px;cursor:pointer;font-family:'Bebas Neue';font-size:16px;letter-spacing:1px;margin-bottom:8px">&#128196; GERAR CONTRATO DE SERVICOS</button>
     <button onclick="document.getElementById('modal-whatsapp').style.display='none'" style="width:100%;padding:12px;background:var(--borda);color:var(--texto);border:none;border-radius:12px;cursor:pointer;font-weight:600">Fechar</button>
   </div>
 </div>
@@ -1424,6 +1458,8 @@ function criarAluno(){
         carregarDashboard();
         // Abre modal WhatsApp
         abrirModalWhatsApp(nome, email, telefone, cpf);
+        // Prepara contrato
+        window._contratoAluno = {nome:nome, email:email, cpf:cpf, telefone:telefone};
         // Limpa campos
         ['novo-nome','novo-email','novo-telefone','novo-cpf'].forEach(function(id){
           var el = document.getElementById(id);
@@ -1434,6 +1470,36 @@ function criarAluno(){
       mostrarToast(d.detail || 'Erro ao criar aluno');
     }
   }).catch(function(){ mostrarToast('Erro de conexão'); });
+}
+
+// == CONTRATO ==
+function abrirContrato(){
+  var aluno = window._contratoAluno || {};
+  document.getElementById('cont-aluno-nome').textContent = aluno.nome || '—';
+  document.getElementById('cont-personal-nome').textContent = nomePersonal || '—';
+  document.getElementById('cont-personal-cref').textContent = localStorage.getItem('aurum_cref') || '—';
+  document.getElementById('cont-data').textContent = new Date().toLocaleDateString('pt-BR');
+  fecharModal('modal-wpp');
+  document.getElementById('modal-contrato-servico').style.display = 'flex';
+}
+
+function enviarContratoWhatsApp(){
+  var aluno = window._contratoAluno || {};
+  var tel = (aluno.telefone||'').replace(/\D/g,'');
+  if(tel.length === 11) tel = '55' + tel;
+  var msg = 'Ola ' + (aluno.nome||'').split(' ')[0] + '! Segue nosso contrato de servicos:\n\n';
+  msg += 'CONTRATO DE PRESTACAO DE SERVICOS\n';
+  msg += '(sugerido, com base em comum acordo entre as partes)\n\n';
+  msg += 'Personal: ' + nomePersonal + '\n';
+  msg += 'Aluno: ' + (aluno.nome||'') + '\n';
+  msg += 'Data: ' + new Date().toLocaleDateString('pt-BR') + '\n\n';
+  msg += '1. CANCELAMENTO: Aviso minimo 12h\n';
+  msg += '2. REPOSICAO: Dentro do mes corrente\n';
+  msg += '3. PAGAMENTO: Juros 1% ao mes em atraso\n';
+  msg += '4. RESCISAO: 15 dias de aviso, sem multa\n\n';
+  msg += 'Qualquer duvida me chama!';
+  var url = tel ? 'https://wa.me/' + tel + '?text=' + encodeURIComponent(msg) : 'https://wa.me/?text=' + encodeURIComponent(msg);
+  window.open(url, '_blank');
 }
 
 // == WHATSAPP ==

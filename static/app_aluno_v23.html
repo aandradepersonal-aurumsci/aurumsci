@@ -1114,6 +1114,15 @@ function toggleConsentimento(i){
   }
 }
 
+function avancarContrato(){
+  if(Object.keys(contratoMarcados).length === 5 || contratoMarcados.length === 5){
+    localStorage.setItem('aurum_contrato', new Date().toISOString());
+    onbProximo();
+  } else {
+    mostrarToast('Responda todas as perguntas para continuar');
+  }
+}
+
 function avancarConsentimento(){
   if(consentimentosMarcados.length === 5){
     localStorage.setItem('aurum_consentimento', new Date().toISOString());
@@ -2250,6 +2259,14 @@ function abrirModal(id){
   if(id === 'modal-nutri') { /* handled by abrirModalNutri */ }
   if(id === 'modal-anamnese') renderAnamnese();
 }
+function voltarParaAvaliacao(){
+  document.getElementById('screen-onboarding').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('tabs').style.display='flex';
+  localStorage.setItem('aurum_onb_done','1');
+  mudarTab('avaliacao', document.querySelector('.tab:nth-child(2)'));
+}
+
 function mudarAbaAval(aba){
   var btnAut = document.getElementById('aba-autonomo');
   var btnPro = document.getElementById('aba-pro');

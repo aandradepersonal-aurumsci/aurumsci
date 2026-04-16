@@ -1476,6 +1476,8 @@ function selecionarOpcao(el, campo, val){
   parent.querySelectorAll('.opcao').forEach(function(o){ o.classList.remove('selected'); });
   el.classList.add('selected');
   onbData[campo] = val;
+  if(campo === 'objetivo') localStorage.setItem('aurum_objetivo', val);
+  if(campo === 'dias') localStorage.setItem('aurum_dias', val);
 }
 function selecionarPeriodizacao(el, val){
   document.querySelectorAll('.opcao-nivel').forEach(function(o){ o.classList.remove('selected'); });
@@ -1486,6 +1488,7 @@ function selecionarNivel(el, val){
   document.querySelectorAll('.opcao-nivel').forEach(function(o){ o.classList.remove('selected'); });
   el.classList.add('selected');
   onbData.nivel = val;
+  localStorage.setItem('aurum_nivel', val);
 }
 
 var fotosOnb = {frente: null, lado: null, costas: null};

@@ -62,7 +62,35 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div class="field"><label>CPF</label><input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)"></div>
     <div class="field"><label>SENHA</label><input type="password" id="senha" placeholder="mínimo 8 caracteres"></div>
 
-    <button class="btn-gold" onclick="cadastrar()" id="btn-cadastrar">COMEÇAR 14 DIAS GRÁTIS →</button>
+    <!-- TERMO DE RESPONSABILIDADE DO PERSONAL -->
+    <div style="background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.15);border-radius:12px;padding:16px;margin-bottom:16px">
+      <div style="font-family:'Bebas Neue';font-size:14px;color:var(--ouro);letter-spacing:1px;margin-bottom:12px">📋 TERMO DE RESPONSABILIDADE PROFISSIONAL</div>
+      <div id="termo-pro-itens">
+        <div class="termo-item" onclick="toggleTermoPro(this)" data-idx="0" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;cursor:pointer">
+          <div class="termo-box" style="width:20px;height:20px;border-radius:5px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px"></div>
+          <div style="font-size:12px;color:var(--cinza);line-height:1.6">Possuo registro ativo no CREF e estou habilitado para prescrição de exercícios físicos</div>
+        </div>
+        <div class="termo-item" onclick="toggleTermoPro(this)" data-idx="1" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;cursor:pointer">
+          <div class="termo-box" style="width:20px;height:20px;border-radius:5px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px"></div>
+          <div style="font-size:12px;color:var(--cinza);line-height:1.6">Assumo responsabilidade técnica pela prescrição e acompanhamento dos meus alunos</div>
+        </div>
+        <div class="termo-item" onclick="toggleTermoPro(this)" data-idx="2" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;cursor:pointer">
+          <div class="termo-box" style="width:20px;height:20px;border-radius:5px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px"></div>
+          <div style="font-size:12px;color:var(--cinza);line-height:1.6">Utilizarei a plataforma de forma ética, respeitando o Código de Ética do CONFEF</div>
+        </div>
+        <div class="termo-item" onclick="toggleTermoPro(this)" data-idx="3" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;cursor:pointer">
+          <div class="termo-box" style="width:20px;height:20px;border-radius:5px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px"></div>
+          <div style="font-size:12px;color:var(--cinza);line-height:1.6">Protegerei os dados dos meus alunos conforme a LGPD (Lei 13.709/2018)</div>
+        </div>
+        <div class="termo-item" onclick="toggleTermoPro(this)" data-idx="4" style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
+          <div class="termo-box" style="width:20px;height:20px;border-radius:5px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px"></div>
+          <div style="font-size:12px;color:var(--cinza);line-height:1.6">Compreendo que o AurumSci é uma ferramenta de apoio tecnológico e não substitui meu julgamento profissional</div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:#444;margin-top:10px;line-height:1.6">Resolução CONFEF 307/2015 · LGPD Lei 13.709/2018</div>
+    </div>
+
+    <button class="btn-gold" onclick="cadastrar()" id="btn-cadastrar" style="opacity:.4;pointer-events:none">COMEÇAR 14 DIAS GRÁTIS →</button>
     <div class="loading" id="loading">⏳ Criando sua conta... Aguarde!</div>
     <div class="error" id="error"></div>
   </div>
@@ -71,6 +99,33 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 </div>
 
 <script>
+var termoPro = [];
+function toggleTermoPro(el){
+  var idx = parseInt(el.dataset.idx);
+  var box = el.querySelector('.termo-box');
+  var i = termoPro.indexOf(idx);
+  if(i === -1){
+    termoPro.push(idx);
+    box.innerHTML = '✓';
+    box.style.background = 'var(--ouro)';
+    box.style.border = '2px solid var(--ouro)';
+    box.style.color = '#000';
+  } else {
+    termoPro.splice(i,1);
+    box.innerHTML = '';
+    box.style.background = 'transparent';
+    box.style.border = '2px solid var(--borda)';
+  }
+  var btn = document.getElementById('btn-cadastrar');
+  if(termoPro.length === 5){
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+  } else {
+    btn.style.opacity = '.4';
+    btn.style.pointerEvents = 'none';
+  }
+}
+
 var planos = {
   'bronze': {nome:'Bronze', valor:4990, label:'🥉 PLANO BRONZE — Até 10 alunos · R$49,90/mês'},
   'prata': {nome:'Prata', valor:8990, label:'🥈 PLANO PRATA — Até 20 alunos · R$89,90/mês'},

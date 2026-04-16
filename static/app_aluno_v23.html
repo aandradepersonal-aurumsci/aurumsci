@@ -408,12 +408,6 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <div class="aval-titulo">NUTRIÇÃO</div>
         <div class="aval-sub">Sugestão baseada em evidências</div>
       </div>
-      <div class="aval-card" onclick="abrirModalDocumentos()" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));border-color:rgba(201,168,76,.25);position:relative">
-        <div class="aval-icon">📄</div>
-        <div class="aval-titulo">DOCUMENTOS</div>
-        <div class="aval-sub">PAR-Q · Consentimento · Termo</div>
-        <div id="docs-badge" style="display:none;position:absolute;top:8px;right:8px;background:var(--vermelho);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px">PENDENTE</div>
-      </div>
       <div class="aval-card" onclick="abrirModal('modal-anamnese')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(75,159,255,.08),rgba(75,159,255,.02));border-color:rgba(75,159,255,.25)">
         <div class="aval-icon">📝</div>
         <div class="aval-titulo">ANAMNESE</div>
@@ -507,47 +501,6 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     </div>
   </div>
   <button class="btn-pular-timer" onclick="pularTimer()">Pular →</button>
-</div>
-
-<!-- MODAL DOCUMENTOS -->
-<div class="modal-full" id="modal-documentos">
-  <div class="modal-header">
-    <button class="modal-back" onclick="fecharModal('modal-documentos')">←</button>
-    <div class="modal-titulo">📄 DOCUMENTOS</div>
-  </div>
-  <div class="modal-body" style="padding:16px">
-
-    <!-- PAR-Q -->
-    <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:14px;padding:16px;margin-bottom:14px">
-      <div style="font-family:'Bebas Neue';font-size:18px;color:var(--ouro);margin-bottom:4px">📋 PAR-Q</div>
-      <div style="font-size:12px;color:var(--cinza);margin-bottom:12px">Questionário de Prontidão para Atividade Física</div>
-      <div id="parq-content">
-        <div id="parq-perguntas">
-        </div>
-        <button id="btn-salvar-parq" onclick="salvarParq()" style="display:none;width:100%;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:'Bebas Neue';font-size:16px;cursor:pointer;margin-top:10px">SALVAR PAR-Q</button>
-      </div>
-      <div id="parq-status" style="font-size:12px;color:var(--verde);display:none">✅ PAR-Q respondido</div>
-    </div>
-
-    <!-- CONSENTIMENTO -->
-    <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:14px;padding:16px;margin-bottom:14px">
-      <div style="font-family:'Bebas Neue';font-size:18px;color:var(--ouro);margin-bottom:4px">📋 CONSENTIMENTO INFORMADO</div>
-      <div style="font-size:12px;color:var(--cinza);margin-bottom:8px">Baseado nas diretrizes ACSM (2022) e Resolução CONFEF 307/2015</div>
-      <div id="cons-status-doc">
-        <div style="font-size:12px;color:var(--cinza)">Não assinado ainda</div>
-      </div>
-    </div>
-
-    <!-- TERMO -->
-    <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:14px;padding:16px">
-      <div style="font-family:'Bebas Neue';font-size:18px;color:var(--ouro);margin-bottom:4px">🤝 TERMO DE ACOMPANHAMENTO</div>
-      <div style="font-size:12px;color:var(--cinza);margin-bottom:8px">Acordo entre aluno e personal trainer</div>
-      <div id="termo-status-doc">
-        <div style="font-size:12px;color:var(--cinza)">Não assinado ainda</div>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <!-- MODAL POSTURAL -->
@@ -1044,46 +997,31 @@ function fazerLogin(){
 }
 
 // ── ONBOARDING ────────────────────────────────────────
-var consentimentoRespostas = {};
-
-function responderConsentimento(i, sim){
-  consentimentoRespostas[i] = sim;
-  var btnSim = document.getElementById('cons-sim-'+i);
-  var btnNao = document.getElementById('cons-nao-'+i);
-  if(sim){
-    btnSim.style.background = 'rgba(0,229,160,.15)';
-    btnSim.style.border = '1px solid var(--verde)';
-    btnSim.style.color = 'var(--verde)';
-    btnNao.style.background = 'transparent';
-    btnNao.style.border = '1px solid var(--borda)';
-    btnNao.style.color = 'var(--cinza)';
+function toggleConsentimento(i){
+  var box = document.getElementById('cons-box-'+i);
+  var item = document.getElementById('cons-'+i);
+  var idx = consentimentosMarcados.indexOf(i);
+  if(idx === -1){
+    consentimentosMarcados.push(i);
+    box.innerHTML = '✓';
+    box.style.background = 'var(--verde)';
+    box.style.border = '2px solid var(--verde)';
+    box.style.color = '#000';
+    item.style.borderColor = 'var(--verde)';
   } else {
-    btnNao.style.background = 'rgba(255,75,75,.15)';
-    btnNao.style.border = '1px solid #FF4B4B';
-    btnNao.style.color = '#FF4B4B';
-    btnSim.style.background = 'transparent';
-    btnSim.style.border = '1px solid var(--borda)';
-    btnSim.style.color = 'var(--cinza)';
-    // Mostra aviso se respondeu Nao na pergunta critica (index 1 - medico)
-    if(i === 1){
-      var aviso = document.getElementById('cons-aviso');
-      if(aviso) aviso.style.display = 'block';
-    }
+    consentimentosMarcados.splice(idx,1);
+    box.innerHTML = '';
+    box.style.background = 'transparent';
+    box.style.border = '2px solid var(--borda)';
+    item.style.borderColor = 'var(--borda)';
   }
   var btn = document.getElementById('btn-consentimento');
-  if(btn && Object.keys(consentimentoRespostas).length === 5){
-    btn.style.opacity = '1';
-    btn.style.pointerEvents = 'auto';
-  }
+  if(btn){ btn.style.opacity = consentimentosMarcados.length===5?'1':'.4'; btn.style.pointerEvents = consentimentosMarcados.length===5?'auto':'none'; }
 }
 
 function avancarConsentimento(){
-  if(Object.keys(consentimentoRespostas).length === 5){
-    localStorage.setItem('aurum_consentimento', JSON.stringify({data: new Date().toISOString(), respostas: consentimentoRespostas}));
-    onbProximo();
-  } else {
-    mostrarToast('Responda todas as perguntas para continuar');
-  }
+  if(consentimentosMarcados.length===5){ localStorage.setItem('aurum_consentimento',new Date().toISOString()); onbProximo(); }
+  else { mostrarToast('Marque todos os itens para continuar'); }
 }
 
 function toggleContrato(i){
@@ -1200,24 +1138,18 @@ function renderOnbStep(){
   }
   else if(passo === 'consentimento'){
     var itensC = [
-      {p:'Você está ciente que o exercício físico envolve riscos e se responsabiliza pela sua participação?', critico:false},
-      {p:'Você passa no médico regularmente e acompanha seus exames de saúde?', critico:true},
-      {p:'Você informou corretamente seu histórico de saúde e condições médicas relevantes?', critico:false},
-      {p:'Você compreende que este aplicativo é uma ferramenta de apoio e não substitui o acompanhamento médico?', critico:false},
-      {p:'Você autoriza o uso dos seus dados para personalização do treino? (LGPD — Lei 13.709/2018)', critico:false}
+      'Estou ciente que o exercício físico envolve riscos e me responsabilizo pela minha participação.',
+      'Certifico que passo no médico regularmente e que acompanha meus exames de saúde.',
+      'Informei corretamente meu histórico de saúde e condições médicas relevantes.',
+      'Compreendo que este aplicativo é uma ferramenta de apoio tecnológico e não substitui o acompanhamento médico profissional.',
+      'Autorizo o uso dos meus dados para personalização do treino, conforme a LGPD (Lei 13.709/2018).'
     ];
-    content = '<div style="text-align:center;margin-bottom:16px"><div style="font-size:40px;margin-bottom:8px">📋</div><div class="onb-titulo">CONSENTIMENTO INFORMADO</div><div class="onb-sub">Responda cada pergunta com sinceridade</div></div>';
+    content = '<div style="text-align:center;margin-bottom:16px"><div style="font-size:40px;margin-bottom:8px">📋</div><div class="onb-titulo">CONSENTIMENTO INFORMADO</div><div class="onb-sub">Leia e confirme cada item para continuar</div></div>';
     itensC.forEach(function(item,i){
-      content += '<div style="background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:10px">' +
-        '<div style="font-size:13px;color:var(--texto);line-height:1.6;margin-bottom:10px">'+item.p+'</div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-        '<button id="cons-sim-'+i+'" onclick="responderConsentimento('+i+',true)" style="padding:10px;border-radius:8px;border:1px solid var(--borda);background:transparent;color:var(--cinza);font-size:13px;cursor:pointer;transition:all .2s">✅ Sim</button>' +
-        '<button id="cons-nao-'+i+'" onclick="responderConsentimento('+i+',false)" style="padding:10px;border-radius:8px;border:1px solid var(--borda);background:transparent;color:var(--cinza);font-size:13px;cursor:pointer;transition:all .2s">❌ Não</button>' +
-        '</div></div>';
+      content += '<div id="cons-'+i+'" onclick="toggleConsentimento('+i+')" style="display:flex;align-items:flex-start;gap:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer"><div id="cons-box-'+i+'" style="width:22px;height:22px;border-radius:6px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:1px"></div><div style="font-size:13px;color:var(--texto);line-height:1.6">'+item+'</div></div>';
     });
-    content += '<div id="cons-aviso" style="display:none;background:rgba(255,75,75,.08);border:1px solid rgba(255,75,75,.3);border-radius:10px;padding:12px;margin-top:8px;font-size:12px;color:#FF4B4B;line-height:1.7">⚠️ Recomendamos consultar um médico antes de iniciar o treino. Seu personal será notificado.</div>';
     content += '<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:12px;margin-top:8px;font-size:11px;color:var(--cinza);line-height:1.7">📚 Baseado nas diretrizes do ACSM (2022) e Resolução CONFEF 307/2015.</div>';
-    footer = '<button class="btn-next" id="btn-consentimento" onclick="avancarConsentimento()" style="opacity:.4;pointer-events:none">CONTINUAR →</button>';
+    footer = '<button class="btn-next" id="btn-consentimento" onclick="avancarConsentimento()" style="opacity:.4;pointer-events:none">LI E CONCORDO →</button>';
   }
   else if(passo === 'contrato'){
     var nomeA = nomeAluno || 'Aluno';
@@ -2302,71 +2234,6 @@ function abrirModal(id){
   if(id === 'modal-anamnese') renderAnamnese();
 }
 function fecharModal(id){ document.getElementById(id).classList.remove('show'); }
-
-function abrirModalDocumentos(){
-  abrirModal('modal-documentos');
-  // Renderiza PAR-Q
-  var parqPerguntas = [
-    'Algum médico já disse que você possui algum problema cardíaco?',
-    'Você sente dor no peito quando pratica alguma atividade física?',
-    'No último mês, você sentiu dor no peito quando não estava praticando atividade física?',
-    'Você perdeu o equilíbrio em razão de tontura ou já perdeu a consciência?',
-    'Você tem algum problema ósseo ou articular que poderia ser agravado com exercícios?',
-    'Seu médico já recomendou uso de medicamentos para pressão arterial ou coração?',
-    'Você conhece alguma outra razão pela qual não deveria praticar atividade física?'
-  ];
-  var html = '';
-  parqPerguntas.forEach(function(p, i){
-    html += '<div style="background:var(--bg);border:1px solid var(--borda);border-radius:10px;padding:12px;margin-bottom:8px">' +
-      '<div style="font-size:12px;color:var(--texto);line-height:1.6;margin-bottom:8px">'+(i+1)+'. '+p+'</div>' +
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">' +
-      '<button id="parq-sim-'+i+'" onclick="responderParq('+i+',true)" style="padding:8px;border-radius:8px;border:1px solid var(--borda);background:transparent;color:var(--cinza);font-size:12px;cursor:pointer">✅ Sim</button>' +
-      '<button id="parq-nao-'+i+'" onclick="responderParq('+i+',false)" style="padding:8px;border-radius:8px;border:1px solid var(--borda);background:transparent;color:var(--cinza);font-size:12px;cursor:pointer">❌ Não</button>' +
-      '</div></div>';
-  });
-  document.getElementById('parq-perguntas').innerHTML = html;
-
-  // Status consentimento
-  var cons = localStorage.getItem('aurum_consentimento');
-  var termo = localStorage.getItem('aurum_contrato');
-  var consEl = document.getElementById('cons-status-doc');
-  var termoEl = document.getElementById('termo-status-doc');
-  if(cons && consEl) consEl.innerHTML = '<div style="font-size:12px;color:var(--verde)">✅ Assinado em ' + new Date(JSON.parse(cons).data||cons).toLocaleDateString("pt-BR") + '</div>';
-  if(termo && termoEl) termoEl.innerHTML = '<div style="font-size:12px;color:var(--verde)">✅ Assinado em ' + new Date(termo).toLocaleDateString("pt-BR") + '</div>';
-
-  // Badge
-  var badge = document.getElementById('docs-badge');
-  if(badge) badge.style.display = (cons && termo) ? 'none' : 'block';
-}
-
-var parqRespostas = {};
-function responderParq(i, sim){
-  parqRespostas[i] = sim;
-  var btnSim = document.getElementById('parq-sim-'+i);
-  var btnNao = document.getElementById('parq-nao-'+i);
-  if(sim){
-    btnSim.style.background='rgba(255,75,75,.15)'; btnSim.style.border='1px solid #FF4B4B'; btnSim.style.color='#FF4B4B';
-    btnNao.style.background='transparent'; btnNao.style.border='1px solid var(--borda)'; btnNao.style.color='var(--cinza)';
-  } else {
-    btnNao.style.background='rgba(0,229,160,.15)'; btnNao.style.border='1px solid var(--verde)'; btnNao.style.color='var(--verde)';
-    btnSim.style.background='transparent'; btnSim.style.border='1px solid var(--borda)'; btnSim.style.color='var(--cinza)';
-  }
-  var btn = document.getElementById('btn-salvar-parq');
-  if(btn && Object.keys(parqRespostas).length === 7) btn.style.display = 'block';
-}
-
-function salvarParq(){
-  var temRisco = Object.values(parqRespostas).some(function(v){ return v === true; });
-  localStorage.setItem('aurum_parq', JSON.stringify({data: new Date().toISOString(), respostas: parqRespostas, risco: temRisco}));
-  document.getElementById('parq-perguntas').style.display = 'none';
-  document.getElementById('btn-salvar-parq').style.display = 'none';
-  document.getElementById('parq-status').style.display = 'block';
-  if(temRisco){
-    mostrarToast('⚠️ Consulte um médico antes de iniciar o treino!');
-  } else {
-    mostrarToast('✅ PAR-Q salvo!');
-  }
-}
 
 function renderModalMedidas(){
   modoMedidasAvancado = false;

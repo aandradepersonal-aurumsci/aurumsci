@@ -69,7 +69,7 @@ def enviar_email_boas_vindas_aluno(nome, email):
         import smtplib
         with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
             server.starttls()
-            server.login(settings.SMTP_USER, settings.SMTP_PASS)
+            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
             server.send_message(msg)
         print(f"Email boas-vindas aluno enviado: {email}")
     except Exception as e:
@@ -162,7 +162,7 @@ def enviar_email_boas_vindas_personal(nome, email, plano="bronze"):
         msg.attach(MIMEText(html, "html"))
         with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
             server.starttls()
-            server.login(settings.SMTP_USER, settings.SMTP_PASS)
+            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
             server.send_message(msg)
         print(f"Email boas-vindas personal enviado: {email}")
     except Exception as e:
@@ -273,7 +273,7 @@ def enviar_email_boas_vindas(nome, email):
         msg.attach(MIMEText(html, "html"))
         with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
             server.starttls()
-            server.login(settings.SMTP_USER, settings.SMTP_PASS)
+            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
             server.send_message(msg)
         print(f"Email enviado para {email}")
     except Exception as e:
@@ -374,7 +374,7 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                     msg.attach(MIMEText(html, "html"))
                     with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
                         server.starttls()
-                        server.login(settings.SMTP_USER, settings.SMTP_PASS)
+                        server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
                         server.send_message(msg)
                 except Exception as e:
                     print(f"Erro email cancelamento: {e}")

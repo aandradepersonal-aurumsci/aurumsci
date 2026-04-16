@@ -374,27 +374,60 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <div class="screen" id="screen-avaliacao">
     <div class="section-title" id="t-aval-titulo">AVALIAÇÃO</div>
     <div class="section-sub" id="t-aval-sub">Acompanhe sua evolução física completa</div>
-    <div style="background:rgba(75,159,255,.08);border:1px solid rgba(75,159,255,.25);border-radius:14px;padding:14px 16px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start">
-      <div style="font-size:22px">👨‍💼</div>
-      <div>
-        <div style="font-size:12px;font-weight:700;color:var(--azul);margin-bottom:4px">AVALIAÇÃO COM SEU PERSONAL</div>
-        <div style="font-size:12px;color:var(--cinza);line-height:1.6">Sua avaliação física completa (postural, composição corporal, testes físicos e VO2) é realizada presencialmente pelo seu personal trainer. Os resultados aparecem automaticamente aqui após a avaliação.</div>
+    <!-- ABAS TEAM AURUM -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:16px;border-radius:12px;overflow:hidden;border:1px solid var(--borda)">
+      <button id="aba-autonomo" onclick="mudarAbaAval('autonomo')" style="padding:12px 8px;background:var(--ouro);border:none;cursor:pointer;font-family:'Bebas Neue';font-size:13px;letter-spacing:1px;color:#0A0A0F">👤 ALUNO TEAM AURUM</button>
+      <button id="aba-pro" onclick="mudarAbaAval('pro')" style="padding:12px 8px;background:var(--bg2);border:none;cursor:pointer;font-family:'Bebas Neue';font-size:13px;letter-spacing:1px;color:var(--cinza)">⭐ TEAM AURUM PRO</button>
+    </div>
+
+    <!-- CONTEÚDO AUTÔNOMO -->
+    <div id="aval-autonomo">
+      <div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:14px 16px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start">
+        <div style="font-size:22px">👤</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--ouro);margin-bottom:4px">ALUNO TEAM AURUM</div>
+          <div style="font-size:12px;color:var(--cinza);line-height:1.6">Você faz parte do time! Realize os testes abaixo seguindo as instruções. Seus resultados ficam salvos e acompanham sua evolução.</div>
+        </div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.3);border-radius:14px;padding:16px;margin-bottom:16px">
+        <div style="font-family:'Bebas Neue';font-size:16px;color:var(--ouro);margin-bottom:10px;letter-spacing:1px">📋 ROTEIRO DA AVALIAÇÃO</div>
+        <div style="font-size:12px;color:var(--cinza);line-height:2">
+          <span style="color:var(--ouro)">1.</span> Preencha os <strong style="color:var(--texto)">DOCUMENTOS</strong> — PAR-Q e consentimento<br>
+          <span style="color:var(--ouro)">2.</span> Preencha a <strong style="color:var(--texto)">ANAMNESE</strong> — histórico de saúde<br>
+          <span style="color:var(--ouro)">3.</span> Realize os <strong style="color:var(--texto)">TESTES</strong> — VO2, força e potência<br>
+          <span style="color:var(--ouro)">4.</span> Tire as fotos para <strong style="color:var(--texto)">ANÁLISE POSTURAL</strong> com IA<br>
+          <span style="color:var(--ouro)">5.</span> Registre suas <strong style="color:var(--texto)">MEDIDAS</strong> e composição corporal
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTEÚDO PRO -->
+    <div id="aval-pro" style="display:none">
+      <div style="background:rgba(75,159,255,.08);border:1px solid rgba(75,159,255,.25);border-radius:14px;padding:14px 16px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start">
+        <div style="font-size:22px">⭐</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--azul);margin-bottom:4px">TEAM AURUM PRO</div>
+          <div style="font-size:12px;color:var(--cinza);line-height:1.6">Sua avaliação física completa é realizada presencialmente pelo seu personal trainer. Os resultados aparecem automaticamente aqui após a avaliação.</div>
+        </div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(75,159,255,.08),rgba(75,159,255,.02));border:1px solid rgba(75,159,255,.2);border-radius:14px;padding:16px;margin-bottom:16px">
+        <div style="font-family:'Bebas Neue';font-size:16px;color:var(--azul);margin-bottom:10px;letter-spacing:1px">📋 ROTEIRO DA AVALIAÇÃO</div>
+        <div style="font-size:12px;color:var(--cinza);line-height:2">
+          <span style="color:var(--azul)">1.</span> Preencha os <strong style="color:var(--texto)">DOCUMENTOS</strong> — PAR-Q e consentimento<br>
+          <span style="color:var(--azul)">2.</span> Preencha a <strong style="color:var(--texto)">ANAMNESE</strong> — histórico de saúde<br>
+          <span style="color:var(--azul)">3.</span> Seu personal fará <strong style="color:var(--texto)">presencialmente:</strong><br>
+          <span style="margin-left:16px;color:var(--cinza)">• Análise postural com IA</span><br>
+          <span style="margin-left:16px;color:var(--cinza)">• Medidas e composição corporal</span><br>
+          <span style="margin-left:16px;color:var(--cinza)">• Testes físicos e de potência</span><br>
+          <span style="margin-left:16px;color:var(--cinza)">• VO2 máximo e HRR cardiovascular</span>
+        </div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:12px;margin-bottom:16px;text-align:center">
+        <div style="font-size:12px;color:var(--ouro);margin-bottom:4px">✨ Ainda não tem um personal?</div>
+        <div style="font-size:11px;color:var(--cinza)">Entre em contato com André Andrade — CREF 62702-G/SP</div>
       </div>
     </div>
     <div id="avaliacao-personal-dados" style="margin-bottom:16px"></div>
-    <!-- ROTEIRO -->
-    <div style="background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.3);border-radius:14px;padding:16px;margin-bottom:16px">
-      <div style="font-family:'Bebas Neue';font-size:16px;color:var(--ouro);margin-bottom:10px;letter-spacing:1px">📋 ROTEIRO DA AVALIAÇÃO</div>
-      <div style="font-size:12px;color:var(--cinza);line-height:2">
-        <span style="color:var(--ouro)">1.</span> Preencha os <strong style="color:var(--texto)">DOCUMENTOS</strong> — PAR-Q e consentimento<br>
-        <span style="color:var(--ouro)">2.</span> Preencha a <strong style="color:var(--texto)">ANAMNESE</strong> — histórico de saúde<br>
-        <span style="color:var(--ouro)">3.</span> Seu personal fará <strong style="color:var(--texto)">presencialmente:</strong><br>
-        <span style="margin-left:16px;color:var(--cinza)">• Análise postural com IA</span><br>
-        <span style="margin-left:16px;color:var(--cinza)">• Medidas e composição corporal</span><br>
-        <span style="margin-left:16px;color:var(--cinza)">• Testes físicos e de potência</span><br>
-        <span style="margin-left:16px;color:var(--cinza)">• VO2 máximo e HRR cardiovascular</span>
-      </div>
-    </div>
 
     <!-- O QUE VOCÊ PREENCHE -->
     <div style="font-size:11px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:8px">✏️ VOCÊ PREENCHE</div>
@@ -2217,6 +2250,22 @@ function abrirModal(id){
   if(id === 'modal-nutri') { /* handled by abrirModalNutri */ }
   if(id === 'modal-anamnese') renderAnamnese();
 }
+function mudarAbaAval(aba){
+  var btnAut = document.getElementById('aba-autonomo');
+  var btnPro = document.getElementById('aba-pro');
+  var divAut = document.getElementById('aval-autonomo');
+  var divPro = document.getElementById('aval-pro');
+  if(aba === 'autonomo'){
+    btnAut.style.background='var(--ouro)'; btnAut.style.color='#0A0A0F';
+    btnPro.style.background='var(--bg2)'; btnPro.style.color='var(--cinza)';
+    divAut.style.display='block'; divPro.style.display='none';
+  } else {
+    btnPro.style.background='var(--azul)'; btnPro.style.color='#fff';
+    btnAut.style.background='var(--bg2)'; btnAut.style.color='var(--cinza)';
+    divPro.style.display='block'; divAut.style.display='none';
+  }
+}
+
 function abrirModalDocumentos(){
   abrirModal('modal-documentos');
   var perguntas = [

@@ -118,6 +118,25 @@ footer a{color:#444;text-decoration:none}
 
 <div class="divisor"></div>
 
+
+<div class="divisor"></div>
+
+<section>
+  <div class="section-tag">QUEM ESTÁ POR TRÁS</div>
+  <h2 class="section-titulo">Construído por quem vive isso</h2>
+  <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:32px">
+    <div style="font-size:40px;text-align:center;margin-bottom:16px">&#128084;</div>
+    <div style="font-family:Georgia,serif;font-size:17px;font-style:italic;color:var(--texto);line-height:1.8;margin-bottom:20px;text-align:center">"Ao longo de mais de 20 anos como personal trainer, percebi que a tecnologia existente não foi feita por quem entende de treino. Então decidi construir a minha."</div>
+    <div style="font-size:14px;color:var(--cinza);line-height:1.8;margin-bottom:20px">Bacharel e Licenciado em Educação Física, com 4 especializações nas principais areas do treinamento. Atuou 7 anos em avaliação física antes de se dedicar exclusivamente ao personal trainer, levando atletas a competições.</div>
+    <div style="text-align:center">
+      <div style="font-size:14px;color:var(--ouro);letter-spacing:2px;font-weight:600">André Andrade · CREF 62702-G/SP</div>
+      <div style="font-size:12px;color:var(--cinza);margin-top:4px">Personal Trainer · Desenvolvedor · Fundador AurumSci</div>
+    </div>
+  </div>
+</section>
+
+<div class="divisor"></div>
+
 <!-- FUNCIONALIDADES -->
 <section>
   <div class="section-tag">FUNCIONALIDADES</div>
@@ -379,19 +398,7 @@ function calcFiscal(){
 
 
 <div class="divisor"></div>
-<section>
-  <div class="section-tag">QUEM ESTA POR TRAS</div>
-  <h2 class="section-titulo">Construido por quem vive isso</h2>
-  <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:32px">
-    <div style="font-size:40px;text-align:center;margin-bottom:16px">&#128084;</div>
-    <div style="font-family:Georgia,serif;font-size:17px;font-style:italic;color:var(--texto);line-height:1.8;margin-bottom:20px;text-align:center">"Ao longo de mais de 20 anos como personal trainer, percebi que a tecnologia existente nao foi feita por quem entende de treino. Entao decidi construir a minha."</div>
-    <div style="font-size:14px;color:var(--cinza);line-height:1.8;margin-bottom:20px">Bacharel e Licenciado em Educacao Fisica, com 4 especializacoes nas principais areas do treinamento. Atuou 7 anos em avaliacao fisica antes de se dedicar exclusivamente ao personal trainer, levando atletas a competicoes.</div>
-    <div style="text-align:center">
-      <div style="font-size:14px;color:var(--ouro);letter-spacing:2px;font-weight:600">Andre Andrade - CREF 62702-G/SP</div>
-      <div style="font-size:12px;color:var(--cinza);margin-top:4px">Personal Trainer - Desenvolvedor - Fundador AurumSci</div>
-    </div>
-  </div>
-</section>
+
 <!-- DEPOIMENTO -->
 <section>
   <div class="section-tag">QUEM JÁ USA</div>
@@ -448,60 +455,6 @@ function enviarContato(){
 </footer>
 
 </body>
-</html><!-- DEPOIMENTO -->
-<section>
-  <div class="section-tag">QUEM JÁ USA</div>
-  <h2 class="section-titulo">O que dizem nossos usuários</h2>
-
-  <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:24px;margin-bottom:16px">
-    <div style="font-size:20px;color:#F0C040;margin-bottom:12px">⭐⭐⭐⭐⭐</div>
-    <p style="font-size:14px;color:var(--texto);line-height:1.8;font-style:italic;margin-bottom:16px">
-      "Tive uma experiência incrível com a navegabilidade da ferramenta. Como aluna obtive informações importantes que aliam prática com ciência reforçando minha performance e resultado."
-    </p>
-    <div style="font-size:13px;font-weight:600;color:var(--ouro)">Maru Gomez</div>
-    <div style="font-size:11px;color:var(--cinza)">Aluna AurumSci · Beta Tester</div>
-  </div>
-</section>
-
-<div class="divisor"></div>
-
-<!-- CONTATO -->
-<section>
-  <div class="section-tag">FALE CONOSCO</div>
-  <h2 class="section-titulo">Dúvidas ou sugestões?</h2>
-  <p class="section-sub">Deixe seu email — o desenvolvedor, um personal trainer como você, vai te responder pessoalmente.</p>
-
-  <div style="display:flex;flex-direction:column;gap:10px">
-    <input id="contato-email" type="email" placeholder="Seu email" 
-      style="width:100%;padding:14px;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;color:var(--texto);font-size:14px">
-    <textarea id="contato-msg" placeholder="Sua dúvida ou sugestão..." rows="3"
-      style="width:100%;padding:14px;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;color:var(--texto);font-size:14px;resize:none"></textarea>
-    <button onclick="enviarContato()" 
-      style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;cursor:pointer">
-      ENVIAR →
-    </button>
-  </div>
-</section>
-
-<script>
-function enviarContato(){
-  var email = document.getElementById('contato-email').value.trim();
-  var msg = document.getElementById('contato-msg').value.trim();
-  if(!email){ alert('Informe seu email'); return; }
-  fetch('/pagamento/contato', {method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({email:email, mensagem:msg})})
-  .then(function(){ 
-    document.getElementById('contato-email').value='';
-    document.getElementById('contato-msg').value='';
-    alert('Mensagem enviada! Responderemos em breve.');
-  }).catch(function(){ alert('Erro ao enviar. Tente novamente.'); });
-}
-</script>
-
-<footer>
-  André Andrade · CREF 62702-G/SP<br>
-  <a href="https://aurumsc.com.br">aurumsc.com.br</a> · <a href="/aluno">Área do Aluno</a>
-</footer>
-
+</html>
 </body>
 </html>

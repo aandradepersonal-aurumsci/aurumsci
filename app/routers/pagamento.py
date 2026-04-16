@@ -192,6 +192,21 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                 personal.assinatura_status = "ativa"
                 db.commit()
                 enviar_email_boas_vindas_personal(personal.nome, personal.email, plano)
+                # Notifica Andre
+                enviar_email(
+                    para="a.andrade_personal@hotmail.com",
+                    assunto=f"🎉 Novo personal assinou! {personal.nome} — Plano {plano.capitalize()}",
+                    html=f"""<html><body style='background:#0A0A0F;font-family:Arial;padding:40px'>
+                    <h2 style='color:#C9A84C'>🎉 Novo personal no AURUM!</h2>
+                    <div style='background:#12121A;border-radius:12px;padding:20px;margin:16px 0'>
+                      <p style='color:#ccc;font-size:15px;margin:0 0 10px 0'><strong style='color:#fff'>Nome:</strong> {personal.nome}</p>
+                      <p style='color:#ccc;font-size:15px;margin:0 0 10px 0'><strong style='color:#fff'>Email:</strong> {personal.email}</p>
+                      <p style='color:#ccc;font-size:15px;margin:0 0 10px 0'><strong style='color:#fff'>Plano:</strong> {plano.capitalize()}</p>
+                      <p style='color:#ccc;font-size:15px;margin:0'><strong style='color:#fff'>Status:</strong> Trial 14 dias</p>
+                    </div>
+                    <p style='color:#888;font-size:12px'>AurumSci — aurumsc.com.br</p>
+                    </body></html>"""
+                )
 
     if event["type"] in ["customer.subscription.deleted", "customer.subscription.paused"]:
         sub = event["data"]["object"]

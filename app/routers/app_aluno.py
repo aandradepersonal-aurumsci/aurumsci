@@ -823,5 +823,7 @@ def white_label(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(
     return {
         "logo_url": personal.logo_url,
         "nome_empresa": personal.nome_empresa,
-        "slogan": personal.slogan
+        "slogan": personal.slogan,
+        "nome_personal": personal.nome,
+        "cref": personal.cref or ""
     }

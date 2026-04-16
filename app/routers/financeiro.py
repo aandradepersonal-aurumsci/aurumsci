@@ -9,6 +9,16 @@ from app.schemas.financeiro import PagamentoCriar, MensalidadeGerar
 
 router = APIRouter(prefix="/financeiro", tags=["Financeiro"])
 
+class ContratoServico(Base):
+    __tablename__ = "contratos_servico"
+    __table_args__ = {"extend_existing": True}
+    id = Column(Integer, primary_key=True)
+    aluno_id = Column(Integer, ForeignKey("alunos.id"), nullable=False)
+    personal_id = Column(Integer, ForeignKey("personals.id"), nullable=False)
+    assinado_em = Column(DateTime, default=datetime.utcnow)
+    ip_assinatura = Column(String(50))
+    status = Column(String(20), default="assinado")
+
 class Pagamento(Base):
     __tablename__ = "pagamentos"
     __table_args__ = {"extend_existing": True}
@@ -100,3 +110,40 @@ def resumo(personal: Personal = Depends(get_personal_atual), db: Session = Depen
             "mes_atual": {"recebido": round(rm, 2), "esperado": round(em, 2),
                           "percentual": round(rm / em * 100, 1) if em > 0 else 0},
             "inadimplentes": inad}
+
+@router.post("/contrato/assinar")
+def assinar_contrato(request_data: dict, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    from fastapi import Request
+    aluno_id = request_data.get("aluno_id")
+    ip = request_data.get("ip", "unknown")
+    if not aluno_id:
+        raise HTTPException(status_code=400, detail="aluno_id obrigatorio")
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal.id).first()
+    if not aluno:
+        raise HTTPException(status_code=404, detail="Aluno nao encontrado")
+    # Verifica se ja assinou
+    existente = db.query(ContratoServico).filter(
+        ContratoServico.aluno_id == aluno_id,
+        ContratoServico.personal_id == personal.id
+    ).first()
+    if existente:
+        return {"mensagem": "Contrato ja assinado", "assinado_em": str(existente.assinado_em)}
+    contrato = ContratoServico(aluno_id=aluno_id, personal_id=personal.id, ip_assinatura=ip)
+    db.add(contrato)
+    db.commit()
+    return {"mensagem": "Contrato assinado com sucesso!", "assinado_em": str(contrato.assinado_em)}
+
+@router.get("/contrato/{aluno_id}")
+def ver_contrato(aluno_id: int, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    contrato = db.query(ContratoServico).filter(
+        ContratoServico.aluno_id == aluno_id,
+        ContratoServico.personal_id == personal.id
+    ).first()
+    if not contrato:
+        return {"assinado": False}
+    return {"assinado": True, "assinado_em": str(contrato.assinado_em)}
+
+@router.get("/pagamento/aluno-view")
+def aluno_view(db: Session = Depends(get_db)):
+    """Endpoint para o aluno ver seus pagamentos — sem autenticacao forte"""
+    return {"pagamentos": []}

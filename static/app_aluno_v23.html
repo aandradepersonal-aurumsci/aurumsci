@@ -702,6 +702,8 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 // ── ESTADO ────────────────────────────────────────────
 var token = '', nomeAluno = '', lang = localStorage.getItem('aurum_lang') || 'pt';
 var onbStep = 0, onbData = {};
+var consentimentosMarcados = [];
+var contratoMarcados = [];
 var fotosPosturais = {frente: null, lado: null, costas: null};
 var chatHist = [];
 var timerInterval = null, timerTotal = 90, timerAtual = 0;
@@ -798,7 +800,7 @@ var TX = {
 function T(k){ return (TX[lang]||TX['pt'])[k] || (TX['pt'])[k] || k; }
 
 // ── PASSOS ONBOARDING ─────────────────────────────────
-var PASSOS = ['consentimento','objetivo','nivel','dias','anamnese','periodizacao','pronto'];
+var PASSOS = ['consentimento','contrato','objetivo','nivel','dias','anamnese','periodizacao','pronto'];
 
 // ── SPLASH ────────────────────────────────────────────
 window.onload = function(){
@@ -995,8 +997,6 @@ function fazerLogin(){
 }
 
 // ── ONBOARDING ────────────────────────────────────────
-var consentimentosMarcados = [];
-
 function toggleConsentimento(i){
   var box = document.getElementById('cons-box-'+i);
   var item = document.getElementById('cons-'+i);
@@ -1016,27 +1016,55 @@ function toggleConsentimento(i){
     item.style.borderColor = 'var(--borda)';
   }
   var btn = document.getElementById('btn-consentimento');
-  if(btn){
-    if(consentimentosMarcados.length === 5){
-      btn.style.opacity = '1';
-      btn.style.pointerEvents = 'auto';
-    } else {
-      btn.style.opacity = '.4';
-      btn.style.pointerEvents = 'none';
-    }
-  }
+  if(btn){ btn.style.opacity = consentimentosMarcados.length===5?'1':'.4'; btn.style.pointerEvents = consentimentosMarcados.length===5?'auto':'none'; }
 }
 
 function avancarConsentimento(){
-  if(consentimentosMarcados.length === 5){
-    localStorage.setItem('aurum_consentimento', new Date().toISOString());
-    onbProximo();
+  if(consentimentosMarcados.length===5){ localStorage.setItem('aurum_consentimento',new Date().toISOString()); onbProximo(); }
+  else { mostrarToast('Marque todos os itens para continuar'); }
+}
+
+function toggleContrato(i){
+  var box = document.getElementById('cont-box-'+i);
+  var item = document.getElementById('cont-'+i);
+  var idx = contratoMarcados.indexOf(i);
+  if(idx === -1){
+    contratoMarcados.push(i);
+    box.innerHTML = '✓';
+    box.style.background = 'var(--ouro)';
+    box.style.border = '2px solid var(--ouro)';
+    box.style.color = '#000';
+    item.style.borderColor = 'var(--ouro)';
   } else {
-    mostrarToast('Marque todos os itens para continuar');
+    contratoMarcados.splice(idx,1);
+    box.innerHTML = '';
+    box.style.background = 'transparent';
+    box.style.border = '2px solid var(--borda)';
+    item.style.borderColor = 'var(--borda)';
   }
+  var btn = document.getElementById('btn-contrato');
+  if(btn){ btn.style.opacity = contratoMarcados.length===5?'1':'.4'; btn.style.pointerEvents = contratoMarcados.length===5?'auto':'none'; }
+}
+
+function avancarContrato(){
+  if(contratoMarcados.length===5){ localStorage.setItem('aurum_contrato',new Date().toISOString()); onbProximo(); }
+  else { mostrarToast('Marque todos os itens para continuar'); }
 }
 
 function iniciarOnboarding(){
+  fetch('/app-aluno/white-label', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    window._contratoPersonal = d.nome_personal || 'Personal Trainer';
+    window._contratoCref = d.cref || '';
+  }).catch(function(){});
+  // Busca nome e CREF do personal
+  fetch('/app-aluno/white-label', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    window._contratoPersonal = d.nome_personal || 'Personal Trainer';
+    window._contratoCref = d.cref || '';
+  }).catch(function(){});
   document.getElementById('screen-login').style.display = 'none';
   document.getElementById('screen-onboarding').style.display = 'flex';
   onbStep = 0; renderOnbStep();
@@ -1079,27 +1107,69 @@ function renderOnbStep(){
       '<textarea class="textarea-field" id="medicacoes" placeholder="Ex: Losartana 50mg, Metformina..." style="min-height:120px"></textarea>';
     footer = btnNext + btnPular;
   }
+  else if(passo === 'contrato'){
+    var nomeA = nomeAluno || 'Aluno';
+    var nomeP = window._contratoPersonal || 'Personal Trainer';
+    var crefP = window._contratoCref || '';
+    var hoje = new Date().toLocaleDateString('pt-BR');
+    content = '<div style="text-align:center;margin-bottom:16px">' +
+      '<div style="font-size:40px;margin-bottom:8px">🤝</div>' +
+      '<div class="onb-titulo">TERMO DE ACOMPANHAMENTO</div>' +
+      '<div class="onb-sub">Confirme os itens abaixo para iniciar seu treino</div></div>' +
+      '<div style="background:var(--bg2);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:14px;margin-bottom:14px;font-size:12px;color:var(--cinza);line-height:1.8">' +
+      '👤 <strong style="color:var(--texto)">' + nomeA + '</strong><br>' +
+      '🏋️ Personal: <strong style="color:var(--ouro)">' + nomeP + (crefP ? ' — CREF ' + crefP : '') + '</strong><br>' +
+      '📅 Data: ' + hoje + '</div>';
+    var itens = [
+      'Concordo em seguir as orientações do meu personal trainer responsável.',
+      'Informei corretamente meu histórico de saúde e possíveis limitações físicas.',
+      'Estou ciente que resultados dependem da minha dedicação e consistência.',
+      'Sei que o acompanhamento médico é complementar ao treino físico.',
+      'Autorizo o uso dos meus dados para personalização do meu treino (LGPD — Lei 13.709/2018).'
+    ];
+    itens.forEach(function(item, i){
+      content += '<div id="cont-'+i+'" onclick="toggleContrato('+i+')" style="display:flex;align-items:flex-start;gap:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer">' +
+        '<div id="cont-box-'+i+'" style="width:22px;height:22px;border-radius:6px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:1px"></div>' +
+        '<div style="font-size:13px;color:var(--texto);line-height:1.6">' + item + '</div></div>';
+    });
+    content += '<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:12px;margin-top:8px;font-size:11px;color:var(--cinza);line-height:1.7">' +
+      '📚 Resolução CONFEF 307/2015 · LGPD Lei 13.709/2018<br>Vamos juntos! 💪</div>';
+    footer = '<button class="btn-next" id="btn-contrato" onclick="avancarContrato()" style="opacity:.4;pointer-events:none">ASSINAR E CONTINUAR →</button>';
+  }
   else if(passo === 'consentimento'){
-    var consentimentos = [
+    var itensC = [
       'Estou ciente que o exercício físico envolve riscos e me responsabilizo pela minha participação.',
       'Certifico que passo no médico regularmente e que acompanha meus exames de saúde.',
       'Informei corretamente meu histórico de saúde e condições médicas relevantes.',
       'Compreendo que este aplicativo é uma ferramenta de apoio tecnológico e não substitui o acompanhamento médico profissional.',
       'Autorizo o uso dos meus dados para personalização do treino, conforme a LGPD (Lei 13.709/2018).'
     ];
-    content = '<div style="text-align:center;margin-bottom:16px">' +
-      '<div style="font-size:40px;margin-bottom:8px">📋</div>' +
-      '<div class="onb-titulo">CONSENTIMENTO INFORMADO</div>' +
-      '<div class="onb-sub">Leia e confirme cada item para continuar</div></div>';
-    consentimentos.forEach(function(item, i){
-      content += '<div id="cons-'+i+'" onclick="toggleConsentimento('+i+')" style="display:flex;align-items:flex-start;gap:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer">' +
-        '<div id="cons-box-'+i+'" style="width:22px;height:22px;border-radius:6px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:1px"></div>' +
-        '<div style="font-size:13px;color:var(--texto);line-height:1.6">' + item + '</div></div>';
+    content = '<div style="text-align:center;margin-bottom:16px"><div style="font-size:40px;margin-bottom:8px">📋</div><div class="onb-titulo">CONSENTIMENTO INFORMADO</div><div class="onb-sub">Leia e confirme cada item para continuar</div></div>';
+    itensC.forEach(function(item,i){
+      content += '<div id="cons-'+i+'" onclick="toggleConsentimento('+i+')" style="display:flex;align-items:flex-start;gap:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer"><div id="cons-box-'+i+'" style="width:22px;height:22px;border-radius:6px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:1px"></div><div style="font-size:13px;color:var(--texto);line-height:1.6">'+item+'</div></div>';
     });
-    content += '<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:12px;margin-top:8px;font-size:11px;color:var(--cinza);line-height:1.7">' +
-      '📚 Baseado nas diretrizes do ACSM (2022) e Resolução CONFEF 307/2015. ' +
-      'Este consentimento não exime a necessidade de acompanhamento médico regular.</div>';
+    content += '<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:12px;margin-top:8px;font-size:11px;color:var(--cinza);line-height:1.7">📚 Baseado nas diretrizes do ACSM (2022) e Resolução CONFEF 307/2015.</div>';
     footer = '<button class="btn-next" id="btn-consentimento" onclick="avancarConsentimento()" style="opacity:.4;pointer-events:none">LI E CONCORDO →</button>';
+  }
+  else if(passo === 'contrato'){
+    var nomeA = nomeAluno || 'Aluno';
+    var nomeP = window._contratoPersonal || 'Personal Trainer';
+    var crefP = window._contratoCref || '';
+    var hoje = new Date().toLocaleDateString('pt-BR');
+    var itensT = [
+      'Concordo em seguir as orientações do meu personal trainer responsável.',
+      'Informei corretamente meu histórico de saúde e possíveis limitações físicas.',
+      'Estou ciente que resultados dependem da minha dedicação e consistência.',
+      'Sei que o acompanhamento médico é complementar ao treino físico.',
+      'Autorizo o uso dos meus dados para personalização do meu treino (LGPD — Lei 13.709/2018).'
+    ];
+    content = '<div style="text-align:center;margin-bottom:16px"><div style="font-size:40px;margin-bottom:8px">🤝</div><div class="onb-titulo">TERMO DE ACOMPANHAMENTO</div><div class="onb-sub">Confirme os itens abaixo para iniciar seu treino</div></div>';
+    content += '<div style="background:var(--bg2);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:14px;margin-bottom:14px;font-size:12px;color:var(--cinza);line-height:1.8">👤 <strong style="color:var(--texto)">'+nomeA+'</strong><br>🏋️ Personal: <strong style="color:var(--ouro)">'+nomeP+(crefP?' — CREF '+crefP:'')+'</strong><br>📅 Data: '+hoje+'</div>';
+    itensT.forEach(function(item,i){
+      content += '<div id="cont-'+i+'" onclick="toggleContrato('+i+')" style="display:flex;align-items:flex-start;gap:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer"><div id="cont-box-'+i+'" style="width:22px;height:22px;border-radius:6px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:1px"></div><div style="font-size:13px;color:var(--texto);line-height:1.6">'+item+'</div></div>';
+    });
+    content += '<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:12px;margin-top:8px;font-size:11px;color:var(--cinza);line-height:1.7">📚 Resolução CONFEF 307/2015 · LGPD Lei 13.709/2018<br>Vamos juntos! 💪</div>';
+    footer = '<button class="btn-next" id="btn-contrato" onclick="avancarContrato()" style="opacity:.4;pointer-events:none">ASSINAR E CONTINUAR →</button>';
   }
   else if(passo === 'objetivo'){
     var objs = ['obj1','obj2','obj3','obj4','obj5','obj6'];

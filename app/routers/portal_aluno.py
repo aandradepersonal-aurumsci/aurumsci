@@ -288,3 +288,23 @@ def cadastro_rapido(dados: CadastroRapido, db: Session = Depends(get_db)):
     except Exception:
         pass
     return {"aluno_id": aluno.id, "mensagem": "Conta criada com sucesso!"}
+
+
+@router.get("/contrato")
+def ver_contrato_aluno(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    from app.routers.financeiro import ContratoServico
+    contrato = db.query(ContratoServico).filter(ContratoServico.aluno_id == aluno.id).first()
+    if not contrato:
+        return {"assinado": False}
+    return {"assinado": True, "assinado_em": str(contrato.assinado_em)}
+
+@router.post("/contrato/assinar")
+def assinar_contrato_aluno(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    from app.routers.financeiro import ContratoServico
+    existente = db.query(ContratoServico).filter(ContratoServico.aluno_id == aluno.id).first()
+    if existente:
+        return {"mensagem": "Contrato ja assinado", "assinado_em": str(existente.assinado_em)}
+    contrato = ContratoServico(aluno_id=aluno.id, personal_id=aluno.personal_id or 0, ip_assinatura="app-aluno")
+    db.add(contrato)
+    db.commit()
+    return {"mensagem": "Contrato assinado!", "assinado_em": str(contrato.assinado_em)}

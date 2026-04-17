@@ -2415,7 +2415,7 @@ function abrirModalDocumentos(){
 
   // Carrega contrato de servicos
   var csEl = document.getElementById('contrato-servico-status');
-  fetch('/financeiro/contrato/' + (window._alunoId || 0), {headers:{Authorization:'Bearer '+token}})
+  fetch('/aluno-portal/contrato', {headers:{Authorization:'Bearer '+token}})
   .then(function(r){ return r.ok ? r.json() : {}; })
   .then(function(d){
     if(!csEl) return;
@@ -2469,10 +2469,10 @@ function assinarContratoServico(){
 }
 
 function confirmarAssinaturaContrato(modal){
-  fetch('/financeiro/contrato/assinar', {
+  fetch('/aluno-portal/contrato/assinar', {
     method:'POST',
     headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body: JSON.stringify({aluno_id: window._alunoId || 0, ip: 'app'})
+    body: JSON.stringify({})
   }).then(function(r){ return r.json(); })
   .then(function(d){
     modal.remove();

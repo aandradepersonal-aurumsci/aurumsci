@@ -474,7 +474,8 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <div class="aval-titulo">TESTES</div>
         <div class="aval-sub" id="t-aval2">VO2, FC, Força</div>
       </div>
-      <div class="aval-card" onclick="abrirModalNutri()" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.04));border-color:rgba(201,168,76,.3)">
+      <div class="aval-card" onclick="abrirModalNutri()" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.04));border-color:rgba(201,168,76,.3);position:relative">
+        <div style="position:absolute;top:8px;left:8px;background:var(--ouro);color:#000;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">6️⃣</div>
         <div class="aval-icon">🥗</div>
         <div class="aval-titulo">NUTRIÇÃO</div>
         <div class="aval-sub">Sugestão baseada em evidências</div>
@@ -820,6 +821,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <script>
 // ── ESTADO ────────────────────────────────────────────
 var token = '', nomeAluno = '', lang = localStorage.getItem('aurum_lang') || 'pt';
+window._alunoId = parseInt(localStorage.getItem('aurum_aluno_id') || '0');
 var onbStep = 0, onbData = {};
 var fotosPosturais = {frente: null, lado: null, costas: null};
 var chatHist = [];
@@ -1092,6 +1094,7 @@ function fazerLogin(){
       token = d.access_token; nomeAluno = d.nome || '';
       localStorage.setItem('aurum_token', token);
       localStorage.setItem('aurum_nome', nomeAluno);
+      if(d.aluno_id) { window._alunoId = d.aluno_id; localStorage.setItem('aurum_aluno_id', d.aluno_id); }
       if(d.sexo) localStorage.setItem('aurum_sexo', d.sexo === 'FEMININO' ? 'F' : 'M');
       if(d.idade) localStorage.setItem('aurum_idade', d.idade);
       var onbDone = localStorage.getItem('aurum_onb_done');

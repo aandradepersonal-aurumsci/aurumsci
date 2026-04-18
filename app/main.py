@@ -216,3 +216,9 @@ def debug_path():
 async def suporte():
     with open('static/suporte.html', 'r', encoding='utf-8') as f:
         return f.read()
+
+
+@app.get('/privacidade', response_class=HTMLResponse)
+async def privacidade():
+    with open('static/privacidade.html', 'r', encoding='utf-8') as f:
+        return f.read()

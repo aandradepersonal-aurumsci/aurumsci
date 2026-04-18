@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suporte — AurumSci</title>
+    <meta name="description" content="Central de suporte do AurumSci — tire suas dúvidas e receba ajuda do nosso time.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0f;
+            color: #f0ede8;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px 0 20px;
+        }
+
+        .logo-wrapper {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .hexagon {
+            width: 50px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .hexagon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .logo-text {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 32px;
+            font-weight: bold;
+            color: #D4AF37;
+            letter-spacing: 2px;
+        }
+
+        .logo-sci {
+            font-family: Georgia, serif;
+            font-style: italic;
+            font-size: 18px;
+            color: #f0ede8;
+            margin-left: 4px;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #D4AF37;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #b8b5ae;
+            font-size: 16px;
+        }
+
+        /* SECTIONS */
+        .section {
+            background: #13131a;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: border-color 0.3s;
+        }
+
+        .section:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .section h2 {
+            color: #D4AF37;
+            font-size: 22px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section p {
+            color: #d0cdc6;
+            margin-bottom: 12px;
+        }
+
+        /* CONTATO */
+        .contact-card {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(212, 175, 55, 0.02));
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 16px 0;
+        }
+
+        .contact-card a {
+            color: #D4AF37;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .contact-card a:hover {
+            text-decoration: underline;
+        }
+
+        .contact-label {
+            color: #b8b5ae;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .response-time {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: rgba(0, 229, 160, 0.08);
+            border-left: 3px solid #00E5A0;
+            border-radius: 6px;
+            color: #d0cdc6;
+            font-size: 14px;
+        }
+
+        /* FAQ */
+        .faq-item {
+            background: #1a1a22;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .faq-question {
+            color: #D4AF37;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .faq-answer {
+            color: #c0bdb6;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* PRIVACY NOTE */
+        .footer-note {
+            text-align: center;
+            color: #8a8780;
+            font-size: 13px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .footer-note a {
+            color: #D4AF37;
+            text-decoration: none;
+        }
+
+        .footer-note a:hover {
+            text-decoration: underline;
+        }
+
+        /* CREF Badge */
+        .cref-badge {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #D4AF37;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .logo-text {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo-wrapper">
+                <div class="hexagon">
+                    <svg viewBox="0 0 50 55" xmlns="http://www.w3.org/2000/svg">
+                        <polygon points="25,2 47,14 47,41 25,53 3,41 3,14"
+                                 fill="none" stroke="#D4AF37" stroke-width="2.5"/>
+                        <text x="25" y="35" text-anchor="middle"
+                              font-family="Georgia, serif" font-size="26"
+                              font-weight="bold" fill="#D4AF37">A</text>
+                    </svg>
+                </div>
+                <span class="logo-text">AURUM<span class="logo-sci">sci.</span></span>
+            </div>
+            <h1>Central de Suporte</h1>
+            <p class="subtitle">Estamos aqui para te ajudar</p>
+        </div>
+
+        <!-- CONTATO -->
+        <div class="section">
+            <h2>📧 Fale Conosco</h2>
+            <p>Dúvidas sobre o app, problemas técnicos, cancelamento de assinatura ou sugestões? Entre em contato direto:</p>
+
+            <div class="contact-card">
+                <div class="contact-label">Email de Suporte</div>
+                <a href="mailto:andrepersonal395@gmail.com">andrepersonal395@gmail.com</a>
+            </div>
+
+            <div class="response-time">
+                ⏱️ <strong>Tempo de resposta:</strong> Respondemos em até 48 horas úteis. Para urgências, envie "URGENTE" no assunto.
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="section">
+            <h2>❓ Perguntas Frequentes</h2>
+
+            <div class="faq-item">
+                <div class="faq-question">Como cancelar minha assinatura?</div>
+                <div class="faq-answer">
+                    Se você assinou via nosso site (aurumsc.com.br), envie um email para andrepersonal395@gmail.com solicitando o cancelamento. Se assinou via App Store, acesse Ajustes → Apple ID → Assinaturas no seu iPhone.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Como funcionam os 14 dias grátis?</div>
+                <div class="faq-answer">
+                    Você tem 14 dias completos para testar todas as funcionalidades sem cobrança. Se decidir não continuar, basta cancelar antes do fim do período e nada será cobrado.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Esqueci minha senha. O que faço?</div>
+                <div class="faq-answer">
+                    Na tela de login, clique em "Esqueci minha senha" e siga as instruções enviadas no seu email. Se não receber, verifique a caixa de spam ou entre em contato conosco.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">O app funciona offline?</div>
+                <div class="faq-answer">
+                    Parte das funcionalidades (como visualizar treinos já carregados) funcionam offline, mas para análise postural com IA, AURI e sincronização de dados é necessária conexão com internet.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">A análise postural com IA é precisa?</div>
+                <div class="faq-answer">
+                    A análise usa inteligência artificial avançada e é baseada em referências científicas (ACSM 2022). Ela é uma ferramenta de suporte profissional, mas não substitui avaliação presencial de um fisioterapeuta ou educador físico.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Como posso reportar um bug?</div>
+                <div class="faq-answer">
+                    Envie um email para andrepersonal395@gmail.com descrevendo o que aconteceu, em qual tela, e se possível anexe um screenshot. Quanto mais detalhes, mais rápido resolvemos.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Meus dados estão seguros?</div>
+                <div class="faq-answer">
+                    Sim. Todos os dados são criptografados em trânsito (HTTPS) e armazenamento (PostgreSQL seguro). Não compartilhamos suas informações com terceiros. Mais detalhes em nossa <a href="/privacidade" style="color: #D4AF37;">Política de Privacidade</a>.
+                </div>
+            </div>
+        </div>
+
+        <!-- SOBRE -->
+        <div class="section">
+            <h2>👨‍💼 Sobre o AurumSci</h2>
+            <p>O AurumSci é uma plataforma desenvolvida por personal trainer para personal trainers e seus alunos, unindo ciência, tecnologia e IA em uma ferramenta completa.</p>
+            <p>Desenvolvido e mantido por:</p>
+            <p><strong>André Andrade</strong><br>Personal Trainer · Fundador AurumSci</p>
+            <div class="cref-badge">CREF 62702-G/SP</div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer-note">
+            <p>© 2026 AurumSci — Ciência que vira resultado</p>
+            <p style="margin-top: 8px;">
+                <a href="/">Início</a> ·
+                <a href="/privacidade">Privacidade</a> ·
+                <a href="/pro">AurumSci PRO</a>
+            </p>
+        </div>
+
+    </div>
+</body>
+</html>

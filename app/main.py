@@ -210,3 +210,9 @@ def debug_path():
         "static_abs": os.path.abspath("static"),
         "files": os.listdir(".") if os.path.exists(".") else []
     }
+
+
+@app.get('/suporte', response_class=HTMLResponse)
+async def suporte():
+    with open('static/suporte.html', 'r', encoding='utf-8') as f:
+        return f.read()

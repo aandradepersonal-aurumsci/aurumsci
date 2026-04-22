@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excluir Conta — AurumSci</title>
+<style>
+  :root {
+    --ink: #0f172a;
+    --ink-soft: #334155;
+    --muted: #64748b;
+    --gold: #b8860b;
+    --gold-soft: #f4e4bc;
+    --bg: #fafaf7;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --danger: #b91c1c;
+    --danger-soft: #fef2f2;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    padding: 40px 20px;
+  }
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    background: var(--card);
+    padding: 60px 50px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .brand {
+    display: inline-block;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--gold);
+  }
+  h1 {
+    font-size: 36px;
+    font-weight: normal;
+    margin-bottom: 8px;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    font-style: italic;
+    margin-bottom: 40px;
+  }
+  h2 {
+    font-size: 22px;
+    font-weight: normal;
+    margin-top: 36px;
+    margin-bottom: 16px;
+    color: var(--ink);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  p { margin-bottom: 14px; color: var(--ink-soft); }
+  ul, ol { margin-left: 24px; margin-bottom: 14px; color: var(--ink-soft); }
+  li { margin-bottom: 8px; }
+  strong { color: var(--ink); }
+  a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-soft); }
+  a:hover { border-bottom-color: var(--gold); }
+  .warning {
+    background: var(--danger-soft);
+    padding: 20px 24px;
+    border-left: 4px solid var(--danger);
+    margin: 28px 0;
+    border-radius: 2px;
+  }
+  .warning p { margin-bottom: 0; color: var(--ink); }
+  .warning strong { color: var(--danger); }
+  .info {
+    background: var(--gold-soft);
+    padding: 16px 20px;
+    border-left: 3px solid var(--gold);
+    margin: 20px 0;
+    border-radius: 2px;
+  }
+  .info p { margin-bottom: 0; color: var(--ink); }
+  .email-box {
+    background: #f8f8f5;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin: 20px 0;
+    text-align: center;
+  }
+  .email-box .label {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .email-box .email {
+    font-size: 18px;
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .email-box .email a { color: var(--ink); border-bottom: 1px dotted var(--gold); }
+  .steps {
+    counter-reset: step;
+    list-style: none;
+    margin-left: 0;
+    padding: 0;
+  }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 50px;
+    margin-bottom: 16px;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: -2px;
+    width: 32px;
+    height: 32px;
+    background: var(--gold);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  footer {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+  }
+  footer a { color: var(--gold); border: none; }
+  @media (max-width: 640px) {
+    .container { padding: 40px 24px; }
+    h1 { font-size: 28px; }
+    .email-box .email { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<span class="brand">AURUMSCI · EXCLUSÃO DE CONTA</span>
+<h1>Excluir sua Conta</h1>
+<p class="subtitle">Conforme a Lei Geral de Proteção de Dados (LGPD) e as diretrizes da Apple, você tem o direito de apagar permanentemente sua conta a qualquer momento.</p>
+
+<div class="warning">
+<p><strong>Atenção:</strong> A exclusão de conta é <strong>irreversível</strong>. Todos os seus dados — avaliações, treinos, histórico, fotos posturais, conversas com a IA AURI e dados de alunos vinculados — serão permanentemente apagados em até 30 dias.</p>
+</div>
+
+<h2>Como solicitar a exclusão</h2>
+
+<p>Você pode solicitar a exclusão da sua conta AurumSci de <strong>3 maneiras diferentes</strong>:</p>
+
+<h2>1. Dentro do aplicativo</h2>
+<ol class="steps">
+<li>Abra o aplicativo AurumSci PRO ou AurumSci Aluno</li>
+<li>Faça login com seu e-mail e senha</li>
+<li>Acesse <strong>Configurações → Minha Conta</strong></li>
+<li>Toque em <strong>Excluir Conta</strong> e confirme</li>
+</ol>
+
+<h2>2. Pelo site</h2>
+<p>Esta página (<strong>aurumsc.com.br/excluir-conta</strong>) é seu canal oficial no site. Para solicitar a exclusão, envie um e-mail conforme instruído abaixo.</p>
+
+<h2>3. Por e-mail</h2>
+<p>Envie uma solicitação com o assunto <strong>"EXCLUIR CONTA"</strong> para qualquer um dos e-mails abaixo:</p>
+
+<div class="email-box">
+<div class="label">E-mail Principal</div>
+<div class="email"><a href="mailto:andrepersonal395@gmail.com?subject=EXCLUIR%20CONTA">andrepersonal395@gmail.com</a></div>
+</div>
+
+<div class="email-box">
+<div class="label">E-mail Alternativo</div>
+<div class="email"><a href="mailto:a.andrade_personal@hotmail.com.br?subject=EXCLUIR%20CONTA">a.andrade_personal@hotmail.com.br</a></div>
+</div>
+
+<div class="info">
+<p><strong>No corpo do e-mail, por favor inclua:</strong></p>
+</div>
+
+<ul>
+<li>Nome completo cadastrado</li>
+<li>E-mail cadastrado na conta AurumSci</li>
+<li>Tipo de conta (Personal Trainer ou Aluno)</li>
+<li>Motivo da exclusão (opcional)</li>
+</ul>
+
+<h2>O que acontece após a solicitação</h2>
+
+<ul>
+<li><strong>Em até 48 horas:</strong> Você receberá um e-mail de confirmação da solicitação</li>
+<li><strong>Em até 7 dias úteis:</strong> Sua conta será desativada e o acesso bloqueado</li>
+<li><strong>Em até 30 dias:</strong> Todos os seus dados pessoais serão apagados permanentemente dos nossos servidores</li>
+</ul>
+
+<h2>O que é apagado</h2>
+<ul>
+<li>Dados pessoais (nome, e-mail, senha, telefone)</li>
+<li>Fotos posturais e avaliações físicas</li>
+<li>Histórico de treinos e progressão</li>
+<li>Conversas com a assistente de IA AURI</li>
+<li>Dados de alunos vinculados (se você for personal trainer)</li>
+<li>Preferências e configurações do aplicativo</li>
+</ul>
+
+<h2>O que pode ser retido por obrigação legal</h2>
+<ul>
+<li><strong>Dados fiscais:</strong> notas fiscais emitidas são mantidas por 5 anos (exigência da legislação brasileira)</li>
+<li><strong>Logs de segurança anonimizados:</strong> mantidos por 6 meses para proteção contra fraudes</li>
+<li><strong>Histórico de pagamentos:</strong> mantido sem dados pessoais, por obrigação contábil</li>
+</ul>
+
+<h2>Assinaturas ativas</h2>
+
+<div class="info">
+<p><strong>Importante:</strong> Se você possui uma assinatura ativa, não se esqueça de cancelá-la separadamente antes de solicitar a exclusão.</p>
+</div>
+
+<p><strong>Para assinaturas feitas via App Store (iOS):</strong></p>
+<ol>
+<li>Abra <strong>Ajustes</strong> no iPhone/iPad</li>
+<li>Toque no seu <strong>nome</strong> no topo</li>
+<li>Toque em <strong>Assinaturas</strong></li>
+<li>Selecione <strong>AurumSci PRO</strong> ou <strong>AurumSci Aluno</strong></li>
+<li>Toque em <strong>Cancelar Assinatura</strong></li>
+</ol>
+
+<p><strong>Para assinaturas feitas pelo site (Stripe):</strong> informe no e-mail de solicitação que possui assinatura ativa para que possamos realizar o cancelamento completo.</p>
+
+<h2>Dúvidas?</h2>
+<p>Qualquer dúvida sobre o processo de exclusão, direitos LGPD ou privacidade de dados, entre em contato conosco pelos e-mails acima. Responderemos em até <strong>15 dias úteis</strong>, conforme determina a LGPD.</p>
+
+<p>Para mais informações, consulte nossa <a href="/privacidade">Política de Privacidade</a> e os nossos <a href="/termos">Termos de Uso</a>.</p>
+
+<footer>
+AurumSci © 2026 · Todos os direitos reservados<br>
+<a href="/privacidade">Política de Privacidade</a> · <a href="/termos">Termos de Uso</a> · <a href="/suporte">Suporte</a>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,439 +1,352 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Política de Privacidade — AurumSci</title>
-    <meta name="description" content="Política de Privacidade do AurumSci — como coletamos, usamos e protegemos seus dados.">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0f;
-            color: #f0ede8;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 24px;
-        }
-
-        /* HEADER */
-        .header {
-            text-align: center;
-            margin-bottom: 60px;
-            padding: 40px 0 20px;
-        }
-
-        .logo-wrapper {
-            display: inline-flex;
-            align-items: center;
-            gap: 18px;
-            margin-bottom: 30px;
-        }
-
-        .hexagon {
-            width: 85px;
-            height: 95px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .hexagon svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .logo-text {
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: 60px;
-            font-weight: bold;
-            color: #D4AF37;
-            letter-spacing: 3px;
-            line-height: 1;
-        }
-
-        .logo-sci {
-            font-family: Georgia, serif;
-            font-style: italic;
-            font-size: 32px;
-            color: #f0ede8;
-            margin-left: 4px;
-        }
-
-        h1 {
-            font-size: 24px;
-            color: #b8b5ae;
-            margin-bottom: 12px;
-            font-weight: 500;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .subtitle {
-            color: #8a8780;
-            font-size: 15px;
-        }
-
-        .last-update {
-            color: #8a8780;
-            font-size: 13px;
-            margin-top: 16px;
-            font-style: italic;
-        }
-
-        /* SECTIONS */
-        .section {
-            background: #13131a;
-            border: 1px solid rgba(212, 175, 55, 0.15);
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 24px;
-            transition: border-color 0.3s;
-        }
-
-        .section:hover {
-            border-color: rgba(212, 175, 55, 0.3);
-        }
-
-        .section h2 {
-            color: #D4AF37;
-            font-size: 22px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section h3 {
-            color: #D4AF37;
-            font-size: 17px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
-
-        .section p {
-            color: #d0cdc6;
-            margin-bottom: 12px;
-        }
-
-        .section ul {
-            color: #c0bdb6;
-            padding-left: 20px;
-            margin-bottom: 12px;
-        }
-
-        .section li {
-            margin-bottom: 8px;
-        }
-
-        .section strong {
-            color: #D4AF37;
-        }
-
-        /* INFO BOX */
-        .info-box {
-            background: linear-gradient(135deg, rgba(0, 229, 160, 0.08), rgba(0, 229, 160, 0.02));
-            border: 1px solid rgba(0, 229, 160, 0.3);
-            border-radius: 12px;
-            padding: 20px;
-            margin: 16px 0;
-        }
-
-        .info-box strong {
-            color: #00E5A0;
-        }
-
-        /* CONTATO */
-        .contact-card {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(212, 175, 55, 0.02));
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 12px;
-            padding: 24px;
-            margin: 16px 0;
-        }
-
-        .contact-card a {
-            color: #D4AF37;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: 600;
-            word-break: break-all;
-        }
-
-        .contact-card a:hover {
-            text-decoration: underline;
-        }
-
-        /* PRIVACY NOTE */
-        .footer-note {
-            text-align: center;
-            color: #8a8780;
-            font-size: 13px;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(212, 175, 55, 0.1);
-        }
-
-        .footer-note a {
-            color: #D4AF37;
-            text-decoration: none;
-        }
-
-        .footer-note a:hover {
-            text-decoration: underline;
-        }
-
-        /* CREF Badge */
-        .cref-badge {
-            display: inline-block;
-            background: rgba(212, 175, 55, 0.1);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            color: #D4AF37;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            margin-top: 10px;
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .container {
-                padding: 24px 16px;
-            }
-
-            h1 {
-                font-size: 18px;
-            }
-
-            .section {
-                padding: 24px 20px;
-            }
-
-            .logo-text {
-                font-size: 42px;
-            }
-
-            .logo-sci {
-                font-size: 22px;
-            }
-
-            .hexagon {
-                width: 60px;
-                height: 68px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de Privacidade — AurumSci</title>
+<style>
+  :root {
+    --ink: #0f172a;
+    --ink-soft: #334155;
+    --muted: #64748b;
+    --gold: #b8860b;
+    --gold-soft: #f4e4bc;
+    --bg: #fafaf7;
+    --card: #ffffff;
+    --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    padding: 40px 20px;
+  }
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    background: var(--card);
+    padding: 60px 50px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .brand {
+    display: inline-block;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--gold);
+  }
+  h1 {
+    font-size: 36px;
+    font-weight: normal;
+    margin-bottom: 8px;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+  }
+  .updated {
+    color: var(--muted);
+    font-size: 14px;
+    font-style: italic;
+    margin-bottom: 40px;
+  }
+  h2 {
+    font-size: 22px;
+    font-weight: normal;
+    margin-top: 40px;
+    margin-bottom: 16px;
+    color: var(--ink);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-top: 24px;
+    margin-bottom: 10px;
+    color: var(--ink-soft);
+  }
+  p { margin-bottom: 14px; color: var(--ink-soft); }
+  ul, ol { margin-left: 24px; margin-bottom: 14px; color: var(--ink-soft); }
+  li { margin-bottom: 8px; }
+  strong { color: var(--ink); }
+  .highlight {
+    background: var(--gold-soft);
+    padding: 16px 20px;
+    border-left: 3px solid var(--gold);
+    margin: 20px 0;
+    border-radius: 2px;
+  }
+  .highlight p { margin-bottom: 0; color: var(--ink); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+  }
+  th {
+    background: #f8f8f5;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  td { color: var(--ink-soft); }
+  .toc {
+    background: #f8f8f5;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 40px;
+  }
+  .toc h3 { margin-top: 0; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+  .toc ul { list-style: none; margin-left: 0; margin-bottom: 0; }
+  .toc li { margin-bottom: 4px; font-size: 14px; }
+  .toc a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px dotted transparent; transition: border-color 0.2s; }
+  .toc a:hover { border-bottom-color: var(--gold); }
+  footer {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+  }
+  footer a { color: var(--gold); text-decoration: none; }
+  @media (max-width: 640px) {
+    .container { padding: 40px 24px; }
+    h1 { font-size: 28px; }
+    table { font-size: 12px; }
+    th, td { padding: 8px 10px; }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
+<div class="container">
 
-        <!-- HEADER -->
-        <div class="header">
-            <div class="logo-wrapper">
-                <div class="hexagon">
-                    <svg viewBox="0 0 50 55" xmlns="http://www.w3.org/2000/svg">
-                        <polygon points="25,2 47,14 47,41 25,53 3,41 3,14"
-                                 fill="none" stroke="#D4AF37" stroke-width="2.5"/>
-                        <text x="25" y="35" text-anchor="middle"
-                              font-family="Georgia, serif" font-size="26"
-                              font-weight="bold" fill="#D4AF37">A</text>
-                    </svg>
-                </div>
-                <span class="logo-text">AURUM<span class="logo-sci">sci.</span></span>
-            </div>
-            <h1>Política de Privacidade</h1>
-            <p class="subtitle">Como cuidamos dos seus dados</p>
-            <p class="last-update">Última atualização: 18 de abril de 2026</p>
-        </div>
+<span class="brand">AURUMSCI · DOCUMENTO LEGAL</span>
+<h1>Política de Privacidade</h1>
+<p class="updated">Última atualização: 22 de abril de 2026</p>
 
-        <!-- INTRODUÇÃO -->
-        <div class="section">
-            <h2>🛡️ Nosso Compromisso</h2>
-            <p>A sua privacidade é importante para nós. Esta Política de Privacidade descreve como o <strong>AurumSci</strong> coleta, usa, armazena e protege suas informações quando você utiliza nosso aplicativo e plataforma web (<strong>aurumsc.com.br</strong>).</p>
-            <p>Ao usar o AurumSci, você concorda com esta Política. Se não concordar, por favor não utilize nossos serviços.</p>
+<div class="highlight">
+<p><strong>Resumo:</strong> Levamos a sua privacidade a sério. Coletamos apenas o necessário para oferecer nossos serviços, não vendemos seus dados, e você tem o direito de acessar, corrigir ou excluir suas informações a qualquer momento.</p>
+</div>
 
-            <div class="info-box">
-                <strong>📜 Conformidade Legal:</strong> Esta política está em conformidade com a Lei Geral de Proteção de Dados (LGPD — Lei 13.709/2018) no Brasil e com as diretrizes da Apple App Store.
-            </div>
-        </div>
+<div class="toc">
+<h3>Sumário</h3>
+<ul>
+<li><a href="#sec-1">1. Quem Somos</a></li>
+<li><a href="#sec-2">2. Dados que Coletamos</a></li>
+<li><a href="#sec-3">3. Como Usamos seus Dados</a></li>
+<li><a href="#sec-4">4. Inteligência Artificial (AURI)</a></li>
+<li><a href="#sec-5">5. Compartilhamento de Dados</a></li>
+<li><a href="#sec-6">6. Armazenamento e Segurança</a></li>
+<li><a href="#sec-7">7. Pagamentos</a></li>
+<li><a href="#sec-8">8. Seus Direitos (LGPD)</a></li>
+<li><a href="#sec-9">9. Exclusão de Conta</a></li>
+<li><a href="#sec-10">10. Cookies e Rastreamento</a></li>
+<li><a href="#sec-11">11. Dados de Menores</a></li>
+<li><a href="#sec-12">12. Transferência Internacional</a></li>
+<li><a href="#sec-13">13. Alterações</a></li>
+<li><a href="#sec-14">14. Contato do Encarregado</a></li>
+</ul>
+</div>
 
-        <!-- DADOS COLETADOS -->
-        <div class="section">
-            <h2>📋 Quais Dados Coletamos</h2>
+<h2 id="sec-1">1. Quem Somos</h2>
+<p>O <strong>AurumSci</strong> é uma plataforma SaaS científica operada por <strong>André Andrade</strong>, profissional registrado no CREF 62702-G/SP, localizado em São Paulo, Brasil.</p>
+<p>Esta Política de Privacidade explica como coletamos, usamos, armazenamos e protegemos os dados pessoais dos usuários do site <strong>aurumsc.com.br</strong>, do aplicativo <strong>AurumSci PRO</strong> e do aplicativo <strong>AurumSci Aluno</strong>.</p>
+<p>Este documento está em conformidade com a <strong>Lei Geral de Proteção de Dados (LGPD — Lei 13.709/2018)</strong> e com as diretrizes internacionais de proteção de dados, incluindo o <strong>GDPR</strong> europeu quando aplicável.</p>
 
-            <h3>1. Dados de Cadastro</h3>
-            <ul>
-                <li>Nome completo</li>
-                <li>Email</li>
-                <li>CPF (para emissão de nota fiscal, quando aplicável)</li>
-                <li>Senha (armazenada com criptografia)</li>
-            </ul>
+<h2 id="sec-2">2. Dados que Coletamos</h2>
 
-            <h3>2. Dados de Saúde e Treino (com seu consentimento expresso)</h3>
-            <ul>
-                <li>Dados de anamnese (histórico de saúde)</li>
-                <li>Respostas do PAR-Q (questionário de prontidão física)</li>
-                <li>Medidas corporais (peso, altura, circunferências, dobras cutâneas)</li>
-                <li>Resultados de testes físicos (VO2, força, flexibilidade)</li>
-                <li>Fotos para análise postural (processadas por IA)</li>
-                <li>Histórico de treinos e check-ins</li>
-            </ul>
+<h3>2.1 Dados fornecidos por você</h3>
+<table>
+<tr><th>Tipo de Dado</th><th>Exemplos</th><th>Finalidade</th></tr>
+<tr><td>Identificação</td><td>Nome, e-mail, senha</td><td>Criar e proteger sua conta</td></tr>
+<tr><td>Profissional (personal trainers)</td><td>Registro CREF, especializações</td><td>Compliance CREF</td></tr>
+<tr><td>Saúde e Condicionamento</td><td>Anamnese, PAR-Q, peso, altura</td><td>Personalização dos treinos</td></tr>
+<tr><td>Composição Corporal</td><td>Medidas, dobras cutâneas, ultrassom</td><td>Avaliação física</td></tr>
+<tr><td>Fotos Posturais</td><td>Imagens anterior, lateral, posterior</td><td>Análise postural via IA</td></tr>
+<tr><td>Testes Físicos</td><td>VO2 máx, HRR, 1RM, flexibilidade</td><td>Prescrição de treinamento</td></tr>
+<tr><td>Pagamento (via site)</td><td>Dados processados pelo Stripe</td><td>Processar assinaturas</td></tr>
+</table>
 
-            <h3>3. Dados de Uso</h3>
-            <ul>
-                <li>Logs de acesso (data, hora, IP)</li>
-                <li>Interações com o aplicativo</li>
-                <li>Conversas com o assistente AURI</li>
-            </ul>
+<h3>2.2 Dados coletados automaticamente</h3>
+<ul>
+<li>Endereço IP e localização aproximada</li>
+<li>Tipo de dispositivo, sistema operacional e versão do navegador</li>
+<li>Data, hora e duração das sessões de uso</li>
+<li>Páginas visitadas e ações realizadas dentro do aplicativo</li>
+<li>Identificadores de dispositivo (para notificações push)</li>
+</ul>
 
-            <h3>4. Dados de Pagamento</h3>
-            <p>Os dados de cartão de crédito <strong>NÃO são armazenados em nossos servidores</strong>. Todo processamento de pagamento é feito de forma segura pelo Stripe (certificação PCI-DSS Nível 1).</p>
-        </div>
+<h3>2.3 O que NÃO coletamos</h3>
+<p>Nunca coletamos:</p>
+<ul>
+<li>Dados de cartão de crédito diretamente (processados por Apple/Stripe)</li>
+<li>Conteúdo de suas mensagens pessoais</li>
+<li>Localização em tempo real (GPS contínuo)</li>
+<li>Dados biométricos fora do contexto de avaliação física</li>
+<li>Acesso a câmera, microfone ou galeria sem sua permissão explícita</li>
+</ul>
 
-        <!-- USO DOS DADOS -->
-        <div class="section">
-            <h2>🎯 Como Usamos Seus Dados</h2>
-            <p>Utilizamos seus dados exclusivamente para:</p>
-            <ul>
-                <li>Fornecer os serviços do aplicativo (treinos, avaliações, análises)</li>
-                <li>Processar análise postural com IA</li>
-                <li>Calcular métricas científicas (composição corporal, VO2, HRR)</li>
-                <li>Comunicação com você (notificações, emails de suporte)</li>
-                <li>Melhorar nossos serviços e corrigir bugs</li>
-                <li>Cumprir obrigações legais (fiscais, contábeis)</li>
-                <li>Segurança (prevenção de fraudes e uso indevido)</li>
-            </ul>
-            <p><strong>Não usamos seus dados para publicidade direcionada ou venda a terceiros.</strong></p>
-        </div>
+<h2 id="sec-3">3. Como Usamos seus Dados</h2>
+<p>Usamos seus dados para:</p>
+<ul>
+<li><strong>Prestar o serviço:</strong> criar conta, gerar avaliações, montar treinos, gerenciar alunos</li>
+<li><strong>Melhorar a plataforma:</strong> analisar uso, corrigir bugs, desenvolver novas funcionalidades</li>
+<li><strong>Comunicação:</strong> enviar avisos importantes, respostas de suporte, atualizações</li>
+<li><strong>Segurança:</strong> prevenir fraudes, acessos não autorizados e abuso</li>
+<li><strong>Obrigações legais:</strong> cumprir determinações de autoridades competentes</li>
+</ul>
 
-        <!-- IA e ANÁLISE POSTURAL -->
-        <div class="section">
-            <h2>🤖 Uso de Inteligência Artificial</h2>
-            <p>O AurumSci utiliza Inteligência Artificial da <strong>Anthropic (Claude)</strong> para:</p>
-            <ul>
-                <li>Análise postural a partir das suas fotos</li>
-                <li>Assistente virtual AURI</li>
-                <li>Sugestões de treino e nutrição</li>
-            </ul>
-            <p>As fotos enviadas para análise postural são processadas via API segura da Anthropic, <strong>não são armazenadas por eles para treinamento de modelos</strong>, e ficam em nosso banco de dados criptografado para que você tenha acesso ao seu histórico.</p>
+<div class="highlight">
+<p><strong>Não vendemos seus dados.</strong> Nunca. Em hipótese alguma. Nem para anunciantes, nem para corretores de dados.</p>
+</div>
 
-            <div class="info-box">
-                <strong>⚠️ Importante:</strong> A análise postural com IA é uma ferramenta de apoio e <strong>não substitui</strong> avaliação presencial de um profissional de saúde (fisioterapeuta, médico ou educador físico).
-            </div>
-        </div>
+<h2 id="sec-4">4. Inteligência Artificial (AURI)</h2>
+<p>O AurumSci utiliza o assistente de IA "AURI", que é alimentado pela <strong>API da Anthropic (Claude)</strong>.</p>
 
-        <!-- COMPARTILHAMENTO -->
-        <div class="section">
-            <h2>🤝 Compartilhamento de Dados</h2>
-            <p><strong>Não vendemos, alugamos ou trocamos seus dados pessoais com terceiros.</strong></p>
-            <p>Compartilhamos dados apenas nas seguintes situações:</p>
-            <ul>
-                <li><strong>Com seu Personal Trainer</strong> (se você for aluno vinculado a um personal na plataforma PRO): seus dados de avaliação e treino são visíveis para o profissional que te acompanha, pois isso é essencial para a prestação do serviço.</li>
-                <li><strong>Prestadores de serviço técnico:</strong> hospedagem (Railway), banco de dados (PostgreSQL), IA (Anthropic) e pagamentos (Stripe). Todos sob contratos de confidencialidade e conformes com LGPD.</li>
-                <li><strong>Obrigação legal:</strong> quando exigido por lei, ordem judicial ou para proteger direitos do AurumSci.</li>
-            </ul>
-        </div>
+<h3>4.1 Como a IA funciona</h3>
+<p>Quando você interage com a AURI:</p>
+<ul>
+<li>Suas mensagens são enviadas para os servidores da Anthropic processarem a resposta</li>
+<li>A Anthropic possui sua própria política de privacidade e não armazena os dados para treinar modelos (Zero Data Retention aplicada quando possível)</li>
+<li>Fotos posturais são analisadas via Claude Vision para gerar insights — não são armazenadas pela Anthropic</li>
+<li>A IA oferece <strong>sugestões</strong> baseadas em evidência científica, não diagnósticos clínicos</li>
+</ul>
 
-        <!-- SEGURANÇA -->
-        <div class="section">
-            <h2>🔒 Segurança dos Dados</h2>
-            <p>Implementamos medidas de segurança para proteger seus dados:</p>
-            <ul>
-                <li><strong>Criptografia em trânsito:</strong> todas as comunicações usam HTTPS (TLS 1.3)</li>
-                <li><strong>Criptografia em repouso:</strong> senhas e dados sensíveis armazenados com hash bcrypt</li>
-                <li><strong>Banco de dados seguro:</strong> PostgreSQL gerenciado com backups automáticos</li>
-                <li><strong>Controle de acesso:</strong> autenticação via token JWT</li>
-                <li><strong>Monitoramento:</strong> logs de segurança e detecção de atividades suspeitas</li>
-            </ul>
-        </div>
+<h3>4.2 Seus dados e a IA</h3>
+<p>Você pode optar por <strong>não usar</strong> as funcionalidades de IA em qualquer momento. Isso não afeta o acesso às demais funcionalidades da plataforma.</p>
 
-        <!-- SEUS DIREITOS -->
-        <div class="section">
-            <h2>⚖️ Seus Direitos (LGPD)</h2>
-            <p>Conforme a Lei Geral de Proteção de Dados, você tem direito a:</p>
-            <ul>
-                <li><strong>Acesso:</strong> solicitar uma cópia dos seus dados</li>
-                <li><strong>Correção:</strong> atualizar dados incorretos</li>
-                <li><strong>Exclusão:</strong> solicitar a remoção dos seus dados (direito ao esquecimento)</li>
-                <li><strong>Portabilidade:</strong> exportar seus dados em formato legível</li>
-                <li><strong>Revogação de consentimento:</strong> retirar autorizações a qualquer momento</li>
-                <li><strong>Oposição:</strong> contestar uso de dados em casos específicos</li>
-                <li><strong>Informação:</strong> saber com quem seus dados foram compartilhados</li>
-            </ul>
-            <p>Para exercer qualquer direito, entre em contato via email (abaixo). Respondemos em até 15 dias.</p>
-        </div>
+<h2 id="sec-5">5. Compartilhamento de Dados</h2>
+<p>Compartilhamos dados apenas com prestadores de serviço essenciais e quando legalmente exigido:</p>
 
-        <!-- RETENÇÃO -->
-        <div class="section">
-            <h2>⏱️ Por Quanto Tempo Guardamos Seus Dados</h2>
-            <ul>
-                <li><strong>Conta ativa:</strong> enquanto você utilizar o serviço</li>
-                <li><strong>Após cancelamento:</strong> dados mantidos por 6 meses para permitir reativação; após isso, são anonimizados ou excluídos</li>
-                <li><strong>Obrigações legais:</strong> dados fiscais/contábeis são mantidos por 5 anos (exigência fiscal)</li>
-            </ul>
-        </div>
+<table>
+<tr><th>Parceiro</th><th>Finalidade</th><th>Dados Compartilhados</th></tr>
+<tr><td>Railway (hosting)</td><td>Armazenar banco de dados</td><td>Todos os dados da aplicação</td></tr>
+<tr><td>Anthropic (IA)</td><td>Processar AURI e análise postural</td><td>Texto da conversa, fotos posturais</td></tr>
+<tr><td>Apple</td><td>Processar compras IAP</td><td>Identificador de assinatura</td></tr>
+<tr><td>Stripe</td><td>Processar pagamentos web</td><td>Nome, e-mail, dados de pagamento</td></tr>
+<tr><td>Gmail (SMTP)</td><td>Enviar e-mails transacionais</td><td>Nome, e-mail</td></tr>
+</table>
 
-        <!-- MENORES -->
-        <div class="section">
-            <h2>👶 Menores de Idade</h2>
-            <p>O AurumSci é destinado a maiores de 18 anos. Menores entre 13 e 18 anos podem utilizar mediante autorização e supervisão dos pais ou responsáveis legais.</p>
-            <p>Não coletamos conscientemente dados de crianças menores de 13 anos.</p>
-        </div>
+<p>Personal trainers têm acesso aos dados de seus próprios alunos dentro da plataforma. Alunos não têm acesso aos dados de outros alunos.</p>
 
-        <!-- COOKIES -->
-        <div class="section">
-            <h2>🍪 Cookies e Tecnologias Similares</h2>
-            <p>Usamos cookies essenciais para:</p>
-            <ul>
-                <li>Manter você logado na plataforma</li>
-                <li>Salvar preferências (idioma, tema escuro/claro)</li>
-                <li>Análise de uso (anonimizada)</li>
-            </ul>
-            <p>Não utilizamos cookies de publicidade ou rastreamento de terceiros.</p>
-        </div>
+<h2 id="sec-6">6. Armazenamento e Segurança</h2>
 
-        <!-- MUDANÇAS -->
-        <div class="section">
-            <h2>📝 Alterações Nesta Política</h2>
-            <p>Podemos atualizar esta Política periodicamente. Quando houver mudanças significativas, notificaremos você por email ou aviso no aplicativo.</p>
-            <p>A data da última atualização está sempre visível no topo desta página.</p>
-        </div>
+<h3>6.1 Onde seus dados ficam</h3>
+<p>Seus dados são armazenados em servidores seguros operados pela <strong>Railway</strong>, com banco de dados PostgreSQL criptografado. Os servidores estão localizados em <strong>infraestrutura internacional</strong> com padrões rigorosos de segurança.</p>
 
-        <!-- CONTATO -->
-        <div class="section">
-            <h2>📧 Dúvidas? Fale Conosco</h2>
-            <p>Se tiver qualquer dúvida sobre esta Política ou sobre o tratamento dos seus dados:</p>
+<h3>6.2 Medidas de segurança</h3>
+<ul>
+<li>Criptografia HTTPS/TLS em todas as comunicações</li>
+<li>Senhas armazenadas com hash bcrypt (nunca em texto puro)</li>
+<li>Tokens JWT para autenticação segura</li>
+<li>Backups automáticos diários</li>
+<li>Monitoramento 24/7 contra invasões</li>
+<li>Acesso restrito a administradores autorizados</li>
+</ul>
 
-            <div class="contact-card">
-                <div style="color: #b8b5ae; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Encarregado de Dados (DPO)</div>
-                <p style="color: #fff; margin-bottom: 10px;"><strong>André Andrade</strong><br>Personal Trainer · Fundador AurumSci</p>
-                <a href="mailto:andrepersonal395@gmail.com">andrepersonal395@gmail.com</a>
-            </div>
+<h3>6.3 Por quanto tempo armazenamos</h3>
+<p>Mantemos seus dados enquanto sua conta estiver ativa. Após a exclusão da conta, os dados são apagados permanentemente em até <strong>30 dias</strong>, exceto quando a lei exigir retenção (ex: dados fiscais por 5 anos).</p>
 
-            <div class="cref-badge">CREF 62702-G/SP</div>
-        </div>
+<h2 id="sec-7">7. Pagamentos</h2>
 
-        <!-- FOOTER -->
-        <div class="footer-note">
-            <p>© 2026 AurumSci — Ciência que vira resultado</p>
-            <p style="margin-top: 8px;">
-                <a href="/">Início</a> ·
-                <a href="/suporte">Suporte</a> ·
-                <a href="/pro">AurumSci PRO</a>
-            </p>
-        </div>
+<h3>7.1 Dados de pagamento no iOS</h3>
+<p>Ao assinar via aplicativo iOS, seus dados de pagamento (cartão de crédito, ID Apple) são processados <strong>exclusivamente pela Apple</strong>. Não temos acesso aos seus dados de cartão.</p>
 
-    </div>
+<h3>7.2 Dados de pagamento no site</h3>
+<p>Ao assinar via site, seus dados são processados pelo <strong>Stripe</strong>, certificado <strong>PCI-DSS Nível 1</strong> (o mais alto padrão de segurança para processadores de cartão). O AurumSci recebe apenas a confirmação da transação, não os dados completos do cartão.</p>
+
+<h2 id="sec-8">8. Seus Direitos (LGPD)</h2>
+<p>De acordo com a Lei Geral de Proteção de Dados, você tem direito a:</p>
+<ul>
+<li><strong>Acesso:</strong> saber quais dados temos sobre você</li>
+<li><strong>Correção:</strong> atualizar dados incompletos ou incorretos</li>
+<li><strong>Exclusão:</strong> apagar sua conta e todos os dados associados</li>
+<li><strong>Portabilidade:</strong> receber seus dados em formato estruturado</li>
+<li><strong>Informação:</strong> saber com quem compartilhamos seus dados</li>
+<li><strong>Revogação:</strong> retirar seu consentimento a qualquer momento</li>
+<li><strong>Reclamação:</strong> apresentar queixa à ANPD (Autoridade Nacional de Proteção de Dados)</li>
+</ul>
+
+<p>Para exercer qualquer um desses direitos, envie um e-mail para <strong>andrepersonal395@gmail.com</strong> ou <strong>a.andrade_personal@hotmail.com.br</strong>. Responderemos em até <strong>15 dias úteis</strong>.</p>
+
+<h2 id="sec-9">9. Exclusão de Conta</h2>
+
+<div class="highlight">
+<p><strong>Seu direito de apagar tudo:</strong> Você pode solicitar a exclusão permanente de sua conta a qualquer momento, pelos canais abaixo.</p>
+</div>
+
+<h3>9.1 Como excluir</h3>
+<ol>
+<li><strong>Dentro do app:</strong> Configurações → Minha Conta → Excluir Conta</li>
+<li><strong>No site:</strong> aurumsc.com.br/excluir-conta</li>
+<li><strong>Por e-mail:</strong> andrepersonal395@gmail.com ou a.andrade_personal@hotmail.com.br</li>
+</ol>
+
+<h3>9.2 O que é apagado</h3>
+<ul>
+<li>Dados pessoais (nome, e-mail, senha, telefone)</li>
+<li>Fotos posturais e avaliações físicas</li>
+<li>Histórico de treinos e progressão</li>
+<li>Conversas com a AURI</li>
+<li>Dados de alunos vinculados (para personal trainers)</li>
+</ul>
+
+<h3>9.3 O que pode ser retido</h3>
+<ul>
+<li>Dados fiscais (notas fiscais emitidas) — por 5 anos (exigência legal brasileira)</li>
+<li>Dados de segurança (logs anônimos) — por 6 meses</li>
+<li>Histórico de pagamentos (sem dados pessoais) — por obrigação contábil</li>
+</ul>
+
+<h2 id="sec-10">10. Cookies e Rastreamento</h2>
+<p>Utilizamos cookies essenciais para:</p>
+<ul>
+<li>Manter você logado</li>
+<li>Lembrar suas preferências (idioma, tema)</li>
+<li>Medir desempenho e corrigir problemas</li>
+</ul>
+<p>Não usamos cookies de publicidade ou rastreamento de terceiros.</p>
+
+<h2 id="sec-11">11. Dados de Menores</h2>
+<p>O AurumSci <strong>não é destinado a menores de 14 anos</strong>. Menores entre 14 e 18 anos só podem usar a plataforma com autorização dos pais ou responsáveis legais, conforme exige o Art. 14 da LGPD.</p>
+<p>Se identificarmos contas de menores sem autorização, elas serão excluídas imediatamente.</p>
+
+<h2 id="sec-12">12. Transferência Internacional</h2>
+<p>Seus dados podem ser processados por servidores localizados fora do Brasil (ex: Anthropic nos Estados Unidos, Apple globalmente, Railway internacional). Todos os parceiros atendem padrões rigorosos de proteção de dados equivalentes à LGPD.</p>
+
+<h2 id="sec-13">13. Alterações</h2>
+<p>Podemos atualizar esta Política periodicamente. Mudanças relevantes serão comunicadas por e-mail e/ou dentro do aplicativo com pelo menos 30 dias de antecedência.</p>
+
+<h2 id="sec-14">14. Contato do Encarregado</h2>
+<p>Em conformidade com a LGPD, nosso encarregado de dados (DPO) é:</p>
+<ul>
+<li><strong>Nome:</strong> André Andrade</li>
+<li><strong>CREF:</strong> 62702-G/SP</li>
+<li><strong>E-mail principal:</strong> andrepersonal395@gmail.com</li>
+<li><strong>E-mail alternativo:</strong> a.andrade_personal@hotmail.com.br</li>
+<li><strong>Localização:</strong> São Paulo, SP — Brasil</li>
+</ul>
+
+<p>Para qualquer dúvida, reclamação ou solicitação relacionada a dados pessoais, entre em contato.</p>
+
+<footer>
+AurumSci © 2026 · Todos os direitos reservados<br>
+<a href="/privacidade">Política de Privacidade</a> · <a href="/termos">Termos de Uso</a> · <a href="/suporte">Suporte</a>
+</footer>
+
+</div>
 </body>
 </html>

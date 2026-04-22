@@ -222,3 +222,13 @@ async def suporte():
 async def privacidade():
     with open('static/privacidade.html', 'r', encoding='utf-8') as f:
         return f.read()
+
+@app.get('/termos', response_class=HTMLResponse)
+async def termos():
+    with open('static/termos.html', 'r', encoding='utf-8') as f:
+        return f.read()
+
+@app.get('/excluir-conta', response_class=HTMLResponse)
+async def excluir_conta():
+    with open('static/excluir-conta.html', 'r', encoding='utf-8') as f:
+        return f.read()

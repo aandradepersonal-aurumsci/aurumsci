@@ -12,7 +12,7 @@ Melhorias de segurança aplicadas:
 ✅ Trusted hosts em produção
 """
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -232,3 +232,128 @@ async def termos():
 async def excluir_conta():
     with open('static/excluir-conta.html', 'r', encoding='utf-8') as f:
         return f.read()
+
+
+# ============================================
+# FLUXO DE EXCLUSÃO DE CONTA (LGPD / Apple 5.1.1v)
+# ============================================
+
+from pydantic import BaseModel, EmailStr
+from datetime import datetime, timedelta
+import secrets
+import bcrypt
+
+class SolicitarExclusaoRequest(BaseModel):
+    email: str
+    senha: str
+    tipo: str  # "aluno" ou "personal"
+
+@app.post('/conta/solicitar-exclusao')
+async def solicitar_exclusao(req: SolicitarExclusaoRequest, db=Depends(get_db)):
+    """Solicita exclusão de conta. Gera token e envia email de confirmação."""
+    
+    from sqlalchemy import text
+    
+    if req.tipo not in ['aluno', 'personal']:
+        raise HTTPException(status_code=400, detail='Tipo inválido. Use "aluno" ou "personal".')
+    
+    tabela = 'alunos' if req.tipo == 'aluno' else 'personals'
+    
+    # Busca o usuário
+    result = db.execute(
+        text(f"SELECT id, email, nome FROM {tabela} WHERE email = :email AND ativo = true"),
+        {"email": req.email}
+    ).fetchone()
+    
+    if not result:
+        raise HTTPException(status_code=404, detail='Conta não encontrada ou já inativa.')
+    
+    user_id, user_email, user_nome = result
+    
+    # Gera token único (32 caracteres aleatórios)
+    token = secrets.token_urlsafe(32)
+    agora = datetime.utcnow()
+    
+    # Salva token e data no banco
+    db.execute(
+        text(f"""
+            UPDATE {tabela} 
+            SET token_exclusao = :token, 
+                data_solicitacao_exclusao = :data
+            WHERE id = :id
+        """),
+        {"token": token, "data": agora, "id": user_id}
+    )
+    db.commit()
+    
+    # Link de confirmação
+    link = f"https://www.aurumsc.com.br/conta/confirmar-exclusao/{token}?tipo={req.tipo}"
+    
+    return {
+        "sucesso": True,
+        "mensagem": "Solicitação registrada! Um email de confirmação foi enviado.",
+        "email": user_email,
+        "nome": user_nome,
+        "link_confirmacao": link,
+        "expira_em": "24 horas",
+        "obs": "Email ainda não é enviado automaticamente - próximo passo!"
+    }
+
+
+@app.get('/conta/confirmar-exclusao/{token}', response_class=HTMLResponse)
+async def confirmar_exclusao(token: str, tipo: str, db=Depends(get_db)):
+    """Confirma a exclusão da conta via link do email."""
+    
+    from sqlalchemy import text
+    
+    if tipo not in ['aluno', 'personal']:
+        return '<html><body style="font-family:sans-serif;padding:40px;text-align:center;"><h1>❌ Link inválido</h1><p>Tipo de conta inválido.</p></body></html>'
+    
+    tabela = 'alunos' if tipo == 'aluno' else 'personals'
+    
+    # Busca usuário com esse token
+    result = db.execute(
+        text(f"""
+            SELECT id, email, nome, data_solicitacao_exclusao 
+            FROM {tabela} 
+            WHERE token_exclusao = :token AND ativo = true
+        """),
+        {"token": token}
+    ).fetchone()
+    
+    if not result:
+        return '<html><body style="font-family:sans-serif;padding:40px;text-align:center;"><h1>❌ Link inválido ou expirado</h1><p>Solicite a exclusão novamente.</p></body></html>'
+    
+    user_id, user_email, user_nome, data_solicitacao = result
+    
+    # Verifica se token expirou (24h)
+    if data_solicitacao and (datetime.utcnow() - data_solicitacao) > timedelta(hours=24):
+        return '<html><body style="font-family:sans-serif;padding:40px;text-align:center;"><h1>⏱️ Link expirado</h1><p>Solicite a exclusão novamente.</p></body></html>'
+    
+    # Desativa a conta (soft delete)
+    db.execute(
+        text(f"""
+            UPDATE {tabela} 
+            SET ativo = false,
+                token_exclusao = NULL
+            WHERE id = :id
+        """),
+        {"id": user_id}
+    )
+    db.commit()
+    
+    return f"""
+    <html>
+    <head><title>Conta Excluída - AurumSci</title></head>
+    <body style="font-family:Georgia,serif;padding:60px 20px;text-align:center;background:#fafaf7;">
+        <div style="max-width:600px;margin:0 auto;background:white;padding:50px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            <h1 style="color:#b8860b;">✅ Conta Excluída com Sucesso</h1>
+            <p style="color:#334155;font-size:18px;">Olá, <strong>{user_nome}</strong>!</p>
+            <p style="color:#334155;">Sua conta AurumSci foi desativada. Em até <strong>30 dias</strong> todos os seus dados pessoais serão permanentemente apagados de nossos servidores.</p>
+            <p style="color:#64748b;font-size:14px;margin-top:30px;">Se mudou de ideia, entre em contato em até 30 dias: <strong>andrepersonal395@gmail.com</strong></p>
+            <hr style="border:none;border-top:1px solid #e2e8f0;margin:30px 0;">
+            <p style="color:#64748b;font-size:13px;">AurumSci © 2026 · Obrigado por ter feito parte da nossa jornada.</p>
+        </div>
+    </body>
+    </html>
+    """

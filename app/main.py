@@ -21,6 +21,7 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 import os
+import requests
 import logging
 import time
 
@@ -357,3 +358,327 @@ async def confirmar_exclusao(token: str, tipo: str, db=Depends(get_db)):
     </body>
     </html>
     """
+
+
+# ============================================
+# ENDPOINTS IAP (In-App Purchase) - Apple
+# ============================================
+
+APPLE_VERIFY_URL_PROD = "https://buy.itunes.apple.com/verifyReceipt"
+APPLE_VERIFY_URL_SANDBOX = "https://sandbox.itunes.apple.com/verifyReceipt"
+
+PRODUTO_PARA_PLANO = {
+    "com.aurumsc.pro.bronze": {"plano": "bronze", "tipo": "personal", "limite_alunos": 10},
+    "com.aurumsc.pro.prata": {"plano": "prata", "tipo": "personal", "limite_alunos": 20},
+    "com.aurumsc.pro.ouro": {"plano": "ouro", "tipo": "personal", "limite_alunos": 50},
+    "com.aurumsc.pro.diamante": {"plano": "diamante", "tipo": "personal", "limite_alunos": 999999},
+    "com.aurumsc.aluno.mensal": {"plano": "aluno_mensal", "tipo": "aluno", "limite_alunos": 0},
+    "com.aurumsc.aluno.anual": {"plano": "aluno_anual", "tipo": "aluno", "limite_alunos": 0},
+}
+
+
+class ValidarReciboRequest(BaseModel):
+    receipt_data: str
+    user_id: int
+    user_type: str
+
+
+@app.post("/iap/validar-recibo")
+async def validar_recibo_apple(req: ValidarReciboRequest, db=Depends(get_db)):
+    """
+    Valida recibo de compra IAP com servidor Apple.
+    Salva assinatura no banco se valida.
+    """
+    if req.user_type not in ["aluno", "personal"]:
+        raise HTTPException(status_code=400, detail="user_type deve ser 'aluno' ou 'personal'")
+
+    shared_secret = os.getenv("APPLE_SHARED_SECRET_PRO" if req.user_type == "personal" else "APPLE_SHARED_SECRET_ALUNO", "")
+
+    payload = {
+        "receipt-data": req.receipt_data,
+        "password": shared_secret,
+        "exclude-old-transactions": True
+    }
+
+    try:
+        response = requests.post(APPLE_VERIFY_URL_PROD, json=payload, timeout=30)
+        data = response.json()
+
+        if data.get("status") == 21007:
+            response = requests.post(APPLE_VERIFY_URL_SANDBOX, json=payload, timeout=30)
+            data = response.json()
+
+        if data.get("status") != 0:
+            raise HTTPException(status_code=400, detail=f"Recibo invalido. Status Apple: {data.get('status')}")
+
+    except requests.Timeout:
+        raise HTTPException(status_code=504, detail="Timeout ao validar com Apple")
+    except requests.RequestException as e:
+        raise HTTPException(status_code=502, detail=f"Erro ao comunicar com Apple: {str(e)}")
+
+    latest_receipt_info = data.get("latest_receipt_info", [])
+    if not latest_receipt_info:
+        raise HTTPException(status_code=400, detail="Recibo sem informacoes de transacao")
+
+    ultima = latest_receipt_info[-1]
+    product_id = ultima.get("product_id", "")
+    transaction_id = ultima.get("transaction_id", "")
+    original_transaction_id = ultima.get("original_transaction_id", "")
+    purchase_date_ms = int(ultima.get("purchase_date_ms", 0))
+    expires_date_ms = int(ultima.get("expires_date_ms", 0))
+    is_trial_period = ultima.get("is_trial_period", "false") == "true"
+
+    purchase_date = datetime.fromtimestamp(purchase_date_ms / 1000)
+    expires_date = datetime.fromtimestamp(expires_date_ms / 1000)
+
+    if product_id not in PRODUTO_PARA_PLANO:
+        raise HTTPException(status_code=400, detail=f"product_id desconhecido: {product_id}")
+
+    info_plano = PRODUTO_PARA_PLANO[product_id]
+    agora = datetime.now()
+    status_assinatura = "active" if expires_date > agora else "expired"
+
+    from sqlalchemy import text
+    import json
+
+    with engine.begin() as conn:
+        existing = conn.execute(
+            text("SELECT id FROM assinaturas_iap WHERE transaction_id = :tid"),
+            {"tid": transaction_id}
+        ).fetchone()
+
+        if existing:
+            conn.execute(text("""
+                UPDATE assinaturas_iap SET
+                    status = :status,
+                    expires_date = :expires,
+                    updated_at = NOW(),
+                    raw_response = :raw
+                WHERE transaction_id = :tid
+            """), {
+                "status": status_assinatura,
+                "expires": expires_date,
+                "raw": json.dumps(data),
+                "tid": transaction_id
+            })
+            acao = "atualizada"
+        else:
+            conn.execute(text("""
+                INSERT INTO assinaturas_iap (
+                    user_id, user_type, product_id, transaction_id,
+                    original_transaction_id, purchase_date, expires_date,
+                    status, is_trial, plano, receipt_data, raw_response
+                ) VALUES (
+                    :user_id, :user_type, :product_id, :tid,
+                    :otid, :purchase, :expires,
+                    :status, :trial, :plano, :receipt, :raw
+                )
+            """), {
+                "user_id": req.user_id,
+                "user_type": req.user_type,
+                "product_id": product_id,
+                "tid": transaction_id,
+                "otid": original_transaction_id,
+                "purchase": purchase_date,
+                "expires": expires_date,
+                "status": status_assinatura,
+                "trial": is_trial_period,
+                "plano": info_plano["plano"],
+                "receipt": req.receipt_data,
+                "raw": json.dumps(data)
+            })
+            acao = "criada"
+
+    return {
+        "sucesso": True,
+        "mensagem": f"Assinatura {acao} com sucesso!",
+        "plano": info_plano["plano"],
+        "status": status_assinatura,
+        "expires_date": expires_date.isoformat(),
+        "is_trial": is_trial_period,
+        "transaction_id": transaction_id
+    }
+
+
+
+@app.get("/iap/status-assinatura/{user_id}")
+async def status_assinatura(user_id: int, user_type: str, db=Depends(get_db)):
+    """
+    Retorna status da assinatura do usuario.
+    Usado pelo app pra saber se libera ou nao os recursos premium.
+    """
+    if user_type not in ["aluno", "personal"]:
+        raise HTTPException(status_code=400, detail="user_type deve ser 'aluno' ou 'personal'")
+
+    from sqlalchemy import text
+    
+    with engine.connect() as conn:
+        result = conn.execute(text("""
+            SELECT 
+                id, product_id, transaction_id, purchase_date, 
+                expires_date, status, is_trial, plano, auto_renew
+            FROM assinaturas_iap
+            WHERE user_id = :uid AND user_type = :utype
+            ORDER BY expires_date DESC
+            LIMIT 1
+        """), {"uid": user_id, "utype": user_type}).fetchone()
+
+    if not result:
+        return {
+            "tem_assinatura": False,
+            "status": "sem_assinatura",
+            "mensagem": "Usuario nao possui assinatura ativa"
+        }
+
+    agora = datetime.now()
+    expires = result[4]
+    status_real = "active" if expires > agora else "expired"
+    
+    dias_restantes = (expires - agora).days if expires > agora else 0
+
+    return {
+        "tem_assinatura": status_real == "active",
+        "status": status_real,
+        "plano": result[7],
+        "product_id": result[1],
+        "purchase_date": result[3].isoformat() if result[3] else None,
+        "expires_date": expires.isoformat() if expires else None,
+        "dias_restantes": dias_restantes,
+        "is_trial": result[6],
+        "auto_renew": result[8],
+        "transaction_id": result[2]
+    }
+
+
+
+class RestaurarComprasRequest(BaseModel):
+    receipt_data: str
+    user_id: int
+    user_type: str
+
+
+@app.post("/iap/restaurar-compras")
+async def restaurar_compras(req: RestaurarComprasRequest, db=Depends(get_db)):
+    """
+    Restaura compras anteriores do usuario.
+    Usado quando usuario troca de celular ou reinstala o app.
+    Revalida o recibo com Apple e atualiza/cria assinatura no banco.
+    """
+    if req.user_type not in ["aluno", "personal"]:
+        raise HTTPException(status_code=400, detail="user_type deve ser 'aluno' ou 'personal'")
+
+    shared_secret = os.getenv("APPLE_SHARED_SECRET_PRO" if req.user_type == "personal" else "APPLE_SHARED_SECRET_ALUNO", "")
+
+    payload = {
+        "receipt-data": req.receipt_data,
+        "password": shared_secret,
+        "exclude-old-transactions": False
+    }
+
+    try:
+        response = requests.post(APPLE_VERIFY_URL_PROD, json=payload, timeout=30)
+        data = response.json()
+
+        if data.get("status") == 21007:
+            response = requests.post(APPLE_VERIFY_URL_SANDBOX, json=payload, timeout=30)
+            data = response.json()
+
+        if data.get("status") != 0:
+            raise HTTPException(status_code=400, detail=f"Recibo invalido. Status Apple: {data.get('status')}")
+
+    except requests.Timeout:
+        raise HTTPException(status_code=504, detail="Timeout ao validar com Apple")
+    except requests.RequestException as e:
+        raise HTTPException(status_code=502, detail=f"Erro ao comunicar com Apple: {str(e)}")
+
+    latest_receipt_info = data.get("latest_receipt_info", [])
+    if not latest_receipt_info:
+        return {
+            "sucesso": True,
+            "mensagem": "Nenhuma compra anterior encontrada",
+            "assinaturas_restauradas": 0
+        }
+
+    from sqlalchemy import text
+    import json
+
+    assinaturas_processadas = 0
+    assinaturas_ativas = []
+
+    with engine.begin() as conn:
+        for transacao in latest_receipt_info:
+            product_id = transacao.get("product_id", "")
+            transaction_id = transacao.get("transaction_id", "")
+            original_transaction_id = transacao.get("original_transaction_id", "")
+            purchase_date_ms = int(transacao.get("purchase_date_ms", 0))
+            expires_date_ms = int(transacao.get("expires_date_ms", 0))
+            is_trial_period = transacao.get("is_trial_period", "false") == "true"
+
+            if product_id not in PRODUTO_PARA_PLANO:
+                continue
+
+            purchase_date = datetime.fromtimestamp(purchase_date_ms / 1000)
+            expires_date = datetime.fromtimestamp(expires_date_ms / 1000)
+            info_plano = PRODUTO_PARA_PLANO[product_id]
+            agora = datetime.now()
+            status_assinatura = "active" if expires_date > agora else "expired"
+
+            existing = conn.execute(
+                text("SELECT id FROM assinaturas_iap WHERE transaction_id = :tid"),
+                {"tid": transaction_id}
+            ).fetchone()
+
+            if existing:
+                conn.execute(text("""
+                    UPDATE assinaturas_iap SET
+                        status = :status,
+                        expires_date = :expires,
+                        updated_at = NOW()
+                    WHERE transaction_id = :tid
+                """), {
+                    "status": status_assinatura,
+                    "expires": expires_date,
+                    "tid": transaction_id
+                })
+            else:
+                conn.execute(text("""
+                    INSERT INTO assinaturas_iap (
+                        user_id, user_type, product_id, transaction_id,
+                        original_transaction_id, purchase_date, expires_date,
+                        status, is_trial, plano, receipt_data, raw_response
+                    ) VALUES (
+                        :user_id, :user_type, :product_id, :tid,
+                        :otid, :purchase, :expires,
+                        :status, :trial, :plano, :receipt, :raw
+                    )
+                """), {
+                    "user_id": req.user_id,
+                    "user_type": req.user_type,
+                    "product_id": product_id,
+                    "tid": transaction_id,
+                    "otid": original_transaction_id,
+                    "purchase": purchase_date,
+                    "expires": expires_date,
+                    "status": status_assinatura,
+                    "trial": is_trial_period,
+                    "plano": info_plano["plano"],
+                    "receipt": req.receipt_data,
+                    "raw": json.dumps(data)
+                })
+
+            assinaturas_processadas += 1
+            
+            if status_assinatura == "active":
+                assinaturas_ativas.append({
+                    "plano": info_plano["plano"],
+                    "expires_date": expires_date.isoformat(),
+                    "transaction_id": transaction_id
+                })
+
+    return {
+        "sucesso": True,
+        "mensagem": f"Compras restauradas com sucesso! {assinaturas_processadas} transacoes processadas.",
+        "assinaturas_restauradas": assinaturas_processadas,
+        "assinaturas_ativas": assinaturas_ativas
+    }
+

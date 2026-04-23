@@ -25,7 +25,7 @@ import logging
 import time
 
 from app.config import settings
-from app.database import engine
+from app.database import engine, get_db
 from app.models import Base
 
 from app.routers import auth, alunos, anamnese, avaliacao

@@ -682,3 +682,178 @@ async def restaurar_compras(req: RestaurarComprasRequest, db=Depends(get_db)):
         "assinaturas_ativas": assinaturas_ativas
     }
 
+
+
+@app.post("/iap/notificacao-apple")
+async def webhook_notificacao_apple(request: Request, db=Depends(get_db)):
+    """
+    Webhook que recebe notificacoes da Apple sobre mudancas em assinaturas.
+    Apple envia: renovacao, cancelamento, reembolso, falha de pagamento.
+    """
+    from sqlalchemy import text
+    import json
+    
+    try:
+        payload = await request.json()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Payload invalido: {str(e)}")
+
+    notification_type = payload.get("notificationType", "UNKNOWN")
+    subtype = payload.get("subtype", "")
+    
+    signed_transaction_info = payload.get("data", {}).get("signedTransactionInfo", "")
+    
+    transaction_data = payload.get("data", {}).get("transactionInfo", {})
+    
+    if not transaction_data:
+        with engine.begin() as conn:
+            conn.execute(text("""
+                INSERT INTO assinaturas_iap_logs (notification_type, subtype, raw_payload, created_at)
+                VALUES (:ntype, :subtype, :payload, NOW())
+                ON CONFLICT DO NOTHING
+            """), {
+                "ntype": notification_type,
+                "subtype": subtype,
+                "payload": json.dumps(payload)
+            }) if False else None
+        
+        return {
+            "sucesso": True,
+            "mensagem": f"Notificacao {notification_type} recebida (sem transaction data)",
+            "processada": False
+        }
+
+    original_transaction_id = transaction_data.get("originalTransactionId", "")
+    transaction_id = transaction_data.get("transactionId", "")
+    product_id = transaction_data.get("productId", "")
+    expires_date_ms = int(transaction_data.get("expiresDate", 0))
+    
+    if not original_transaction_id:
+        return {
+            "sucesso": True,
+            "mensagem": "Notificacao sem original_transaction_id",
+            "processada": False
+        }
+
+    novo_status = "active"
+    
+    if notification_type == "DID_RENEW":
+        novo_status = "active"
+    elif notification_type == "EXPIRED":
+        novo_status = "expired"
+    elif notification_type == "DID_CHANGE_RENEWAL_STATUS":
+        if subtype == "AUTO_RENEW_DISABLED":
+            novo_status = "canceled_will_expire"
+        elif subtype == "AUTO_RENEW_ENABLED":
+            novo_status = "active"
+    elif notification_type == "REFUND":
+        novo_status = "refunded"
+    elif notification_type == "GRACE_PERIOD_EXPIRED":
+        novo_status = "expired"
+    elif notification_type == "DID_FAIL_TO_RENEW":
+        novo_status = "payment_failed"
+    elif notification_type == "REVOKE":
+        novo_status = "revoked"
+
+    expires_date = None
+    if expires_date_ms > 0:
+        expires_date = datetime.fromtimestamp(expires_date_ms / 1000)
+
+    with engine.begin() as conn:
+        if expires_date:
+            conn.execute(text("""
+                UPDATE assinaturas_iap SET
+                    status = :status,
+                    expires_date = :expires,
+                    auto_renew = :auto_renew,
+                    raw_response = :raw,
+                    updated_at = NOW()
+                WHERE original_transaction_id = :otid
+            """), {
+                "status": novo_status,
+                "expires": expires_date,
+                "auto_renew": novo_status == "active",
+                "raw": json.dumps(payload),
+                "otid": original_transaction_id
+            })
+        else:
+            conn.execute(text("""
+                UPDATE assinaturas_iap SET
+                    status = :status,
+                    auto_renew = :auto_renew,
+                    raw_response = :raw,
+                    updated_at = NOW()
+                WHERE original_transaction_id = :otid
+            """), {
+                "status": novo_status,
+                "auto_renew": novo_status == "active",
+                "raw": json.dumps(payload),
+                "otid": original_transaction_id
+            })
+
+    return {
+        "sucesso": True,
+        "mensagem": f"Notificacao processada: {notification_type}",
+        "notification_type": notification_type,
+        "subtype": subtype,
+        "novo_status": novo_status,
+        "original_transaction_id": original_transaction_id
+    }
+
+
+
+def verificar_assinatura_ativa(user_id: int, user_type: str) -> dict:
+    """
+    Verifica se usuario tem assinatura IAP ativa.
+    Retorna dict com status. Usar antes de liberar recursos premium.
+    
+    Uso:
+        status = verificar_assinatura_ativa(user_id=3, user_type="personal")
+        if not status["ativa"]:
+            raise HTTPException(status_code=403, detail="Assinatura necessaria")
+    """
+    from sqlalchemy import text
+    
+    with engine.connect() as conn:
+        result = conn.execute(text("""
+            SELECT expires_date, status, plano, is_trial
+            FROM assinaturas_iap
+            WHERE user_id = :uid AND user_type = :utype
+            ORDER BY expires_date DESC
+            LIMIT 1
+        """), {"uid": user_id, "utype": user_type}).fetchone()
+
+    if not result:
+        return {
+            "ativa": False,
+            "motivo": "sem_assinatura",
+            "mensagem": "Usuario nao possui assinatura"
+        }
+
+    expires = result[0]
+    status_db = result[1]
+    agora = datetime.now()
+
+    if expires <= agora:
+        return {
+            "ativa": False,
+            "motivo": "expirada",
+            "mensagem": "Assinatura expirada",
+            "expirou_em": expires.isoformat()
+        }
+
+    if status_db in ["refunded", "revoked", "payment_failed"]:
+        return {
+            "ativa": False,
+            "motivo": status_db,
+            "mensagem": f"Assinatura com status: {status_db}"
+        }
+
+    return {
+        "ativa": True,
+        "plano": result[2],
+        "is_trial": result[3],
+        "expires_date": expires.isoformat(),
+        "status": status_db
+    }
+

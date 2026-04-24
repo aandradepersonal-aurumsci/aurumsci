@@ -857,3 +857,11 @@ def verificar_assinatura_ativa(user_id: int, user_type: str) -> dict:
         "status": status_db
     }
 
+
+
+@app.get("/upgrade")
+async def pagina_upgrade():
+    """Pagina de upgrade - mostra os 4 planos PRO"""
+    from fastapi.responses import FileResponse
+    return FileResponse("static/upgrade.html")
+

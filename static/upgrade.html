@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AurumSci PRO — Escolha seu Plano</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{background:linear-gradient(135deg,#0A0A0F 0%,#1a1a2e 100%);color:#fff;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:40px;padding:20px}
+.logo{font-family:Georgia,serif;font-size:32px;color:#D4AF37;letter-spacing:2px;margin-bottom:10px}
+.titulo{font-family:Georgia,serif;font-size:28px;color:#fff;margin-bottom:8px}
+.subtitulo{color:#999;font-size:14px}
+.planos{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:1200px;margin:0 auto}
+.plano{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:2px solid #2a2a3e;border-radius:16px;padding:28px;position:relative;transition:all 0.3s}
+.plano:hover{transform:translateY(-8px);border-color:#D4AF37;box-shadow:0 20px 40px rgba(212,175,55,0.2)}
+.plano.destaque{border-color:#D4AF37;background:linear-gradient(135deg,#2a1f0e 0%,#1a1a2e 100%)}
+.plano.destaque::before{content:"MAIS POPULAR";position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#D4AF37;color:#0A0A0F;padding:4px 16px;border-radius:12px;font-size:10px;font-weight:bold;letter-spacing:1px}
+.plano-nome{font-family:Georgia,serif;font-size:24px;color:#D4AF37;text-align:center;margin-bottom:8px;letter-spacing:2px}
+.plano-icone{text-align:center;font-size:40px;margin-bottom:12px}
+.plano-preco{text-align:center;margin-bottom:20px}
+.preco-valor{font-family:Georgia,serif;font-size:36px;color:#fff;font-weight:bold}
+.preco-valor small{font-size:18px;color:#999}
+.preco-periodo{color:#999;font-size:13px;margin-top:4px}
+.plano-limite{text-align:center;padding:12px;background:rgba(212,175,55,0.1);border-radius:10px;margin-bottom:20px;font-size:13px;color:#D4AF37;font-weight:600}
+.plano-features{list-style:none;margin-bottom:24px}
+.plano-features li{padding:8px 0;color:#ccc;font-size:13px;display:flex;align-items:center;gap:10px}
+.plano-features li::before{content:"✓";color:#D4AF37;font-weight:bold;font-size:16px}
+.btn-assinar{width:100%;padding:14px;background:linear-gradient(135deg,#D4AF37,#F4D03F);color:#0A0A0F;border:none;border-radius:10px;font-family:Georgia,serif;font-size:16px;font-weight:bold;cursor:pointer;letter-spacing:1px;transition:all 0.2s}
+.btn-assinar:hover{transform:scale(1.03);box-shadow:0 8px 20px rgba(212,175,55,0.4)}
+.trial-info{text-align:center;margin-top:40px;padding:20px;background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.2);border-radius:12px;max-width:800px;margin-left:auto;margin-right:auto}
+.trial-info h3{color:#D4AF37;font-family:Georgia,serif;margin-bottom:8px}
+.trial-info p{color:#999;font-size:13px;line-height:1.6}
+.voltar{display:inline-block;margin-top:30px;color:#999;text-decoration:none;font-size:13px;text-align:center;width:100%}
+.voltar:hover{color:#D4AF37}
+@media(max-width:768px){.plano{padding:20px}.preco-valor{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">⬡ AURUMSCI</div>
+  <div class="titulo">Escolha seu Plano</div>
+  <div class="subtitulo">7 dias grátis · Cancele a qualquer momento</div>
+</div>
+
+<div class="planos">
+  <div class="plano">
+    <div class="plano-icone">🥉</div>
+    <div class="plano-nome">BRONZE</div>
+    <div class="plano-preco">
+      <div class="preco-valor"><small>R$</small> 49,90</div>
+      <div class="preco-periodo">por mês</div>
+    </div>
+    <div class="plano-limite">Até 10 alunos</div>
+    <ul class="plano-features">
+      <li>Avaliações completas</li>
+      <li>Planos de treino</li>
+      <li>AURI - Assistente IA</li>
+      <li>Análise postural</li>
+      <li>Financeiro básico</li>
+    </ul>
+    <button class="btn-assinar" onclick="assinar('bronze')">COMEÇAR GRÁTIS</button>
+  </div>
+
+  <div class="plano destaque">
+    <div class="plano-icone">🥈</div>
+    <div class="plano-nome">PRATA</div>
+    <div class="plano-preco">
+      <div class="preco-valor"><small>R$</small> 89,90</div>
+      <div class="preco-periodo">por mês</div>
+    </div>
+    <div class="plano-limite">Até 20 alunos</div>
+    <ul class="plano-features">
+      <li>Tudo do Bronze +</li>
+      <li>Relatórios avançados</li>
+      <li>Exportação PDF</li>
+      <li>White label básico</li>
+      <li>Suporte prioritário</li>
+    </ul>
+    <button class="btn-assinar" onclick="assinar('prata')">COMEÇAR GRÁTIS</button>
+  </div>
+
+  <div class="plano">
+    <div class="plano-icone">🥇</div>
+    <div class="plano-nome">OURO</div>
+    <div class="plano-preco">
+      <div class="preco-valor"><small>R$</small> 149,90</div>
+      <div class="preco-periodo">por mês</div>
+    </div>
+    <div class="plano-limite">Até 50 alunos</div>
+    <ul class="plano-features">
+      <li>Tudo do Prata +</li>
+      <li>White label completo</li>
+      <li>Analytics detalhado</li>
+      <li>Integração BodyMetrix</li>
+      <li>Backup diário</li>
+    </ul>
+    <button class="btn-assinar" onclick="assinar('ouro')">COMEÇAR GRÁTIS</button>
+  </div>
+
+  <div class="plano">
+    <div class="plano-icone">💎</div>
+    <div class="plano-nome">DIAMANTE</div>
+    <div class="plano-preco">
+      <div class="preco-valor"><small>R$</small> 249,90</div>
+      <div class="preco-periodo">por mês</div>
+    </div>
+    <div class="plano-limite">Alunos ilimitados</div>
+    <ul class="plano-features">
+      <li>Tudo do Ouro +</li>
+      <li>Academias e equipes</li>
+      <li>API dedicada</li>
+      <li>Suporte VIP 24/7</li>
+      <li>Consultoria mensal</li>
+    </ul>
+    <button class="btn-assinar" onclick="assinar('diamante')">COMEÇAR GRÁTIS</button>
+  </div>
+</div>
+
+<div class="trial-info">
+  <h3>✨ 7 Dias Grátis em Todos os Planos</h3>
+  <p>Experimente sem compromisso. Cancele antes do fim do trial e nao sera cobrado. Apos os 7 dias, a cobranca e automatica conforme o plano escolhido.</p>
+</div>
+
+<a href="/app-personal" class="voltar">← Voltar</a>
+
+<script>
+function assinar(plano) {
+  var urlsStripe = {
+    'bronze': 'https://buy.stripe.com/YOUR_BRONZE_LINK',
+    'prata': 'https://buy.stripe.com/YOUR_PRATA_LINK',
+    'ouro': 'https://buy.stripe.com/YOUR_OURO_LINK',
+    'diamante': 'https://buy.stripe.com/YOUR_DIAMANTE_LINK'
+  };
+  window.location.href = urlsStripe[plano] || 'mailto:andrepersonal395@gmail.com?subject=Assinar ' + plano.toUpperCase();
+}
+</script>
+</body>
+</html>

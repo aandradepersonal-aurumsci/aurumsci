@@ -139,8 +139,26 @@ def criar_sessao(dados: CheckoutSchema):
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/criar-sessao-personal")
-def criar_sessao_personal(dados: CheckoutPersonalSchema):
+def criar_sessao_personal(dados: CheckoutPersonalSchema, db: Session = Depends(get_db)):
     try:
+        # VERIFICACAO ANTI-DUPLICACAO
+        from app.models import Personal
+        personal = db.query(Personal).filter(Personal.id == dados.personal_id).first()
+        
+        if not personal:
+            raise HTTPException(status_code=404, detail="Personal nao encontrado")
+        
+        if personal.stripe_subscription_id:
+            try:
+                sub = stripe.Subscription.retrieve(personal.stripe_subscription_id)
+                if sub.status in ["active", "trialing", "past_due"]:
+                    raise HTTPException(
+                        status_code=400, 
+                        detail=f"Voce ja tem uma assinatura {sub.status}. Acesse o portal do cliente para gerenciar."
+                    )
+            except stripe.error.InvalidRequestError:
+                pass
+        
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             line_items=[{"price_data": {"currency": "brl", "product_data": {"name": f"AurumSci PRO — Plano {dados.plano.capitalize()}"}, "unit_amount": dados.valor, "recurring": {"interval": "month"}}, "quantity": 1}],
@@ -151,6 +169,8 @@ def criar_sessao_personal(dados: CheckoutPersonalSchema):
             metadata={"personal_id": str(dados.personal_id), "plano": dados.plano},
         )
         return {"url": session.url, "session_id": session.id}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

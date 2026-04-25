@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>AURA · AurumSci PRO</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ouro:#C9A84C;--ouro2:#F0C040;--azul:#4B9FFF;--verde:#00E5A0;--amarelo:#F0C040;--vermelho:#FF6B6B;--bg:#0A0A0F;--bg2:#12121A;--bg3:#1A1A26;--texto:#F0EDE8;--cinza:#888;--borda:rgba(201,168,76,0.15)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;min-height:100vh}
+.container{max-width:480px;margin:0 auto;padding:0;position:relative}
+.header{padding:24px 20px 32px;text-align:center;position:relative;background:linear-gradient(180deg,rgba(201,168,76,0.12) 0%,transparent 100%)}
+.voltar{position:absolute;top:24px;left:20px;color:var(--cinza);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:4px}
+.voltar:hover{color:var(--ouro)}
+.aura-logo{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:24px}
+.aura-icone{width:80px;height:80px;display:flex;align-items:center;justify-content:center;position:relative}
+.aura-hex{position:absolute;inset:0}
+.aura-letra{font-family:Georgia,serif;font-size:36px;color:#0A0A0F;font-weight:700;z-index:1}
+.aura-estrela{position:absolute;top:-4px;right:-4px;font-size:20px;filter:drop-shadow(0 2px 4px rgba(201,168,76,0.5))}
+.aura-titulo{font-family:Georgia,serif;font-size:32px;letter-spacing:6px;color:var(--ouro);margin-top:8px}
+.aura-sub{font-size:12px;color:var(--cinza);letter-spacing:2px;font-style:italic}
+.cards{padding:20px;display:flex;flex-direction:column;gap:16px}
+.card{background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:24px;position:relative;overflow:hidden}
+.card-titulo{font-size:11px;letter-spacing:3px;color:var(--ouro);margin-bottom:8px}
+.plano-header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.plano-icone{font-size:36px;flex-shrink:0}
+.plano-info{flex:1}
+.plano-nome{font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;color:var(--ouro);line-height:1}
+.plano-preco{font-size:13px;color:var(--cinza);margin-top:4px}
+.uso-info{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.uso-numero{font-family:'Bebas Neue';font-size:32px;letter-spacing:1px;color:var(--ouro)}
+.uso-texto{font-size:11px;color:var(--cinza);letter-spacing:2px}
+.barra{width:100%;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.barra-fill{height:100%;border-radius:4px;transition:width 0.5s ease}
+.barra-fill.verde{background:linear-gradient(90deg,var(--ouro),var(--ouro2))}
+.barra-fill.amarelo{background:linear-gradient(90deg,var(--ouro2),#F5D547)}
+.barra-fill.vermelho{background:linear-gradient(90deg,var(--ouro2),#F5D547)}
+.uso-mensagem{font-size:12px;color:var(--cinza);font-style:italic;margin-top:12px;text-align:center;line-height:1.6}
+.btn-upgrade{display:block;width:100%;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:16px;letter-spacing:3px;padding:14px;border-radius:12px;text-decoration:none;text-align:center;margin-top:16px;border:none;cursor:pointer;transition:transform 0.2s}
+.btn-upgrade:active{transform:scale(0.98)}
+.btn-secundario{display:block;width:100%;background:transparent;color:var(--cinza);font-size:13px;padding:12px;text-align:center;border:1px solid var(--borda);border-radius:12px;text-decoration:none;margin-top:8px;cursor:pointer}
+.em-breve{background:rgba(75,159,255,0.06);border:1px dashed rgba(75,159,255,0.2);border-radius:16px;padding:24px;text-align:center}
+.em-breve-titulo{font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;color:var(--azul);margin-bottom:8px}
+.em-breve-desc{font-size:12px;color:var(--cinza);line-height:1.6}
+.em-breve-tag{display:inline-block;background:rgba(75,159,255,0.1);color:var(--azul);font-size:10px;padding:4px 10px;border-radius:10px;margin-top:8px;letter-spacing:1px}
+.loading{padding:40px;text-align:center;color:var(--cinza);font-size:14px}
+.assinatura-status{display:inline-block;font-size:11px;letter-spacing:2px;padding:4px 10px;border-radius:10px;margin-top:8px}
+.assinatura-status.ativa{background:rgba(0,229,160,0.1);color:var(--verde)}
+.assinatura-status.trial{background:rgba(75,159,255,0.1);color:var(--azul)}
+.assinatura-status.inativa{background:rgba(255,107,107,0.1);color:var(--vermelho)}
+.footer-aura{text-align:center;padding:32px 20px;font-size:11px;color:#444;letter-spacing:1px}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <a href="/personal" class="voltar">← Voltar</a>
+    <div class="aura-logo">
+      <div class="aura-icone">
+        <svg class="aura-hex" viewBox="0 0 80 80"><polygon points="40,4 72,22 72,58 40,76 8,58 8,22" fill="#C9A84C" stroke="#F0C040" stroke-width="2"/></svg>
+        <span class="aura-letra">A</span>
+        <span class="aura-estrela">⭐</span>
+      </div>
+      <div class="aura-titulo">AURA</div>
+      <div class="aura-sub">A alma do seu negócio</div>
+    </div>
+  </div>
+
+  <div id="conteudo" class="loading">Carregando...</div>
+</div>
+
+<script>
+var token = localStorage.getItem('aurum_token');
+var personalId = localStorage.getItem('aurum_personal_id');
+
+if(!token || !personalId){
+  window.location.href = '/personal';
+}
+
+function carregar(){
+  fetch('/personal/meu-plano?personal_id=' + personalId, {
+    headers: {'Authorization': 'Bearer ' + token}
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.detail){
+      document.getElementById('conteudo').innerHTML = '<div style="padding:40px;text-align:center;color:#FF6B6B">Erro: ' + d.detail + '</div>';
+      return;
+    }
+    
+    var msg = '';
+    if(d.ilimitado){
+      msg = 'Plano ilimitado · sem restrições';
+    } else if(d.percentual >= 80){
+      var faltam = d.limite_alunos - d.total_alunos;
+      msg = 'Faltam apenas ' + faltam + ' aluno' + (faltam !== 1 ? 's' : '') + ' · considere um upgrade';
+    } else if(d.percentual >= 50){
+      msg = 'Você está usando ' + d.percentual + '% da capacidade';
+    } else {
+      msg = 'Você tem espaço para crescer';
+    }
+    
+    var statusLabel = {
+      'ativa': '✓ ATIVA',
+      'trial': '✨ TRIAL',
+      'inativa': '⚠ INATIVA'
+    }[d.assinatura_status] || d.assinatura_status.toUpperCase();
+    
+    var html = '';
+    
+    html += '<div class="cards">';
+    
+    html += '<div class="card">';
+    html += '<div class="card-titulo">SEU PLANO</div>';
+    html += '<div class="plano-header">';
+    html += '<div class="plano-icone">' + d.plano_icone + '</div>';
+    html += '<div class="plano-info">';
+    html += '<div class="plano-nome">' + d.plano_nome + '</div>';
+    html += '<div class="plano-preco">R$ ' + d.preco.toFixed(2).replace('.',',') + ' / mês</div>';
+    html += '<span class="assinatura-status ' + d.assinatura_status + '">' + statusLabel + '</span>';
+    html += '</div>';
+    html += '</div>';
+    
+    html += '<div class="uso-info">';
+    html += '<div class="uso-numero">' + d.indicador + '</div>';
+    html += '<div class="uso-texto">' + (d.ilimitado ? 'ALUNOS · ILIMITADO' : 'ALUNOS USADOS') + '</div>';
+    html += '</div>';
+    
+    if(!d.ilimitado){
+      html += '<div class="barra"><div class="barra-fill ' + d.alerta + '" style="width:' + Math.min(d.percentual, 100) + '%"></div></div>';
+    }
+    
+    html += '<div class="uso-mensagem">' + msg + '</div>';
+    
+    if(d.plano !== 'diamante'){
+      html += '<a href="/upgrade" class="btn-upgrade">FAZER UPGRADE →</a>';
+    }
+    
+    html += '</div>';
+    
+    html += '<div class="card">';
+    html += '<div class="card-titulo">MARCA · WHITE LABEL</div>';
+    html += '<div class="em-breve">';
+    html += '<div class="em-breve-titulo">EM BREVE AQUI</div>';
+    html += '<div class="em-breve-desc">Personalize o logo, cores e identidade visual do seu app.</div>';
+    html += '<div class="em-breve-tag">PRÓXIMA ATUALIZAÇÃO</div>';
+    html += '</div>';
+    html += '</div>';
+    
+    html += '<a href="/personal" class="btn-secundario">Voltar ao app</a>';
+    
+    html += '</div>';
+    
+    html += '<div class="footer-aura">⬡ AURUM · CREF 62702-G/SP</div>';
+    
+    document.getElementById('conteudo').innerHTML = html;
+  })
+  .catch(function(e){
+    document.getElementById('conteudo').innerHTML = '<div style="padding:40px;text-align:center;color:#FF6B6B">Erro de conexão</div>';
+  });
+}
+
+carregar();
+</script>
+
+</body>
+</html>

@@ -865,3 +865,100 @@ async def pagina_upgrade():
     from fastapi.responses import FileResponse
     return FileResponse("static/upgrade.html")
 
+
+
+# ============================================
+# ENDPOINT AURA - Centro de Comando
+# ============================================
+
+@app.get("/personal/meu-plano")
+async def meu_plano_personal(personal_id: int, db=Depends(get_db)):
+    """
+    Retorna informacoes do plano atual do personal.
+    Usado pela tela AURA pra mostrar uso atual.
+    """
+    from sqlalchemy import text
+    
+    LIMITES_PLANO = {
+        'bronze': 10,
+        'prata': 20,
+        'ouro': 50,
+        'diamante': 999999
+    }
+    
+    PRECOS_PLANO = {
+        'bronze': 49.90,
+        'prata': 89.90,
+        'ouro': 149.90,
+        'diamante': 249.90
+    }
+    
+    NOMES_PLANO = {
+        'bronze': 'BRONZE',
+        'prata': 'PRATA',
+        'ouro': 'OURO',
+        'diamante': 'DIAMANTE'
+    }
+    
+    ICONES_PLANO = {
+        'bronze': '🥉',
+        'prata': '🥈',
+        'ouro': '🥇',
+        'diamante': '💎'
+    }
+    
+    with engine.connect() as conn:
+        personal = conn.execute(text("""
+            SELECT id, nome, email, plano, assinatura_status
+            FROM personals WHERE id = :pid
+        """), {"pid": personal_id}).fetchone()
+        
+        if not personal:
+            raise HTTPException(status_code=404, detail="Personal nao encontrado")
+        
+        total_alunos = conn.execute(text("""
+            SELECT COUNT(*) FROM alunos 
+            WHERE personal_id = :pid AND ativo = true
+        """), {"pid": personal_id}).fetchone()[0]
+    
+    plano = personal[3] or 'bronze'
+    limite = LIMITES_PLANO.get(plano, 10)
+    
+    if limite >= 999999:
+        percentual = 0
+        alerta = "verde"
+        ilimitado = True
+    else:
+        percentual = round((total_alunos / limite) * 100, 1)
+        ilimitado = False
+        if percentual < 50:
+            alerta = "verde"
+        elif percentual < 80:
+            alerta = "amarelo"
+        else:
+            alerta = "vermelho"
+    
+    return {
+        "plano": plano,
+        "plano_nome": NOMES_PLANO.get(plano, 'BRONZE'),
+        "plano_icone": ICONES_PLANO.get(plano, '🥉'),
+        "preco": PRECOS_PLANO.get(plano, 49.90),
+        "total_alunos": total_alunos,
+        "limite_alunos": limite,
+        "ilimitado": ilimitado,
+        "percentual": percentual,
+        "alerta": alerta,
+        "indicador": f"{total_alunos}/{limite}" if not ilimitado else f"{total_alunos}/∞",
+        "assinatura_status": personal[4] or 'trial',
+        "personal_nome": personal[1],
+        "personal_email": personal[2]
+    }
+
+
+
+@app.get("/aura")
+async def pagina_aura():
+    """AURA - Centro de Comando do Personal"""
+    from fastapi.responses import FileResponse
+    return FileResponse("static/aura.html")
+

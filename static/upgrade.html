@@ -4,135 +4,162 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AurumSci PRO — Escolha seu Plano</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-body{background:linear-gradient(135deg,#0A0A0F 0%,#1a1a2e 100%);color:#fff;min-height:100vh;padding:20px}
-.header{text-align:center;margin-bottom:40px;padding:20px}
-.logo{font-family:Georgia,serif;font-size:32px;color:#D4AF37;letter-spacing:2px;margin-bottom:10px}
-.titulo{font-family:Georgia,serif;font-size:28px;color:#fff;margin-bottom:8px}
-.subtitulo{color:#999;font-size:14px}
-.planos{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:1200px;margin:0 auto}
-.plano{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:2px solid #2a2a3e;border-radius:16px;padding:28px;position:relative;transition:all 0.3s}
-.plano:hover{transform:translateY(-8px);border-color:#D4AF37;box-shadow:0 20px 40px rgba(212,175,55,0.2)}
-.plano.destaque{border-color:#D4AF37;background:linear-gradient(135deg,#2a1f0e 0%,#1a1a2e 100%)}
-.plano.destaque::before{content:"MAIS POPULAR";position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#D4AF37;color:#0A0A0F;padding:4px 16px;border-radius:12px;font-size:10px;font-weight:bold;letter-spacing:1px}
-.plano-nome{font-family:Georgia,serif;font-size:24px;color:#D4AF37;text-align:center;margin-bottom:8px;letter-spacing:2px}
-.plano-icone{text-align:center;font-size:40px;margin-bottom:12px}
-.plano-preco{text-align:center;margin-bottom:20px}
-.preco-valor{font-family:Georgia,serif;font-size:36px;color:#fff;font-weight:bold}
-.preco-valor small{font-size:18px;color:#999}
-.preco-periodo{color:#999;font-size:13px;margin-top:4px}
-.plano-limite{text-align:center;padding:12px;background:rgba(212,175,55,0.1);border-radius:10px;margin-bottom:20px;font-size:13px;color:#D4AF37;font-weight:600}
-.plano-features{list-style:none;margin-bottom:24px}
-.plano-features li{padding:8px 0;color:#ccc;font-size:13px;display:flex;align-items:center;gap:10px}
-.plano-features li::before{content:"✓";color:#D4AF37;font-weight:bold;font-size:16px}
-.btn-assinar{width:100%;padding:14px;background:linear-gradient(135deg,#D4AF37,#F4D03F);color:#0A0A0F;border:none;border-radius:10px;font-family:Georgia,serif;font-size:16px;font-weight:bold;cursor:pointer;letter-spacing:1px;transition:all 0.2s}
-.btn-assinar:hover{transform:scale(1.03);box-shadow:0 8px 20px rgba(212,175,55,0.4)}
-.trial-info{text-align:center;margin-top:40px;padding:20px;background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.2);border-radius:12px;max-width:800px;margin-left:auto;margin-right:auto}
-.trial-info h3{color:#D4AF37;font-family:Georgia,serif;margin-bottom:8px}
-.trial-info p{color:#999;font-size:13px;line-height:1.6}
-.voltar{display:inline-block;margin-top:30px;color:#999;text-decoration:none;font-size:13px;text-align:center;width:100%}
-.voltar:hover{color:#D4AF37}
-@media(max-width:768px){.plano{padding:20px}.preco-valor{font-size:28px}}
+:root{--ouro:#C9A84C;--ouro2:#F0C040;--azul:#4B9FFF;--verde:#00E5A0;--bg:#0A0A0F;--bg2:#12121A;--bg3:#1A1A26;--texto:#F0EDE8;--cinza:#888;--borda:rgba(201,168,76,0.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+.container{max-width:800px;margin:0 auto;padding:60px 24px 40px;position:relative}
+.container::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.08),transparent 70%);pointer-events:none;z-index:0}
+.header{text-align:center;margin-bottom:48px;position:relative;z-index:1}
+.logo{display:flex;align-items:baseline;gap:4px;justify-content:center;margin-bottom:12px}
+.logo-hex{width:44px;height:44px;margin-right:6px}
+.logo-aurum{font-family:Georgia,serif;font-size:36px;font-weight:400;letter-spacing:4px;color:var(--ouro)}
+.logo-sci{font-family:Georgia,serif;font-size:14px;font-style:italic;color:#fff;margin-left:2px}
+.logo-pro{font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:var(--azul);margin-left:2px}
+.badge{display:inline-block;background:rgba(75,159,255,0.1);border:1px solid rgba(75,159,255,0.3);color:var(--azul);font-size:11px;letter-spacing:3px;padding:6px 16px;border-radius:20px;margin-bottom:24px}
+.titulo{font-family:'Bebas Neue';font-size:42px;letter-spacing:2px;line-height:1.1;margin-bottom:12px;color:#fff}
+.titulo span{color:var(--ouro)}
+.sub{font-size:15px;color:var(--cinza);line-height:1.7;max-width:500px;margin:0 auto}
+.trial-info{display:inline-block;background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.2);border-radius:20px;padding:8px 20px;margin-top:16px;font-size:12px;color:var(--verde);letter-spacing:1px}
+.planos{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;position:relative;z-index:1;margin-bottom:40px}
+.plano{background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:28px;position:relative;transition:transform .3s,border-color .3s}
+.plano:hover{transform:translateY(-6px);border-color:rgba(201,168,76,0.4)}
+.plano.destaque{border-color:var(--ouro);background:linear-gradient(135deg,rgba(201,168,76,0.08),var(--bg2))}
+.plano-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#0A0A0F;font-family:'Bebas Neue';font-size:12px;letter-spacing:2px;padding:4px 16px;border-radius:20px;white-space:nowrap}
+.plano-icon{text-align:center;font-size:36px;margin-bottom:12px}
+.plano-nome{font-family:'Bebas Neue';font-size:26px;letter-spacing:2px;text-align:center;color:var(--ouro);margin-bottom:4px}
+.plano-alunos{text-align:center;font-size:12px;color:var(--cinza);letter-spacing:1px;margin-bottom:20px}
+.plano-preco{text-align:center;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--borda)}
+.plano-valor{font-family:'Bebas Neue';font-size:44px;color:var(--ouro);line-height:1}
+.plano-valor small{font-size:18px;color:var(--cinza);margin-right:4px}
+.plano-periodo{font-size:12px;color:var(--cinza);margin-top:4px;letter-spacing:1px}
+.plano-items{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:24px;min-height:140px}
+.plano-items li{font-size:13px;color:var(--cinza);display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+.plano-items li::before{content:'✓';color:var(--verde);font-weight:700;flex-shrink:0;font-size:14px}
+.btn-plano{display:block;width:100%;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;padding:14px;border-radius:12px;border:none;text-decoration:none;text-align:center;cursor:pointer;transition:transform .2s}
+.btn-plano:active{transform:scale(.98)}
+.trial-box{background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(75,159,255,0.04));border:1px solid var(--borda);border-radius:20px;padding:32px 24px;text-align:center;margin-bottom:40px;position:relative;z-index:1}
+.trial-box-titulo{font-family:'Bebas Neue';font-size:24px;letter-spacing:1px;color:var(--ouro);margin-bottom:8px}
+.trial-box-sub{font-size:13px;color:var(--cinza);line-height:1.7;max-width:500px;margin:0 auto}
+.voltar{text-align:center;display:block;color:var(--cinza);text-decoration:none;font-size:13px;padding:20px;position:relative;z-index:1}
+.voltar:hover{color:var(--ouro)}
+footer{text-align:center;padding:24px;font-size:12px;color:#333;border-top:1px solid var(--borda);margin-top:20px}
+footer a{color:#444;text-decoration:none}
+@media(max-width:640px){
+  .titulo{font-size:32px}
+  .plano-valor{font-size:36px}
+  .planos{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-<div class="header">
-  <div class="logo">⬡ AURUMSCI</div>
-  <div class="titulo">Escolha seu Plano</div>
-  <div class="subtitulo">7 dias grátis · Cancele a qualquer momento</div>
+
+<div class="container">
+  <div class="header">
+    <div class="logo">
+      <svg class="logo-hex" viewBox="0 0 44 44"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#C9A84C" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#C9A84C">A</text></svg>
+      <span class="logo-aurum">AURUM</span><span class="logo-sci">sci.</span><span class="logo-pro">PRO</span>
+    </div>
+    <div class="badge">ESCOLHA SEU PLANO</div>
+    <h1 class="titulo">Invista no seu<br><span>crescimento</span></h1>
+    <p class="sub">Todos os planos incluem IA integrada, análise postural, AURI e acesso completo. Escolha pela quantidade de alunos.</p>
+    <div class="trial-info">✨ 7 DIAS GRÁTIS · CANCELE QUANDO QUISER</div>
+  </div>
+
+  <div class="planos">
+
+    <div class="plano">
+      <div class="plano-icon">🥉</div>
+      <div class="plano-nome">BRONZE</div>
+      <div class="plano-alunos">ATÉ 10 ALUNOS</div>
+      <div class="plano-preco">
+        <div class="plano-valor"><small>R$</small>49,90</div>
+        <div class="plano-periodo">POR MÊS</div>
+      </div>
+      <ul class="plano-items">
+        <li>Avaliações físicas completas</li>
+        <li>Planos de treino periodizados</li>
+        <li>AURI · Assistente IA</li>
+        <li>Análise postural com IA</li>
+        <li>Financeiro integrado</li>
+      </ul>
+      <button class="btn-plano" onclick="assinar('bronze')">COMEÇAR GRÁTIS →</button>
+    </div>
+
+    <div class="plano destaque">
+      <div class="plano-badge">MAIS POPULAR</div>
+      <div class="plano-icon">🥈</div>
+      <div class="plano-nome">PRATA</div>
+      <div class="plano-alunos">ATÉ 20 ALUNOS</div>
+      <div class="plano-preco">
+        <div class="plano-valor"><small>R$</small>89,90</div>
+        <div class="plano-periodo">POR MÊS</div>
+      </div>
+      <ul class="plano-items">
+        <li>Tudo do Bronze +</li>
+        <li>Relatórios avançados</li>
+        <li>Exportação em PDF</li>
+        <li>White label básico</li>
+        <li>Suporte prioritário</li>
+      </ul>
+      <button class="btn-plano" onclick="assinar('prata')">COMEÇAR GRÁTIS →</button>
+    </div>
+
+    <div class="plano">
+      <div class="plano-icon">🥇</div>
+      <div class="plano-nome">OURO</div>
+      <div class="plano-alunos">ATÉ 50 ALUNOS</div>
+      <div class="plano-preco">
+        <div class="plano-valor"><small>R$</small>149,90</div>
+        <div class="plano-periodo">POR MÊS</div>
+      </div>
+      <ul class="plano-items">
+        <li>Tudo do Prata +</li>
+        <li>White label completo</li>
+        <li>Analytics detalhado</li>
+        <li>Integração BodyMetrix</li>
+        <li>Backup diário automático</li>
+      </ul>
+      <button class="btn-plano" onclick="assinar('ouro')">COMEÇAR GRÁTIS →</button>
+    </div>
+
+    <div class="plano">
+      <div class="plano-icon">💎</div>
+      <div class="plano-nome">DIAMANTE</div>
+      <div class="plano-alunos">ILIMITADO</div>
+      <div class="plano-preco">
+        <div class="plano-valor"><small>R$</small>249,90</div>
+        <div class="plano-periodo">POR MÊS</div>
+      </div>
+      <ul class="plano-items">
+        <li>Tudo do Ouro +</li>
+        <li>Academias e equipes</li>
+        <li>API dedicada</li>
+        <li>Suporte VIP 24/7</li>
+        <li>Consultoria mensal</li>
+      </ul>
+      <button class="btn-plano" onclick="assinar('diamante')">COMEÇAR GRÁTIS →</button>
+    </div>
+
+  </div>
+
+  <div class="trial-box">
+    <div class="trial-box-titulo">✨ 7 DIAS GRÁTIS EM TODOS OS PLANOS</div>
+    <div class="trial-box-sub">Experimente sem compromisso. Cancele antes do fim do trial e nada será cobrado. Após os 7 dias, a cobrança é automática conforme o plano escolhido.</div>
+  </div>
+
+  <a href="/pro" class="voltar">← Voltar para landing</a>
 </div>
 
-<div class="planos">
-  <div class="plano">
-    <div class="plano-icone">🥉</div>
-    <div class="plano-nome">BRONZE</div>
-    <div class="plano-preco">
-      <div class="preco-valor"><small>R$</small> 49,90</div>
-      <div class="preco-periodo">por mês</div>
-    </div>
-    <div class="plano-limite">Até 10 alunos</div>
-    <ul class="plano-features">
-      <li>Avaliações completas</li>
-      <li>Planos de treino</li>
-      <li>AURI - Assistente IA</li>
-      <li>Análise postural</li>
-      <li>Financeiro básico</li>
-    </ul>
-    <button class="btn-assinar" onclick="assinar('bronze')">COMEÇAR GRÁTIS</button>
-  </div>
-
-  <div class="plano destaque">
-    <div class="plano-icone">🥈</div>
-    <div class="plano-nome">PRATA</div>
-    <div class="plano-preco">
-      <div class="preco-valor"><small>R$</small> 89,90</div>
-      <div class="preco-periodo">por mês</div>
-    </div>
-    <div class="plano-limite">Até 20 alunos</div>
-    <ul class="plano-features">
-      <li>Tudo do Bronze +</li>
-      <li>Relatórios avançados</li>
-      <li>Exportação PDF</li>
-      <li>White label básico</li>
-      <li>Suporte prioritário</li>
-    </ul>
-    <button class="btn-assinar" onclick="assinar('prata')">COMEÇAR GRÁTIS</button>
-  </div>
-
-  <div class="plano">
-    <div class="plano-icone">🥇</div>
-    <div class="plano-nome">OURO</div>
-    <div class="plano-preco">
-      <div class="preco-valor"><small>R$</small> 149,90</div>
-      <div class="preco-periodo">por mês</div>
-    </div>
-    <div class="plano-limite">Até 50 alunos</div>
-    <ul class="plano-features">
-      <li>Tudo do Prata +</li>
-      <li>White label completo</li>
-      <li>Analytics detalhado</li>
-      <li>Integração BodyMetrix</li>
-      <li>Backup diário</li>
-    </ul>
-    <button class="btn-assinar" onclick="assinar('ouro')">COMEÇAR GRÁTIS</button>
-  </div>
-
-  <div class="plano">
-    <div class="plano-icone">💎</div>
-    <div class="plano-nome">DIAMANTE</div>
-    <div class="plano-preco">
-      <div class="preco-valor"><small>R$</small> 249,90</div>
-      <div class="preco-periodo">por mês</div>
-    </div>
-    <div class="plano-limite">Alunos ilimitados</div>
-    <ul class="plano-features">
-      <li>Tudo do Ouro +</li>
-      <li>Academias e equipes</li>
-      <li>API dedicada</li>
-      <li>Suporte VIP 24/7</li>
-      <li>Consultoria mensal</li>
-    </ul>
-    <button class="btn-assinar" onclick="assinar('diamante')">COMEÇAR GRÁTIS</button>
-  </div>
-</div>
-
-<div class="trial-info">
-  <h3>✨ 7 Dias Grátis em Todos os Planos</h3>
-  <p>Experimente sem compromisso. Cancele antes do fim do trial e nao sera cobrado. Apos os 7 dias, a cobranca e automatica conforme o plano escolhido.</p>
-</div>
-
-<a href="/app-personal" class="voltar">← Voltar</a>
+<footer>
+  <a href="/privacidade">Privacidade</a> · <a href="/termos">Termos</a> · <a href="/suporte">Suporte</a>
+  <div style="margin-top:8px">© 2026 AurumSci · CREF 62702-G/SP</div>
+</footer>
 
 <script>
 function assinar(plano) {
-  var urlsStripe = {
-    'bronze': 'https://buy.stripe.com/YOUR_BRONZE_LINK',
-    'prata': 'https://buy.stripe.com/YOUR_PRATA_LINK',
-    'ouro': 'https://buy.stripe.com/YOUR_OURO_LINK',
-    'diamante': 'https://buy.stripe.com/YOUR_DIAMANTE_LINK'
-  };
-  window.location.href = urlsStripe[plano] || 'mailto:andrepersonal395@gmail.com?subject=Assinar ' + plano.toUpperCase();
+  window.location.href = '/cadastro-pro?plano=' + plano;
 }
 </script>
 </body>

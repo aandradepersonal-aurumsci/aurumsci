@@ -1467,7 +1467,15 @@ function criarAluno(){
         });
       });
     } else {
-      mostrarToast(d.detail || 'Erro ao criar aluno');
+      // Detecta erro de limite de plano
+      var msg = d.detail || 'Erro ao criar aluno';
+      if(msg.indexOf('Limite') !== -1 || msg.indexOf('limite') !== -1 || msg.indexOf('plano') !== -1){
+        // Mostra modal bonito de upgrade
+        document.getElementById('upgrade-msg').textContent = msg;
+        document.getElementById('modal-upgrade').style.display = 'flex';
+      } else {
+        mostrarToast(msg);
+      }
     }
   }).catch(function(){ mostrarToast('Erro de conexão'); });
 }
@@ -2994,6 +3002,35 @@ function mostrarRoteiro(){
 
 
 <div style="text-align:center;padding:8px;font-size:10px;color:var(--cinza);letter-spacing:1px">Powered by <a href="https://aurumsc.com.br" style="color:var(--ouro);text-decoration:none">AurumSci</a></div>
+
+<!-- MODAL UPGRADE - Aparece quando bate limite do plano -->
+<div id="modal-upgrade" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:linear-gradient(135deg,#12121A,#1A1A26);border:2px solid var(--ouro);border-radius:24px;padding:32px 24px;max-width:420px;width:100%;text-align:center;position:relative;box-shadow:0 20px 60px rgba(201,168,76,0.2)">
+    <span onclick="document.getElementById('modal-upgrade').style.display='none'" style="position:absolute;top:16px;right:20px;font-size:28px;cursor:pointer;color:var(--cinza)">×</span>
+    
+    <div style="font-size:48px;margin-bottom:16px">🚀</div>
+    
+    <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;color:var(--ouro);margin-bottom:8px;line-height:1.2">LIMITE DO SEU PLANO ATINGIDO</div>
+    
+    <div id="upgrade-msg" style="font-size:14px;color:var(--cinza);margin-bottom:24px;line-height:1.6">Você já alcançou o número máximo de alunos do seu plano atual.</div>
+    
+    <div style="background:rgba(201,168,76,0.08);border:1px solid var(--borda);border-radius:16px;padding:20px;margin-bottom:20px;text-align:left">
+      <div style="font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;color:var(--ouro);margin-bottom:12px">⬡ FAÇA UPGRADE E GANHE:</div>
+      <div style="font-size:13px;color:var(--texto);line-height:1.8">
+        ✓ Mais alunos cadastrados<br>
+        ✓ Recursos avançados<br>
+        ✓ Suporte prioritário<br>
+        ✓ Sem perder seus dados atuais
+      </div>
+    </div>
+    
+    <a href="https://www.aurumsc.com.br/upgrade" target="_blank" style="display:block;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;padding:16px;border-radius:12px;text-decoration:none;margin-bottom:12px;box-shadow:0 4px 16px rgba(201,168,76,0.3)">VER PLANOS DISPONÍVEIS →</a>
+    
+    <button onclick="document.getElementById('modal-upgrade').style.display='none'" style="width:100%;padding:12px;background:transparent;border:1px solid var(--borda);border-radius:12px;color:var(--cinza);font-size:13px;cursor:pointer">Continuar com plano atual</button>
+    
+    <div style="font-size:11px;color:#444;margin-top:16px;letter-spacing:1px">⬡ AURUM · TODOS OS PLANOS · 7 DIAS GRÁTIS</div>
+  </div>
+</div>
 
 </body>
 </html>

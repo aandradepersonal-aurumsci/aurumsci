@@ -6,50 +6,67 @@
 <title>AurumSci PRO — Escolha seu Plano</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--ouro:#C9A84C;--ouro2:#F0C040;--azul:#4B9FFF;--verde:#00E5A0;--bg:#0A0A0F;--bg2:#12121A;--bg3:#1A1A26;--texto:#F0EDE8;--cinza:#888;--borda:rgba(201,168,76,0.15)}
+:root{--ouro:#C9A84C;--ouro2:#F0C040;--ouro3:#FFD700;--azul:#4B9FFF;--verde:#00E5A0;--bg:#0A0A0F;--bg2:#12121A;--bg3:#1A1A26;--texto:#F0EDE8;--cinza:#888;--borda:rgba(201,168,76,0.15)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
-.container{max-width:800px;margin:0 auto;padding:60px 24px 40px;position:relative}
-.container::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.08),transparent 70%);pointer-events:none;z-index:0}
+.container{max-width:800px;margin:0 auto;padding:40px 24px;position:relative}
+.container::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.12),transparent 70%);pointer-events:none;z-index:0}
 .header{text-align:center;margin-bottom:48px;position:relative;z-index:1}
-.logo{display:flex;align-items:baseline;gap:4px;justify-content:center;margin-bottom:12px}
-.logo-hex{width:44px;height:44px;margin-right:6px}
-.logo-aurum{font-family:Georgia,serif;font-size:36px;font-weight:400;letter-spacing:4px;color:var(--ouro)}
-.logo-sci{font-family:Georgia,serif;font-size:14px;font-style:italic;color:#fff;margin-left:2px}
-.logo-pro{font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:var(--azul);margin-left:2px}
-.badge{display:inline-block;background:rgba(75,159,255,0.1);border:1px solid rgba(75,159,255,0.3);color:var(--azul);font-size:11px;letter-spacing:3px;padding:6px 16px;border-radius:20px;margin-bottom:24px}
-.titulo{font-family:'Bebas Neue';font-size:42px;letter-spacing:2px;line-height:1.1;margin-bottom:12px;color:#fff}
-.titulo span{color:var(--ouro)}
-.sub{font-size:15px;color:var(--cinza);line-height:1.7;max-width:500px;margin:0 auto}
-.trial-info{display:inline-block;background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.2);border-radius:20px;padding:8px 20px;margin-top:16px;font-size:12px;color:var(--verde);letter-spacing:1px}
-.planos{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;position:relative;z-index:1;margin-bottom:40px}
-.plano{background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:28px;position:relative;transition:transform .3s,border-color .3s}
-.plano:hover{transform:translateY(-6px);border-color:rgba(201,168,76,0.4)}
-.plano.destaque{border-color:var(--ouro);background:linear-gradient(135deg,rgba(201,168,76,0.08),var(--bg2))}
-.plano-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#0A0A0F;font-family:'Bebas Neue';font-size:12px;letter-spacing:2px;padding:4px 16px;border-radius:20px;white-space:nowrap}
-.plano-icon{text-align:center;font-size:36px;margin-bottom:12px}
-.plano-nome{font-family:'Bebas Neue';font-size:26px;letter-spacing:2px;text-align:center;color:var(--ouro);margin-bottom:4px}
-.plano-alunos{text-align:center;font-size:12px;color:var(--cinza);letter-spacing:1px;margin-bottom:20px}
-.plano-preco{text-align:center;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--borda)}
-.plano-valor{font-family:'Bebas Neue';font-size:44px;color:var(--ouro);line-height:1}
-.plano-valor small{font-size:18px;color:var(--cinza);margin-right:4px}
-.plano-periodo{font-size:12px;color:var(--cinza);margin-top:4px;letter-spacing:1px}
-.plano-items{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:24px;min-height:140px}
+.logo{display:flex;align-items:baseline;gap:6px;justify-content:center;margin-bottom:16px}
+.logo-hex{width:72px;height:72px;margin-right:8px}
+.logo-aurum{font-family:Georgia,serif;font-size:60px;font-weight:400;letter-spacing:6px;color:var(--ouro)}
+.logo-sci{font-family:Georgia,serif;font-size:20px;font-style:italic;color:#fff;margin-left:4px}
+.logo-pro{font-family:Arial,sans-serif;font-size:18px;font-weight:700;color:var(--azul);margin-left:4px}
+.badge{display:inline-block;background:rgba(75,159,255,0.1);border:1px solid rgba(75,159,255,0.3);color:var(--azul);font-size:11px;letter-spacing:3px;padding:6px 16px;border-radius:20px;margin-bottom:20px}
+.titulo{font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;line-height:1.2;margin-bottom:10px;color:#fff}
+.sub{font-size:14px;color:var(--cinza);line-height:1.7;max-width:500px;margin:0 auto 12px}
+.trial-info{display:inline-block;background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.2);border-radius:20px;padding:8px 20px;font-size:12px;color:var(--verde);letter-spacing:1px;margin-top:8px}
+.planos{display:flex;flex-direction:column;gap:20px;position:relative;z-index:1;margin-bottom:40px}
+.plano{background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:24px;position:relative;transition:transform .3s,border-color .3s}
+.plano:hover{transform:translateY(-4px);border-color:rgba(201,168,76,0.3)}
+.plano-header{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.plano-icon{font-size:32px;flex-shrink:0}
+.plano-info{flex:1}
+.plano-nome{font-family:'Bebas Neue';font-size:24px;letter-spacing:2px;color:var(--ouro);line-height:1.1}
+.plano-alunos{font-size:11px;color:var(--cinza);letter-spacing:1px;margin-top:2px}
+.plano-preco{text-align:right}
+.plano-valor{font-family:'Bebas Neue';font-size:32px;color:var(--ouro);line-height:1}
+.plano-valor small{font-size:14px;color:var(--cinza);margin-right:2px}
+.plano-periodo{font-size:10px;color:var(--cinza);margin-top:2px;letter-spacing:1px}
+.plano-items{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:20px;padding-top:16px;border-top:1px solid var(--borda)}
 .plano-items li{font-size:13px;color:var(--cinza);display:flex;gap:10px;align-items:flex-start;line-height:1.5}
 .plano-items li::before{content:'✓';color:var(--verde);font-weight:700;flex-shrink:0;font-size:14px}
-.btn-plano{display:block;width:100%;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;padding:14px;border-radius:12px;border:none;text-decoration:none;text-align:center;cursor:pointer;transition:transform .2s}
-.btn-plano:active{transform:scale(.98)}
-.trial-box{background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(75,159,255,0.04));border:1px solid var(--borda);border-radius:20px;padding:32px 24px;text-align:center;margin-bottom:40px;position:relative;z-index:1}
-.trial-box-titulo{font-family:'Bebas Neue';font-size:24px;letter-spacing:1px;color:var(--ouro);margin-bottom:8px}
+.btn-plano{display:block;width:100%;background:transparent;border:1px solid var(--borda);color:var(--texto);font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;padding:12px;border-radius:10px;text-decoration:none;text-align:center;cursor:pointer;transition:all .2s}
+.btn-plano:hover{border-color:var(--ouro);color:var(--ouro)}
+/* DESTAQUE AURUM (OURO) */
+.plano.aurum{background:linear-gradient(135deg,rgba(201,168,76,0.12),rgba(201,168,76,0.03),var(--bg2));border:2px solid var(--ouro);padding:32px 24px;transform:scale(1.02)}
+.plano.aurum:hover{transform:scale(1.02) translateY(-4px);border-color:var(--ouro2)}
+.plano.aurum::before{content:'⬡ PLANO AURUM';position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:12px;letter-spacing:3px;padding:6px 20px;border-radius:20px;white-space:nowrap;box-shadow:0 4px 16px rgba(201,168,76,0.3)}
+.plano.aurum .plano-nome{font-size:32px;color:var(--ouro2);text-shadow:0 0 20px rgba(201,168,76,0.3)}
+.plano.aurum .plano-valor{font-size:44px;color:var(--ouro2)}
+.plano.aurum .plano-icon{font-size:40px}
+.plano.aurum .btn-plano{background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;border:none;font-size:16px;padding:16px;box-shadow:0 4px 16px rgba(201,168,76,0.2)}
+.plano.aurum .btn-plano:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,0.4);color:#0A0A0F}
+.plano.aurum .plano-items li{color:var(--texto)}
+/* DIAMANTE - TOP TIER */
+.plano.diamante{background:linear-gradient(135deg,rgba(75,159,255,0.06),var(--bg2));border-color:rgba(75,159,255,0.2)}
+.plano.diamante .plano-nome{color:var(--azul)}
+.plano.diamante .plano-valor{color:var(--azul)}
+.trial-box{background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(75,159,255,0.04));border:1px solid var(--borda);border-radius:20px;padding:28px 24px;text-align:center;margin-bottom:32px;position:relative;z-index:1}
+.trial-box-titulo{font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--ouro);margin-bottom:8px}
 .trial-box-sub{font-size:13px;color:var(--cinza);line-height:1.7;max-width:500px;margin:0 auto}
 .voltar{text-align:center;display:block;color:var(--cinza);text-decoration:none;font-size:13px;padding:20px;position:relative;z-index:1}
 .voltar:hover{color:var(--ouro)}
 footer{text-align:center;padding:24px;font-size:12px;color:#333;border-top:1px solid var(--borda);margin-top:20px}
 footer a{color:#444;text-decoration:none}
 @media(max-width:640px){
-  .titulo{font-size:32px}
-  .plano-valor{font-size:36px}
-  .planos{grid-template-columns:1fr}
+  .titulo{font-size:28px}
+  .logo-aurum{font-size:44px;letter-spacing:4px}
+  .logo-hex{width:54px;height:54px}
+  .logo-sci{font-size:16px}
+  .plano-header{flex-wrap:wrap}
+  .plano.aurum{transform:none}
+  .plano.aurum:hover{transform:translateY(-4px)}
 }
 </style>
 </head>
@@ -62,7 +79,7 @@ footer a{color:#444;text-decoration:none}
       <span class="logo-aurum">AURUM</span><span class="logo-sci">sci.</span><span class="logo-pro">PRO</span>
     </div>
     <div class="badge">ESCOLHA SEU PLANO</div>
-    <h1 class="titulo">Invista no seu<br><span>crescimento</span></h1>
+    <h1 class="titulo">INVISTA NO SEU CRESCIMENTO</h1>
     <p class="sub">Todos os planos incluem IA integrada, análise postural, AURI e acesso completo. Escolha pela quantidade de alunos.</p>
     <div class="trial-info">✨ 7 DIAS GRÁTIS · CANCELE QUANDO QUISER</div>
   </div>
@@ -70,12 +87,16 @@ footer a{color:#444;text-decoration:none}
   <div class="planos">
 
     <div class="plano">
-      <div class="plano-icon">🥉</div>
-      <div class="plano-nome">BRONZE</div>
-      <div class="plano-alunos">ATÉ 10 ALUNOS</div>
-      <div class="plano-preco">
-        <div class="plano-valor"><small>R$</small>49,90</div>
-        <div class="plano-periodo">POR MÊS</div>
+      <div class="plano-header">
+        <div class="plano-icon">🥉</div>
+        <div class="plano-info">
+          <div class="plano-nome">BRONZE</div>
+          <div class="plano-alunos">ATÉ 10 ALUNOS</div>
+        </div>
+        <div class="plano-preco">
+          <div class="plano-valor"><small>R$</small>49,90</div>
+          <div class="plano-periodo">POR MÊS</div>
+        </div>
       </div>
       <ul class="plano-items">
         <li>Avaliações físicas completas</li>
@@ -87,14 +108,17 @@ footer a{color:#444;text-decoration:none}
       <button class="btn-plano" onclick="assinar('bronze')">COMEÇAR GRÁTIS →</button>
     </div>
 
-    <div class="plano destaque">
-      <div class="plano-badge">MAIS POPULAR</div>
-      <div class="plano-icon">🥈</div>
-      <div class="plano-nome">PRATA</div>
-      <div class="plano-alunos">ATÉ 20 ALUNOS</div>
-      <div class="plano-preco">
-        <div class="plano-valor"><small>R$</small>89,90</div>
-        <div class="plano-periodo">POR MÊS</div>
+    <div class="plano">
+      <div class="plano-header">
+        <div class="plano-icon">🥈</div>
+        <div class="plano-info">
+          <div class="plano-nome">PRATA</div>
+          <div class="plano-alunos">ATÉ 20 ALUNOS</div>
+        </div>
+        <div class="plano-preco">
+          <div class="plano-valor"><small>R$</small>89,90</div>
+          <div class="plano-periodo">POR MÊS</div>
+        </div>
       </div>
       <ul class="plano-items">
         <li>Tudo do Bronze +</li>
@@ -106,13 +130,17 @@ footer a{color:#444;text-decoration:none}
       <button class="btn-plano" onclick="assinar('prata')">COMEÇAR GRÁTIS →</button>
     </div>
 
-    <div class="plano">
-      <div class="plano-icon">🥇</div>
-      <div class="plano-nome">OURO</div>
-      <div class="plano-alunos">ATÉ 50 ALUNOS</div>
-      <div class="plano-preco">
-        <div class="plano-valor"><small>R$</small>149,90</div>
-        <div class="plano-periodo">POR MÊS</div>
+    <div class="plano aurum">
+      <div class="plano-header">
+        <div class="plano-icon">🥇</div>
+        <div class="plano-info">
+          <div class="plano-nome">OURO</div>
+          <div class="plano-alunos">ATÉ 50 ALUNOS</div>
+        </div>
+        <div class="plano-preco">
+          <div class="plano-valor"><small>R$</small>149,90</div>
+          <div class="plano-periodo">POR MÊS</div>
+        </div>
       </div>
       <ul class="plano-items">
         <li>Tudo do Prata +</li>
@@ -124,13 +152,17 @@ footer a{color:#444;text-decoration:none}
       <button class="btn-plano" onclick="assinar('ouro')">COMEÇAR GRÁTIS →</button>
     </div>
 
-    <div class="plano">
-      <div class="plano-icon">💎</div>
-      <div class="plano-nome">DIAMANTE</div>
-      <div class="plano-alunos">ILIMITADO</div>
-      <div class="plano-preco">
-        <div class="plano-valor"><small>R$</small>249,90</div>
-        <div class="plano-periodo">POR MÊS</div>
+    <div class="plano diamante">
+      <div class="plano-header">
+        <div class="plano-icon">💎</div>
+        <div class="plano-info">
+          <div class="plano-nome">DIAMANTE</div>
+          <div class="plano-alunos">ILIMITADO</div>
+        </div>
+        <div class="plano-preco">
+          <div class="plano-valor"><small>R$</small>249,90</div>
+          <div class="plano-periodo">POR MÊS</div>
+        </div>
       </div>
       <ul class="plano-items">
         <li>Tudo do Ouro +</li>

@@ -123,8 +123,26 @@ class CheckoutPersonalSchema(BaseModel):
     valor: int = 4990
 
 @router.post("/criar-sessao")
-def criar_sessao(dados: CheckoutSchema):
+def criar_sessao(dados: CheckoutSchema, db: Session = Depends(get_db)):
     try:
+        # VERIFICACAO ANTI-DUPLICACAO ALUNO
+        from app.models import Aluno
+        aluno = db.query(Aluno).filter(Aluno.id == dados.aluno_id).first()
+        
+        if not aluno:
+            raise HTTPException(status_code=404, detail="Aluno nao encontrado")
+        
+        if aluno.stripe_subscription_id:
+            try:
+                sub = stripe.Subscription.retrieve(aluno.stripe_subscription_id)
+                if sub.status in ["active", "trialing", "past_due"]:
+                    raise HTTPException(
+                        status_code=400, 
+                        detail=f"Voce ja tem uma assinatura {sub.status}. Acesse o portal do cliente para gerenciar."
+                    )
+            except stripe.error.InvalidRequestError:
+                pass
+        
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             line_items=[{"price_data": {"currency": "brl", "product_data": {"name": dados.plano}, "unit_amount": dados.valor, "recurring": {"interval": "month"}}, "quantity": 1}],
@@ -135,6 +153,8 @@ def criar_sessao(dados: CheckoutSchema):
             metadata={"aluno_id": str(dados.aluno_id)},
         )
         return {"url": session.url, "session_id": session.id}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

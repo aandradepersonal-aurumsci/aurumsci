@@ -13,7 +13,7 @@ class AlunoBase(BaseModel):
     objetivo: Optional[ObjetivoAluno] = None
     nivel_experiencia: Optional[NivelExperiencia] = NivelExperiencia.INICIANTE
     # Cobranca
-    ciclo_cobranca: Optional[Literal['mensal', 'quinzenal', 'semanal', 'por_aula']] = 'mensal'
+    ciclo_cobranca: Optional[Literal['mensal', 'quinzenal', 'semanal', 'por_aula_mensal']] = 'mensal'
     dia_fechamento: Optional[int] = 30
     valor_aula: Optional[float] = None
     valor_mensal: Optional[float] = None
@@ -32,7 +32,7 @@ class AlunoAtualizar(BaseModel):
     nivel_experiencia: Optional[NivelExperiencia] = None
     ativo: Optional[bool] = None
     # Cobranca
-    ciclo_cobranca: Optional[Literal['mensal', 'quinzenal', 'semanal', 'por_aula']] = None
+    ciclo_cobranca: Optional[Literal['mensal', 'quinzenal', 'semanal', 'por_aula_mensal']] = None
     dia_fechamento: Optional[int] = None
     valor_aula: Optional[float] = None
     valor_mensal: Optional[float] = None

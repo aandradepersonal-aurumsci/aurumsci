@@ -570,6 +570,59 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       <input type="text" id="novo-cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)">
       <div style="font-size:10px;color:var(--cinza);margin-top:4px">A senha de acesso será os 6 primeiros dígitos do CPF</div>
     </div>
+    
+    <!-- SECAO COBRANCA -->
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--borda)">
+      <div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2);letter-spacing:1.5px;margin-bottom:4px">💰 COBRANÇA</div>
+      <div style="font-size:11px;color:var(--cinza);margin-bottom:16px">Configure como o aluno pagará</div>
+      
+      <div class="field-mini">
+        <label>CICLO DE COBRANÇA</label>
+        <select id="novo-ciclo" onchange="atualizarAvisoCiclo()">
+          <option value="mensal">Mensal (1 NF/mês)</option>
+          <option value="quinzenal">Quinzenal (2 NF/mês)</option>
+          <option value="semanal">Semanal (4 NF/mês)</option>
+          <option value="por_aula_mensal">Por aula / Mensal (1 NF/mês)</option>
+        </select>
+        <div id="aviso-ciclo" style="font-size:10px;color:var(--ouro2);margin-top:4px">💡 Mensal: R$ 0,30/mês em notas fiscais</div>
+      </div>
+      
+      <div class="field-mini" id="campo-valor-mensal">
+        <label>VALOR (R$)</label>
+        <input type="number" id="novo-valor-mensal" placeholder="800.00" step="0.01" min="0">
+        <div style="font-size:10px;color:var(--cinza);margin-top:4px">Valor total do período</div>
+      </div>
+      
+      <div class="field-mini" id="campo-valor-aula" style="display:none">
+        <label>VALOR POR AULA (R$)</label>
+        <input type="number" id="novo-valor-aula" placeholder="100.00" step="0.01" min="0">
+        <div style="font-size:10px;color:var(--cinza);margin-top:4px">Cobra apenas as aulas dadas</div>
+      </div>
+      
+      <div class="field-mini">
+        <label>DIA DE FECHAMENTO</label>
+        <select id="novo-dia-fechamento">
+          <option value="5">Dia 5</option>
+          <option value="10">Dia 10</option>
+          <option value="15">Dia 15</option>
+          <option value="20">Dia 20</option>
+          <option value="25">Dia 25</option>
+          <option value="30" selected>Dia 30 (último do mês)</option>
+        </select>
+        <div style="font-size:10px;color:var(--cinza);margin-top:4px">Quando fechar a cobrança</div>
+      </div>
+      
+      <div class="field-mini">
+        <label>VENCIMENTO (DIAS APÓS FECHAMENTO)</label>
+        <select id="novo-dias-vencimento">
+          <option value="3">3 dias</option>
+          <option value="5" selected>5 dias</option>
+          <option value="7">7 dias</option>
+          <option value="10">10 dias</option>
+        </select>
+      </div>
+    </div>
+    
     <br>
     <button class="btn-gold" onclick="criarAluno()">CRIAR ALUNO</button>
   </div>
@@ -1442,6 +1495,36 @@ function mascaraCPF(input){
   input.value = v;
 }
 
+
+function atualizarAvisoCiclo() {
+  var ciclo = document.getElementById('novo-ciclo').value;
+  var aviso = document.getElementById('aviso-ciclo');
+  var campoValorMensal = document.getElementById('campo-valor-mensal');
+  var campoValorAula = document.getElementById('campo-valor-aula');
+  
+  if (ciclo === 'mensal') {
+    aviso.innerHTML = '<b>📅 Mensal Fixo</b><br>✅ Receba antecipado<br>✅ Previsibilidade financeira<br>⚠️ Aluno faltou? Pode pedir reposição<br>💰 Custo: R$ 0,30/mês em NF';
+    aviso.style.color = 'var(--ouro2)';
+    campoValorMensal.style.display = 'block';
+    campoValorAula.style.display = 'none';
+  } else if (ciclo === 'quinzenal') {
+    aviso.innerHTML = '<b>📅 Quinzenal</b><br>✅ Cobrança 2x ao mês<br>✅ Bom para personal corporativo<br>⚠️ Mais notas que mensal<br>💰 Custo: R$ 0,60/mês em NF';
+    aviso.style.color = 'var(--ouro2)';
+    campoValorMensal.style.display = 'block';
+    campoValorAula.style.display = 'none';
+  } else if (ciclo === 'semanal') {
+    aviso.innerHTML = '<b>📅 Semanal</b><br>✅ Pagamento toda semana<br>✅ Bom para alunos casuais<br>⚠️ 4 NF/mês<br>💰 Custo: R$ 1,20/mês em NF';
+    aviso.style.color = '#FFA500';
+    campoValorMensal.style.display = 'block';
+    campoValorAula.style.display = 'none';
+  } else if (ciclo === 'por_aula_mensal') {
+    aviso.innerHTML = '<b>📅 Por Aula / Mensal</b><br>✅ Aluno paga só o que fez<br>✅ Sem reposição (zero stress)<br>✅ 1 boleto no fim do mês<br>⚠️ Receita variável<br>💰 Custo: R$ 0,30/mês em NF';
+    aviso.style.color = 'var(--ouro2)';
+    campoValorMensal.style.display = 'none';
+    campoValorAula.style.display = 'block';
+  }
+}
+
 function criarAluno(){
   var nome = document.getElementById('novo-nome').value.trim();
   var email = document.getElementById('novo-email').value.trim();
@@ -1453,12 +1536,19 @@ function criarAluno(){
 
   if(!nome || !email){ mostrarToast('Preencha nome e email'); return; }
   if(cpf.length < 6){ mostrarToast('Informe o CPF para gerar a senha'); return; }
+  var ciclo = document.getElementById('novo-ciclo').value;
+  var diaFechamento = parseInt(document.getElementById('novo-dia-fechamento').value);
+  var diasVencimento = parseInt(document.getElementById('novo-dias-vencimento').value);
+  var valorMensal = parseFloat(document.getElementById('novo-valor-mensal').value) || null;
+  var valorAula = parseFloat(document.getElementById('novo-valor-aula').value) || null;
+  if(ciclo === 'por_aula_mensal' && !valorAula){ mostrarToast('Informe o valor por aula'); return; }
+  if(ciclo !== 'por_aula_mensal' && !valorMensal){ mostrarToast('Informe o valor do periodo'); return; }
 
   // Senha = primeiros 6 dígitos do CPF
   var senha = cpf.substring(0, 6);
 
   fetch('/alunos', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body: JSON.stringify({nome:nome, email:email, telefone:telefone, objetivo:objetivo, nivel_experiencia:nivel, sexo:sexo, cpf:cpf})})
+    body: JSON.stringify({nome:nome, email:email, telefone:telefone, objetivo:objetivo, nivel_experiencia:nivel, sexo:sexo, cpf:cpf, ciclo_cobranca:ciclo, dia_fechamento:diaFechamento, dias_vencimento:diasVencimento, valor_mensal:valorMensal, valor_aula:valorAula})})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(d.id){

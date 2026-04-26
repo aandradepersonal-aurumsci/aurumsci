@@ -378,6 +378,17 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 
     <div id="card-trib"></div>
     <div id="card-soma"></div>
+    
+    <!-- FECHAMENTOS PENDENTES -->
+    <div id="fechamentos-pendentes-section" style="margin-top:24px">
+      <div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2);letter-spacing:1.5px;margin-bottom:8px">FECHAMENTOS PENDENTES</div>
+      <div style="font-size:11px;color:var(--cinza);margin-bottom:16px">Cobrancas a fechar este ciclo</div>
+      <div id="lista-fechamentos">
+        <div style="color:var(--ouro2);text-align:center;padding:30px;font-size:14px">Carregando fechamentos...</div>
+      </div>
+    </div>
+    
+    <div style="margin-top:32px;font-family:Bebas Neue;font-size:18px;color:var(--ouro2);letter-spacing:1.5px;margin-bottom:16px">PAGAMENTOS</div>
     <div id="lista-pagamentos">
       <div style="text-align:center;padding:40px;color:var(--cinza)">Carregando...</div>
     </div>
@@ -1156,7 +1167,81 @@ function filtroStatus(status, el){
 // ── FINANCEIRO — banco de dados ───────────────────────────────
 var pagamentosDB = [];
 
+
+function carregarFechamentos() {
+  fetch('/app-personal/financeiro/fechamentos-pendentes', {
+    headers: {'Authorization':'Bearer '+token}
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var lista = d.fechamentos || [];
+    var container = document.getElementById('lista-fechamentos');
+    if(!container) return;
+    
+    if(lista.length === 0) {
+      container.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px">Nenhum fechamento pendente</div>';
+      return;
+    }
+    
+    var html = '';
+    lista.forEach(function(f){
+      var corMap = {
+        'vermelho': 'var(--vermelho)',
+        'amarelo': 'var(--ouro2)',
+        'verde': 'var(--verde)'
+      };
+      var cor = corMap[f.cor] || 'var(--cinza)';
+      
+      var statusTexto = '';
+      if(f.status === 'vence_hoje') statusTexto = 'VENCE HOJE!';
+      else if(f.status === 'em_breve') statusTexto = 'Em ' + f.dias_para_fechar + ' dias';
+      else statusTexto = 'Em ' + f.dias_para_fechar + ' dias';
+      
+      var cicloTexto = {
+        'mensal': 'Mensal Fixo',
+        'quinzenal': 'Quinzenal',
+        'semanal': 'Semanal',
+        'por_aula_mensal': 'Por Aula / Mensal'
+      }[f.ciclo_cobranca] || f.ciclo_cobranca;
+      
+      var detalhe = '';
+      if(f.ciclo_cobranca === 'por_aula_mensal') {
+        detalhe = f.aulas_dadas + ' aulas x R$ ' + f.valor_aula.toFixed(2);
+      } else {
+        detalhe = 'Mensalidade fixa';
+      }
+      
+      var dataFmt = f.data_fechamento.split('-').reverse().join('/');
+      
+      html += '<div style="background:var(--bg);border:1px solid ' + cor + ';border-left:4px solid ' + cor + ';border-radius:12px;padding:14px;margin-bottom:10px">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">';
+      html += '<div><div style="font-weight:700;font-size:14px;color:var(--branco)">' + f.aluno_nome + '</div>';
+      html += '<div style="font-size:11px;color:var(--cinza);margin-top:2px">' + cicloTexto + ' - ' + detalhe + '</div></div>';
+      html += '<div style="text-align:right"><div style="font-weight:700;font-size:16px;color:' + cor + '">R$ ' + f.valor_total.toFixed(2) + '</div>';
+      html += '<div style="font-size:10px;color:' + cor + ';margin-top:2px">' + statusTexto + '</div></div>';
+      html += '</div>';
+      html += '<div style="display:flex;gap:8px;margin-top:10px">';
+      html += '<div style="flex:1;font-size:10px;color:var(--cinza)">Fecha: ' + dataFmt + '</div>';
+      html += '<button onclick="fecharMesAluno(' + f.aluno_id + ', \'' + f.aluno_nome.replace(/[\'\"]/g,"") + '\', ' + f.valor_total + ')" style="background:' + cor + ';color:#0A0A0F;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">FECHAR MES</button>';
+      html += '</div></div>';
+    });
+    
+    container.innerHTML = html;
+  })
+  .catch(function(){
+    var container = document.getElementById('lista-fechamentos');
+    if(container) container.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px">Sem conexao no momento</div>';
+  });
+}
+
+function fecharMesAluno(alunoId, alunoNome, valor) {
+  var msg = 'Fechar mes para ' + alunoNome + '?\n\nValor: R$ ' + valor.toFixed(2) + '\n\n(Por enquanto so registra, depois adicionamos cobranca automatica)';
+  if(!confirm(msg)) return;
+  mostrarToast('Em desenvolvimento - cobranca automatica vem na FASE 3!');
+}
+
 function carregarFinanceiro(){
+  carregarFechamentos();
   // Busca todos os pagamentos de todos os alunos do personal
   var promises = todosAlunos.map(function(a){
     return fetch('/financeiro/pagamento/aluno/' + a.id, {headers:{'Authorization':'Bearer '+token}})

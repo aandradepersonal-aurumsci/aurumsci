@@ -696,3 +696,95 @@ def aulas_do_mes(
         "total_aulas": len(presencas),
         "por_dia": por_dia
     }
+
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# FECHAMENTOS — Lista de cobrancas pendentes
+# ──────────────────────────────────────────────────────────────────────────────
+
+@router.get("/financeiro/fechamentos-pendentes")
+def listar_fechamentos_pendentes(
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    from app.routers.treino import PresencaTreino
+    from datetime import date as date_cls, timedelta
+    from calendar import monthrange
+    
+    hoje = date_cls.today()
+    
+    alunos = db.query(Aluno).filter(
+        Aluno.personal_id == personal.id,
+        Aluno.ativo == True
+    ).all()
+    
+    fechamentos = []
+    
+    for aluno in alunos:
+        ciclo = aluno.ciclo_cobranca or "mensal"
+        dia_fechamento = aluno.dia_fechamento or 30
+        dias_vencimento = aluno.dias_vencimento or 5
+        valor_mensal = float(aluno.valor_mensal) if aluno.valor_mensal else 0
+        valor_aula = float(aluno.valor_aula) if aluno.valor_aula else 0
+        
+        ultimo_dia_mes = monthrange(hoje.year, hoje.month)[1]
+        dia_real = min(dia_fechamento, ultimo_dia_mes)
+        data_fechamento = date_cls(hoje.year, hoje.month, dia_real)
+        
+        if data_fechamento < hoje:
+            if hoje.month == 12:
+                data_fechamento = date_cls(hoje.year + 1, 1, min(dia_fechamento, 31))
+            else:
+                proximo_mes = hoje.month + 1
+                ultimo_dia_proximo = monthrange(hoje.year, proximo_mes)[1]
+                data_fechamento = date_cls(hoje.year, proximo_mes, min(dia_fechamento, ultimo_dia_proximo))
+        
+        data_vencimento = data_fechamento + timedelta(days=dias_vencimento)
+        
+        primeiro_dia_mes = date_cls(hoje.year, hoje.month, 1)
+        aulas_dadas = db.query(PresencaTreino).filter(
+            PresencaTreino.aluno_id == aluno.id,
+            PresencaTreino.data >= primeiro_dia_mes,
+            PresencaTreino.data <= hoje
+        ).count()
+        
+        if ciclo == "por_aula_mensal":
+            valor_total = aulas_dadas * valor_aula
+        else:
+            valor_total = valor_mensal
+        
+        dias_para_fechar = (data_fechamento - hoje).days
+        if dias_para_fechar == 0:
+            status = "vence_hoje"
+            cor = "vermelho"
+        elif dias_para_fechar <= 3:
+            status = "em_breve"
+            cor = "amarelo"
+        else:
+            status = "futuro"
+            cor = "verde"
+        
+        if valor_total > 0 or ciclo == "por_aula_mensal":
+            fechamentos.append({
+                "aluno_id": aluno.id,
+                "aluno_nome": aluno.nome,
+                "ciclo_cobranca": ciclo,
+                "valor_aula": valor_aula,
+                "valor_mensal": valor_mensal,
+                "aulas_dadas": aulas_dadas,
+                "valor_total": valor_total,
+                "data_fechamento": data_fechamento.isoformat(),
+                "data_vencimento": data_vencimento.isoformat(),
+                "dias_para_fechar": dias_para_fechar,
+                "status": status,
+                "cor": cor
+            })
+    
+    fechamentos.sort(key=lambda x: x["dias_para_fechar"])
+    
+    return {
+        "total": len(fechamentos),
+        "data_consulta": hoje.isoformat(),
+        "fechamentos": fechamentos
+    }

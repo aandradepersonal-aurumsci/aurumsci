@@ -276,7 +276,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <!-- STATS COMPACTOS -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:16px">
       <div style="background:var(--bg2);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center">
-        <div style="font-family:Bebas Neue;font-size:26px;color:var(--verde)" id="stat-alunos">0</div>
+        <div style="font-family:Bebas Neue;font-size:26px;color:var(--verde)"><span id="stat-alunos">0</span><span id="stat-limite" style="font-size:18px;color:var(--cinza);font-weight:normal"></span></div>
         <div style="font-size:9px;color:var(--cinza);letter-spacing:1px">ATIVOS</div>
       </div>
       <div style="background:var(--bg2);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center">
@@ -857,6 +857,15 @@ function carregarDashboard(){
   .then(function(r){ return r.json(); })
   .then(function(d){
     document.getElementById('stat-alunos').textContent = d.total_alunos || 0;
+    if(d.limite_alunos && d.limite_alunos < 999999) {
+      document.getElementById('stat-limite').textContent = '/' + d.limite_alunos;
+      // Alerta visual quando perto do limite (80% ou mais)
+      if(d.total_alunos >= d.limite_alunos * 0.8) {
+        document.getElementById('stat-alunos').style.color = 'var(--vermelho)';
+      }
+    } else {
+      document.getElementById('stat-limite').textContent = '';
+    }
     document.getElementById('stat-checkins').textContent = d.checkins_hoje || 0;
     document.getElementById('stat-pendentes').textContent = d.pagamentos_pendentes || 0;
     document.getElementById('stat-receita').textContent = 'R$' + (d.receita_mes || 0).toFixed(0);

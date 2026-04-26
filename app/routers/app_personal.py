@@ -84,8 +84,14 @@ def dashboard(personal: Personal = Depends(get_personal_atual), db: Session = De
         "ativo": a.ativo
     } for a in alunos[:5]]
 
+    # Limite de alunos por plano
+    LIMITES_PLANO = {'bronze': 10, 'prata': 20, 'ouro': 50, 'diamante': 999999}
+    plano_atual = personal.plano or 'bronze'
+    limite_alunos = LIMITES_PLANO.get(plano_atual, 10)
     return {
         "total_alunos": total_alunos,
+        "limite_alunos": limite_alunos,
+        "plano": plano_atual,
         "checkins_hoje": checkins_hoje,
         "pagamentos_pendentes": pendentes,
         "receita_mes": round(receita_mes, 2),

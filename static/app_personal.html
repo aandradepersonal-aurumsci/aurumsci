@@ -1235,9 +1235,30 @@ function carregarFechamentos() {
 }
 
 function fecharMesAluno(alunoId, alunoNome, valor) {
-  var msg = 'Fechar mes para ' + alunoNome + '?\n\nValor: R$ ' + valor.toFixed(2) + '\n\n(Por enquanto so registra, depois adicionamos cobranca automatica)';
+  var msg = 'Fechar mes para ' + alunoNome + '?\n\nValor a cobrar: R$ ' + valor.toFixed(2) + '\n\nEsta acao vai criar a cobranca e gerar link de pagamento.';
   if(!confirm(msg)) return;
-  mostrarToast('Em desenvolvimento - cobranca automatica vem na FASE 3!');
+  
+  fetch('/app-personal/financeiro/fechar-mes-aluno/' + alunoId, {
+    method: 'POST',
+    headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'}
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.ok) {
+      var resumo = 'COBRANCA CRIADA!\n\n';
+      resumo += 'Aluno: ' + d.aluno_nome + '\n';
+      resumo += 'Valor: R$ ' + d.valor.toFixed(2) + '\n';
+      resumo += d.descricao + '\n';
+      resumo += 'Vence: ' + d.data_vencimento.split('-').reverse().join('/');
+      alert(resumo);
+      mostrarToast('Cobranca registrada com sucesso!');
+      carregarFechamentos();
+      carregarFinanceiro();
+    } else {
+      mostrarToast(d.detail || 'Erro ao fechar mes');
+    }
+  })
+  .catch(function(){ mostrarToast('Erro de conexao'); });
 }
 
 function carregarFinanceiro(){

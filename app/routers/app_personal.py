@@ -788,3 +788,268 @@ def listar_fechamentos_pendentes(
         "data_consulta": hoje.isoformat(),
         "fechamentos": fechamentos
     }
+
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# FECHAR MES — Cria cobranca real e gera link Stripe
+# ──────────────────────────────────────────────────────────────────────────────
+
+@router.post("/financeiro/fechar-mes-aluno/{aluno_id}")
+def fechar_mes_aluno(
+    aluno_id: int,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """
+    Fecha o mes para um aluno especifico.
+    Cria cobranca no banco e retorna info pra cobranca via Stripe.
+    """
+    from app.routers.treino import PresencaTreino
+    from datetime import date as date_cls, timedelta, datetime
+    from calendar import monthrange
+    from sqlalchemy import text
+    
+    hoje = date_cls.today()
+    
+    # Busca aluno
+    aluno = db.query(Aluno).filter(
+        Aluno.id == aluno_id,
+        Aluno.personal_id == personal.id
+    ).first()
+    
+    if not aluno:
+        raise HTTPException(404, "Aluno nao encontrado")
+    
+    if not aluno.email:
+        raise HTTPException(400, "Aluno precisa ter email cadastrado")
+    
+    ciclo = aluno.ciclo_cobranca or "mensal"
+    valor_mensal = float(aluno.valor_mensal) if aluno.valor_mensal else 0
+    valor_aula = float(aluno.valor_aula) if aluno.valor_aula else 0
+    dias_vencimento = aluno.dias_vencimento or 5
+    
+    # Conta aulas do mes
+    primeiro_dia_mes = date_cls(hoje.year, hoje.month, 1)
+    aulas_dadas = db.query(PresencaTreino).filter(
+        PresencaTreino.aluno_id == aluno.id,
+        PresencaTreino.data >= primeiro_dia_mes,
+        PresencaTreino.data <= hoje
+    ).count()
+    
+    # Calcula valor
+    if ciclo == "por_aula_mensal":
+        valor_total = aulas_dadas * valor_aula
+        descricao = f"{aulas_dadas} aulas em {hoje.strftime('%m/%Y')}"
+    else:
+        valor_total = valor_mensal
+        descricao = f"Mensalidade {hoje.strftime('%m/%Y')}"
+    
+    if valor_total <= 0:
+        raise HTTPException(400, "Valor a cobrar e zero. Verifique aulas dadas ou valor configurado")
+    
+    # Data de vencimento
+    data_vencimento = hoje + timedelta(days=dias_vencimento)
+    
+    # Verifica se ja existe cobranca em aberto deste mes
+    sql_check = text("""
+        SELECT id FROM cobrancas 
+        WHERE aluno_id = :aluno_id 
+        AND status IN ('pendente', 'enviada')
+        AND EXTRACT(MONTH FROM data_fechamento) = :mes
+        AND EXTRACT(YEAR FROM data_fechamento) = :ano
+    """)
+    existe = db.execute(sql_check, {
+        "aluno_id": aluno.id,
+        "mes": hoje.month,
+        "ano": hoje.year
+    }).fetchone()
+    
+    if existe:
+        raise HTTPException(400, "Ja existe cobranca pendente para esse aluno neste mes")
+    
+    # Cria cobranca no banco
+    sql_insert = text("""
+        INSERT INTO cobrancas (
+            aluno_id, valor, data_fechamento, data_vencimento, 
+            status, aulas_periodo, descricao, criado_em, atualizado_em
+        ) VALUES (
+            :aluno_id, :valor, :data_fechamento, :data_vencimento,
+            'pendente', :aulas, :descricao, NOW(), NOW()
+        ) RETURNING id
+    """)
+    
+    result = db.execute(sql_insert, {
+        "aluno_id": aluno.id,
+        "valor": valor_total,
+        "data_fechamento": hoje,
+        "data_vencimento": data_vencimento,
+        "aulas": aulas_dadas,
+        "descricao": descricao
+    })
+    cobranca_id = result.fetchone()[0]
+    db.commit()
+    
+    return {
+        "ok": True,
+        "cobranca_id": cobranca_id,
+        "aluno_nome": aluno.nome,
+        "aluno_email": aluno.email,
+        "valor": valor_total,
+        "descricao": descricao,
+        "data_vencimento": data_vencimento.isoformat(),
+        "aulas_dadas": aulas_dadas,
+        "ciclo": ciclo,
+        "proximo_passo": "Cobranca registrada! Sistema enviara link de pagamento por email."
+    }
+
+
+@router.get("/financeiro/cobrancas-aluno/{aluno_id}")
+def listar_cobrancas_aluno(
+    aluno_id: int,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Lista todas as cobrancas de um aluno."""
+    from sqlalchemy import text
+    
+    aluno = db.query(Aluno).filter(
+        Aluno.id == aluno_id,
+        Aluno.personal_id == personal.id
+    ).first()
+    
+    if not aluno:
+        raise HTTPException(404, "Aluno nao encontrado")
+    
+    sql = text("""
+        SELECT id, valor, data_fechamento, data_vencimento, data_pagamento,
+               status, aulas_periodo, descricao, criado_em
+        FROM cobrancas
+        WHERE aluno_id = :aluno_id
+        ORDER BY data_fechamento DESC
+        LIMIT 12
+    """)
+    
+    rows = db.execute(sql, {"aluno_id": aluno_id}).fetchall()
+    
+    cobrancas = []
+    for r in rows:
+        cobrancas.append({
+            "id": r[0],
+            "valor": float(r[1]) if r[1] else 0,
+            "data_fechamento": r[2].isoformat() if r[2] else None,
+            "data_vencimento": r[3].isoformat() if r[3] else None,
+            "data_pagamento": r[4].isoformat() if r[4] else None,
+            "status": r[5],
+            "aulas_periodo": r[6],
+            "descricao": r[7],
+            "criado_em": r[8].isoformat() if r[8] else None
+        })
+    
+    return {
+        "aluno_id": aluno_id,
+        "aluno_nome": aluno.nome,
+        "total": len(cobrancas),
+        "cobrancas": cobrancas
+    }
+
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# STRIPE — Gera link de pagamento para cobranca
+# ──────────────────────────────────────────────────────────────────────────────
+
+@router.post("/financeiro/gerar-link-pagamento/{cobranca_id}")
+def gerar_link_pagamento(
+    cobranca_id: int,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """
+    Gera link Stripe para pagamento de uma cobranca especifica.
+    Suporta: cartao, PIX, boleto.
+    """
+    import stripe
+    from app.config import settings
+    from sqlalchemy import text
+    
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    
+    # Busca cobranca
+    sql = text("""
+        SELECT c.id, c.aluno_id, c.valor, c.descricao, c.data_vencimento, c.status,
+               a.nome, a.email, a.cpf
+        FROM cobrancas c
+        JOIN alunos a ON a.id = c.aluno_id
+        WHERE c.id = :cid AND a.personal_id = :pid
+    """)
+    
+    row = db.execute(sql, {"cid": cobranca_id, "pid": personal.id}).fetchone()
+    
+    if not row:
+        raise HTTPException(404, "Cobranca nao encontrada")
+    
+    if row[5] not in ("pendente", "enviada"):
+        raise HTTPException(400, f"Cobranca esta com status: {row[5]}")
+    
+    valor_centavos = int(float(row[2]) * 100)
+    descricao = row[3]
+    aluno_nome = row[6]
+    aluno_email = row[7]
+    
+    try:
+        # Cria sessao Stripe
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card", "boleto"],
+            line_items=[{
+                "price_data": {
+                    "currency": "brl",
+                    "product_data": {
+                        "name": f"Personal Training - {aluno_nome}",
+                        "description": descricao
+                    },
+                    "unit_amount": valor_centavos
+                },
+                "quantity": 1
+            }],
+            mode="payment",
+            customer_email=aluno_email,
+            metadata={
+                "cobranca_id": str(cobranca_id),
+                "aluno_id": str(row[1]),
+                "personal_id": str(personal.id),
+                "tipo": "cobranca_mensal"
+            },
+            success_url=f"https://www.aurumsc.com.br/aluno?pagamento=sucesso&cobranca={cobranca_id}",
+            cancel_url=f"https://www.aurumsc.com.br/aluno?pagamento=cancelado&cobranca={cobranca_id}",
+            payment_intent_data={
+                "description": f"{descricao} - {aluno_nome}",
+                "metadata": {"cobranca_id": str(cobranca_id)}
+            }
+        )
+        
+        # Salva session_id na cobranca
+        update_sql = text("""
+            UPDATE cobrancas 
+            SET stripe_invoice_id = :sid, status = :st, atualizado_em = NOW()
+            WHERE id = :cid
+        """)
+        db.execute(update_sql, {
+            "sid": session.id,
+            "st": "enviada",
+            "cid": cobranca_id
+        })
+        db.commit()
+        
+        return {
+            "ok": True,
+            "url_pagamento": session.url,
+            "session_id": session.id,
+            "valor": float(row[2]),
+            "aluno_nome": aluno_nome,
+            "aluno_email": aluno_email,
+            "descricao": descricao
+        }
+        
+    except Exception as e:
+        raise HTTPException(400, f"Erro ao criar sessao Stripe: {str(e)}")

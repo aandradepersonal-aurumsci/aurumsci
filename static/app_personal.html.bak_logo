@@ -276,7 +276,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <!-- STATS COMPACTOS -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:16px">
       <div style="background:var(--bg2);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center">
-        <div style="font-family:Bebas Neue;font-size:26px;color:var(--verde)"><span id="stat-alunos">0</span><span id="stat-limite" style="font-size:18px;color:var(--cinza);font-weight:normal"></span></div>
+        <div style="font-family:Bebas Neue;font-size:26px;color:var(--verde)" id="stat-alunos">0</div>
         <div style="font-size:9px;color:var(--cinza);letter-spacing:1px">ATIVOS</div>
       </div>
       <div style="background:var(--bg2);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center">
@@ -317,10 +317,10 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <div style="font-family:Bebas Neue;font-size:16px;color:var(--azul)">FINANÇAS</div>
         <div style="font-size:11px;color:var(--cinza)">Pagamentos</div>
       </div>
-      <div onclick="abrirAulas()" style="background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.15);border-radius:14px;padding:16px;cursor:pointer;text-align:center">
-        <div style="font-size:28px;margin-bottom:6px">📅</div>
-        <div style="font-family:Bebas Neue;font-size:16px;color:var(--verde)">AULAS</div>
-        <div style="font-size:11px;color:var(--cinza)">Check-in diário</div>
+      <div onclick="mudarTab('chat', document.querySelector('.tab:last-child'))" style="background:rgba(255,75,75,.06);border:1px solid rgba(255,75,75,.15);border-radius:14px;padding:16px;cursor:pointer;text-align:center">
+        <div style="font-size:28px;margin-bottom:6px">🤖</div>
+        <div style="font-family:Bebas Neue;font-size:16px;color:#FF6B6B">AURI</div>
+        <div style="font-size:11px;color:var(--cinza)">Assistente IA</div>
       </div>
     </div>
     <div id="alunos-recentes" style="display:none"></div>
@@ -570,59 +570,6 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       <input type="text" id="novo-cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)">
       <div style="font-size:10px;color:var(--cinza);margin-top:4px">A senha de acesso será os 6 primeiros dígitos do CPF</div>
     </div>
-    
-    <!-- SECAO COBRANCA -->
-    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--borda)">
-      <div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2);letter-spacing:1.5px;margin-bottom:4px">💰 COBRANÇA</div>
-      <div style="font-size:11px;color:var(--cinza);margin-bottom:16px">Configure como o aluno pagará</div>
-      
-      <div class="field-mini">
-        <label>CICLO DE COBRANÇA</label>
-        <select id="novo-ciclo" onchange="atualizarAvisoCiclo()">
-          <option value="mensal">Mensal (1 NF/mês)</option>
-          <option value="quinzenal">Quinzenal (2 NF/mês)</option>
-          <option value="semanal">Semanal (4 NF/mês)</option>
-          <option value="por_aula_mensal">Por aula / Mensal (1 NF/mês)</option>
-        </select>
-        <div id="aviso-ciclo" style="font-size:10px;color:var(--ouro2);margin-top:4px">💡 Mensal: R$ 0,30/mês em notas fiscais</div>
-      </div>
-      
-      <div class="field-mini" id="campo-valor-mensal">
-        <label>VALOR (R$)</label>
-        <input type="number" id="novo-valor-mensal" placeholder="800.00" step="0.01" min="0">
-        <div style="font-size:10px;color:var(--cinza);margin-top:4px">Valor total do período</div>
-      </div>
-      
-      <div class="field-mini" id="campo-valor-aula" style="display:none">
-        <label>VALOR POR AULA (R$)</label>
-        <input type="number" id="novo-valor-aula" placeholder="100.00" step="0.01" min="0">
-        <div style="font-size:10px;color:var(--cinza);margin-top:4px">Cobra apenas as aulas dadas</div>
-      </div>
-      
-      <div class="field-mini">
-        <label>DIA DE FECHAMENTO</label>
-        <select id="novo-dia-fechamento">
-          <option value="5">Dia 5</option>
-          <option value="10">Dia 10</option>
-          <option value="15">Dia 15</option>
-          <option value="20">Dia 20</option>
-          <option value="25">Dia 25</option>
-          <option value="30" selected>Dia 30 (último do mês)</option>
-        </select>
-        <div style="font-size:10px;color:var(--cinza);margin-top:4px">Quando fechar a cobrança</div>
-      </div>
-      
-      <div class="field-mini">
-        <label>VENCIMENTO (DIAS APÓS FECHAMENTO)</label>
-        <select id="novo-dias-vencimento">
-          <option value="3">3 dias</option>
-          <option value="5" selected>5 dias</option>
-          <option value="7">7 dias</option>
-          <option value="10">10 dias</option>
-        </select>
-      </div>
-    </div>
-    
     <br>
     <button class="btn-gold" onclick="criarAluno()">CRIAR ALUNO</button>
   </div>
@@ -755,8 +702,8 @@ function fazerLogin(){
       nomePersonal = d.nome || 'Personal';
       localStorage.setItem('aurum_personal_token', token);
       localStorage.setItem('aurum_personal_nome', nomePersonal);
-      if(d.logo_url) { localStorage.setItem('aurum_wl_logo', d.logo_url); } else { localStorage.removeItem('aurum_wl_logo'); }
-      if(d.nome_empresa) { localStorage.setItem('aurum_wl_nome', d.nome_empresa); } else { localStorage.removeItem('aurum_wl_nome'); }
+      if(d.logo_url) localStorage.setItem('aurum_wl_logo', d.logo_url);
+      if(d.nome_empresa) localStorage.setItem('aurum_wl_nome', d.nome_empresa);
       carregarApp();
     } else {
       mostrarToast(d.detail || 'Email ou senha incorretos');
@@ -910,18 +857,6 @@ function carregarDashboard(){
   .then(function(r){ return r.json(); })
   .then(function(d){
     document.getElementById('stat-alunos').textContent = d.total_alunos || 0;
-    if(d.limite_alunos && d.limite_alunos < 999999) {
-      document.getElementById('stat-limite').textContent = '/' + d.limite_alunos;
-      // Cores: verde (ok) | amarelo (90%+) | vermelho (100%)
-      var pct = d.total_alunos / d.limite_alunos;
-      if(pct >= 1) {
-        document.getElementById('stat-alunos').style.color = 'var(--vermelho)';
-      } else if(pct >= 0.9) {
-        document.getElementById('stat-alunos').style.color = 'var(--ouro2)';
-      }
-    } else {
-      document.getElementById('stat-limite').textContent = '';
-    }
     document.getElementById('stat-checkins').textContent = d.checkins_hoje || 0;
     document.getElementById('stat-pendentes').textContent = d.pagamentos_pendentes || 0;
     document.getElementById('stat-receita').textContent = 'R$' + (d.receita_mes || 0).toFixed(0);
@@ -948,63 +883,23 @@ function carregarDashboard(){
 
 // ── ALUNOS ────────────────────────────────────────────────────
 function carregarAlunos(){
-  console.log('[carregarAlunos] Iniciando... token:', token ? 'OK' : 'FALTANDO');
-  document.getElementById('lista-alunos').innerHTML = '<div style="color:var(--ouro2);text-align:center;padding:40px;font-size:14px">Carregando seus alunos...</div>';
-  if(!token) {
-    console.error('[carregarAlunos] Token nao disponivel!');
-    document.getElementById('lista-alunos').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px;font-size:14px">Aguardando login...</div>';
-    return;
-  }
   fetch('/alunos', {headers: {'Authorization': 'Bearer ' + token}})
-  .then(function(r){ 
-    console.log('[carregarAlunos] Status HTTP:', r.status);
-    if(!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json(); 
-  })
+  .then(function(r){ return r.json(); })
   .then(function(alunos){
-    console.log('[carregarAlunos] Sucesso! Alunos:', alunos);
     todosAlunos = alunos.alunos || alunos;
     renderAlunos(alunos);
-  }).catch(function(err){ 
-    console.error('[carregarAlunos] ERRO:', err);
-    document.getElementById('lista-alunos').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px"><div style="font-size:14px;margin-bottom:8px">Sem conexao no momento</div><button onclick="carregarAlunos()" style="background:var(--ouro);color:#0A0A0F;border:none;padding:8px 16px;border-radius:8px;font-weight:700;cursor:pointer">Tentar novamente</button></div>'; 
-  });
-}
-
-
-function marcarAulaHoje(alunoId, alunoNome) {
-  var hoje = new Date().toISOString().split('T')[0];
-  if(!confirm('Confirmar aula de ' + alunoNome + ' hoje?')) return;
-  
-  fetch('/app-personal/aulas/checkin', {
-    method: 'POST',
-    headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body: JSON.stringify({aluno_id: alunoId, data: hoje, observacoes: ''})
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    if(d.ok) {
-      mostrarToast('Aula registrada para ' + alunoNome + '!');
-    } else {
-      mostrarToast(d.detail || 'Erro ao registrar');
-    }
-  })
-  .catch(function(){ mostrarToast('Erro de conexao'); });
+  }).catch(function(){ document.getElementById('lista-alunos').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px">Erro ao carregar</div>'; });
 }
 
 function renderAlunos(alunos){
   var html = '';
-  // Backend pode retornar {alunos: [...]} ou array direto
-  var lista = (alunos && alunos.alunos) ? alunos.alunos : alunos;
-  if(!Array.isArray(lista)) lista = [];
-  lista.forEach(function(a){
+  alunos.forEach(function(a){
     html += '<div class="aluno-item" onclick="abrirPerfilAluno(' + a.id + ')">';
     html += '<div class="aluno-avatar">' + (a.nome||'?').charAt(0).toUpperCase() + '</div>';
     html += '<div class="aluno-info"><div class="aluno-nome">' + (a.nome||'') + '</div>';
     html += '<div class="aluno-meta">' + (a.objetivo||'—') + ' · ' + (a.nivel_experiencia||'—') + '</div></div>';
-    html += '<div style="display:flex;align-items:center;gap:8px" onclick="event.stopPropagation()">';
+    html += '<div style="display:flex;align-items:center;gap:8px">';
     if(a.precisa_reavaliar) html += '<span style="font-size:10px;background:#FF4B4B;color:#fff;border-radius:6px;padding:2px 5px">📊 VER EVOLUÇÃO</span>';
-    if(a.ativo) { var nomeClean = (a.nome||'').replace(/['"]/g,''); html += '<button data-id="' + a.id + '" data-nome="' + nomeClean + '" onclick="event.stopPropagation();marcarAulaHoje(this.dataset.id, this.dataset.nome)" style="background:var(--verde);color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ AULA</button>'; }
     html += '<div class="aluno-status ' + (a.ativo ? 'status-ativo' : 'status-inativo') + '"></div>';
     html += '<span style="font-size:18px;color:var(--cinza)">›</span></div></div>';
   });
@@ -1535,36 +1430,6 @@ function mascaraCPF(input){
   input.value = v;
 }
 
-
-function atualizarAvisoCiclo() {
-  var ciclo = document.getElementById('novo-ciclo').value;
-  var aviso = document.getElementById('aviso-ciclo');
-  var campoValorMensal = document.getElementById('campo-valor-mensal');
-  var campoValorAula = document.getElementById('campo-valor-aula');
-  
-  if (ciclo === 'mensal') {
-    aviso.innerHTML = '<b>📅 Mensal Fixo</b><br>✅ Receba antecipado<br>✅ Previsibilidade financeira<br>⚠️ Aluno faltou? Pode pedir reposição<br>💰 Custo: R$ 0,30/mês em NF';
-    aviso.style.color = 'var(--ouro2)';
-    campoValorMensal.style.display = 'block';
-    campoValorAula.style.display = 'none';
-  } else if (ciclo === 'quinzenal') {
-    aviso.innerHTML = '<b>📅 Quinzenal</b><br>✅ Cobrança 2x ao mês<br>✅ Bom para personal corporativo<br>⚠️ Mais notas que mensal<br>💰 Custo: R$ 0,60/mês em NF';
-    aviso.style.color = 'var(--ouro2)';
-    campoValorMensal.style.display = 'block';
-    campoValorAula.style.display = 'none';
-  } else if (ciclo === 'semanal') {
-    aviso.innerHTML = '<b>📅 Semanal</b><br>✅ Pagamento toda semana<br>✅ Bom para alunos casuais<br>⚠️ 4 NF/mês<br>💰 Custo: R$ 1,20/mês em NF';
-    aviso.style.color = '#FFA500';
-    campoValorMensal.style.display = 'block';
-    campoValorAula.style.display = 'none';
-  } else if (ciclo === 'por_aula_mensal') {
-    aviso.innerHTML = '<b>📅 Por Aula / Mensal</b><br>✅ Aluno paga só o que fez<br>✅ Sem reposição (zero stress)<br>✅ 1 boleto no fim do mês<br>⚠️ Receita variável<br>💰 Custo: R$ 0,30/mês em NF';
-    aviso.style.color = 'var(--ouro2)';
-    campoValorMensal.style.display = 'none';
-    campoValorAula.style.display = 'block';
-  }
-}
-
 function criarAluno(){
   var nome = document.getElementById('novo-nome').value.trim();
   var email = document.getElementById('novo-email').value.trim();
@@ -1576,19 +1441,12 @@ function criarAluno(){
 
   if(!nome || !email){ mostrarToast('Preencha nome e email'); return; }
   if(cpf.length < 6){ mostrarToast('Informe o CPF para gerar a senha'); return; }
-  var ciclo = document.getElementById('novo-ciclo').value;
-  var diaFechamento = parseInt(document.getElementById('novo-dia-fechamento').value);
-  var diasVencimento = parseInt(document.getElementById('novo-dias-vencimento').value);
-  var valorMensal = parseFloat(document.getElementById('novo-valor-mensal').value) || null;
-  var valorAula = parseFloat(document.getElementById('novo-valor-aula').value) || null;
-  if(ciclo === 'por_aula_mensal' && !valorAula){ mostrarToast('Informe o valor por aula'); return; }
-  if(ciclo !== 'por_aula_mensal' && !valorMensal){ mostrarToast('Informe o valor do periodo'); return; }
 
   // Senha = primeiros 6 dígitos do CPF
   var senha = cpf.substring(0, 6);
 
   fetch('/alunos', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body: JSON.stringify({nome:nome, email:email, telefone:telefone, objetivo:objetivo, nivel_experiencia:nivel, sexo:sexo, cpf:cpf, ciclo_cobranca:ciclo, dia_fechamento:diaFechamento, dias_vencimento:diasVencimento, valor_mensal:valorMensal, valor_aula:valorAula})})
+    body: JSON.stringify({nome:nome, email:email, telefone:telefone, objetivo:objetivo, nivel_experiencia:nivel, sexo:sexo, cpf:cpf})})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(d.id){

@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import date, datetime
 from app.database import get_db
-from app.models import Personal
+from app.models import Personal, Aluno
 from app.utils.auth import get_personal_atual
 
 router = APIRouter(prefix="/app-personal", tags=["App Personal"])
@@ -511,3 +511,188 @@ async def salvar_white_label(
         personal.slogan = slogan
     db.commit()
     return {"status": "ok", "logo_url": personal.logo_url if logo else None}
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# AULAS — Check-in diario do personal
+# ──────────────────────────────────────────────────────────────────────────────
+
+@router.post("/aulas/checkin")
+def fazer_checkin_aula(
+    payload: dict,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """
+    Marca presenca de 1 aluno em 1 dia especifico.
+    Body: { "aluno_id": 1, "data": "2026-04-27", "observacoes": "" }
+    """
+    from app.routers.treino import PresencaTreino
+    from datetime import date as date_cls
+    
+    aluno_id = payload.get("aluno_id")
+    data_str = payload.get("data")
+    observacoes = payload.get("observacoes", "")
+    
+    if not aluno_id or not data_str:
+        raise HTTPException(400, "aluno_id e data sao obrigatorios")
+    
+    # Verifica se aluno pertence ao personal
+    aluno = db.query(Aluno).filter(
+        Aluno.id == aluno_id,
+        Aluno.personal_id == personal.id
+    ).first()
+    if not aluno:
+        raise HTTPException(404, "Aluno nao encontrado")
+    
+    # Converte data
+    try:
+        data_aula = date_cls.fromisoformat(data_str)
+    except:
+        raise HTTPException(400, "Data invalida (use YYYY-MM-DD)")
+    
+    # Verifica se ja existe checkin nesse dia
+    ja_existe = db.query(PresencaTreino).filter(
+        PresencaTreino.aluno_id == aluno_id,
+        PresencaTreino.data == data_aula
+    ).first()
+    
+    if ja_existe:
+        raise HTTPException(400, f"{aluno.nome} ja tem check-in nesse dia")
+    
+    # Cria presenca
+    nova = PresencaTreino(
+        aluno_id=aluno_id,
+        data=data_aula,
+        presente=True,
+        observacoes=observacoes or None
+    )
+    db.add(nova)
+    db.commit()
+    db.refresh(nova)
+    
+    return {
+        "id": nova.id,
+        "aluno_id": aluno_id,
+        "aluno_nome": aluno.nome,
+        "data": data_aula.isoformat(),
+        "ok": True
+    }
+
+
+@router.get("/aulas/dia")
+def listar_aulas_do_dia(
+    data: str,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """
+    Lista todos os check-ins de aulas de um dia especifico.
+    Query param: ?data=2026-04-27
+    """
+    from app.routers.treino import PresencaTreino
+    from datetime import date as date_cls
+    
+    try:
+        data_aula = date_cls.fromisoformat(data)
+    except:
+        raise HTTPException(400, "Data invalida (use YYYY-MM-DD)")
+    
+    # Busca todas as presencas do dia para alunos desse personal
+    presencas = db.query(PresencaTreino).join(Aluno).filter(
+        PresencaTreino.data == data_aula,
+        Aluno.personal_id == personal.id
+    ).all()
+    
+    resultado = []
+    for p in presencas:
+        aluno = db.query(Aluno).filter(Aluno.id == p.aluno_id).first()
+        if aluno:
+            resultado.append({
+                "id": p.id,
+                "aluno_id": p.aluno_id,
+                "aluno_nome": aluno.nome,
+                "data": p.data.isoformat(),
+                "observacoes": p.observacoes,
+                "criado_em": p.criado_em.isoformat() if p.criado_em else None
+            })
+    
+    return {
+        "data": data_aula.isoformat(),
+        "total": len(resultado),
+        "aulas": resultado
+    }
+
+
+@router.delete("/aulas/checkin/{presenca_id}")
+def remover_checkin(
+    presenca_id: int,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Remove um check-in (caso de erro)."""
+    from app.routers.treino import PresencaTreino
+    
+    presenca = db.query(PresencaTreino).filter(
+        PresencaTreino.id == presenca_id
+    ).first()
+    
+    if not presenca:
+        raise HTTPException(404, "Check-in nao encontrado")
+    
+    # Verifica se aluno e desse personal
+    aluno = db.query(Aluno).filter(
+        Aluno.id == presenca.aluno_id,
+        Aluno.personal_id == personal.id
+    ).first()
+    
+    if not aluno:
+        raise HTTPException(403, "Sem permissao")
+    
+    db.delete(presenca)
+    db.commit()
+    
+    return {"ok": True}
+
+
+@router.get("/aulas/mes")
+def aulas_do_mes(
+    ano: int,
+    mes: int,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """
+    Resumo de aulas do mes - para calendario visual.
+    Query: ?ano=2026&mes=4
+    """
+    from app.routers.treino import PresencaTreino
+    from datetime import date as date_cls, timedelta
+    from calendar import monthrange
+    
+    if mes < 1 or mes > 12:
+        raise HTTPException(400, "Mes invalido")
+    
+    primeiro_dia = date_cls(ano, mes, 1)
+    ultimo_dia = date_cls(ano, mes, monthrange(ano, mes)[1])
+    
+    presencas = db.query(PresencaTreino).join(Aluno).filter(
+        PresencaTreino.data >= primeiro_dia,
+        PresencaTreino.data <= ultimo_dia,
+        Aluno.personal_id == personal.id
+    ).all()
+    
+    # Agrupa por dia
+    por_dia = {}
+    for p in presencas:
+        dia = p.data.isoformat()
+        if dia not in por_dia:
+            por_dia[dia] = 0
+        por_dia[dia] += 1
+    
+    return {
+        "ano": ano,
+        "mes": mes,
+        "total_aulas": len(presencas),
+        "por_dia": por_dia
+    }

@@ -1235,9 +1235,14 @@ function carregarFechamentos() {
 }
 
 function fecharMesAluno(alunoId, alunoNome, valor) {
-  var msg = 'Fechar mes para ' + alunoNome + '?\n\nValor a cobrar: R$ ' + valor.toFixed(2) + '\n\nEsta acao vai criar a cobranca e gerar link de pagamento.';
+  var msg = 'Fechar mes para ' + alunoNome + '?
+
+Valor a cobrar: R$ ' + valor.toFixed(2) + '
+
+Esta acao vai criar a cobranca e gerar link de pagamento.';
   if(!confirm(msg)) return;
   
+  // PASSO 1: Cria cobranca
   fetch('/app-personal/financeiro/fechar-mes-aluno/' + alunoId, {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'}
@@ -1245,20 +1250,50 @@ function fecharMesAluno(alunoId, alunoNome, valor) {
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(d.ok) {
-      var resumo = 'COBRANCA CRIADA!\n\n';
-      resumo += 'Aluno: ' + d.aluno_nome + '\n';
-      resumo += 'Valor: R$ ' + d.valor.toFixed(2) + '\n';
-      resumo += d.descricao + '\n';
-      resumo += 'Vence: ' + d.data_vencimento.split('-').reverse().join('/');
+      // PASSO 2: Gera link Stripe
+      return fetch('/app-personal/financeiro/gerar-link-pagamento/' + d.cobranca_id, {
+        method: 'POST',
+        headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'}
+      }).then(function(r){ return r.json(); }).then(function(stripe){
+        return {cobranca: d, stripe: stripe};
+      });
+    } else {
+      throw new Error(d.detail || 'Erro ao fechar mes');
+    }
+  })
+  .then(function(res){
+    if(res.stripe.ok) {
+      var url = res.stripe.url_pagamento;
+      var resumo = 'COBRANCA + LINK GERADOS!
+
+';
+      resumo += 'Aluno: ' + res.cobranca.aluno_nome + '
+';
+      resumo += 'Valor: R$ ' + res.cobranca.valor.toFixed(2) + '
+';
+      resumo += res.cobranca.descricao + '
+';
+      resumo += 'Vence: ' + res.cobranca.data_vencimento.split('-').reverse().join('/') + '
+
+';
+      resumo += 'LINK STRIPE:
+' + url;
       alert(resumo);
-      mostrarToast('Cobranca registrada com sucesso!');
+      if(navigator.clipboard) {
+        navigator.clipboard.writeText(url);
+        mostrarToast('Link copiado! Cole no WhatsApp');
+      } else {
+        mostrarToast('Cobranca pronta!');
+      }
       carregarFechamentos();
       carregarFinanceiro();
     } else {
-      mostrarToast(d.detail || 'Erro ao fechar mes');
+      mostrarToast(res.stripe.detail || 'Erro ao gerar link');
     }
   })
-  .catch(function(){ mostrarToast('Erro de conexao'); });
+  .catch(function(err){ 
+    mostrarToast(err.message || 'Erro de conexao'); 
+  });
 }
 
 function carregarFinanceiro(){

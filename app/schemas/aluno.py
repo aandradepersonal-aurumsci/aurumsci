@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Optional
+from typing import Optional, Literal
 from pydantic import BaseModel, EmailStr
 from app.models import Sexo, ObjetivoAluno, NivelExperiencia
 
@@ -12,6 +12,12 @@ class AlunoBase(BaseModel):
     sexo: Optional[Sexo] = None
     objetivo: Optional[ObjetivoAluno] = None
     nivel_experiencia: Optional[NivelExperiencia] = NivelExperiencia.INICIANTE
+    # Cobranca
+    ciclo_cobranca: Optional[Literal['mensal', 'quinzenal', 'semanal', 'por_aula']] = 'mensal'
+    dia_fechamento: Optional[int] = 30
+    valor_aula: Optional[float] = None
+    valor_mensal: Optional[float] = None
+    dias_vencimento: Optional[int] = 5
 
 class AlunoCriar(AlunoBase):
     pass
@@ -25,6 +31,12 @@ class AlunoAtualizar(BaseModel):
     objetivo: Optional[ObjetivoAluno] = None
     nivel_experiencia: Optional[NivelExperiencia] = None
     ativo: Optional[bool] = None
+    # Cobranca
+    ciclo_cobranca: Optional[Literal['mensal', 'quinzenal', 'semanal', 'por_aula']] = None
+    dia_fechamento: Optional[int] = None
+    valor_aula: Optional[float] = None
+    valor_mensal: Optional[float] = None
+    dias_vencimento: Optional[int] = None
 
 class AlunoResposta(AlunoBase):
     id: int

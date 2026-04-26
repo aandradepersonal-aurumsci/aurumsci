@@ -63,6 +63,18 @@ class Aluno(Base):
     ativo = Column(Boolean, default=True)
     foto_url = Column(String(300))
     criado_em = Column(DateTime, default=datetime.utcnow)
+    # Cobranca automatica
+    ciclo_cobranca = Column(String(20), default='mensal')
+    dia_fechamento = Column(Integer, default=30)
+    valor_aula = Column(Float)
+    valor_mensal = Column(Float)
+    dias_vencimento = Column(Integer, default=5)
+    # Stripe
+    stripe_customer_id = Column(String(100))
+    stripe_subscription_id = Column(String(100))
+    # Exclusao de conta
+    data_solicitacao_exclusao = Column(DateTime)
+    token_exclusao = Column(String(100))
     personal = relationship("Personal", back_populates="alunos")
     
     

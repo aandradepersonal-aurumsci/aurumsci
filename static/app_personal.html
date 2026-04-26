@@ -859,9 +859,12 @@ function carregarDashboard(){
     document.getElementById('stat-alunos').textContent = d.total_alunos || 0;
     if(d.limite_alunos && d.limite_alunos < 999999) {
       document.getElementById('stat-limite').textContent = '/' + d.limite_alunos;
-      // Alerta visual quando perto do limite (80% ou mais)
-      if(d.total_alunos >= d.limite_alunos * 0.8) {
+      // Cores: verde (ok) | amarelo (90%+) | vermelho (100%)
+      var pct = d.total_alunos / d.limite_alunos;
+      if(pct >= 1) {
         document.getElementById('stat-alunos').style.color = 'var(--vermelho)';
+      } else if(pct >= 0.9) {
+        document.getElementById('stat-alunos').style.color = 'var(--ouro2)';
       }
     } else {
       document.getElementById('stat-limite').textContent = '';

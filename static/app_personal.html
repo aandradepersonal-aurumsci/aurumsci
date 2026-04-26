@@ -702,8 +702,8 @@ function fazerLogin(){
       nomePersonal = d.nome || 'Personal';
       localStorage.setItem('aurum_personal_token', token);
       localStorage.setItem('aurum_personal_nome', nomePersonal);
-      if(d.logo_url) localStorage.setItem('aurum_wl_logo', d.logo_url);
-      if(d.nome_empresa) localStorage.setItem('aurum_wl_nome', d.nome_empresa);
+      if(d.logo_url) { localStorage.setItem('aurum_wl_logo', d.logo_url); } else { localStorage.removeItem('aurum_wl_logo'); }
+      if(d.nome_empresa) { localStorage.setItem('aurum_wl_nome', d.nome_empresa); } else { localStorage.removeItem('aurum_wl_nome'); }
       carregarApp();
     } else {
       mostrarToast(d.detail || 'Email ou senha incorretos');

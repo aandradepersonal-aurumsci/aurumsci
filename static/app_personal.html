@@ -1082,6 +1082,7 @@ function abrirPerfilAluno(id){
     // Botões
     // Sub-abas do perfil
     html += '<div style="display:flex;gap:8px;margin-top:14px;overflow-x:auto;padding-bottom:2px">';
+    html += '<button onclick="subAba(' + id + ',\'dados\')" id="sab-dados" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">👤 DADOS</button>';
     html += '<button onclick="subAba(' + id + ',\'resumo\')" id="sab-resumo" style="padding:8px 14px;border-radius:10px;background:var(--ouro);border:none;color:#0A0A0F;font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">RESUMO</button>';
     html += '<button onclick="subAba(' + id + ',\'aval\')" id="sab-aval" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📋 AVAL.</button>';
     html += '<button onclick="subAba(' + id + ',\'treino\')" id="sab-treino" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">🏋️ TREINO</button>';
@@ -1090,7 +1091,7 @@ function abrirPerfilAluno(id){
     html += '</div>';
     html += '<div id="sub-aba-content" style="margin-top:12px"></div>';
     document.getElementById('perfil-aluno-content').innerHTML = html;
-    subAba(id, 'resumo');
+    subAba(id, 'dados');
   }).catch(function(){
     document.getElementById('perfil-aluno-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:20px">Erro ao carregar perfil</div>';
   });
@@ -2869,17 +2870,98 @@ function selecionarResultAluno(id, nome){
 }
 
 // ── SUB-ABAS DO PERFIL ───────────────────────────────────────
+
+function renderAbaDados(id, d){
+  d = d || {};
+  var ciclo = d.ciclo_cobranca || 'mensal';
+  var html = '';
+  html += '<div style="padding:8px 4px">';
+  html += '<div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2);margin-bottom:14px;letter-spacing:1px">👤 DADOS PESSOAIS E COBRANÇA</div>';
+  
+  // Bloco contato
+  html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:14px;margin-bottom:12px">';
+  html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:2px;margin-bottom:10px">📞 CONTATO</div>';
+  html += linhaInput('Nome', 'dad-nome', d.nome || '');
+  html += linhaInput('Email', 'dad-email', d.email || '', 'email');
+  html += linhaInput('Telefone', 'dad-telefone', d.telefone || '', 'tel');
+  html += linhaInput('CPF', 'dad-cpf', d.cpf || '');
+  html += linhaInput('Data Nasc.', 'dad-nasc', d.data_nascimento || '', 'date');
+  html += '</div>';
+  
+  // Bloco cobrança
+  html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:14px;margin-bottom:12px">';
+  html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:2px;margin-bottom:10px">💰 COBRANÇA</div>';
+  html += '<div style="margin-bottom:10px"><label style="font-size:11px;color:var(--cinza);display:block;margin-bottom:4px">Ciclo</label>';
+  html += '<select id="dad-ciclo" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--borda);border-radius:8px;color:var(--texto);font-size:13px">';
+  ['mensal','quinzenal','semanal','por_aula_mensal'].forEach(function(c){
+    var label = {mensal:'Mensal',quinzenal:'Quinzenal',semanal:'Semanal',por_aula_mensal:'Por Aula (avulso)'}[c];
+    html += '<option value="'+c+'"' + (ciclo===c?' selected':'') + '>'+label+'</option>';
+  });
+  html += '</select></div>';
+  html += linhaInput('Valor mensal (R$)', 'dad-valor-mensal', d.valor_mensal || '', 'number');
+  html += linhaInput('Valor por aula (R$)', 'dad-valor-aula', d.valor_aula || '', 'number');
+  html += linhaInput('Dia fechamento', 'dad-dia-fech', d.dia_fechamento || 30, 'number');
+  html += linhaInput('Dias p/ vencimento', 'dad-dias-venc', d.dias_vencimento || 5, 'number');
+  html += '</div>';
+  
+  // Botão salvar
+  html += '<button onclick="salvarDadosAluno('+id+')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:14px;letter-spacing:1px;cursor:pointer;margin-top:8px">💾 SALVAR DADOS</button>';
+  html += '</div>';
+  return html;
+}
+
+function linhaInput(label, id, value, type){
+  type = type || 'text';
+  return '<div style="margin-bottom:10px"><label style="font-size:11px;color:var(--cinza);display:block;margin-bottom:4px">'+label+'</label>' +
+    '<input type="'+type+'" id="'+id+'" value="'+(value||'')+'" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--borda);border-radius:8px;color:var(--texto);font-size:13px"></div>';
+}
+
+function salvarDadosAluno(id){
+  var dados = {
+    nome: document.getElementById('dad-nome').value,
+    email: document.getElementById('dad-email').value,
+    telefone: document.getElementById('dad-telefone').value,
+    cpf: document.getElementById('dad-cpf').value,
+    data_nascimento: document.getElementById('dad-nasc').value || null,
+    ciclo_cobranca: document.getElementById('dad-ciclo').value,
+    valor_mensal: parseFloat(document.getElementById('dad-valor-mensal').value) || null,
+    valor_aula: parseFloat(document.getElementById('dad-valor-aula').value) || null,
+    dia_fechamento: parseInt(document.getElementById('dad-dia-fech').value) || 30,
+    dias_vencimento: parseInt(document.getElementById('dad-dias-venc').value) || 5
+  };
+  fetch('/app-personal/aluno/' + id + '/dados', {
+    method: 'PUT',
+    headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
+    body: JSON.stringify(dados)
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(res){
+    if(res.ok){ alert('✅ Dados salvos!'); }
+    else { alert('❌ Erro: ' + (res.detail||res.error||'desconhecido')); }
+  })
+  .catch(function(e){ alert('❌ Erro: ' + e); });
+}
+
 function subAba(id, aba){
   var el = document.getElementById('sub-aba-content');
   if(!el) return;
   // Highlight botão ativo
-  ['resumo','treino','aval','period','result'].forEach(function(b){
+  ['dados','resumo','treino','aval','period','result'].forEach(function(b){
     var btn = document.getElementById('sab-'+b);
     if(!btn) return;
     if(b===aba){ btn.style.background='linear-gradient(135deg,var(--ouro),var(--ouro2))'; btn.style.color='#0A0A0F'; btn.style.border='none'; }
     else { btn.style.background='var(--bg)'; btn.style.color='var(--texto)'; btn.style.border='1px solid var(--borda)'; }
   });
-  if(aba === 'resumo'){
+  if(aba === 'dados'){
+    fetch('/app-personal/aluno/' + id + '/dados', {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      el.innerHTML = renderAbaDados(id, d);
+    })
+    .catch(function(e){
+      el.innerHTML = '<div style="color:var(--vermelho);padding:20px;text-align:center">Erro ao carregar dados: ' + e + '</div>';
+    });
+  } else if(aba === 'resumo'){
     el.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px">Selecione uma aba acima para ver os dados do aluno.</div>';
   } else if(aba === 'treino'){
     var nomAluno = (todosAlunos.find(function(a){return a.id===id;})||{}).nome||'Aluno';

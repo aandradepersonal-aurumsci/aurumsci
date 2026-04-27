@@ -1201,3 +1201,78 @@ def status_cobranca(
         "metodo_pagamento": row[4],
         "aluno_nome": row[5]
     }
+
+# ──────────────────────────────────────────────────────────────────────────────
+# ABA DADOS — GET e PUT dos dados pessoais e cobrança do aluno
+# ──────────────────────────────────────────────────────────────────────────────
+@router.get("/app-personal/aluno/{aluno_id}/dados")
+def get_dados_aluno(
+    aluno_id: int,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    aluno = db.query(Aluno).filter(
+        Aluno.id == aluno_id,
+        Aluno.personal_id == personal.id
+    ).first()
+    if not aluno:
+        raise HTTPException(404, "Aluno nao encontrado")
+    
+    return {
+        "nome": aluno.nome,
+        "email": aluno.email,
+        "telefone": aluno.telefone,
+        "cpf": aluno.cpf,
+        "data_nascimento": aluno.data_nascimento.isoformat() if aluno.data_nascimento else None,
+        "ciclo_cobranca": aluno.ciclo_cobranca or "mensal",
+        "valor_mensal": float(aluno.valor_mensal) if aluno.valor_mensal else None,
+        "valor_aula": float(aluno.valor_aula) if aluno.valor_aula else None,
+        "dia_fechamento": aluno.dia_fechamento or 30,
+        "dias_vencimento": aluno.dias_vencimento or 5,
+    }
+
+
+@router.put("/app-personal/aluno/{aluno_id}/dados")
+def put_dados_aluno(
+    aluno_id: int,
+    payload: dict,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    from datetime import datetime as dt
+    
+    aluno = db.query(Aluno).filter(
+        Aluno.id == aluno_id,
+        Aluno.personal_id == personal.id
+    ).first()
+    if not aluno:
+        raise HTTPException(404, "Aluno nao encontrado")
+    
+    # Atualiza campos permitidos
+    if "nome" in payload and payload["nome"]:
+        aluno.nome = payload["nome"]
+    if "email" in payload:
+        aluno.email = payload["email"] or None
+    if "telefone" in payload:
+        aluno.telefone = payload["telefone"] or None
+    if "cpf" in payload:
+        aluno.cpf = payload["cpf"] or None
+    if "data_nascimento" in payload and payload["data_nascimento"]:
+        try:
+            aluno.data_nascimento = dt.strptime(payload["data_nascimento"], "%Y-%m-%d").date()
+        except Exception:
+            pass
+    if "ciclo_cobranca" in payload and payload["ciclo_cobranca"]:
+        aluno.ciclo_cobranca = payload["ciclo_cobranca"]
+    if "valor_mensal" in payload:
+        aluno.valor_mensal = float(payload["valor_mensal"]) if payload["valor_mensal"] else None
+    if "valor_aula" in payload:
+        aluno.valor_aula = float(payload["valor_aula"]) if payload["valor_aula"] else None
+    if "dia_fechamento" in payload and payload["dia_fechamento"]:
+        aluno.dia_fechamento = int(payload["dia_fechamento"])
+    if "dias_vencimento" in payload and payload["dias_vencimento"]:
+        aluno.dias_vencimento = int(payload["dias_vencimento"])
+    
+    db.commit()
+    return {"ok": True, "mensagem": "Dados atualizados"}
+

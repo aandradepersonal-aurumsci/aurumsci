@@ -1041,6 +1041,29 @@ def gerar_link_pagamento(
         })
         db.commit()
         
+        # ── Envia email com link de pagamento ──
+        try:
+            from app.services.email_service import enviar_email
+            from app.services.email_templates import email_cobranca
+            data_venc_fmt = row[4].strftime("%d/%m/%Y") if row[4] else ""
+            html = email_cobranca(
+                aluno_nome=aluno_nome,
+                descricao=descricao,
+                valor=float(row[2]),
+                data_vencimento=data_venc_fmt,
+                url_pagamento=session.url,
+                personal_nome=personal.nome or "Seu Personal Trainer"
+            )
+            email_ok = enviar_email(
+                para=aluno_email,
+                assunto=f"Cobranca AurumSci - {descricao}",
+                html=html
+            )
+            print(f"[EMAIL COBRANCA] Aluno: {aluno_email} | Status: {email_ok}")
+        except Exception as e:
+            print(f"[EMAIL ERROR] {e}")
+            email_ok = False
+        
         return {
             "ok": True,
             "url_pagamento": session.url,
@@ -1048,7 +1071,8 @@ def gerar_link_pagamento(
             "valor": float(row[2]),
             "aluno_nome": aluno_nome,
             "aluno_email": aluno_email,
-            "descricao": descricao
+            "descricao": descricao,
+            "email_enviado": email_ok
         }
         
     except Exception as e:

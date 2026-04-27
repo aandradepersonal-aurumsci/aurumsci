@@ -1,7 +1,7 @@
 """
 Router — App Personal (expandido)
 """
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form, Request
 from pydantic import BaseModel
 from typing import Optional, List
 from sqlalchemy.orm import Session
@@ -1053,3 +1053,127 @@ def gerar_link_pagamento(
         
     except Exception as e:
         raise HTTPException(400, f"Erro ao criar sessao Stripe: {str(e)}")
+
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# WEBHOOK STRIPE — Confirmacao automatica de pagamentos
+# ──────────────────────────────────────────────────────────────────────────────
+
+@router.post("/webhooks/stripe")
+async def webhook_stripe(request: Request, db: Session = Depends(get_db)):
+    """
+    Webhook Stripe - confirma pagamento automaticamente.
+    Stripe envia POST aqui quando algo acontece (pagamento confirmado, etc.)
+    """
+    import stripe
+    from app.config import settings
+    from sqlalchemy import text
+    
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    
+    # Pega o payload bruto e a assinatura
+    payload = await request.body()
+    sig_header = request.headers.get("stripe-signature", "")
+    webhook_secret = getattr(settings, "STRIPE_WEBHOOK_SECRET", "")
+    
+    try:
+        # Verifica assinatura (so se tiver secret configurado)
+        if webhook_secret:
+            event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
+        else:
+            # Sem secret = aceita sem validar (modo dev)
+            import json
+            event = json.loads(payload)
+    except ValueError as e:
+        raise HTTPException(400, f"Payload invalido: {e}")
+    except stripe.error.SignatureVerificationError as e:
+        raise HTTPException(400, f"Assinatura invalida: {e}")
+    
+    # Processa o evento
+    event_type = event.get("type") if isinstance(event, dict) else event["type"]
+    event_data = event.get("data", {}).get("object", {}) if isinstance(event, dict) else event["data"]["object"]
+    
+    if event_type == "checkout.session.completed":
+        # Pagamento confirmado!
+        session_id = event_data.get("id")
+        metadata = event_data.get("metadata", {}) or {}
+        cobranca_id = metadata.get("cobranca_id")
+        
+        if cobranca_id:
+            # Atualiza status no banco
+            sql = text("""
+                UPDATE cobrancas 
+                SET status = 'pago', 
+                    data_pagamento = NOW(),
+                    metodo_pagamento = :metodo,
+                    atualizado_em = NOW()
+                WHERE id = :cid AND status != 'pago'
+            """)
+            
+            metodo = "stripe_card"
+            if event_data.get("payment_method_types"):
+                metodo = "stripe_" + str(event_data["payment_method_types"][0])
+            
+            db.execute(sql, {
+                "cid": int(cobranca_id),
+                "metodo": metodo
+            })
+            db.commit()
+            
+            # TODO: Trigger NFe + email aluno
+            return {
+                "received": True,
+                "processed": True,
+                "cobranca_id": cobranca_id,
+                "status": "pago"
+            }
+    
+    elif event_type == "checkout.session.expired":
+        # Sessao expirou sem pagamento
+        session_id = event_data.get("id")
+        metadata = event_data.get("metadata", {}) or {}
+        cobranca_id = metadata.get("cobranca_id")
+        
+        if cobranca_id:
+            sql = text("""
+                UPDATE cobrancas 
+                SET status = 'expirada', atualizado_em = NOW()
+                WHERE id = :cid AND status NOT IN ('pago', 'cancelada')
+            """)
+            db.execute(sql, {"cid": int(cobranca_id)})
+            db.commit()
+    
+    return {"received": True}
+
+
+@router.get("/financeiro/status-cobranca/{cobranca_id}")
+def status_cobranca(
+    cobranca_id: int,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Endpoint pro personal verificar status de uma cobranca."""
+    from sqlalchemy import text
+    
+    sql = text("""
+        SELECT c.id, c.valor, c.status, c.data_pagamento, c.metodo_pagamento,
+               a.nome
+        FROM cobrancas c
+        JOIN alunos a ON a.id = c.aluno_id
+        WHERE c.id = :cid AND a.personal_id = :pid
+    """)
+    
+    row = db.execute(sql, {"cid": cobranca_id, "pid": personal.id}).fetchone()
+    
+    if not row:
+        raise HTTPException(404, "Cobranca nao encontrada")
+    
+    return {
+        "id": row[0],
+        "valor": float(row[1]),
+        "status": row[2],
+        "data_pagamento": row[3].isoformat() if row[3] else None,
+        "metodo_pagamento": row[4],
+        "aluno_nome": row[5]
+    }

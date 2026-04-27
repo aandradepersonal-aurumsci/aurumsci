@@ -1205,7 +1205,7 @@ def status_cobranca(
 # ──────────────────────────────────────────────────────────────────────────────
 # ABA DADOS — GET e PUT dos dados pessoais e cobrança do aluno
 # ──────────────────────────────────────────────────────────────────────────────
-@router.get("/app-personal/aluno/{aluno_id}/dados")
+@router.get("/aluno/{aluno_id}/dados")
 def get_dados_aluno(
     aluno_id: int,
     personal: Personal = Depends(get_personal_atual),
@@ -1232,7 +1232,7 @@ def get_dados_aluno(
     }
 
 
-@router.put("/app-personal/aluno/{aluno_id}/dados")
+@router.put("/aluno/{aluno_id}/dados")
 def put_dados_aluno(
     aluno_id: int,
     payload: dict,

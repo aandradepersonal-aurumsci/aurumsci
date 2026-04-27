@@ -35,7 +35,7 @@ def enviar_email_boas_vindas(nome, email):
       <a href="https://www.aurumsc.com.br/aluno" style="display:inline-block;background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#0A0A0F;padding:16px 40px;border-radius:12px;text-decoration:none;font-weight:900;font-size:16px;letter-spacing:2px;">COMEÇAR AGORA →</a>
     </div>
     <div style="text-align:center;">
-      <p style="color:#555;font-size:12px;">Trial de 14 dias grátis. Após esse período, R$49,90/mês será cobrado automaticamente.<br>
+      <p style="color:#555;font-size:12px;">Trial de 7 dias grátis. Após esse período, R$49,90/mês será cobrado automaticamente.<br>
       Cancele quando quiser, sem burocracia.<br><br>
       <strong style="color:#C9A84C;">Equipe AurumSci</strong> — Ciência que vira resultado.</p>
     </div>
@@ -94,7 +94,7 @@ def enviar_email_boas_vindas_personal(nome, email, plano="bronze"):
     <div style="height:2px;background:linear-gradient(90deg,transparent,#C9A84C,transparent);margin-bottom:32px;"></div>
     <div style="background:#12121A;border:1px solid #2A2A3A;border-radius:16px;padding:28px;margin-bottom:20px;">
       <div style="font-size:22px;font-weight:700;color:#C9A84C;margin-bottom:12px;">Bem-vindo, {nome}! Plano {nome_plano} ativado 🏆</div>
-      <p style="color:#ccc;line-height:1.9;font-size:15px;margin:0 0 16px 0;">Seu acesso ao <strong style="color:#C9A84C;">AurumSci PRO</strong> está ativo com 14 dias grátis.</p>
+      <p style="color:#ccc;line-height:1.9;font-size:15px;margin:0 0 16px 0;">Seu acesso ao <strong style="color:#C9A84C;">AurumSci PRO</strong> está ativo com 7 dias grátis.</p>
       <div style="background:#0A0A0F;border-radius:12px;padding:20px;">
         <div style="font-size:13px;color:#C9A84C;font-weight:700;margin-bottom:12px;">COMO COMEÇAR:</div>
         <div style="color:#ccc;font-size:14px;line-height:2;">
@@ -109,7 +109,7 @@ def enviar_email_boas_vindas_personal(nome, email, plano="bronze"):
       <a href="https://aurumsc.com.br/personal" style="display:inline-block;background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#0A0A0F;padding:16px 40px;border-radius:12px;text-decoration:none;font-weight:900;font-size:16px;letter-spacing:2px;">ACESSAR O PRO →</a>
     </div>
     <div style="text-align:center;">
-      <p style="color:#555;font-size:12px;">14 dias grátis. Após esse período, R$49,90/mês será cobrado automaticamente.<br>
+      <p style="color:#555;font-size:12px;">7 dias grátis. Após esse período, R$49,90/mês será cobrado automaticamente.<br>
       <strong style="color:#C9A84C;">Equipe AurumSci</strong></p>
     </div>
   </div>
@@ -147,7 +147,7 @@ def criar_sessao(dados: CheckoutSchema, db: Session = Depends(get_db)):
             payment_method_types=["card"],
             line_items=[{"price_data": {"currency": "brl", "product_data": {"name": dados.plano}, "unit_amount": dados.valor, "recurring": {"interval": "month"}}, "quantity": 1}],
             mode="subscription",
-            subscription_data={"trial_period_days": 14},
+            subscription_data={"trial_period_days": 7},
             success_url="https://www.aurumsc.com.br/aluno?pagamento=sucesso",
             cancel_url="https://www.aurumsc.com.br/aluno?pagamento=cancelado",
             metadata={"aluno_id": str(dados.aluno_id)},
@@ -183,7 +183,7 @@ def criar_sessao_personal(dados: CheckoutPersonalSchema, db: Session = Depends(g
             payment_method_types=["card"],
             line_items=[{"price_data": {"currency": "brl", "product_data": {"name": f"AurumSci PRO — Plano {dados.plano.capitalize()}"}, "unit_amount": dados.valor, "recurring": {"interval": "month"}}, "quantity": 1}],
             mode="subscription",
-            subscription_data={"trial_period_days": 14},
+            subscription_data={"trial_period_days": 7},
             success_url="https://www.aurumsc.com.br/personal?cadastro=sucesso",
             cancel_url="https://www.aurumsc.com.br/pro",
             metadata={"personal_id": str(dados.personal_id), "plano": dados.plano},
@@ -242,7 +242,7 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                       <p style='color:#ccc;font-size:15px;margin:0 0 10px 0'><strong style='color:#fff'>Nome:</strong> {personal.nome}</p>
                       <p style='color:#ccc;font-size:15px;margin:0 0 10px 0'><strong style='color:#fff'>Email:</strong> {personal.email}</p>
                       <p style='color:#ccc;font-size:15px;margin:0 0 10px 0'><strong style='color:#fff'>Plano:</strong> {plano.capitalize()}</p>
-                      <p style='color:#ccc;font-size:15px;margin:0'><strong style='color:#fff'>Status:</strong> Trial 14 dias</p>
+                      <p style='color:#ccc;font-size:15px;margin:0'><strong style='color:#fff'>Status:</strong> Trial 7 dias</p>
                     </div>
                     <p style='color:#888;font-size:12px'>AurumSci — aurumsc.com.br</p>
                     </body></html>"""

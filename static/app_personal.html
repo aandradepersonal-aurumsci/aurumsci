@@ -348,6 +348,38 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     </div>
   </div>
 
+  <!-- AULAS -->
+  <div class="screen" id="screen-aulas">
+    <div class="section-title">AULAS</div>
+    <div class="section-sub" id="aulas-data-titulo">Carregando...</div>
+    
+    <!-- Navegacao de datas -->
+    <div style="display:flex;align-items:center;gap:8px;margin:16px 0;background:var(--bg);border:1px solid var(--borda);border-radius:14px;padding:8px">
+      <button onclick="aulasNavegar(-1)" style="background:transparent;border:none;color:var(--ouro);font-size:24px;cursor:pointer;padding:4px 12px">‹</button>
+      <div style="flex:1;text-align:center;font-family:Bebas Neue;font-size:20px;color:var(--ouro2);letter-spacing:1.5px" id="aulas-data-display">--/--/----</div>
+      <button onclick="aulasNavegar(1)" style="background:transparent;border:none;color:var(--ouro);font-size:24px;cursor:pointer;padding:4px 12px">›</button>
+    </div>
+    <button onclick="aulasIrParaHoje()" style="width:100%;background:rgba(201,168,76,.1);border:1px solid var(--ouro);color:var(--ouro);padding:8px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:16px">HOJE</button>
+    
+    <!-- Autocomplete -->
+    <div style="position:relative;margin-bottom:20px">
+      <input type="text" id="aulas-busca" placeholder="Digite o nome do aluno..." oninput="aulasBuscar(this.value)" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--borda);border-radius:12px;color:var(--branco);font-size:14px;outline:none">
+      <div id="aulas-sugestoes" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--borda);border-radius:12px;margin-top:4px;max-height:200px;overflow-y:auto;z-index:100"></div>
+    </div>
+    
+    <!-- Lista do dia -->
+    <div style="font-family:Bebas Neue;font-size:16px;color:var(--ouro2);letter-spacing:1.5px;margin-bottom:8px">ALUNOS QUE TREINARAM</div>
+    <div id="aulas-lista">
+      <div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px">Nenhuma aula registrada</div>
+    </div>
+    
+    <!-- Resumo -->
+    <div id="aulas-resumo" style="margin-top:20px;padding:16px;background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.2);border-radius:12px;text-align:center">
+      <div style="font-size:11px;color:var(--cinza);letter-spacing:1.5px">TOTAL DO DIA</div>
+      <div style="font-family:Bebas Neue;font-size:32px;color:var(--verde)" id="aulas-total">0</div>
+    </div>
+  </div>
+  
   <!-- LOJA PRO -->
   <div class="screen" id="screen-loja">
     <div class="section-title">LOJA PRO</div>
@@ -1168,6 +1200,167 @@ function filtroStatus(status, el){
 var pagamentosDB = [];
 
 
+
+// ── AULAS - TELA COMPLETA ─────────────────────────────────
+var aulasDataAtual = new Date();
+
+function abrirAulas() {
+  // Vai pra tela aulas
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('screen-aulas').classList.add('active');
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  aulasIrParaHoje();
+}
+
+function aulasIrParaHoje() {
+  aulasDataAtual = new Date();
+  aulasAtualizar();
+}
+
+function aulasNavegar(dias) {
+  aulasDataAtual.setDate(aulasDataAtual.getDate() + dias);
+  aulasAtualizar();
+}
+
+function aulasFormatarData(d) {
+  var dia = String(d.getDate()).padStart(2, '0');
+  var mes = String(d.getMonth() + 1).padStart(2, '0');
+  var ano = d.getFullYear();
+  return dia + '/' + mes + '/' + ano;
+}
+
+function aulasFormatarDataAPI(d) {
+  var dia = String(d.getDate()).padStart(2, '0');
+  var mes = String(d.getMonth() + 1).padStart(2, '0');
+  var ano = d.getFullYear();
+  return ano + '-' + mes + '-' + dia;
+}
+
+function aulasNomeDiaSemana(d) {
+  var dias = ['domingo', 'segunda-feira', 'terca-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sabado'];
+  return dias[d.getDay()];
+}
+
+function aulasAtualizar() {
+  var dataDisplay = aulasFormatarData(aulasDataAtual);
+  var nomeDia = aulasNomeDiaSemana(aulasDataAtual);
+  document.getElementById('aulas-data-display').textContent = dataDisplay;
+  document.getElementById('aulas-data-titulo').textContent = nomeDia.charAt(0).toUpperCase() + nomeDia.slice(1);
+  
+  // Limpa input
+  document.getElementById('aulas-busca').value = '';
+  document.getElementById('aulas-sugestoes').style.display = 'none';
+  
+  // Carrega lista do dia
+  aulasCarregarLista();
+}
+
+function aulasCarregarLista() {
+  var dataAPI = aulasFormatarDataAPI(aulasDataAtual);
+  
+  fetch('/app-personal/aulas/dia?data=' + dataAPI, {
+    headers: {'Authorization':'Bearer '+token}
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var lista = d.aulas || [];
+    var container = document.getElementById('aulas-lista');
+    
+    if(lista.length === 0) {
+      container.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px">Nenhuma aula registrada</div>';
+    } else {
+      var html = '';
+      lista.forEach(function(a){
+        html += '<div style="display:flex;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--borda);border-radius:12px;padding:12px;margin-bottom:8px">';
+        html += '<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--ouro),var(--ouro2));display:flex;align-items:center;justify-content:center;color:#0A0A0F;font-weight:700">' + a.aluno_nome.charAt(0).toUpperCase() + '</div>';
+        html += '<div style="flex:1"><div style="font-weight:700;color:var(--branco)">' + a.aluno_nome + '</div>';
+        html += '<div style="font-size:10px;color:var(--cinza);margin-top:2px">Check-in registrado</div></div>';
+        html += '<button onclick="aulasRemover(' + a.id + ', \'' + a.aluno_nome.replace(/[\'\"]/g,'') + '\')" style="background:transparent;border:none;color:var(--vermelho);font-size:18px;cursor:pointer;padding:4px 8px">×</button>';
+        html += '</div>';
+      });
+      container.innerHTML = html;
+    }
+    
+    document.getElementById('aulas-total').textContent = lista.length;
+  })
+  .catch(function(){
+    document.getElementById('aulas-lista').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px">Erro ao carregar</div>';
+  });
+}
+
+function aulasBuscar(termo) {
+  var sugestoes = document.getElementById('aulas-sugestoes');
+  
+  if(!termo || termo.length < 2) {
+    sugestoes.style.display = 'none';
+    return;
+  }
+  
+  var lista = todosAlunos || [];
+  var ativos = lista.filter(function(a){ return a.ativo; });
+  var termoLower = termo.toLowerCase();
+  var encontrados = ativos.filter(function(a){
+    return (a.nome || '').toLowerCase().indexOf(termoLower) !== -1;
+  }).slice(0, 5);
+  
+  if(encontrados.length === 0) {
+    sugestoes.innerHTML = '<div style="padding:12px;color:var(--cinza);font-size:13px">Nenhum aluno encontrado</div>';
+    sugestoes.style.display = 'block';
+    return;
+  }
+  
+  var html = '';
+  encontrados.forEach(function(a){
+    var nomeClean = (a.nome || '').replace(/['"]/g, '');
+    html += '<div onclick="aulasMarcar(' + a.id + ', \'' + nomeClean + '\')" style="padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--borda);display:flex;align-items:center;gap:10px" onmouseover="this.style.background=\'rgba(201,168,76,0.1)\'" onmouseout="this.style.background=\'transparent\'">';
+    html += '<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--ouro),var(--ouro2));display:flex;align-items:center;justify-content:center;color:#0A0A0F;font-weight:700;font-size:12px">' + a.nome.charAt(0).toUpperCase() + '</div>';
+    html += '<div style="color:var(--branco);font-size:14px">' + a.nome + '</div></div>';
+  });
+  sugestoes.innerHTML = html;
+  sugestoes.style.display = 'block';
+}
+
+function aulasMarcar(alunoId, alunoNome) {
+  var dataAPI = aulasFormatarDataAPI(aulasDataAtual);
+  
+  fetch('/app-personal/aulas/checkin', {
+    method: 'POST',
+    headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({aluno_id: alunoId, data: dataAPI, observacoes: ''})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.ok) {
+      mostrarToast('Aula registrada para ' + alunoNome + '!');
+      document.getElementById('aulas-busca').value = '';
+      document.getElementById('aulas-sugestoes').style.display = 'none';
+      aulasCarregarLista();
+    } else {
+      mostrarToast(d.detail || 'Erro ao registrar');
+    }
+  })
+  .catch(function(){ mostrarToast('Erro de conexao'); });
+}
+
+function aulasRemover(presencaId, alunoNome) {
+  if(!confirm('Remover check-in de ' + alunoNome + '?')) return;
+  
+  fetch('/app-personal/aulas/checkin/' + presencaId, {
+    method: 'DELETE',
+    headers: {'Authorization':'Bearer '+token}
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.ok) {
+      mostrarToast('Check-in removido');
+      aulasCarregarLista();
+    } else {
+      mostrarToast(d.detail || 'Erro');
+    }
+  })
+  .catch(function(){ mostrarToast('Erro de conexao'); });
+}
+
 function carregarFechamentos() {
   fetch('/app-personal/financeiro/fechamentos-pendentes', {
     headers: {'Authorization':'Bearer '+token}
@@ -1235,11 +1428,7 @@ function carregarFechamentos() {
 }
 
 function fecharMesAluno(alunoId, alunoNome, valor) {
-  var msg = 'Fechar mes para ' + alunoNome + '?
-
-Valor a cobrar: R$ ' + valor.toFixed(2) + '
-
-Esta acao vai criar a cobranca e gerar link de pagamento.';
+  var msg = 'Fechar mes para ' + alunoNome + '?\n\nValor a cobrar: R$ ' + valor.toFixed(2) + '\n\nEsta acao vai criar a cobranca e gerar link de pagamento.';
   if(!confirm(msg)) return;
   
   // PASSO 1: Cria cobranca
@@ -1264,20 +1453,12 @@ Esta acao vai criar a cobranca e gerar link de pagamento.';
   .then(function(res){
     if(res.stripe.ok) {
       var url = res.stripe.url_pagamento;
-      var resumo = 'COBRANCA + LINK GERADOS!
-
-';
-      resumo += 'Aluno: ' + res.cobranca.aluno_nome + '
-';
-      resumo += 'Valor: R$ ' + res.cobranca.valor.toFixed(2) + '
-';
-      resumo += res.cobranca.descricao + '
-';
-      resumo += 'Vence: ' + res.cobranca.data_vencimento.split('-').reverse().join('/') + '
-
-';
-      resumo += 'LINK STRIPE:
-' + url;
+      var resumo = 'COBRANCA + LINK GERADOS!\n\n';
+      resumo += 'Aluno: ' + res.cobranca.aluno_nome + '\n';
+      resumo += 'Valor: R$ ' + res.cobranca.valor.toFixed(2) + '\n';
+      resumo += res.cobranca.descricao + '\n';
+      resumo += 'Vence: ' + res.cobranca.data_vencimento.split('-').reverse().join('/') + '\n\n';
+      resumo += 'LINK STRIPE:\n' + url;
       alert(resumo);
       if(navigator.clipboard) {
         navigator.clipboard.writeText(url);

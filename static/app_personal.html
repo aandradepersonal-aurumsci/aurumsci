@@ -3673,12 +3673,13 @@ function baixarMeuContrato() {
     <div style="background:var(--bg);border:2px solid var(--ouro);border-radius:12px;padding:14px;margin-bottom:14px">
       <div style="font-size:11px;color:var(--ouro);letter-spacing:1px;margin-bottom:10px;font-weight:700">📋 INFORME SEUS DADOS PROFISSIONAIS</div>
       <div style="margin-bottom:10px">
-        <label style="font-size:11px;color:var(--cinza);display:block;margin-bottom:4px">Número do CREF</label>
-        <input type="text" id="cont-cref" placeholder="Ex: 062702-G" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--borda);border-radius:8px;color:var(--texto);font-size:13px">
+        <label style="font-size:11px;color:var(--cinza);display:block;margin-bottom:4px">Número do CREF (apenas números)</label>
+        <input type="text" id="cont-cref" placeholder="Ex: 062702" maxlength="7" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--borda);border-radius:8px;color:var(--texto);font-size:13px" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+        <div style="font-size:10px;color:var(--cinza);margin-top:4px;font-style:italic">💡 Digite apenas o número. Sem letras ou /UF.</div>
       </div>
       <div style="margin-bottom:10px">
         <label style="font-size:11px;color:var(--cinza);display:block;margin-bottom:4px">Estado (UF)</label>
-        <input type="text" id="cont-cref-uf" placeholder="SP" maxlength="2" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--borda);border-radius:8px;color:var(--texto);font-size:13px;text-transform:uppercase">
+        <input type="text" id="cont-cref-uf" placeholder="Ex: SP" maxlength="2" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--borda);border-radius:8px;color:var(--texto);font-size:13px;text-transform:uppercase">
       </div>
       <a href="https://www.confef.org.br/extra/perfil/" target="_blank" style="display:block;text-align:center;padding:12px;background:linear-gradient(135deg,#0066cc,#003d7a);color:#fff;border-radius:8px;text-decoration:none;font-family:Bebas Neue;font-size:14px;letter-spacing:1px;margin-bottom:8px">🔗 CONSULTAR MEU CREF NO CONFEF</a>
       <div style="font-size:10px;color:var(--cinza);text-align:center;font-style:italic">Verifique se está ATIVO e ADIMPLENTE antes de continuar</div>

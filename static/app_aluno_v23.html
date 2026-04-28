@@ -931,7 +931,7 @@ window.onload = function(){
       nomeAluno = localStorage.getItem('aurum_nome') || '';
       var onbDone = localStorage.getItem('aurum_onb_done');
       if(onbDone){
-        mostrarApp();
+        mostrarApp(); detectarPersonalEAjustarAbas();
       } else {
         // Verifica se já tem plano ativo no backend (caso senha salva / nova aba)
         fetch('/app-aluno/treino-hoje', {headers:{'Authorization':'Bearer '+token}})
@@ -1100,7 +1100,7 @@ function fazerLogin(){
       if(d.idade) localStorage.setItem('aurum_idade', d.idade);
       var onbDone = localStorage.getItem('aurum_onb_done');
       if(onbDone){
-        mostrarApp();
+        mostrarApp(); detectarPersonalEAjustarAbas();
         verificarPagamentosAluno();
       } else {
         fetch('/app-aluno/treino-hoje', {headers:{'Authorization':'Bearer '+token}})
@@ -1108,7 +1108,7 @@ function fazerLogin(){
         .then(function(t){
           if(t && (t.sessao || t.mensagem)){
             localStorage.setItem('aurum_onb_done','1');
-            mostrarApp();
+            mostrarApp(); detectarPersonalEAjustarAbas();
             verificarPagamentosAluno();
           } else { iniciarOnboarding(); }
         }).catch(function(){ iniciarOnboarding(); });
@@ -1552,7 +1552,7 @@ function finalizarAppAposOnboarding(){
   localStorage.setItem('aurum_onb_done', '1');
   if(!localStorage.getItem('aurum_data_inicio')) localStorage.setItem('aurum_data_inicio', Date.now().toString());
   document.getElementById('screen-onboarding').style.display = 'none';
-  mostrarApp();
+  mostrarApp(); detectarPersonalEAjustarAbas();
   setTimeout(function(){
     var tabTreino = document.querySelector('.tab[onclick*="treino"]');
     if(tabTreino) mudarTab('treino', tabTreino);
@@ -1575,7 +1575,7 @@ function _dummy(){
   }
   localStorage.setItem('aurum_onb_done', '1');
   document.getElementById('screen-onboarding').style.display = 'none';
-  mostrarApp();
+  mostrarApp(); detectarPersonalEAjustarAbas();
 }
 
 var modoMedidasAvancado = false;

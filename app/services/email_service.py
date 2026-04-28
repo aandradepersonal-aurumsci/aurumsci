@@ -12,7 +12,7 @@ def enviar_email(para: str, assunto: str, html: str) -> bool:
         r = requests.post(
             "https://api.resend.com/emails",
             headers={"Authorization": f"Bearer {RESEND_API_KEY}", "Content-Type": "application/json"},
-            json={"from": EMAIL_FROM, "to": [para], "subject": assunto, "html": html}
+            json={"from": EMAIL_FROM, "to": [para], "subject": assunto, "html": html, "reply_to": "andrepersonal395@gmail.com"}
         )
         print(f"Email enviado: {r.status_code}")
         return r.status_code == 200

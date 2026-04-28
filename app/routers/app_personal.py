@@ -1320,6 +1320,48 @@ def aceitar_contrato(
     
     db.commit()
     
+    # Gera PDF do contrato + envia email de boas-vindas com PDF anexo
+    try:
+        from app.services.contrato_pdf import gerar_pdf_contrato
+        from app.services.email_service import enviar_email_com_anexo
+        
+        pdf_path = gerar_pdf_contrato(personal)
+        
+        html_email = f"""
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#f9f9f9">
+            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:40px 20px;text-align:center;border-radius:12px 12px 0 0">
+                <h1 style="color:#C9A961;font-family:Georgia,serif;margin:0;font-size:32px;letter-spacing:4px">AURUMSCI</h1>
+                <p style="color:#888;margin:8px 0 0;font-size:11px;letter-spacing:3px">CIENCIA QUE VIRA RESULTADO</p>
+            </div>
+            <div style="background:#fff;padding:32px 24px;border-radius:0 0 12px 12px">
+                <h2 style="color:#C9A961;margin-top:0">Bem-vindo a familia AurumSci! 🏆</h2>
+                <p style="color:#333;line-height:1.7">Ola <strong>{personal.nome}</strong>,</p>
+                <p style="color:#333;line-height:1.7">Que alegria ter voce conosco! Seu contrato esta confirmado e <strong>blindado juridicamente</strong>.</p>
+                <p style="color:#333;line-height:1.7">Em anexo voce encontra o PDF oficial assinado digitalmente — guarde com voce, esta tambem disponivel a qualquer momento no menu do app PRO.</p>
+                <div style="background:#f5f5f0;border-left:4px solid #C9A961;padding:16px;margin:24px 0;border-radius:6px">
+                    <p style="color:#666;margin:0;font-size:14px"><strong>Tudo certo com o juridico.</strong> Agora e foco no sucesso com seus alunos!</p>
+                </div>
+                <p style="color:#333;line-height:1.7">Qualquer duvida, sugestao ou problema, fale comigo direto:<br>
+                📧 <a href="mailto:andrepersonal395@gmail.com" style="color:#C9A961">andrepersonal395@gmail.com</a></p>
+                <p style="color:#333;line-height:1.7;margin-top:32px">Bons treinos e bons alunos! 💪</p>
+                <p style="color:#666;font-size:13px;margin-top:24px">— Andre Andrade<br>Fundador AurumSci<br>CREF 62702-G/SP</p>
+            </div>
+            <div style="text-align:center;padding:16px;color:#999;font-size:11px">
+                <p>AurumSci · Ciencia, metodo e inteligencia artificial</p>
+            </div>
+        </div>
+        """
+        
+        enviar_email_com_anexo(
+            para=personal.email,
+            assunto="🏆 Bem-vindo a familia AurumSci! Seu contrato esta confirmado",
+            html=html_email,
+            anexo_path=pdf_path,
+            nome_anexo=f"contrato_aurumsci_{personal.nome.replace(' ', '_')}.pdf"
+        )
+    except Exception as e:
+        print(f"[CONTRATO PDF/EMAIL] Erro: {e}")
+    
     return {
         "ok": True,
         "mensagem": "Contrato aceito e CREF registrado",

@@ -56,6 +56,38 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["200/minute"])
 # ── Banco ─────────────────────────────────────────────────────
 Base.metadata.create_all(bind=engine)
 
+# ──────────────────────────────────────────────────────────────────────────────
+# AUTO-MIGRATION: adiciona colunas novas em tabelas existentes (27/04/2026)
+# ──────────────────────────────────────────────────────────────────────────────
+def auto_migrate():
+    """Adiciona colunas novas no banco se ainda nao existirem."""
+    from sqlalchemy import text
+    
+    migrations = [
+        # CREF + Contrato no Personal
+        "ALTER TABLE personals ADD COLUMN IF NOT EXISTS cref_estado VARCHAR(2)",
+        "ALTER TABLE personals ADD COLUMN IF NOT EXISTS cref_consultado_confef BOOLEAN DEFAULT FALSE",
+        "ALTER TABLE personals ADD COLUMN IF NOT EXISTS cref_status VARCHAR(20) DEFAULT 'pendente'",
+        "ALTER TABLE personals ADD COLUMN IF NOT EXISTS cref_validado_em TIMESTAMP",
+        "ALTER TABLE personals ADD COLUMN IF NOT EXISTS contrato_aceito_em TIMESTAMP",
+        "ALTER TABLE personals ADD COLUMN IF NOT EXISTS contrato_aceito_ip VARCHAR(45)",
+    ]
+    
+    with engine.connect() as conn:
+        for sql in migrations:
+            try:
+                conn.execute(text(sql))
+                conn.commit()
+                print(f"[MIGRATION OK] {sql[:80]}")
+            except Exception as e:
+                print(f"[MIGRATION SKIP] {sql[:50]} - {e}")
+
+try:
+    auto_migrate()
+except Exception as e:
+    print(f"[AUTO-MIGRATE WARN] {e}")
+
+
 # ── App ───────────────────────────────────────────────────────
 app = FastAPI(
     title="AurumSci",

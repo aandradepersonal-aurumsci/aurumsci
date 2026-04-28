@@ -1276,3 +1276,69 @@ def put_dados_aluno(
     db.commit()
     return {"ok": True, "mensagem": "Dados atualizados"}
 
+
+# ──────────────────────────────────────────────────────────────────────────────
+# CONTRATO + CREF — Aceite e validacao profissional (27/04/2026)
+# ──────────────────────────────────────────────────────────────────────────────
+@router.post("/contrato/aceitar")
+def aceitar_contrato(
+    payload: dict,
+    request: Request,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """
+    Registra o aceite do contrato AurumSci-Personal.
+    Salva: CREF, estado, confirmacao consulta CONFEF, IP, timestamp.
+    """
+    from datetime import datetime as dt
+    
+    cref = (payload.get("cref") or "").strip()
+    cref_estado = (payload.get("cref_estado") or "").strip().upper()
+    consultou_confef = bool(payload.get("consultou_confef", False))
+    aceito_contrato = bool(payload.get("aceito_contrato", False))
+    
+    if not cref:
+        raise HTTPException(400, "CREF obrigatorio")
+    if not cref_estado or len(cref_estado) != 2:
+        raise HTTPException(400, "Estado do CREF obrigatorio (UF)")
+    if not consultou_confef:
+        raise HTTPException(400, "Voce precisa consultar seu CREF no CONFEF antes de continuar")
+    if not aceito_contrato:
+        raise HTTPException(400, "Voce precisa aceitar o contrato")
+    
+    # Pega IP do request (considera proxy do Railway)
+    ip = request.headers.get("x-forwarded-for", "").split(",")[0].strip() or request.client.host or "desconhecido"
+    
+    # Atualiza Personal
+    personal.cref = cref
+    personal.cref_estado = cref_estado
+    personal.cref_consultado_confef = True
+    personal.cref_status = "pendente"  # admin valida depois (auditoria por amostragem)
+    personal.contrato_aceito_em = dt.utcnow()
+    personal.contrato_aceito_ip = ip
+    
+    db.commit()
+    
+    return {
+        "ok": True,
+        "mensagem": "Contrato aceito e CREF registrado",
+        "contrato_aceito_em": personal.contrato_aceito_em.isoformat(),
+        "cref_status": personal.cref_status
+    }
+
+
+@router.get("/contrato/status")
+def status_contrato(
+    personal: Personal = Depends(get_personal_atual)
+):
+    """Retorna se o personal ja aceitou contrato e status CREF."""
+    return {
+        "contrato_aceito": personal.contrato_aceito_em is not None,
+        "contrato_aceito_em": personal.contrato_aceito_em.isoformat() if personal.contrato_aceito_em else None,
+        "cref": personal.cref,
+        "cref_estado": personal.cref_estado,
+        "cref_status": personal.cref_status or "pendente",
+        "cref_consultado_confef": bool(personal.cref_consultado_confef)
+    }
+

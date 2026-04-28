@@ -825,6 +825,17 @@ function carregarApp(){
   aplicarLogoSalvo();
 
   atualizarTextos();
+  // ── Verifica se contrato AurumSci ja foi aceito ──
+  fetch('/app-personal/contrato/status', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d && d.contrato_aceito === false){
+      // Personal ainda nao aceitou contrato - abre modal obrigatoriamente
+      setTimeout(function(){ abrirContratoAurumSci(); }, 800);
+    }
+  })
+  .catch(function(e){ console.warn('[contrato/status] erro:', e); });
+  
   carregarDashboard();
   carregarAlunos();
   carregarFinanceiro();
@@ -1767,7 +1778,139 @@ function confirmarRecibo(regime){
   pg.document.write("<div class='tbox'><div style='font-size:11px;color:#888;margin-bottom:4px'>VALOR DO SERVICO</div><div style='font-size:30px;font-weight:900;color:#C9A84C'>R$ "+total.toFixed(2).replace(".",",")+"</div><div style='font-size:11px;color:#888;margin-top:3px'>"+regLabel+"</div></div>");
   pg.document.write(tribHtml);
   pg.document.write("<div class='ass'><div class='ab'>"+nomePers+"<br><span style='color:#888'>Prestador</span></div><div class='ab'>"+alunoNome+"<br><span style='color:#888'>Tomador</span></div></div>");
-  pg.document.write("<div class='rod'>Recibo gerado pelo AurumSci PRO — aurumsc.com.br<br>Valores tributarios sao estimativas. Consulte um contador.</div></body></html>");
+  pg.document.write("<div class='rod'>Recibo gerado pelo AurumSci PRO — aurumsc.com.br<br>Valores tributarios sao estimativas. Consulte um contador.</div>
+<!-- MODAL CONTRATO AURUMSCI-PERSONAL (27/04/2026) -->
+<div class="modal-overlay" id="modal-contrato-aurumsci" style="display:none">
+  <div class="modal-card" style="max-height:92vh;overflow-y:auto;max-width:600px">
+    <div class="modal-titulo" style="text-align:center">📄 CONTRATO DE PRESTAÇÃO DE SERVIÇOS</div>
+    <div style="font-size:11px;color:var(--cinza);text-align:center;margin-bottom:16px">AurumSci PRO · Versão 1.0 · 04/2026</div>
+    
+    <div style="background:var(--bg);border:1px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:14px;font-size:11px;color:var(--cinza);line-height:1.6">
+      <div><strong style="color:var(--ouro)">CONTRATANTE (AurumSci):</strong></div>
+      <div>CNPJ: 58.893.821/0001-84</div>
+      <div>Razão Social: [a confirmar]</div>
+      <div style="margin-top:8px"><strong style="color:var(--ouro)">CONTRATADO (Personal):</strong></div>
+      <div>Conforme dados de cadastro</div>
+    </div>
+    
+    <div style="font-size:12px;color:var(--cinza);line-height:1.9;margin-bottom:14px">
+      
+      <div style="margin-bottom:14px"><strong style="color:var(--texto);font-size:13px">1. OBJETO</strong><br>
+      Plataforma SaaS para gestão profissional de personal trainers e seus alunos, incluindo: cadastro, avaliação, treinos, cobrança e relacionamento.</div>
+      
+      <div style="margin-bottom:14px"><strong style="color:var(--texto);font-size:13px">2. PLANOS E MENSALIDADE</strong><br>
+      🥉 Bronze: R$ 49,90/mês (até 10 alunos)<br>
+      🥈 Prata: R$ 89,90/mês (até 20 alunos)<br>
+      🥇 Ouro: R$ 149,90/mês (até 50 alunos)<br>
+      💎 Diamante: R$ 249,90/mês (alunos ilimitados)<br>
+      Cobrança automática via cartão. Upgrade/downgrade a qualquer momento.</div>
+      
+      <div style="margin-bottom:14px"><strong style="color:var(--texto);font-size:13px">3. VALIDAÇÃO PROFISSIONAL</strong><br>
+      3.1 Acesso EXCLUSIVO a profissionais com registro ATIVO e ADIMPLENTE no CREF.<br>
+      3.2 Personal declara, sob as penas da lei (Art. 299 CP — Falsidade Ideológica), que:<br>
+      &nbsp;&nbsp;a) CREF informado é seu, ativo e adimplente;<br>
+      &nbsp;&nbsp;b) Consultou o site oficial do CONFEF (www.confef.org.br);<br>
+      &nbsp;&nbsp;c) Não responde a processo ético em andamento.<br>
+      3.3 AurumSci pode validar o registro a qualquer momento. Irregularidade detectada suspende o acesso sem reembolso.</div>
+      
+      <div style="margin-bottom:14px"><strong style="color:var(--texto);font-size:13px">4. CUSTOS DE TERCEIROS</strong><br>
+      Serviços automatizados têm custo repassado sem margem:<br>
+      • WhatsApp (Meta): R$ 0,12 por mensagem<br>
+      • NF-e (prefeitura): R$ 0,30 por nota<br>
+      Consumo visível em tempo real no painel financeiro.</div>
+      
+      <div style="margin-bottom:14px"><strong style="color:var(--texto);font-size:13px">5. TRIAL E CANCELAMENTO</strong><br>
+      7 dias grátis. Após esse período, cobrança automática inicia. Cancele a qualquer momento sem multa. Acesso permanece até o fim do ciclo pago.</div>
+      
+      <div style="margin-bottom:14px"><strong style="color:var(--texto);font-size:13px">6. RESPONSABILIDADE TÉCNICA</strong><br>
+      AurumSci é ferramenta tecnológica. O personal CREF é o ÚNICO responsável por treinos, avaliações e atendimentos. Sugestões geradas por IA (treinos, postural, nutrição) são referenciais e exigem supervisão profissional.</div>
+      
+      <div style="margin-bottom:14px"><strong style="color:var(--texto);font-size:13px">7. PROTEÇÃO DE DADOS (LGPD)</strong><br>
+      Dados dos alunos pertencem ao personal. AurumSci não comercializa nem compartilha. Personal pode exportar/excluir dados a qualquer momento.</div>
+      
+      <div style="margin-bottom:14px"><strong style="color:var(--texto);font-size:13px">8. JURISDIÇÃO</strong><br>
+      Foro da comarca de São Paulo/SP. Lei brasileira aplicável. Versão 1.0 datada de 27/04/2026.</div>
+      
+    </div>
+    
+    <div style="background:var(--bg);border:2px solid var(--ouro);border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:11px;color:var(--ouro);letter-spacing:1px;margin-bottom:10px;font-weight:700">📋 INFORME SEUS DADOS PROFISSIONAIS</div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;color:var(--cinza);display:block;margin-bottom:4px">Número do CREF</label>
+        <input type="text" id="cont-cref" placeholder="Ex: 062702-G" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--borda);border-radius:8px;color:var(--texto);font-size:13px">
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;color:var(--cinza);display:block;margin-bottom:4px">Estado (UF)</label>
+        <input type="text" id="cont-cref-uf" placeholder="SP" maxlength="2" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--borda);border-radius:8px;color:var(--texto);font-size:13px;text-transform:uppercase">
+      </div>
+      <a href="https://www.confef.org.br/extra/perfil/" target="_blank" style="display:block;text-align:center;padding:12px;background:linear-gradient(135deg,#0066cc,#003d7a);color:#fff;border-radius:8px;text-decoration:none;font-family:Bebas Neue;font-size:14px;letter-spacing:1px;margin-bottom:8px">🔗 CONSULTAR MEU CREF NO CONFEF</a>
+      <div style="font-size:10px;color:var(--cinza);text-align:center;font-style:italic">Verifique se está ATIVO e ADIMPLENTE antes de continuar</div>
+    </div>
+    
+    <div style="margin-bottom:14px;font-size:12px;color:var(--texto);line-height:1.7">
+      <label style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;cursor:pointer">
+        <input type="checkbox" id="cont-chk-consultou" style="margin-top:3px;width:18px;height:18px;flex-shrink:0">
+        <span>Consultei meu CREF no site oficial do CONFEF e confirmo que está <strong>ATIVO e ADIMPLENTE</strong></span>
+      </label>
+      <label style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;cursor:pointer">
+        <input type="checkbox" id="cont-chk-veracidade" style="margin-top:3px;width:18px;height:18px;flex-shrink:0">
+        <span>Declaro, sob as penas da lei (Art. 299 CP), que todas as informações são <strong>verdadeiras</strong></span>
+      </label>
+      <label style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;cursor:pointer">
+        <input type="checkbox" id="cont-chk-aceito" style="margin-top:3px;width:18px;height:18px;flex-shrink:0">
+        <span>Li e <strong>aceito</strong> todos os termos deste contrato</span>
+      </label>
+    </div>
+    
+    <button onclick="aceitarContratoAurumSci()" style="width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;letter-spacing:1.5px;cursor:pointer;margin-bottom:8px">✅ ACEITAR E CONTINUAR</button>
+    
+    <div style="font-size:10px;color:var(--cinza);text-align:center">Código Civil Brasileiro · Lei 13.709/2018 (LGPD) · Resolução CONFEF 307/2015 · Marco Civil 12.965/2014</div>
+  </div>
+</div>
+
+<script>
+function abrirContratoAurumSci(){
+  document.getElementById('modal-contrato-aurumsci').style.display = 'flex';
+}
+
+function aceitarContratoAurumSci(){
+  var cref = document.getElementById('cont-cref').value.trim();
+  var uf = document.getElementById('cont-cref-uf').value.trim().toUpperCase();
+  var chk1 = document.getElementById('cont-chk-consultou').checked;
+  var chk2 = document.getElementById('cont-chk-veracidade').checked;
+  var chk3 = document.getElementById('cont-chk-aceito').checked;
+  
+  if(!cref){ alert('⚠️ Informe seu numero de CREF'); return; }
+  if(!uf || uf.length !== 2){ alert('⚠️ Informe o estado do CREF (2 letras)'); return; }
+  if(!chk1){ alert('⚠️ Voce precisa confirmar que consultou seu CREF no CONFEF'); return; }
+  if(!chk2){ alert('⚠️ Voce precisa declarar veracidade das informacoes'); return; }
+  if(!chk3){ alert('⚠️ Voce precisa aceitar os termos do contrato'); return; }
+  
+  fetch('/app-personal/contrato/aceitar', {
+    method: 'POST',
+    headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
+    body: JSON.stringify({
+      cref: cref,
+      cref_estado: uf,
+      consultou_confef: true,
+      aceito_contrato: true
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(res){
+    if(res.ok){
+      alert('✅ Contrato aceito! Bem-vindo ao AurumSci PRO!');
+      document.getElementById('modal-contrato-aurumsci').style.display = 'none';
+      setTimeout(function(){ window.location.reload(); }, 500);
+    } else {
+      alert('❌ Erro: ' + (res.detail || 'tente novamente'));
+    }
+  })
+  .catch(function(e){ alert('❌ Erro: ' + e); });
+}
+</script>
+
+</body></html>");
   pg.document.close();
   setTimeout(function(){ pg.print(); }, 600);
 }

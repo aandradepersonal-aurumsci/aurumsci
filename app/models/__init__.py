@@ -46,6 +46,13 @@ class Personal(Base):
     nome_empresa = Column(String(150))
     slogan = Column(String(200))
     criado_em = Column(DateTime, default=datetime.utcnow)
+    # Validacao CREF + Contrato (27/04/2026)
+    cref_estado = Column(String(2))
+    cref_consultado_confef = Column(Boolean, default=False)
+    cref_status = Column(String(20), default="pendente")  # pendente/ativo/suspenso/cancelado
+    cref_validado_em = Column(DateTime)
+    contrato_aceito_em = Column(DateTime)
+    contrato_aceito_ip = Column(String(45))
     alunos = relationship("Aluno", back_populates="personal")
 
 class Aluno(Base):

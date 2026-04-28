@@ -32,3 +32,4 @@ app/routers/pagamento-*.py
 *.db
 app/*.db
 
+static/contratos/*.pdf

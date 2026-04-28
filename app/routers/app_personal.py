@@ -1342,3 +1342,22 @@ def status_contrato(
         "cref_consultado_confef": bool(personal.cref_consultado_confef)
     }
 
+@router.get("/contrato/pdf")
+def baixar_contrato_pdf(personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    """Gera (se necessario) e retorna PDF do contrato do personal."""
+    from fastapi.responses import FileResponse
+    from app.services.contrato_pdf import gerar_pdf_contrato
+    import os
+    
+    # Gera/regenera PDF (sempre atualizado)
+    filepath = gerar_pdf_contrato(personal)
+    
+    if not os.path.exists(filepath):
+        raise HTTPException(404, "Erro ao gerar contrato")
+    
+    return FileResponse(
+        filepath,
+        media_type="application/pdf",
+        filename=f"contrato_aurumsci_{personal.nome.replace(' ', '_')}.pdf"
+    )
+

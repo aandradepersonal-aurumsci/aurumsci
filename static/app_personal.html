@@ -1778,8 +1778,7 @@ function confirmarRecibo(regime){
   pg.document.write("<div class='tbox'><div style='font-size:11px;color:#888;margin-bottom:4px'>VALOR DO SERVICO</div><div style='font-size:30px;font-weight:900;color:#C9A84C'>R$ "+total.toFixed(2).replace(".",",")+"</div><div style='font-size:11px;color:#888;margin-top:3px'>"+regLabel+"</div></div>");
   pg.document.write(tribHtml);
   pg.document.write("<div class='ass'><div class='ab'>"+nomePers+"<br><span style='color:#888'>Prestador</span></div><div class='ab'>"+alunoNome+"<br><span style='color:#888'>Tomador</span></div></div>");
-  pg.document.write("<div class='rod'>Recibo gerado pelo AurumSci PRO — aurumsc.com.br<br>Valores tributarios sao estimativas. Consulte um contador.</div>
-");
+  pg.document.write("<div class='rod'>Recibo gerado pelo AurumSci PRO — aurumsc.com.br<br>Valores tributarios sao estimativas. Consulte um contador.</div></body></html>");
   pg.document.close();
   setTimeout(function(){ pg.print(); }, 600);
 }

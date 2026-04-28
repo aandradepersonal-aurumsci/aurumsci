@@ -943,6 +943,7 @@ window.onload = function(){
           if(d && d.sessao){
             localStorage.setItem('aurum_onb_done','1');
             mostrarApp();
+            detectarPersonalEAjustarAbas();
           } else {
             iniciarOnboarding();
           }
@@ -2361,6 +2362,40 @@ function voltarParaAvaliacao(){
   document.getElementById('tabs').style.display='flex';
   localStorage.setItem('aurum_onb_done','1');
   mudarTab('avaliacao', document.querySelector('.tab:nth-child(2)'));
+}
+
+function detectarPersonalEAjustarAbas(){
+  fetch('/aluno-portal/perfil', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var temPersonal = d && d.personal_id && d.personal_id !== null;
+    var btnAut = document.getElementById('aba-autonomo');
+    var btnPro = document.getElementById('aba-pro');
+    
+    if(temPersonal){
+      // Aluno do PRO - abre aba PRO e esconde aba autonomo
+      if(btnAut) btnAut.style.display = 'none';
+      if(btnPro){
+        btnPro.style.width = '100%';
+        btnPro.style.background = 'var(--azul)';
+        btnPro.style.color = '#fff';
+      }
+      mudarAbaAval('pro');
+      window._tem_personal = true;
+    } else {
+      // Aluno autonomo - abre aba autonomo e esconde aba PRO
+      if(btnPro) btnPro.style.display = 'none';
+      if(btnAut){
+        btnAut.style.width = '100%';
+      }
+      mudarAbaAval('autonomo');
+      window._tem_personal = false;
+    }
+  })
+  .catch(function(e){
+    console.warn('[detectarPersonal] erro:', e);
+    // Em caso de erro, deixa as 2 abas (comportamento atual)
+  });
 }
 
 function mudarAbaAval(aba){

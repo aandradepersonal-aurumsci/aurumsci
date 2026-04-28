@@ -164,6 +164,7 @@ def perfil(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_d
         "nivel_experiencia": aluno.nivel_experiencia.value if aluno.nivel_experiencia else None,
         "idade": idade,
         "foto_url": aluno.foto_url,
+        "personal_id": aluno.personal_id,
     }
 
 

@@ -39,6 +39,7 @@ from app.routers.postural_ia import router as postural_ia_router
 from app.routers.app_aluno import router as app_aluno_router
 from app.routers.app_personal import router as app_personal_router
 from app.routers.pagamento import router as pagamento_router
+from app.routers.onboarding import router as onboarding_router
 
 # ── Logging ───────────────────────────────────────────────────
 logging.basicConfig(
@@ -182,6 +183,7 @@ app.include_router(postural_ia_router)
 app.include_router(app_aluno_router)
 app.include_router(app_personal_router)
 app.include_router(pagamento_router)
+app.include_router(onboarding_router)
 
 # ── App do Aluno ──────────────────────────────────────────────
 @app.get("/cadastro", response_class=HTMLResponse, include_in_schema=False)

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AurumSci — Cadastro</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0A0F;
+  --bg2: #15151D;
+  --bg3: #1F1F2A;
+  --ouro: #C9A961;
+  --ouro2: #E5C57C;
+  --texto: #F5F5F5;
+  --cinza: #8B8B95;
+  --borda: #2A2A38;
+  --azul: #4A90E2;
+  --verde: #4CAF50;
+  --vermelho: #E74C3C;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(180deg, #0A0A0F 0%, #15151D 100%);
+  color: var(--texto);
+  min-height: 100vh;
+  padding: 20px;
+}
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+.logo {
+  text-align: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  letter-spacing: 6px;
+  color: var(--ouro);
+  margin-bottom: 8px;
+}
+.tagline {
+  text-align: center;
+  font-size: 12px;
+  color: var(--cinza);
+  letter-spacing: 3px;
+  margin-bottom: 40px;
+}
+.welcome {
+  background: linear-gradient(135deg, var(--bg2), var(--bg3));
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.welcome h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  color: var(--ouro);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.welcome p {
+  color: var(--cinza);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.welcome strong { color: var(--ouro); }
+.section {
+  background: var(--bg2);
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  color: var(--ouro);
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: 12px;
+  color: var(--cinza);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+.field input, .field select {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 14px;
+  color: var(--texto);
+  font-size: 15px;
+  font-family: inherit;
+  transition: border 0.2s;
+}
+.field input:focus, .field select:focus {
+  outline: none;
+  border-color: var(--ouro);
+}
+.radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.radio-btn {
+  background: var(--bg3);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--cinza);
+  transition: all 0.2s;
+}
+.radio-btn.active {
+  background: var(--ouro);
+  color: var(--bg);
+  border-color: var(--ouro);
+  font-weight: 600;
+}
+.parq-question {
+  background: var(--bg3);
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.parq-question p {
+  font-size: 13px;
+  color: var(--texto);
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+.parq-options { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.parq-btn {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--borda);
+  background: transparent;
+  color: var(--cinza);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.parq-btn.sim-active { background: var(--vermelho); color: white; border-color: var(--vermelho); }
+.parq-btn.nao-active { background: var(--verde); color: white; border-color: var(--verde); }
+.btn-enviar {
+  width: 100%;
+  background: linear-gradient(135deg, var(--ouro), var(--ouro2));
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  padding: 18px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  margin-top: 24px;
+  transition: transform 0.2s;
+}
+.btn-enviar:hover { transform: translateY(-2px); }
+.btn-enviar:disabled { opacity: 0.5; cursor: not-allowed; }
+.success-screen {
+  display: none;
+  text-align: center;
+  padding: 60px 20px;
+}
+.success-screen.show { display: block; }
+.success-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+.success-screen h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  color: var(--ouro);
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+.success-screen p {
+  color: var(--cinza);
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+.error-msg {
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid var(--vermelho);
+  border-radius: 10px;
+  padding: 12px;
+  color: var(--vermelho);
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+}
+.error-msg.show { display: block; }
+.cnpj-field { display: none; }
+.cnpj-field.show { display: block; }
+.medicacao-field { display: none; }
+.medicacao-field.show { display: block; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">AURUMSCI</div>
+  <div class="tagline">CIÊNCIA QUE VIRA RESULTADO</div>
+
+  <div id="form-screen">
+    <div class="welcome">
+      <h2>BEM-VINDO! 🏆</h2>
+      <p>Você foi convidado por <strong>{{PERSONAL_NOME}}</strong></p>
+      <p style="margin-top:8px">Preencha em <strong>3 minutos</strong> e receba seu treino base por email!</p>
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+
+    <form id="onboarding-form">
+      <div class="section">
+        <div class="section-title">👤 DADOS PESSOAIS</div>
+        <div class="field"><label>Nome completo</label><input type="text" id="nome" required></div>
+        <div class="field"><label>Email</label><input type="email" id="email" required></div>
+        <div class="field"><label>CPF</label><input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" required></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">🧾 NOTA FISCAL</div>
+        <div class="field">
+          <label>Onde receber a NF?</label>
+          <div class="radio-group">
+            <div class="radio-btn active" data-tipo="cpf" onclick="selectTipoNF('cpf')">CPF</div>
+            <div class="radio-btn" data-tipo="cnpj" onclick="selectTipoNF('cnpj')">CNPJ</div>
+          </div>
+        </div>
+        <div class="field cnpj-field" id="cnpj-field">
+          <label>CNPJ</label>
+          <input type="text" id="cnpj" placeholder="00.000.000/0000-00" maxlength="18">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">🏋️ TREINO</div>
+        <div class="field">
+          <label>Objetivo</label>
+          <select id="objetivo" required>
+            <option value="">Selecione...</option>
+            <option value="hipertrofia">Hipertrofia (ganho de massa)</option>
+            <option value="emagrecimento">Emagrecimento</option>
+            <option value="condicionamento">Condicionamento</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Quantas vezes por semana?</label>
+          <select id="dias_semana" required>
+            <option value="">Selecione...</option>
+            <option value="2">2x por semana</option>
+            <option value="3">3x por semana</option>
+            <option value="4">4x por semana</option>
+            <option value="5">5x por semana</option>
+            <option value="6">6x por semana</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Nível de experiência</label>
+          <select id="nivel" required>
+            <option value="">Selecione...</option>
+            <option value="iniciante">Iniciante (0-6 meses)</option>
+            <option value="intermediario">Intermediário (6 meses-2 anos)</option>
+            <option value="avancado">Avançado (2+ anos)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">🩺 SAÚDE (PAR-Q)</div>
+        <div class="parq-question">
+          <p>1. Algum médico já disse que você possui problema cardíaco?</p>
+          <div class="parq-options">
+            <button type="button" class="parq-btn" onclick="setParq('cardiaco', true, this)">✓ Sim</button>
+            <button type="button" class="parq-btn" onclick="setParq('cardiaco', false, this)">✗ Não</button>
+          </div>
+        </div>
+        <div class="parq-question">
+          <p>2. Sente dor no peito quando pratica atividade física?</p>
+          <div class="parq-options">
+            <button type="button" class="parq-btn" onclick="setParq('dor_peito', true, this)">✓ Sim</button>
+            <button type="button" class="parq-btn" onclick="setParq('dor_peito', false, this)">✗ Não</button>
+          </div>
+        </div>
+        <div class="parq-question">
+          <p>3. Tem dor articular ou problema ósseo que pode piorar com exercício?</p>
+          <div class="parq-options">
+            <button type="button" class="parq-btn" onclick="setParq('dor_articular', true, this)">✓ Sim</button>
+            <button type="button" class="parq-btn" onclick="setParq('dor_articular', false, this)">✗ Não</button>
+          </div>
+        </div>
+        <div class="parq-question">
+          <p>4. Toma alguma medicação contínua?</p>
+          <div class="parq-options">
+            <button type="button" class="parq-btn" onclick="setParq('medicacao', true, this)">✓ Sim</button>
+            <button type="button" class="parq-btn" onclick="setParq('medicacao', false, this)">✗ Não</button>
+          </div>
+          <div class="medicacao-field" id="medicacao-field" style="margin-top:10px">
+            <input type="text" id="medicacao_qual" placeholder="Qual medicação?">
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-enviar" id="btn-enviar">✅ ENVIAR E RECEBER MEU TREINO</button>
+    </form>
+  </div>
+
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">🏆</div>
+    <h2>CADASTRO ENVIADO!</h2>
+    <p id="success-msg"></p>
+    <p style="margin-top:24px"><strong>Verifique seu email</strong> com seu acesso ao app!</p>
+  </div>
+</div>
+
+<script>
+const TOKEN = "{{TOKEN}}";
+let parqAnswers = { cardiaco: null, dor_peito: null, dor_articular: null, medicacao: null };
+let tipoNF = "cpf";
+
+function selectTipoNF(tipo) {
+  tipoNF = tipo;
+  document.querySelectorAll('[data-tipo]').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-tipo="${tipo}"]`).classList.add('active');
+  document.getElementById('cnpj-field').classList.toggle('show', tipo === 'cnpj');
+}
+
+function setParq(campo, valor, btn) {
+  parqAnswers[campo] = valor;
+  // Limpa active dos botoes irmaos
+  btn.parentElement.querySelectorAll('.parq-btn').forEach(b => b.classList.remove('sim-active','nao-active'));
+  btn.classList.add(valor ? 'sim-active' : 'nao-active');
+  // Mostra campo medicacao se sim
+  if (campo === 'medicacao') {
+    document.getElementById('medicacao-field').classList.toggle('show', valor === true);
+  }
+}
+
+// Mascaras
+document.getElementById('cpf').addEventListener('input', function(e){
+  let v = e.target.value.replace(/\D/g,'');
+  if(v.length > 11) v = v.slice(0,11);
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  e.target.value = v;
+});
+
+document.getElementById('cnpj').addEventListener('input', function(e){
+  let v = e.target.value.replace(/\D/g,'');
+  if(v.length > 14) v = v.slice(0,14);
+  v = v.replace(/^(\d{2})(\d)/,'$1.$2');
+  v = v.replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3');
+  v = v.replace(/\.(\d{3})(\d)/,'.$1/$2');
+  v = v.replace(/(\d{4})(\d)/,'$1-$2');
+  e.target.value = v;
+});
+
+document.getElementById('onboarding-form').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const errorEl = document.getElementById('error-msg');
+  errorEl.classList.remove('show');
+
+  // Validacao PAR-Q
+  for (const k of Object.keys(parqAnswers)) {
+    if (parqAnswers[k] === null) {
+      errorEl.textContent = '⚠️ Responda todas as perguntas de saúde (PAR-Q)';
+      errorEl.classList.add('show');
+      window.scrollTo({top:0, behavior:'smooth'});
+      return;
+    }
+  }
+
+  const btn = document.getElementById('btn-enviar');
+  btn.disabled = true;
+  btn.textContent = '⏳ Enviando...';
+
+  const payload = {
+    nome: document.getElementById('nome').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    cpf: document.getElementById('cpf').value,
+    tipo_nf: tipoNF,
+    cnpj: tipoNF === 'cnpj' ? document.getElementById('cnpj').value : null,
+    objetivo: document.getElementById('objetivo').value,
+    dias_semana: parseInt(document.getElementById('dias_semana').value),
+    nivel: document.getElementById('nivel').value,
+    par_q_cardiaco: parqAnswers.cardiaco,
+    par_q_dor_peito: parqAnswers.dor_peito,
+    par_q_dor_articular: parqAnswers.dor_articular,
+    par_q_medicacao: parqAnswers.medicacao,
+    medicacao_qual: document.getElementById('medicacao_qual').value || null
+  };
+
+  try {
+    const resp = await fetch(`/onboarding/${TOKEN}/responder`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const data = await resp.json();
+    if (resp.ok) {
+      document.getElementById('form-screen').style.display = 'none';
+      document.getElementById('success-screen').classList.add('show');
+      document.getElementById('success-msg').textContent = data.mensagem;
+      window.scrollTo({top:0, behavior:'smooth'});
+    } else {
+      errorEl.textContent = '❌ ' + (data.detail || 'Erro no envio');
+      errorEl.classList.add('show');
+      btn.disabled = false;
+      btn.textContent = '✅ ENVIAR E RECEBER MEU TREINO';
+    }
+  } catch(err) {
+    errorEl.textContent = '❌ Erro de conexão. Tente novamente.';
+    errorEl.classList.add('show');
+    btn.disabled = false;
+    btn.textContent = '✅ ENVIAR E RECEBER MEU TREINO';
+  }
+});
+</script>
+</body>
+</html>

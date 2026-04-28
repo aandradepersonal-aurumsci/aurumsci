@@ -108,3 +108,15 @@ class Presenca(Base):
     observacoes = Column(Text)
     criado_em = Column(DateTime, default=datetime.utcnow)
 
+
+class OnboardingLink(Base):
+    """Link de convite que personal envia pros alunos preencherem questionario."""
+    __tablename__ = "onboarding_links"
+    id = Column(Integer, primary_key=True)
+    personal_id = Column(Integer, ForeignKey("personals.id"), nullable=False)
+    token = Column(String(50), unique=True, nullable=False, index=True)
+    ativo = Column(Boolean, default=True)
+    total_usos = Column(Integer, default=0)
+    criado_em = Column(DateTime, default=datetime.utcnow)
+    personal = relationship("Personal")
+

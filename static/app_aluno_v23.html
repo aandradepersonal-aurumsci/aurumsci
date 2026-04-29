@@ -2575,21 +2575,83 @@ function salvarMedidas(){
   .catch(function(){ mostrarToast('Erro ao salvar'); });
 }
 
+function classificarGordura(perc, idade, sexo){
+  // Tabela ACSM 2022 - faixas de % gordura por sexo e idade
+  if(!perc || !idade || !sexo) return null;
+  var faixa, ideal;
+  if(sexo === 'M'){
+    if(idade < 30) ideal = {essencial:'2-5%', atletico:'6-13%', fitness:'14-17%', aceitavel:'18-24%', obeso:'>25%'};
+    else if(idade < 50) ideal = {essencial:'2-5%', atletico:'11-17%', fitness:'18-21%', aceitavel:'22-27%', obeso:'>28%'};
+    else ideal = {essencial:'2-5%', atletico:'13-19%', fitness:'20-23%', aceitavel:'24-29%', obeso:'>30%'};
+  } else {
+    if(idade < 30) ideal = {essencial:'10-13%', atletico:'14-20%', fitness:'21-24%', aceitavel:'25-31%', obeso:'>32%'};
+    else if(idade < 50) ideal = {essencial:'10-13%', atletico:'15-22%', fitness:'23-26%', aceitavel:'27-33%', obeso:'>34%'};
+    else ideal = {essencial:'10-13%', atletico:'16-23%', fitness:'24-27%', aceitavel:'28-34%', obeso:'>35%'};
+  }
+  var classif, cor;
+  if(sexo === 'M'){
+    if(perc < 6) { classif = 'Essencial (atleta extremo)'; cor = 'var(--azul)'; }
+    else if(perc < 14) { classif = 'Atlético'; cor = 'var(--verde)'; }
+    else if(perc < 18) { classif = 'Fitness'; cor = 'var(--verde)'; }
+    else if(perc < 25) { classif = 'Aceitável'; cor = 'var(--ouro2)'; }
+    else { classif = 'Acima do ideal'; cor = 'var(--vermelho)'; }
+  } else {
+    if(perc < 14) { classif = 'Essencial (atleta extremo)'; cor = 'var(--azul)'; }
+    else if(perc < 21) { classif = 'Atlético'; cor = 'var(--verde)'; }
+    else if(perc < 25) { classif = 'Fitness'; cor = 'var(--verde)'; }
+    else if(perc < 32) { classif = 'Aceitável'; cor = 'var(--ouro2)'; }
+    else { classif = 'Acima do ideal'; cor = 'var(--vermelho)'; }
+  }
+  return {classif: classif, cor: cor, ideal: ideal};
+}
 function renderModalComposicao(){
+  var idade = parseInt(localStorage.getItem('aurum_idade') || '0');
+  var sexo = localStorage.getItem('aurum_sexo') || '';
+  var peso_salvo = localStorage.getItem('aurum_peso') || '';
+  var gord_salvo = localStorage.getItem('aurum_gord') || '';
+  var mm_salvo = localStorage.getItem('aurum_mm') || '';
+  var info_perfil = (idade && sexo) ? '<div style="background:rgba(75,159,255,.08);border:1px solid rgba(75,159,255,.2);border-radius:10px;padding:10px;margin-bottom:12px;font-size:12px;color:var(--azul)">👤 Análise para: <b>'+(sexo==='M'?'Masculino':'Feminino')+', '+idade+' anos</b></div>' : '';
   document.getElementById('body-composicao').innerHTML =
     '<div class="onb-dica">Informe os dados da sua bioimpedância ou dobras cutâneas.</div>' +
-    '<div class="bio-row"><div class="bio-icon">⚖️</div><div class="bio-info"><div class="bio-label">Peso</div></div><input class="bio-input-val" type="number" id="comp-peso" placeholder="70"><div class="bio-un">kg</div></div>' +
-    '<div class="bio-row"><div class="bio-icon">📊</div><div class="bio-info"><div class="bio-label">% Gordura</div></div><input class="bio-input-val" type="number" id="comp-gord" placeholder="18"><div class="bio-un">%</div></div>' +
-    '<div class="bio-row"><div class="bio-icon">💪</div><div class="bio-info"><div class="bio-label">Massa Magra</div></div><input class="bio-input-val" type="number" id="comp-mm" placeholder="57"><div class="bio-un">kg</div></div>' +
+    info_perfil +
+    '<div class="bio-row"><div class="bio-icon">⚖️</div><div class="bio-info"><div class="bio-label">Peso</div></div><input class="bio-input-val" type="number" id="comp-peso" placeholder="70" value="'+peso_salvo+'"><div class="bio-un">kg</div></div>' +
+    '<div class="bio-row"><div class="bio-icon">📊</div><div class="bio-info"><div class="bio-label">% Gordura</div></div><input class="bio-input-val" type="number" id="comp-gord" placeholder="18" value="'+gord_salvo+'"><div class="bio-un">%</div></div>' +
+    '<div class="bio-row"><div class="bio-icon">💪</div><div class="bio-info"><div class="bio-label">Massa Magra</div></div><input class="bio-input-val" type="number" id="comp-mm" placeholder="57" value="'+mm_salvo+'"><div class="bio-un">kg</div></div>' +
+    '<div id="comp-resultado" style="margin-top:12px"></div>' +
     '<br><button class="btn-gold" onclick="salvarComposicao()">SALVAR</button>';
+  // Mostra resultado se ja tem dados
+  if(gord_salvo) mostrarResultadoComposicao();
+}
+function mostrarResultadoComposicao(){
+  var gord = parseFloat(document.getElementById('comp-gord').value);
+  var idade = parseInt(localStorage.getItem('aurum_idade') || '0');
+  var sexo = localStorage.getItem('aurum_sexo') || '';
+  if(!gord || !idade || !sexo) return;
+  var r = classificarGordura(gord, idade, sexo);
+  if(!r) return;
+  document.getElementById('comp-resultado').innerHTML = 
+    '<div style="background:rgba(0,229,160,.06);border:1px solid '+r.cor+';border-radius:12px;padding:14px">' +
+    '<div style="font-size:11px;color:var(--ouro);letter-spacing:2px;margin-bottom:6px">📊 RESULTADO — % GORDURA</div>' +
+    '<div style="font-size:24px;font-weight:700;color:'+r.cor+';margin-bottom:4px">'+gord+'%</div>' +
+    '<div style="font-size:14px;color:'+r.cor+';margin-bottom:8px">'+r.classif+'</div>' +
+    '<div style="font-size:11px;color:var(--cinza);line-height:1.5;margin-top:8px">Faixa '+(sexo==='M'?'masculina':'feminina')+' '+idade+' anos:<br>Atlético: '+r.ideal.atletico+' · Fitness: '+r.ideal.fitness+' · Aceitável: '+r.ideal.aceitavel+'</div>' +
+    '<div style="font-size:10px;color:var(--cinza);margin-top:8px;font-style:italic">📚 ACSM Guidelines (2022) · Heyward & Wagner (2004)</div>' +
+    '</div>';
 }
 function salvarComposicao(){
   var peso = document.getElementById('comp-peso').value;
   var gord = document.getElementById('comp-gord').value;
+  var mm = document.getElementById('comp-mm').value;
   if(!peso){ mostrarToast('Informe o peso!'); return; }
+  // Salva em localStorage pra mostrar quando voltar
+  localStorage.setItem('aurum_peso', peso);
+  if(gord) localStorage.setItem('aurum_gord', gord);
+  if(mm) localStorage.setItem('aurum_mm', mm);
+  // Mostra resultado classificado
+  mostrarResultadoComposicao();
   fetch('/app-aluno/bioimpedancia', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({peso:parseFloat(peso), percentual_gordura:gord?parseFloat(gord):null})})
-  .then(function(){ mostrarToast('✅ Composição salva!'); fecharModal('modal-composicao'); renderEvolucao(); })
+  .then(function(){ mostrarToast('✅ Composição salva!'); renderEvolucao(); })
   .catch(function(){ mostrarToast('Erro ao salvar'); });
 }
 

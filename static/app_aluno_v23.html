@@ -1829,7 +1829,7 @@ function renderFinanceiro(){
 }
 
 // ── TREINO ────────────────────────────────────────────
-async function renderTreino(){
+function renderTreino(){
   var h = new Date().getHours();
   var sauda = h<12 ? T('bomDia') : h<18 ? T('boaTarde') : T('boaNoite');
   var nome = (nomeAluno||'Atleta').split(' ')[0].toUpperCase();
@@ -1956,24 +1956,21 @@ async function renderTreino(){
       // Card de avaliação DEPOIS dos exercícios — checa banco antes (nao so localStorage)
       var posturalFeita = localStorage.getItem('aurum_postural_feita');
       var hrrFeito = localStorage.getItem('aurum_hrr_feito');
-      // Sincroniza com banco: se ja foi avaliado pelo personal, atualiza flags
-      try {
-        var avalResp = await fetch('/aluno-portal/avaliacoes', {headers:{'Authorization':'Bearer '+token}});
-        if(avalResp.ok){
-          var avals = await avalResp.json();
+      // Sync rapido com banco: atualiza flags via fetch sem bloquear render
+      fetch('/aluno-portal/avaliacoes', {headers:{'Authorization':'Bearer '+token}})
+        .then(function(r){ return r.ok ? r.json() : []; })
+        .then(function(avals){
           if(Array.isArray(avals) && avals.length > 0){
             var ultimaAval = avals[0];
             if(ultimaAval.postura_cabeca || ultimaAval.postura_ombros || ultimaAval.postura_coluna){
-              posturalFeita = '1';
               localStorage.setItem('aurum_postural_feita', '1');
             }
             if(ultimaAval.vo2max || ultimaAval.cooper_metros){
-              hrrFeito = '1';
               localStorage.setItem('aurum_hrr_feito', '1');
             }
           }
-        }
-      } catch(e){ console.warn('Erro sync avaliacoes:', e); }
+        })
+        .catch(function(e){ console.warn('Erro sync avaliacoes:', e); });
       if(!posturalFeita || !hrrFeito){
         treinoHtml = treinoHtml + renderDicaAvaliacao(posturalFeita, hrrFeito);
       }

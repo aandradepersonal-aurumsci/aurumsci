@@ -2257,7 +2257,7 @@ function renderPeriodo(){
     var totalSem = 0;
     d.ciclos.forEach(function(c){ var m=(c.descricao||'').match(/-(\d+)/); if(m) totalSem=Math.max(totalSem,parseInt(m[1])); });
     if(!totalSem) totalSem=17;
-    var grafico = '<div style="margin-bottom:20px"><div style="font-size:10px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:10px">MACROCICLO — VISAO GERAL</div><div style="display:flex;gap:3px;height:40px;border-radius:10px;overflow:hidden;margin-bottom:8px">';
+    var grafico = '<div style="background:rgba(75,159,255,.08);border:1px solid rgba(75,159,255,.3);border-radius:12px;padding:14px;margin-bottom:16px"><div style="display:flex;gap:10px;align-items:flex-start"><div style="font-size:22px;flex-shrink:0">💡</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--azul);margin-bottom:4px">A periodização avança com seus CHECK-INS!</div><div style="font-size:11px;color:var(--cinza);line-height:1.6">A cada treino concluído, faça <b>CHECK-IN ✓</b>. Sem isso, você fica preso na mesma fase. Total atual: <b>'+totalCheckins+' check-ins</b>.</div></div></div></div><div style="margin-bottom:20px"><div style="font-size:10px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:10px">MACROCICLO — VISAO GERAL</div><div style="display:flex;gap:3px;height:40px;border-radius:10px;overflow:hidden;margin-bottom:8px">';
     d.ciclos.forEach(function(c, i){
       var chave=getChave(c.nome); var cor=getCor(chave);
       var m=(c.descricao||'').match(/Semanas? (\d+)(?:-(\d+))?/);

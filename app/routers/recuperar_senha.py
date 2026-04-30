@@ -126,7 +126,7 @@ def solicitar_reset(dados: SolicitarReset, db: Session = Depends(get_db)):
         """
         
         enviar_email(
-            destinatario=email_lower,
+            para=email_lower,
             assunto="Recuperar senha - AurumSci",
             html=html
         )

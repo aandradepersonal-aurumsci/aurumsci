@@ -3466,5 +3466,18 @@ if('serviceWorker' in navigator){
   </div>
 </div>
 
+
+<script>
+function toggleSenha(inputId, btn){
+  var inp = document.getElementById(inputId);
+  if(inp.type === 'password'){
+    inp.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    inp.type = 'password';
+    btn.textContent = '👁️';
+  }
+}
+</script>
 </body>
 </html>

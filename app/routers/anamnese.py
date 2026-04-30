@@ -139,3 +139,77 @@ def deletar(
     db.delete(anamnese)
     db.commit()
     return {"mensagem": "Anamnese removida com sucesso"}
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ENDPOINTS PARA O ALUNO LOGADO (ele mesmo preenche sua anamnese)
+# Reusa a mesma tabela "anamneses" do PRO
+# ═══════════════════════════════════════════════════════════════════════════
+from app.routers.portal_aluno import get_aluno_logado
+
+@router.get("/minha", tags=["Anamnese - Aluno"])
+def aluno_buscar_propria(
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """Aluno busca a propria anamnese."""
+    anamnese = db.query(Anamnese).filter(Anamnese.aluno_id == aluno.id).first()
+    if not anamnese:
+        return {"existe": False, "anamnese": None}
+    return {
+        "existe": True,
+        "id": anamnese.id,
+        "doencas_cronicas": anamnese.doencas_cronicas or "",
+        "medicamentos_uso": anamnese.medicamentos_uso or "",
+        "lesoes_anteriores": anamnese.lesoes_anteriores or "",
+        "patologias_marcadas": (anamnese.doencas_cronicas or "").split(",") if anamnese.doencas_cronicas else [],
+        "data_avaliacao": str(anamnese.data_avaliacao) if anamnese.data_avaliacao else None
+    }
+
+@router.post("/minha", tags=["Anamnese - Aluno"])
+def aluno_salvar_propria(
+    dados: dict,
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """Aluno salva/atualiza sua propria anamnese.
+    
+    NOTA: Salvar aqui NAO altera treino atual automaticamente.
+    Personal usa essa info na proxima avaliacao presencial.
+    
+    TODO: futura sessao - aplicar ressalvas no treino baseado em patologias.
+    """
+    patologias = dados.get("patologias", [])
+    outras = dados.get("outras_condicoes", "")
+    medicacoes = dados.get("medicacoes", "")
+    
+    # Junta patologias + outras condicoes em "doencas_cronicas"
+    doencas_str = ",".join(patologias) if patologias else ""
+    if outras:
+        doencas_str = (doencas_str + " | Outras: " + outras) if doencas_str else "Outras: " + outras
+    
+    existente = db.query(Anamnese).filter(Anamnese.aluno_id == aluno.id).first()
+    if existente:
+        existente.doencas_cronicas = doencas_str
+        existente.medicamentos_uso = medicacoes
+        existente.data_avaliacao = date.today()
+        db.commit()
+        db.refresh(existente)
+        anamnese_id = existente.id
+    else:
+        nova = Anamnese(
+            aluno_id=aluno.id,
+            data_avaliacao=date.today(),
+            doencas_cronicas=doencas_str,
+            medicamentos_uso=medicacoes
+        )
+        db.add(nova)
+        db.commit()
+        db.refresh(nova)
+        anamnese_id = nova.id
+    
+    return {
+        "ok": True,
+        "id": anamnese_id,
+        "mensagem": "Anamnese salva! Seu personal vai usar essas informacoes na proxima avaliacao."
+    }

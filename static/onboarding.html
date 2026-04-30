@@ -231,6 +231,14 @@ body {
         <div class="field"><label>Nome completo</label><input type="text" id="nome" required></div>
         <div class="field"><label>Email</label><input type="email" id="email" required></div>
         <div class="field"><label>CPF</label><input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" required></div>
+        <div class="field"><label>Data de nascimento</label><input type="date" id="data_nascimento" required></div>
+        <div class="field">
+          <label>Sexo</label>
+          <div class="radio-group">
+            <div class="radio-btn active" data-sexo="M" onclick="selectSexo('M')">Masculino</div>
+            <div class="radio-btn" data-sexo="F" onclick="selectSexo('F')">Feminino</div>
+          </div>
+        </div>
       </div>
 
       <div class="section">
@@ -282,7 +290,24 @@ body {
       </div>
 
       <div class="section">
-        <div class="section-title">🩺 SAÚDE (PAR-Q)</div>
+        <div class="section-title">🩺 ANAMNESE</div>
+        <div style="background:rgba(75,159,255,.08);border:1px solid rgba(75,159,255,.25);border-radius:12px;padding:14px;margin-bottom:18px;font-size:13px;color:#cce4ff;line-height:1.6">
+          📋 <strong>Por que isso é importante?</strong><br>
+          Conhecer seu histórico de saúde nos permite adaptar seu treino com segurança científica. Suas informações ficam salvas e você pode atualizar quando precisar (nova medicação, nova lesão, etc).
+        </div>
+        <div style="font-size:13px;color:#888;margin-bottom:10px;font-weight:600">Você tem alguma das condições abaixo? (marque todas que se aplicam)</div>
+        <div class="patologias-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+          <label class="check-item-pat"><input type="checkbox" class="patologia" value="hipertensao"> Hipertensão</label>
+          <label class="check-item-pat"><input type="checkbox" class="patologia" value="diabetes"> Diabetes</label>
+          <label class="check-item-pat"><input type="checkbox" class="patologia" value="colesterol_alto"> Colesterol alto</label>
+          <label class="check-item-pat"><input type="checkbox" class="patologia" value="doenca_cardiaca"> Doença cardíaca</label>
+          <label class="check-item-pat"><input type="checkbox" class="patologia" value="artrite_artrose"> Artrite / Artrose</label>
+          <label class="check-item-pat"><input type="checkbox" class="patologia" value="hernia_disco"> Hérnia de disco</label>
+          <label class="check-item-pat"><input type="checkbox" class="patologia" value="osteoporose"> Osteoporose</label>
+          <label class="check-item-pat"><input type="checkbox" class="patologia" value="asma_dpoc"> Asma / DPOC</label>
+        </div>
+        <div class="field"><label>Outras condições ou lesões anteriores</label><input type="text" id="lesoes_anteriores" placeholder="Ex: lesão no joelho em 2020"></div>
+        <div style="font-size:13px;color:#888;margin:18px 0 10px;font-weight:600">PAR-Q (Questionário de Prontidão):</div>
         <div class="parq-question">
           <p>1. Algum médico já disse que você possui problema cardíaco?</p>
           <div class="parq-options">
@@ -339,6 +364,12 @@ function selectTipoNF(tipo) {
   document.querySelector(`[data-tipo="${tipo}"]`).classList.add('active');
   document.getElementById('cnpj-field').classList.toggle('show', tipo === 'cnpj');
 }
+let sexoSelecionado = "M";
+function selectSexo(sexo) {
+  sexoSelecionado = sexo;
+  document.querySelectorAll('[data-sexo]').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-sexo="${sexo}"]`).classList.add('active');
+}
 
 function setParq(campo, valor, btn) {
   parqAnswers[campo] = valor;
@@ -390,9 +421,16 @@ document.getElementById('onboarding-form').addEventListener('submit', async func
   btn.disabled = true;
   btn.textContent = '⏳ Enviando...';
 
+  // Coleta patologias marcadas
+  const patologiasMarcadas = [];
+  document.querySelectorAll('input.patologia:checked').forEach(c => patologiasMarcadas.push(c.value));
   const payload = {
     nome: document.getElementById('nome').value.trim(),
     email: document.getElementById('email').value.trim(),
+    data_nascimento: document.getElementById('data_nascimento').value,
+    sexo: sexoSelecionado,
+    patologias: patologiasMarcadas,
+    lesoes_anteriores: document.getElementById('lesoes_anteriores').value.trim(),
     cpf: document.getElementById('cpf').value,
     tipo_nf: tipoNF,
     cnpj: tipoNF === 'cnpj' ? document.getElementById('cnpj').value : null,

@@ -3143,18 +3143,21 @@ function renderAnamnese(){
   if(elNiv) elNiv.textContent = nivelSalvo ? nivelSalvo.charAt(0).toUpperCase()+nivelSalvo.slice(1) : '—';
   if(elDias) elDias.textContent = diasSalvo ? diasSalvo+'x' : '—';
   // Carrega dados do banco
-  fetch('/app-aluno/minha-anamnese', {headers:{Authorization:'Bearer '+token}})
+  fetch('/anamnese/minha', {headers:{Authorization:'Bearer '+token}})
   .then(function(r){ return r.ok ? r.json() : {}; })
   .then(function(d){
-    var salvos = d.patologias || [];
+    var salvos = d.patologias_marcadas || [];
     var html = '';
     pats.forEach(function(p){
       var m = salvos.indexOf(p.key) !== -1;
       html += '<div class="check-item'+(m?' checked':'')+'" onclick="toggleCheck(this,\''+p.key+'\')" data-key="'+p.key+'"><div class="check-box">'+(m?'✓':'')+'</div><div class="check-label">'+p.label+'</div></div>';
     });
     document.getElementById('anam-checks').innerHTML = html;
-    var elO = document.getElementById('anam-outras'); if(elO && d.outras_condicoes) elO.value = d.outras_condicoes;
-    var elM = document.getElementById('anam-med'); if(elM && d.medicamentos) elM.value = d.medicamentos;
+    // Extrai 'outras' da string doencas_cronicas se vier no formato 'patX,patY | Outras: ...'
+    var doencas = d.doencas_cronicas || '';
+    var outrasMatch = doencas.match(/Outras: (.+)$/);
+    var elO = document.getElementById('anam-outras'); if(elO && outrasMatch) elO.value = outrasMatch[1];
+    var elM = document.getElementById('anam-med'); if(elM && d.medicamentos_uso) elM.value = d.medicamentos_uso;
   }).catch(function(){
     var html = '';
     pats.forEach(function(p){
@@ -3169,11 +3172,11 @@ function salvarAnamnese(){
   var pats = []; checks.forEach(function(c){ pats.push(c.dataset.key); });
   var outras = document.getElementById('anam-outras').value;
   var med = document.getElementById('anam-med').value;
-  fetch('/app-aluno/onboarding', {
+  fetch('/anamnese/minha', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
     body: JSON.stringify({patologias: pats, outras_condicoes: outras, medicacoes: med})
-  }).then(function(){ mostrarToast('✅ Anamnese salva!'); fecharModal('modal-anamnese'); })
+  }).then(function(r){ return r.json(); }).then(function(d){ mostrarToast('✅ Anamnese salva!'); fecharModal('modal-anamnese'); })
   .catch(function(){ mostrarToast('Erro ao salvar'); });
 }
 

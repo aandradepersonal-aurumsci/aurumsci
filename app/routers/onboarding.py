@@ -117,6 +117,10 @@ class QuestionarioPayload(BaseModel):
     nome: str
     email: EmailStr
     cpf: str
+    data_nascimento: Optional[str] = None
+    sexo: Optional[str] = None
+    patologias: Optional[list] = []
+    lesoes_anteriores: Optional[str] = ""
     tipo_nf: str  # "cpf" ou "cnpj"
     cnpj: Optional[str] = None
     objetivo: str  # "hipertrofia", "emagrecimento", "condicionamento"
@@ -203,6 +207,23 @@ def responder_questionario(
     )
     
     # 5. Cria aluno vinculado ao personal
+    # Converte data_nascimento (string) pra date
+    data_nasc_obj = None
+    if dados.data_nascimento:
+        try:
+            from datetime import datetime as _dt
+            data_nasc_obj = _dt.strptime(dados.data_nascimento, "%Y-%m-%d").date()
+        except Exception:
+            data_nasc_obj = None
+    
+    # Converte sexo M/F pro enum do banco
+    from app.models import Sexo as _Sexo
+    sexo_obj = None
+    if dados.sexo == "M":
+        sexo_obj = _Sexo.MASCULINO
+    elif dados.sexo == "F":
+        sexo_obj = _Sexo.FEMININO
+    
     novo_aluno = Aluno(
         nome=dados.nome,
         email=dados.email,
@@ -211,6 +232,8 @@ def responder_questionario(
         ativo=True,
         objetivo=dados.objetivo,
         nivel_experiencia=dados.nivel,
+        data_nascimento=data_nasc_obj,
+        sexo=sexo_obj,
     )
     db.add(novo_aluno)
     db.flush()
@@ -227,6 +250,23 @@ def responder_questionario(
     
     # 7. Atualiza contador do link
     link.total_usos += 1
+    
+    # Cria anamnese inicial com patologias + lesoes
+    if dados.patologias or dados.lesoes_anteriores:
+        try:
+            from app.routers.anamnese import Anamnese
+            from datetime import date as _date
+            patologias_str = ",".join(dados.patologias) if dados.patologias else ""
+            anam = Anamnese(
+                aluno_id=novo_aluno.id,
+                data_avaliacao=_date.today(),
+                doencas_cronicas=patologias_str,
+                lesoes_anteriores=dados.lesoes_anteriores or "",
+                medicamentos_uso=dados.medicacao_qual or "" if hasattr(dados, "medicacao_qual") else ""
+            )
+            db.add(anam)
+        except Exception as e:
+            print(f"[ONBOARDING] Erro criar anamnese: {e}")
     
     db.commit()
     db.refresh(novo_aluno)

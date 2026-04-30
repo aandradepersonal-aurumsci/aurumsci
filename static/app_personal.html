@@ -2940,6 +2940,13 @@ function renderAbaDados(id, d){
   
   // Botão salvar
   html += '<button onclick="salvarDadosAluno('+id+')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:14px;letter-spacing:1px;cursor:pointer;margin-top:8px">💾 SALVAR DADOS</button>';
+  
+  // Zona de risco: excluir aluno
+  html += '<div style="margin-top:30px;padding-top:20px;border-top:1px solid rgba(255,75,75,0.2)">';
+  html += '<div style="font-size:11px;color:#FF6B6B;letter-spacing:1px;margin-bottom:8px;font-weight:700">ZONA DE RISCO</div>';
+  html += '<div style="font-size:12px;color:var(--cinza);margin-bottom:10px">Esta acao nao pode ser desfeita. Todos os dados do aluno (anamnese, avaliacoes, treinos, pagamentos) serao apagados permanentemente.</div>';
+  html += '<button onclick="excluirAluno('+id+')" style="width:100%;padding:14px;background:transparent;border:1px solid rgba(255,75,75,0.4);border-radius:10px;color:#FF6B6B;font-family:Bebas Neue;font-size:13px;letter-spacing:1px;cursor:pointer">EXCLUIR ALUNO PERMANENTEMENTE</button>';
+  html += '</div>';
   html += '</div>';
   return html;
 }
@@ -3807,6 +3814,48 @@ function abrirEsqueciSenha(){
     alert("Erro ao solicitar. Tente novamente em alguns instantes.");
     console.error(e);
   });
+}
+</script>
+
+<script>
+async function excluirAluno(alunoId){
+  // Busca nome do aluno pra confirmar
+  var aluno = todosAlunos.find(function(a){ return a.id === alunoId; });
+  var nome = aluno ? aluno.nome : 'aluno';
+  
+  // Confirmacao 1
+  if(!confirm('ATENCAO!\n\nVoce tem certeza que deseja EXCLUIR PERMANENTEMENTE o aluno ' + nome + '?\n\nEsta acao apagara TODOS os dados (anamnese, avaliacoes, treinos, pagamentos) e NAO PODE ser desfeita.')){
+    return;
+  }
+  
+  // Confirmacao 2 - digita nome
+  var resp = prompt('Para confirmar, digite o NOME do aluno:\n\n' + nome);
+  if(!resp || resp.trim().toLowerCase() !== nome.toLowerCase()){
+    alert('Nome incorreto. Exclusao cancelada.');
+    return;
+  }
+  
+  // Chama backend
+  try {
+    var token = localStorage.getItem('token');
+    var r = await fetch('/alunos/' + alunoId + '/permanente', {
+      method: 'DELETE',
+      headers: {'Authorization': 'Bearer ' + token}
+    });
+    if(r.ok){
+      alert('Aluno ' + nome + ' excluido com sucesso.');
+      // Volta pra lista de alunos
+      mudarTab('alunos', document.querySelector('.tab:nth-child(2)'));
+      if(typeof carregarAlunos === 'function') carregarAlunos();
+      else location.reload();
+    } else {
+      var d = await r.json();
+      alert('Erro ao excluir: ' + (d.detail || 'tente novamente'));
+    }
+  } catch(e){
+    alert('Erro de conexao. Tente novamente.');
+    console.error(e);
+  }
 }
 </script>
 </body>

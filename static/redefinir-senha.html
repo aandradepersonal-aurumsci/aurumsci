@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redefinir Senha — AurumSci</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background: #0A0A0F;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.container {
+  max-width: 440px;
+  width: 100%;
+  background: #14141A;
+  border: 1px solid #2A2A3A;
+  border-radius: 16px;
+  padding: 40px 30px;
+}
+.logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.logo-text {
+  font-family: Georgia, serif;
+  font-size: 36px;
+  letter-spacing: 5px;
+  color: #C9A84C;
+}
+.logo-sub {
+  color: #888;
+  font-size: 11px;
+  letter-spacing: 3px;
+  margin-top: 4px;
+}
+h1 {
+  font-size: 22px;
+  color: #C9A84C;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.subtitulo {
+  color: #888;
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+.field {
+  margin-bottom: 18px;
+}
+label {
+  display: block;
+  font-size: 11px;
+  color: #C9A84C;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.senha-wrapper { position: relative; }
+input {
+  width: 100%;
+  padding: 14px 16px;
+  padding-right: 50px;
+  background: #F0E8D0;
+  border: 1px solid #C9A84C;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #0A0A0F;
+}
+input:focus { outline: 2px solid #C9A84C; }
+.senha-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  opacity: 0.65;
+}
+.senha-toggle:hover { opacity: 1; }
+.btn {
+  width: 100%;
+  padding: 16px;
+  background: #C9A84C;
+  color: #0A0A0F;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.btn:hover { background: #D4B660; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.msg-erro {
+  background: rgba(255, 75, 75, 0.1);
+  border: 1px solid rgba(255, 75, 75, 0.4);
+  color: #FF6B6B;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 18px;
+  display: none;
+  text-align: center;
+}
+.msg-sucesso {
+  background: rgba(0, 229, 160, 0.1);
+  border: 1px solid rgba(0, 229, 160, 0.4);
+  color: #00E5A0;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  display: none;
+  line-height: 1.6;
+}
+.dica { font-size: 11px; color: #888; margin-top: 6px; }
+.loading { text-align: center; color: #888; padding: 40px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">
+    <div class="logo-text">⬡ AURUM <span style="font-size:18px;font-style:italic;color:#fff">sci.</span></div>
+    <div class="logo-sub">CIENCIA QUE VIRA RESULTADO</div>
+  </div>
+
+  <div id="loading" class="loading">Validando link...</div>
+
+  <div id="form-container" style="display:none">
+    <h1>Redefinir senha</h1>
+    <div class="subtitulo">Crie uma nova senha forte para sua conta.</div>
+    
+    <div class="msg-erro" id="msg-erro"></div>
+    
+    <div class="field">
+      <label>NOVA SENHA</label>
+      <div class="senha-wrapper">
+        <input type="password" id="senha1" placeholder="minimo 8 caracteres">
+        <button type="button" class="senha-toggle" onclick="toggleSenha('senha1', this)">👁️</button>
+      </div>
+      <div class="dica">Use letras e numeros para mais seguranca</div>
+    </div>
+    
+    <div class="field">
+      <label>CONFIRMAR SENHA</label>
+      <div class="senha-wrapper">
+        <input type="password" id="senha2" placeholder="repita a nova senha">
+        <button type="button" class="senha-toggle" onclick="toggleSenha('senha2', this)">👁️</button>
+      </div>
+    </div>
+    
+    <button class="btn" id="btn-salvar" onclick="redefinir()">REDEFINIR SENHA</button>
+  </div>
+
+  <div id="sucesso" class="msg-sucesso">
+    ✅ <strong>Senha redefinida com sucesso!</strong><br><br>
+    Voce sera redirecionado para o login em <span id="contador">5</span> segundos...
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const token = params.get('token');
+let tipoUsuario = '';
+
+function toggleSenha(inputId, btn){
+  var inp = document.getElementById(inputId);
+  if(inp.type === 'password'){
+    inp.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    inp.type = 'password';
+    btn.textContent = '👁️';
+  }
+}
+
+function mostrarErro(msg){
+  var el = document.getElementById('msg-erro');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+// Valida token ao carregar a pagina
+async function validarToken(){
+  if(!token){
+    document.getElementById('loading').innerHTML = '⚠️ Link invalido. Verifique o email recebido.';
+    return;
+  }
+  try {
+    const r = await fetch('/recuperar-senha/validar/' + token);
+    const d = await r.json();
+    if(d.valido){
+      tipoUsuario = d.tipo;
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('form-container').style.display = 'block';
+    } else {
+      document.getElementById('loading').innerHTML = '⚠️ ' + (d.motivo || 'Link invalido');
+    }
+  } catch(e){
+    document.getElementById('loading').innerHTML = '⚠️ Erro ao validar link. Tente novamente.';
+  }
+}
+
+async function redefinir(){
+  const s1 = document.getElementById('senha1').value;
+  const s2 = document.getElementById('senha2').value;
+  const erro = document.getElementById('msg-erro');
+  erro.style.display = 'none';
+  
+  if(s1.length < 8){
+    mostrarErro('Senha deve ter pelo menos 8 caracteres');
+    return;
+  }
+  if(s1 !== s2){
+    mostrarErro('As senhas nao conferem');
+    return;
+  }
+  
+  const btn = document.getElementById('btn-salvar');
+  btn.disabled = true;
+  btn.textContent = 'SALVANDO...';
+  
+  try {
+    const r = await fetch('/recuperar-senha/redefinir', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({token: token, nova_senha: s1})
+    });
+    const d = await r.json();
+    if(r.ok){
+      document.getElementById('form-container').style.display = 'none';
+      document.getElementById('sucesso').style.display = 'block';
+      // Redireciona apos 5 segundos
+      let count = 5;
+      const interval = setInterval(function(){
+        count--;
+        document.getElementById('contador').textContent = count;
+        if(count <= 0){
+          clearInterval(interval);
+          window.location.href = tipoUsuario === 'aluno' ? '/aluno' : '/personal';
+        }
+      }, 1000);
+    } else {
+      mostrarErro(d.detail || 'Erro ao redefinir senha');
+      btn.disabled = false;
+      btn.textContent = 'REDEFINIR SENHA';
+    }
+  } catch(e){
+    mostrarErro('Erro de conexao. Tente novamente.');
+    btn.disabled = false;
+    btn.textContent = 'REDEFINIR SENHA';
+  }
+}
+
+window.onload = validarToken;
+</script>
+</body>
+</html>

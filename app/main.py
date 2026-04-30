@@ -29,7 +29,7 @@ from app.config import settings
 from app.database import engine, get_db
 from app.models import Base
 
-from app.routers import auth, alunos, anamnese, avaliacao
+from app.routers import auth, alunos, anamnese, avaliacao, recuperar_senha
 from app.routers.treino import router as treino_router
 from app.routers.financeiro import router as financeiro_router
 from app.routers.portal_aluno import router as portal_aluno_router
@@ -171,6 +171,7 @@ app.mount("/static", StaticFiles(directory="static", html=True), name="static")
 
 # ── Routers ───────────────────────────────────────────────────
 app.include_router(auth.router)
+app.include_router(recuperar_senha.router)
 app.include_router(alunos.router)
 app.include_router(anamnese.router)
 app.include_router(avaliacao.router)
@@ -215,6 +216,11 @@ def landing_pro():
 def app_personal():
     with open("static/app_personal.html", "r", encoding="utf-8") as f:
         return f.read()
+
+@app.get("/redefinir-senha", response_class=HTMLResponse, include_in_schema=False)
+def redefinir_senha_page():
+    with open("static/redefinir-senha.html", "r", encoding="utf-8") as f:
+        return f.read()	
 
 @app.get("/postural", response_class=HTMLResponse, include_in_schema=False)
 def app_postural():

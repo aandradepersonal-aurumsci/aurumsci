@@ -230,6 +230,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div class="senha-wrapper"><input type="password" id="login-senha" placeholder="••••••••"><button type="button" class="senha-toggle" onclick="toggleSenha('login-senha', this)">👁️</button></div>
   </div>
   <button class="btn-gold" onclick="fazerLogin()" id="btn-entrar">ENTRAR</button>
+  <div style="text-align:center;margin-top:14px"><a href="#" onclick="abrirEsqueciSenha(); return false;" style="color:var(--ouro);font-size:13px;text-decoration:none">Esqueci minha senha</a></div>
   <div class="login-link" style="margin-top:14px">
     <span id="l-sem-conta">Não tem conta? </span><a href="#" onclick="mostrarToast('Contate o suporte AurumSci')">Fale conosco</a>
   </div>
@@ -3781,6 +3782,31 @@ function toggleSenha(inputId, btn){
     inp.type = 'password';
     btn.textContent = '👁️';
   }
+}
+</script>
+
+<script>
+function abrirEsqueciSenha(){
+  var email = prompt("Digite seu email cadastrado:");
+  if(!email) return;
+  email = email.trim().toLowerCase();
+  if(!email.includes("@")){
+    alert("Email invalido. Tente novamente.");
+    return;
+  }
+  fetch("/recuperar-senha/solicitar", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({email: email})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    alert(d.mensagem || "Se este email estiver cadastrado, voce recebera um link em alguns minutos.");
+  })
+  .catch(function(e){
+    alert("Erro ao solicitar. Tente novamente em alguns instantes.");
+    console.error(e);
+  });
 }
 </script>
 </body>

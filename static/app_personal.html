@@ -1801,18 +1801,6 @@ function confirmarRecibo(regime){
   pg.document.write(tribHtml);
   pg.document.write("<div class='ass'><div class='ab'>"+nomePers+"<br><span style='color:#888'>Prestador</span></div><div class='ab'>"+alunoNome+"<br><span style='color:#888'>Tomador</span></div></div>");
   pg.document.write("<div class='rod'>Recibo gerado pelo AurumSci PRO — aurumsc.com.br<br>Valores tributarios sao estimativas. Consulte um contador.</div>
-<script>
-function toggleSenha(inputId, btn){
-  var inp = document.getElementById(inputId);
-  if(inp.type === 'password'){
-    inp.type = 'text';
-    btn.textContent = '🙈';
-  } else {
-    inp.type = 'password';
-    btn.textContent = '👁️';
-  }
-}
-</script>
 </body></html>");
   pg.document.close();
   setTimeout(function(){ pg.print(); }, 600);
@@ -3783,5 +3771,18 @@ function aceitarContratoAurumSci(){
 </script>
 
 
+
+<script>
+function toggleSenha(inputId, btn){
+  var inp = document.getElementById(inputId);
+  if(inp.type === 'password'){
+    inp.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    inp.type = 'password';
+    btn.textContent = '👁️';
+  }
+}
+</script>
 </body>
 </html>

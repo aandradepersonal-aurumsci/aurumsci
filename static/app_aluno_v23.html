@@ -304,6 +304,27 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 #toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--borda);border-radius:12px;padding:12px 20px;font-size:13px;z-index:500;opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none}
 #toast.show{opacity:1}
 </style>
+
+<style>
+.senha-wrapper { position: relative !important; display: block !important; width: 100% !important; }
+.senha-wrapper input[type="password"], .senha-wrapper input[type="text"] { padding-right: 50px !important; width: 100% !important; box-sizing: border-box !important; }
+.senha-toggle { 
+  position: absolute !important; 
+  right: 14px !important; 
+  top: 50% !important; 
+  transform: translateY(-50%) !important; 
+  background: transparent !important; 
+  border: none !important; 
+  cursor: pointer !important; 
+  font-size: 20px !important; 
+  padding: 4px 8px !important;
+  opacity: 0.65;
+  transition: opacity 0.2s;
+  z-index: 10 !important;
+  margin: 0 !important;
+}
+.senha-toggle:hover { opacity: 1; }
+</style>
 </head>
 <body>
 
@@ -316,7 +337,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 
 <!-- LOGIN -->
 <div id="screen-login" style="display:flex">
-  <div class="login-logo" style="display:flex;align-items:baseline;gap:4px"><svg viewBox="0 0 44 44" width="36" height="36" style="margin-right:6px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:42px;font-weight:400;letter-spacing:4px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:16px;font-style:italic;color:#fff;margin-left:3px">sci.</span></div>
+  <div class="login-logo" style="display:flex;align-items:baseline;gap:4px;justify-content:center;margin:0 auto"><svg viewBox="0 0 44 44" width="36" height="36" style="margin-right:6px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:42px;font-weight:400;letter-spacing:4px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:16px;font-style:italic;color:#fff;margin-left:3px">sci.</span></div>
   <div class="login-tag" id="l-tag">CIÊNCIA QUE VIRA RESULTADO</div>
   <div class="lang-row">
     <button class="lang-btn active" onclick="setLang('pt',this)">🇧🇷 PT</button>

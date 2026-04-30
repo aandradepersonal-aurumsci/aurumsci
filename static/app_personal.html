@@ -3837,7 +3837,7 @@ async function excluirAluno(alunoId){
   
   // Chama backend
   try {
-    var token = localStorage.getItem('token');
+    var token = localStorage.getItem('aurum_personal_token');
     var r = await fetch('/alunos/' + alunoId + '/permanente', {
       method: 'DELETE',
       headers: {'Authorization': 'Bearer ' + token}

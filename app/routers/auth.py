@@ -227,3 +227,79 @@ def alterar_senha(
 
     logger.info(f"SENHA ALTERADA | Personal ID: {personal.id}")
     return {"mensagem": "Senha alterada com sucesso"}
+
+
+
+# ─── EXCLUIR CONTA PERMANENTEMENTE ────────────────────────────
+class ExcluirConta(BaseModel):
+    senha: str
+    confirmacao: str  # deve ser "EXCLUIR"
+
+
+@router.delete("/excluir-conta")
+def excluir_conta(
+    dados: ExcluirConta,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Exclui PERMANENTEMENTE a conta do personal e TODOS seus dados em cascata."""
+    
+    # Validacao 1: senha correta
+    if not verificar_senha(dados.senha, personal.senha_hash):
+        raise HTTPException(status_code=400, detail="Senha incorreta")
+    
+    # Validacao 2: confirmacao explicita
+    if dados.confirmacao.strip().upper() != "EXCLUIR":
+        raise HTTPException(status_code=400, detail='Digite "EXCLUIR" para confirmar')
+    
+    personal_id = personal.id
+    nome_personal = personal.nome
+    email_personal = personal.email
+    
+    # Imports tardios para evitar circular imports
+    from app.models import Aluno
+    from app.routers.portal_aluno import AlunoCredencial
+    from app.routers.treino import PresencaTreino
+    from app.routers.financeiro import Pagamento
+    from app.routers.recuperar_senha import TokenResetSenha
+    
+    # Lista todos os alunos desse personal
+    alunos_ids = [a.id for a in db.query(Aluno).filter(Aluno.personal_id == personal_id).all()]
+    
+    # Apaga em cascata (ordem importa pra nao quebrar FK)
+    if alunos_ids:
+        db.query(AlunoCredencial).filter(AlunoCredencial.aluno_id.in_(alunos_ids)).delete(synchronize_session=False)
+        db.query(PresencaTreino).filter(PresencaTreino.aluno_id.in_(alunos_ids)).delete(synchronize_session=False)
+        db.query(Pagamento).filter(Pagamento.aluno_id.in_(alunos_ids)).delete(synchronize_session=False)
+        db.query(Aluno).filter(Aluno.personal_id == personal_id).delete(synchronize_session=False)
+    
+    # Apaga tokens de reset
+    db.query(TokenResetSenha).filter(
+        TokenResetSenha.email == email_personal,
+        TokenResetSenha.tipo == "personal"
+    ).delete(synchronize_session=False)
+    
+    # Tenta cancelar Stripe (nao falha se erro)
+    try:
+        if hasattr(personal, 'stripe_customer_id') and personal.stripe_customer_id:
+            import stripe
+            from app.config import settings
+            stripe.api_key = settings.STRIPE_SECRET_KEY
+            # Cancela todas assinaturas ativas
+            subs = stripe.Subscription.list(customer=personal.stripe_customer_id, status="active")
+            for sub in subs.data:
+                stripe.Subscription.delete(sub.id)
+            logger.info(f"STRIPE: assinaturas canceladas | Personal {personal_id}")
+    except Exception as e:
+        logger.error(f"STRIPE: erro ao cancelar | Personal {personal_id} | {e}")
+    
+    # Finalmente apaga o personal
+    db.delete(personal)
+    db.commit()
+    
+    logger.info(f"CONTA EXCLUIDA | Personal ID: {personal_id} | Nome: {nome_personal} | Email: {email_personal}")
+    
+    return {
+        "ok": True,
+        "mensagem": f"Conta de {nome_personal} excluida permanentemente. Todos os dados foram apagados."
+    }

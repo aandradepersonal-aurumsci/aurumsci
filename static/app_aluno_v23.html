@@ -372,6 +372,9 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       <div class="avatar" id="avatar" onclick="toggleMenuAvatar()" style="position:relative">A</div>
       <div id="menu-avatar" style="display:none;position:fixed;top:56px;right:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:14px;padding:8px;z-index:9999;min-width:180px;box-shadow:0 8px 32px rgba(0,0,0,.5)">
         <div id="menu-avatar-nome" style="padding:10px 14px;font-size:11px;color:var(--cinza);border-bottom:1px solid var(--borda);margin-bottom:6px;letter-spacing:2px;font-weight:700"></div>
+        <div onclick="excluirMinhaContaAluno()" style="padding:10px 14px;font-size:14px;color:var(--vermelho);cursor:pointer;border-radius:10px;display:flex;align-items:center;gap:10px;border-top:1px solid var(--borda);margin-top:6px;padding-top:10px" onmouseover="this.style.background='rgba(255,75,75,.08)'" onmouseout="this.style.background='transparent'">
+          \u{1F5D1}\uFE0F <span>Excluir minha conta</span>
+        </div>
         <div onclick="fazerLogout()" style="padding:10px 14px;font-size:14px;color:var(--vermelho);cursor:pointer;border-radius:10px;display:flex;align-items:center;gap:10px" onmouseover="this.style.background='rgba(255,75,75,.08)'" onmouseout="this.style.background='transparent'">
           🚪 <span>Sair da conta</span>
         </div>
@@ -3503,6 +3506,57 @@ function abrirEsqueciSenha(){
     alert("Erro ao solicitar. Tente novamente em alguns instantes.");
     console.error(e);
   });
+}
+</script>
+
+<script>
+async function excluirMinhaContaAluno(){
+  // Fecha menu
+  var menu = document.getElementById('menu-avatar');
+  if(menu) menu.style.display = 'none';
+  
+  // Confirmacao 1: alerta inicial
+  if(!confirm('ATENCAO!\n\nVoce esta prestes a EXCLUIR sua conta no AurumSci.\n\nO que vai acontecer:\n- Voce perde acesso ao app\n- Seu personal MANTEM seu historico\n- Para voltar, peca acesso ao seu personal\n\nDeseja continuar?')){
+    return;
+  }
+  
+  // Confirmacao 2: senha
+  var senha = prompt('Para confirmar, digite sua SENHA:');
+  if(!senha){
+    alert('Operacao cancelada.');
+    return;
+  }
+  
+  // Confirmacao 3: digita EXCLUIR
+  var conf = prompt('ULTIMA CONFIRMACAO!\n\nDigite EXCLUIR (em maiusculo) para apagar sua conta:');
+  if(!conf || conf.trim().toUpperCase() !== 'EXCLUIR'){
+    alert('Confirmacao incorreta. Operacao cancelada.');
+    return;
+  }
+  
+  // Chama backend
+  try {
+    var t = localStorage.getItem('aurum_aluno_token') || token;
+    var r = await fetch('/aluno-portal/excluir-conta', {
+      method: 'DELETE',
+      headers: {
+        'Authorization': 'Bearer ' + t,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({senha: senha, confirmacao: conf})
+    });
+    var d = await r.json();
+    if(r.ok){
+      alert(d.mensagem || 'Conta removida com sucesso. Ate mais!');
+      localStorage.clear();
+      window.location.href = '/aluno';
+    } else {
+      alert('Erro: ' + (d.detail || 'tente novamente'));
+    }
+  } catch(e){
+    alert('Erro de conexao. Tente novamente.');
+    console.error(e);
+  }
 }
 </script>
 </body>

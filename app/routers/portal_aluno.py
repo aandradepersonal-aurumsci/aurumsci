@@ -309,3 +309,56 @@ def assinar_contrato_aluno(aluno: Aluno = Depends(get_aluno_logado), db: Session
     db.add(contrato)
     db.commit()
     return {"mensagem": "Contrato assinado!", "assinado_em": str(contrato.assinado_em)}
+
+
+
+# ─── EXCLUIR CONTA DO ALUNO (LGPD) ────────────────────────────
+class ExcluirContaAluno(BaseModel):
+    senha: str
+    confirmacao: str  # deve ser "EXCLUIR"
+
+
+@router.delete("/excluir-conta")
+def excluir_conta_aluno(
+    dados: ExcluirContaAluno,
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """
+    Exclui a credencial de acesso do aluno (login).
+    NAO apaga o registro do aluno no PRO do personal — historico mantido.
+    """
+    # Busca credencial
+    credencial = db.query(AlunoCredencial).filter(AlunoCredencial.aluno_id == aluno.id).first()
+    if not credencial:
+        raise HTTPException(status_code=404, detail="Credencial nao encontrada")
+    
+    # Validacao 1: senha correta
+    if not pwd_context.verify(dados.senha, credencial.senha_hash):
+        raise HTTPException(status_code=400, detail="Senha incorreta")
+    
+    # Validacao 2: confirmacao explicita
+    if dados.confirmacao.strip().upper() != "EXCLUIR":
+        raise HTTPException(status_code=400, detail='Digite "EXCLUIR" para confirmar')
+    
+    email_aluno = credencial.email
+    
+    # Apaga tokens de reset desse aluno
+    try:
+        from app.routers.recuperar_senha import TokenResetSenha
+        db.query(TokenResetSenha).filter(
+            TokenResetSenha.email == email_aluno,
+            TokenResetSenha.tipo == "aluno"
+        ).delete(synchronize_session=False)
+    except Exception:
+        pass
+    
+    # Apaga SO a credencial (login). 
+    # O aluno do personal continua no banco com historico.
+    db.delete(credencial)
+    db.commit()
+    
+    return {
+        "ok": True,
+        "mensagem": "Sua conta foi removida. Voce nao tem mais acesso ao app. Seu personal mantem o historico para continuidade do acompanhamento."
+    }

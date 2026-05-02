@@ -205,7 +205,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <div id="splash">
   <div class="splash-logo" style="display:flex;align-items:baseline;gap:6px"><svg viewBox="0 0 44 44" width="52" height="52" style="margin-right:8px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:58px;font-weight:400;letter-spacing:6px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:22px;font-style:italic;color:#fff;margin-left:4px">sci.</span><span style="font-family:Arial,sans-serif;font-size:20px;font-weight:700;color:#4B9FFF;margin-left:4px">PRO</span></div>
   <div class="splash-sub" data-i18n="cienciaResultado">CIÊNCIA QUE VIRA RESULTADO</div>
-  <div class="splash-tag">PERSONAL TRAINER</div>
+  <div class="splash-tag" data-i18n="splashTag">PERSONAL TRAINER</div>
   <div class="splash-bar"><div class="splash-progress" id="splash-bar"></div></div>
 </div>
 
@@ -232,7 +232,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <button onclick="fazerLogin()" data-i18n="entrarBtn">ENTRAR</button>
   <div style="text-align:center;margin-top:14px"><a href="#" onclick="abrirEsqueciSenha(); return false;" style="color:var(--ouro);font-size:13px;text-decoration:none" data-i18n="esqueciSenha">Esqueci minha senha</a></div>
   <div class="login-link" style="margin-top:14px">
-    <span id="l-sem-conta">Não tem conta? </span><a href="#" onclick="mostrarToast('Contate o suporte AurumSci')">Fale conosco</a>
+    <span id="l-sem-conta" data-i18n="naoTemConta">Não tem conta? </span><a href="#" onclick="mostrarToast('Contate o suporte AurumSci')" data-i18n="faleConosco">Fale conosco</a>
   </div>
 </div>
 
@@ -255,17 +255,17 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <!-- MENU PERFIL / LOGOUT -->
   <div id="menu-perfil" style="display:none;position:fixed;top:56px;right:12px;background:var(--card);border:1px solid var(--borda);border-radius:14px;padding:8px;z-index:9999;min-width:160px;box-shadow:0 8px 32px rgba(0,0,0,0.4)">
     <div style="padding:8px 12px;font-size:12px;color:var(--cinza);border-bottom:1px solid var(--borda);margin-bottom:6px" id="menu-nome-personal">—</div>
-    <div onclick="abrirWhiteLabel()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🎨 <span>Personalizar logo</span></div>
-    <div onclick="baixarMeuContrato()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">📄 <span>Meu Contrato</span></div>
-<div onclick="abrirMeuPlano()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">💎 <span>Meu Plano</span></div>
-    <div onclick="excluirMinhaConta()" style="padding:10px 12px;font-size:14px;color:#FF4B4B;cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px;border-top:1px solid var(--borda);margin-top:6px;padding-top:10px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🗑️ <span>Excluir minha conta</span></div>
-    <div onclick="fazerLogout()" style="padding:10px 12px;font-size:14px;color:#FF4B4B;cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px;margin-top:2px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🚪 <span>Sair</span></div>
+    <div onclick="abrirWhiteLabel()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🎨 <span data-i18n="personalizarLogo">Personalizar logo</span></div>
+    <div onclick="baixarMeuContrato()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">📄 <span data-i18n="meuContrato">Meu Contrato</span></div>
+<div onclick="abrirMeuPlano()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">💎 <span data-i18n="meuPlano">Meu Plano</span></div>
+    <div onclick="excluirMinhaConta()" style="padding:10px 12px;font-size:14px;color:#FF4B4B;cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px;border-top:1px solid var(--borda);margin-top:6px;padding-top:10px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🗑️ <span data-i18n="excluirConta">Excluir minha conta</span></div>
+    <div onclick="fazerLogout()" style="padding:10px 12px;font-size:14px;color:#FF4B4B;cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px;margin-top:2px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🚪 <span data-i18n="sairConta">Sair</span></div>
   </div>
 
   <!-- MODAL WHITE LABEL -->
   <div id="modal-whitelabel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10000;align-items:center;justify-content:center">
     <div style="background:var(--card);border-radius:20px;padding:28px;width:88%;max-width:340px">
-      <div style="font-family:'Bebas Neue';font-size:22px;color:var(--ouro2);margin-bottom:6px">Personalizar Logo</div>
+      <div style="font-family:'Bebas Neue';font-size:22px;color:var(--ouro2);margin-bottom:6px" data-i18n="personalizarLogoTitulo">Personalizar Logo</div>
       <div style="font-size:13px;color:var(--cinza);margin-bottom:20px">Substitua o logo AurumSci pelo seu. Aparece no topo do app.</div>
       <div id="preview-logo-wl" style="text-align:center;margin-bottom:16px;min-height:50px;display:flex;align-items:center;justify-content:center"></div>
       <label style="display:block;background:var(--ouro2);color:#000;text-align:center;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;margin-bottom:10px">
@@ -273,13 +273,13 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <input type="file" accept="image/*" style="display:none" onchange="uploadLogoWL(this)">
       </label>
       <div style="margin-bottom:10px">
-        <div style="font-size:11px;color:var(--cinza);margin-bottom:6px">NOME DO SEU NEGÓCIO (opcional)</div>
+        <div style="font-size:11px;color:var(--cinza);margin-bottom:6px" data-i18n="nomeNegocio">NOME DO SEU NEGÓCIO (opcional)</div>
         <input id="wl-nome-input" placeholder="Ex: João Fitness, Studio Silva..." style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);font-size:14px;box-sizing:border-box">
       </div>
       <button onclick="usarAurumSci()" style="width:100%;padding:10px;background:rgba(201,168,76,.1);border:1px solid var(--ouro);color:var(--ouro);border-radius:12px;cursor:pointer;margin-bottom:10px;font-weight:700;font-size:13px">⚡ Usar logo AurumSci (padrão)</button>
-      <button onclick="removerLogoWL()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--borda);color:var(--cinza);border-radius:12px;cursor:pointer;margin-bottom:10px">Remover logo personalizado</button>
+      <button onclick="removerLogoWL()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--borda);color:var(--cinza);border-radius:12px;cursor:pointer;margin-bottom:10px" data-i18n="removerLogo">Remover logo personalizado</button>
       <button onclick="salvarLogoWL()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;cursor:pointer;margin-bottom:10px">✅ SALVAR E APLICAR</button>
-      <button onclick="document.getElementById('modal-whitelabel').style.display='none'" style="width:100%;padding:12px;background:var(--borda);color:var(--texto);border:none;border-radius:12px;cursor:pointer;font-weight:600">Fechar</button>
+      <button onclick="document.getElementById('modal-whitelabel').style.display='none'" style="width:100%;padding:12px;background:var(--borda);color:var(--texto);border:none;border-radius:12px;cursor:pointer;font-weight:600" data-i18n="fechar">Fechar</button>
     </div>
   </div>
   <input type="file" id="wl-file-input" accept="image/*" style="display:none" onchange="uploadLogoWL(this)">
@@ -302,19 +302,19 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:16px">
       <div style="background:var(--bg2);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center">
         <div style="font-family:Bebas Neue;font-size:26px;color:var(--verde)"><span id="stat-alunos">0</span><span id="stat-limite" style="font-size:18px;color:var(--cinza);font-weight:normal"></span></div>
-        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px">ATIVOS</div>
+        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px" data-i18n="cardAtivos">ATIVOS</div>
       </div>
       <div style="background:var(--bg2);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center">
         <div style="font-family:Bebas Neue;font-size:26px;color:var(--ouro2)" id="stat-checkins">0</div>
-        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px">CHECK-INS</div>
+        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px" data-i18n="cardCheckins">CHECK-INS</div>
       </div>
       <div style="background:var(--bg2);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center">
         <div style="font-family:Bebas Neue;font-size:26px;color:var(--vermelho)" id="stat-pendentes">0</div>
-        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px">PENDENTES</div>
+        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px" data-i18n="cardPendentes">PENDENTES</div>
       </div>
       <div style="background:var(--bg2);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center">
         <div style="font-family:Bebas Neue;font-size:20px;color:var(--verde)" id="stat-receita">R$0</div>
-        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px">RECEITA</div>
+        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px" data-i18n="cardReceita">RECEITA</div>
       </div>
     </div>
 
@@ -329,23 +329,23 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
       <div onclick="mudarTab('alunos', document.querySelector('.tab:nth-child(2)'))" style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:16px;cursor:pointer;text-align:center">
         <div style="font-size:28px;margin-bottom:6px">👥</div>
-        <div style="font-family:Bebas Neue;font-size:16px;color:var(--ouro2)">ALUNOS</div>
-        <div style="font-size:11px;color:var(--cinza)">Ver todos</div>
+        <div style="font-family:Bebas Neue;font-size:16px;color:var(--ouro2)" data-i18n="quickAlunos">ALUNOS</div>
+        <div style="font-size:11px;color:var(--cinza)" data-i18n="verTodos">Ver todos</div>
       </div>
       <div onclick="mudarTab('loja', document.querySelector('.tab:nth-child(3)'))" style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.15);border-radius:14px;padding:16px;cursor:pointer;text-align:center">
         <div style="font-size:28px;margin-bottom:6px">🛒</div>
-        <div style="font-family:Bebas Neue;font-size:16px;color:var(--verde)">LOJA PRO</div>
-        <div style="font-size:11px;color:var(--cinza)">Equipamentos</div>
+        <div style="font-family:Bebas Neue;font-size:16px;color:var(--verde)" data-i18n="quickLoja">LOJA PRO</div>
+        <div style="font-size:11px;color:var(--cinza)" data-i18n="quickEquip">Equipamentos</div>
       </div>
       <div onclick="mudarTab('fin', document.querySelector('.tab:nth-child(4)'))" style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.15);border-radius:14px;padding:16px;cursor:pointer;text-align:center">
         <div style="font-size:28px;margin-bottom:6px">💰</div>
-        <div style="font-family:Bebas Neue;font-size:16px;color:var(--azul)">FINANÇAS</div>
-        <div style="font-size:11px;color:var(--cinza)">Pagamentos</div>
+        <div style="font-family:Bebas Neue;font-size:16px;color:var(--azul)" data-i18n="quickFinancas">FINANÇAS</div>
+        <div style="font-size:11px;color:var(--cinza)" data-i18n="quickPagamentos">Pagamentos</div>
       </div>
       <div onclick="abrirAulas()" style="background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.15);border-radius:14px;padding:16px;cursor:pointer;text-align:center">
         <div style="font-size:28px;margin-bottom:6px">📅</div>
-        <div style="font-family:Bebas Neue;font-size:16px;color:var(--verde)">AULAS</div>
-        <div style="font-size:11px;color:var(--cinza)">Check-in diário</div>
+        <div style="font-family:Bebas Neue;font-size:16px;color:var(--verde)" data-i18n="quickAulas">AULAS</div>
+        <div style="font-size:11px;color:var(--cinza)" data-i18n="quickCheckinDiario">Check-in diário</div>
       </div>
     </div>
     <div id="alunos-recentes" style="display:none"></div>
@@ -354,22 +354,22 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <!-- ALUNOS -->
   <div class="screen" id="screen-alunos">
     <div class="section-title" id="t-titulo-alunos">ALUNOS</div>
-    <div class="section-sub" id="t-sub-alunos">Gerencie seus alunos</div>
+    <div class="section-sub" id="t-sub-alunos" data-i18n="gerencieAlunos">Gerencie seus alunos</div>
 
     <button class="btn-novo-aluno" onclick="abrirModalNovoAluno()">
-      ➕ <span id="t-novo-aluno">Novo Aluno</span>
+      ➕ <span id="t-novo-aluno" data-i18n="novoAlunoBtn">Novo Aluno</span>
     </button>
 
     <input class="busca-input" type="text" id="busca-aluno" placeholder="🔍 Buscar aluno..." oninput="filtrarAlunos()">
 
     <div class="filtros">
-      <div class="filtro active" onclick="filtroStatus('todos',this)" id="f-todos">Todos</div>
-      <div class="filtro" onclick="filtroStatus('ativo',this)" id="f-ativos">Ativos</div>
-      <div class="filtro" onclick="filtroStatus('inativo',this)" id="f-inativos">Inativos</div>
+      <div class="filtro active" onclick="filtroStatus('todos',this)" id="f-todos" data-i18n="filtroTodos">Todos</div>
+      <div class="filtro" onclick="filtroStatus('ativo',this)" id="f-ativos" data-i18n="filtroAtivos">Ativos</div>
+      <div class="filtro" onclick="filtroStatus('inativo',this)" id="f-inativos" data-i18n="filtroInativos">Inativos</div>
     </div>
 
     <div id="lista-alunos">
-      <div style="text-align:center;padding:40px;color:var(--cinza)">Carregando alunos...</div>
+      <div style="text-align:center;padding:40px;color:var(--cinza)" data-i18n="carregandoAlunos">Carregando alunos...</div>
     </div>
   </div>
 
@@ -384,7 +384,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       <div style="flex:1;text-align:center;font-family:Bebas Neue;font-size:20px;color:var(--ouro2);letter-spacing:1.5px" id="aulas-data-display">--/--/----</div>
       <button onclick="aulasNavegar(1)" style="background:transparent;border:none;color:var(--ouro);font-size:24px;cursor:pointer;padding:4px 12px">›</button>
     </div>
-    <button onclick="aulasIrParaHoje()" style="width:100%;background:rgba(201,168,76,.1);border:1px solid var(--ouro);color:var(--ouro);padding:8px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:16px">HOJE</button>
+    <button onclick="aulasIrParaHoje()" style="width:100%;background:rgba(201,168,76,.1);border:1px solid var(--ouro);color:var(--ouro);padding:8px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:16px" data-i18n="aulasHoje">HOJE</button>
     
     <!-- Autocomplete -->
     <div style="position:relative;margin-bottom:20px">
@@ -393,14 +393,14 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     </div>
     
     <!-- Lista do dia -->
-    <div style="font-family:Bebas Neue;font-size:16px;color:var(--ouro2);letter-spacing:1.5px;margin-bottom:8px">ALUNOS QUE TREINARAM</div>
+    <div style="font-family:Bebas Neue;font-size:16px;color:var(--ouro2);letter-spacing:1.5px;margin-bottom:8px" data-i18n="alunosTreinaram">ALUNOS QUE TREINARAM</div>
     <div id="aulas-lista">
-      <div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px">Nenhuma aula registrada</div>
+      <div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px" data-i18n="nenhumaAula">Nenhuma aula registrada</div>
     </div>
     
     <!-- Resumo -->
     <div id="aulas-resumo" style="margin-top:20px;padding:16px;background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.2);border-radius:12px;text-align:center">
-      <div style="font-size:11px;color:var(--cinza);letter-spacing:1.5px">TOTAL DO DIA</div>
+      <div style="font-size:11px;color:var(--cinza);letter-spacing:1.5px" data-i18n="totalDia">TOTAL DO DIA</div>
       <div style="font-family:Bebas Neue;font-size:32px;color:var(--verde)" id="aulas-total">0</div>
     </div>
   </div>
@@ -416,7 +416,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <!-- FINANCEIRO -->
   <div class="screen" id="screen-fin">
     <div class="section-title" id="t-titulo-fin">FINANCEIRO</div>
-    <div class="section-sub" id="t-sub-fin">Controle de pagamentos</div>
+    <div class="section-sub" id="t-sub-fin" data-i18n="controlePagamentos">Controle de pagamentos</div>
 
     <div class="fin-resumo">
       <div class="fin-card">
@@ -786,6 +786,30 @@ var TR = {
     // ── LOGIN PRO ──
     cienciaResultado:'CIÊNCIA QUE VIRA RESULTADO', areaPersonal:'👨‍💼 ÁREA DO PERSONAL',
     menuLabel:'MENU',
+    splashTag:'PERSONAL TRAINER',
+    naoTemConta:'Não tem conta? ', faleConosco:'Fale conosco',
+    // ── MENU AVATAR ──
+    personalizarLogo:'Personalizar logo', meuContrato:'Meu Contrato',
+    excluirConta:'Excluir minha conta',
+    // ── DASHBOARD CARDS ──
+    cardAtivos:'ATIVOS', cardCheckins:'CHECK-INS', cardPendentes:'PENDENTES', cardReceita:'RECEITA',
+    // ── QUICK ACTIONS ──
+    quickAlunos:'ALUNOS', verTodos:'Ver todos',
+    quickLoja:'LOJA PRO', quickEquip:'Equipamentos',
+    quickFinancas:'FINANÇAS', quickPagamentos:'Pagamentos',
+    quickAulas:'AULAS', quickCheckinDiario:'Check-in diário',
+    // ── ABA ALUNOS ──
+    gerencieAlunos:'Gerencie seus alunos', novoAlunoBtn:'Novo Aluno',
+    filtroTodos:'Todos', filtroAtivos:'Ativos', filtroInativos:'Inativos',
+    carregandoAlunos:'Carregando alunos...',
+    // ── AULAS ──
+    aulasHoje:'HOJE', alunosTreinaram:'ALUNOS QUE TREINARAM',
+    nenhumaAula:'Nenhuma aula registrada', totalDia:'TOTAL DO DIA',
+    // ── FINANÇAS ──
+    controlePagamentos:'Controle de pagamentos',
+    // ── WHITE LABEL ──
+    personalizarLogoTitulo:'Personalizar Logo', nomeNegocio:'NOME DO SEU NEGÓCIO (opcional)',
+    removerLogo:'Remover logo personalizado',
   },
   en: {
     // ── HEADER ──
@@ -847,6 +871,30 @@ var TR = {
     // ── LOGIN PRO ──
     cienciaResultado:'SCIENCE THAT BRINGS RESULTS', areaPersonal:'👨‍💼 PERSONAL TRAINER AREA',
     menuLabel:'MENU',
+    splashTag:'PERSONAL TRAINER',
+    naoTemConta:"Don't have an account? ", faleConosco:'Contact us',
+    // ── AVATAR MENU ──
+    personalizarLogo:'Customize logo', meuContrato:'My Contract',
+    excluirConta:'Delete my account',
+    // ── DASHBOARD CARDS ──
+    cardAtivos:'ACTIVE', cardCheckins:'CHECK-INS', cardPendentes:'PENDING', cardReceita:'REVENUE',
+    // ── QUICK ACTIONS ──
+    quickAlunos:'CLIENTS', verTodos:'See all',
+    quickLoja:'PRO SHOP', quickEquip:'Equipment',
+    quickFinancas:'FINANCES', quickPagamentos:'Payments',
+    quickAulas:'CLASSES', quickCheckinDiario:'Daily check-in',
+    // ── CLIENTS TAB ──
+    gerencieAlunos:'Manage your clients', novoAlunoBtn:'New Client',
+    filtroTodos:'All', filtroAtivos:'Active', filtroInativos:'Inactive',
+    carregandoAlunos:'Loading clients...',
+    // ── CLASSES ──
+    aulasHoje:'TODAY', alunosTreinaram:'CLIENTS WHO TRAINED',
+    nenhumaAula:'No class registered', totalDia:'DAY TOTAL',
+    // ── FINANCES ──
+    controlePagamentos:'Payment control',
+    // ── WHITE LABEL ──
+    personalizarLogoTitulo:'Customize Logo', nomeNegocio:'YOUR BUSINESS NAME (optional)',
+    removerLogo:'Remove custom logo',
   },
   es: {
     // ── HEADER ──
@@ -908,6 +956,30 @@ var TR = {
     // ── LOGIN PRO ──
     cienciaResultado:'CIENCIA QUE TRAE RESULTADOS', areaPersonal:'👨‍💼 ÁREA DEL ENTRENADOR',
     menuLabel:'MENÚ',
+    splashTag:'ENTRENADOR PERSONAL',
+    naoTemConta:'¿No tienes cuenta? ', faleConosco:'Contáctanos',
+    // ── MENÚ AVATAR ──
+    personalizarLogo:'Personalizar logo', meuContrato:'Mi Contrato',
+    excluirConta:'Eliminar mi cuenta',
+    // ── DASHBOARD CARDS ──
+    cardAtivos:'ACTIVOS', cardCheckins:'CHECK-INS', cardPendentes:'PENDIENTES', cardReceita:'INGRESOS',
+    // ── QUICK ACTIONS ──
+    quickAlunos:'ALUMNOS', verTodos:'Ver todos',
+    quickLoja:'TIENDA PRO', quickEquip:'Equipos',
+    quickFinancas:'FINANZAS', quickPagamentos:'Pagos',
+    quickAulas:'CLASES', quickCheckinDiario:'Check-in diario',
+    // ── PESTAÑA ALUMNOS ──
+    gerencieAlunos:'Gestiona tus alumnos', novoAlunoBtn:'Nuevo Alumno',
+    filtroTodos:'Todos', filtroAtivos:'Activos', filtroInativos:'Inactivos',
+    carregandoAlunos:'Cargando alumnos...',
+    // ── CLASES ──
+    aulasHoje:'HOY', alunosTreinaram:'ALUMNOS QUE ENTRENARON',
+    nenhumaAula:'Ninguna clase registrada', totalDia:'TOTAL DEL DÍA',
+    // ── FINANZAS ──
+    controlePagamentos:'Control de pagos',
+    // ── WHITE LABEL ──
+    personalizarLogoTitulo:'Personalizar Logo', nomeNegocio:'NOMBRE DE SU NEGOCIO (opcional)',
+    removerLogo:'Remover logo personalizado',
   }
 };
 
@@ -1513,7 +1585,7 @@ function aulasCarregarLista() {
     var container = document.getElementById('aulas-lista');
     
     if(lista.length === 0) {
-      container.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px">Nenhuma aula registrada</div>';
+      container.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px" data-i18n="nenhumaAula">Nenhuma aula registrada</div>';
     } else {
       var html = '';
       lista.forEach(function(a){

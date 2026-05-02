@@ -257,6 +257,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div style="padding:8px 12px;font-size:12px;color:var(--cinza);border-bottom:1px solid var(--borda);margin-bottom:6px" id="menu-nome-personal">—</div>
     <div onclick="abrirWhiteLabel()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🎨 <span>Personalizar logo</span></div>
     <div onclick="baixarMeuContrato()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">📄 <span>Meu Contrato</span></div>
+<div onclick="abrirMeuPlano()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">💎 <span>Meu Plano</span></div>
     <div onclick="excluirMinhaConta()" style="padding:10px 12px;font-size:14px;color:#FF4B4B;cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px;border-top:1px solid var(--borda);margin-top:6px;padding-top:10px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🗑️ <span>Excluir minha conta</span></div>
     <div onclick="fazerLogout()" style="padding:10px 12px;font-size:14px;color:#FF4B4B;cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px;margin-top:2px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🚪 <span>Sair</span></div>
   </div>
@@ -3646,6 +3647,44 @@ function baixarMeuContrato() {
   </div>
 </div>
 
+<!-- MODAL MEU PLANO -->
+<div id="modal-meu-plano" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;padding:20px;overflow-y:auto">
+  <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:24px;padding:32px;max-width:520px;width:100%;position:relative;max-height:90vh;overflow-y:auto;margin:auto">
+    <span onclick="document.getElementById('modal-meu-plano').style.display='none'" style="position:absolute;top:16px;right:20px;font-size:28px;cursor:pointer;color:var(--cinza);z-index:10">×</span>
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;color:var(--ouro)">💎 MEU PLANO</div>
+      <div style="font-size:12px;color:var(--cinza);margin-top:4px">Gerencie sua assinatura</div>
+    </div>
+    <div id="meu-plano-loading" style="text-align:center;padding:40px 0">
+      <div style="color:var(--cinza);font-size:14px">Carregando...</div>
+    </div>
+    <div id="meu-plano-conteudo" style="display:none">
+      <div id="meu-plano-atual-card" style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.03));border:2px solid var(--ouro);border-radius:16px;padding:24px;margin-bottom:24px;text-align:center">
+        <div id="meu-plano-icone" style="font-size:48px;margin-bottom:8px">🥇</div>
+        <div style="font-size:11px;color:var(--cinza);letter-spacing:3px;margin-bottom:4px">VOCE E</div>
+        <div id="meu-plano-nome" style="font-family:'Bebas Neue';font-size:36px;letter-spacing:4px;color:var(--ouro);line-height:1">OURO</div>
+        <div id="meu-plano-valor" style="font-size:14px;color:var(--cinza);margin-top:8px">R$ 149,90/mes</div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--borda);display:flex;justify-content:space-around">
+          <div><div id="meu-plano-alunos" style="font-family:'Bebas Neue';font-size:24px;color:var(--ouro)">0</div><div style="font-size:10px;color:var(--cinza);letter-spacing:2px">ALUNOS ATIVOS</div></div>
+          <div><div id="meu-plano-limite" style="font-family:'Bebas Neue';font-size:24px;color:var(--ouro)">50</div><div style="font-size:10px;color:var(--cinza);letter-spacing:2px">LIMITE</div></div>
+        </div>
+      </div>
+      <div id="meu-plano-aviso-cancel" style="display:none;background:rgba(255,75,75,0.08);border:1px solid rgba(255,75,75,0.3);border-radius:12px;padding:16px;margin-bottom:20px;text-align:center">
+        <div style="color:#FF4B4B;font-size:13px;margin-bottom:8px">⚠️ Cancelamento agendado</div>
+        <div style="color:var(--cinza);font-size:12px;margin-bottom:12px">Sua assinatura sera cancelada ao final do periodo</div>
+        <button onclick="reativarAssinatura()" style="background:var(--ouro);color:#000;border:none;padding:8px 16px;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px">REATIVAR</button>
+      </div>
+      <div style="margin-bottom:20px">
+        <div style="font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;color:var(--cinza);margin-bottom:12px">MUDAR DE PLANO</div>
+        <div id="meu-plano-opcoes" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+      </div>
+      <div style="border-top:1px solid var(--borda);padding-top:16px;text-align:center">
+        <a href="#" onclick="cancelarAssinaturaModal();return false" style="color:#FF4B4B;font-size:13px;text-decoration:underline;cursor:pointer">Cancelar minha assinatura</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- FIM MODAL MEU PLANO -->
 <!-- MODAL CONTRATO AURUMSCI-PERSONAL (27/04/2026) -->
 <div class="modal-overlay" id="modal-contrato-aurumsci" style="display:none">
   <div class="modal-card" style="max-height:92vh;overflow-y:auto;max-width:600px">
@@ -3816,7 +3855,7 @@ function abrirEsqueciSenha(){
     console.error(e);
   });
 }
-</script>
+</body></script>
 
 <script>
 async function excluirAluno(alunoId){
@@ -3909,6 +3948,121 @@ async function excluirMinhaConta(){
   } catch(e){
     alert('Erro de conexao. Tente novamente.');
     console.error(e);
+  }
+}
+</script>
+<script>
+async function abrirMeuPlano() {
+  document.getElementById('menu-perfil').style.display = 'none';
+  var token = localStorage.getItem('aurum_personal_token');
+  if (!token) { alert('Voce precisa estar logado'); return; }
+  document.getElementById('modal-meu-plano').style.display = 'flex';
+  document.getElementById('meu-plano-loading').style.display = 'block';
+  document.getElementById('meu-plano-conteudo').style.display = 'none';
+  try {
+    var resp = await fetch('/pagamento/meu-plano', {
+      headers: {'Authorization': 'Bearer ' + token}
+    });
+    if (!resp.ok) {
+      var err = await resp.json();
+      alert('Erro ao carregar plano: ' + (err.detail || 'tente novamente'));
+      document.getElementById('modal-meu-plano').style.display = 'none';
+      return;
+    }
+    var data = await resp.json();
+    document.getElementById('meu-plano-icone').textContent = data.icone || '\ud83e\udd47';
+    document.getElementById('meu-plano-nome').textContent = (data.nome_plano || 'Bronze').toUpperCase();
+    document.getElementById('meu-plano-valor').textContent = 'R$ ' + data.valor_mensal.toFixed(2).replace('.', ',') + '/mes';
+    document.getElementById('meu-plano-alunos').textContent = data.alunos_ativos;
+    document.getElementById('meu-plano-limite').textContent = data.limite_alunos >= 9999 ? '\u221e' : data.limite_alunos;
+    if (data.stripe && data.stripe.cancel_at_period_end) {
+      document.getElementById('meu-plano-aviso-cancel').style.display = 'block';
+    } else {
+      document.getElementById('meu-plano-aviso-cancel').style.display = 'none';
+    }
+    var corPlano = data.cor || '#C9A84C';
+    document.getElementById('meu-plano-atual-card').style.borderColor = corPlano;
+    document.getElementById('meu-plano-nome').style.color = corPlano;
+    document.getElementById('meu-plano-alunos').style.color = corPlano;
+    document.getElementById('meu-plano-limite').style.color = corPlano;
+    var opcoesHtml = '';
+    data.planos_disponiveis.forEach(function(p) {
+      if (p.atual) return;
+      opcoesHtml += '<button onclick="mudarPlano(\'' + p.id + '\')" style="background:var(--bg);border:1px solid var(--borda);border-radius:12px;padding:14px 8px;cursor:pointer;color:var(--texto);transition:all 0.2s" onmouseover="this.style.borderColor=\'' + p.cor + '\'" onmouseout="this.style.borderColor=\'var(--borda)\'">' +
+        '<div style="font-size:24px;margin-bottom:4px">' + p.icone + '</div>' +
+        '<div style="font-family:\'Bebas Neue\';font-size:14px;letter-spacing:1px;color:' + p.cor + '">' + p.nome.toUpperCase() + '</div>' +
+        '<div style="font-size:11px;color:var(--cinza);margin-top:2px">R$ ' + p.valor.toFixed(2).replace('.', ',') + '/mes</div>' +
+        '<div style="font-size:10px;color:var(--cinza);margin-top:2px">' + (p.limite_alunos >= 9999 ? 'ilimitado' : 'ate ' + p.limite_alunos + ' alunos') + '</div>' +
+      '</button>';
+    });
+    document.getElementById('meu-plano-opcoes').innerHTML = opcoesHtml;
+    document.getElementById('meu-plano-loading').style.display = 'none';
+    document.getElementById('meu-plano-conteudo').style.display = 'block';
+  } catch (err) {
+    alert('Erro: ' + err.message);
+    document.getElementById('modal-meu-plano').style.display = 'none';
+  }
+}
+
+async function mudarPlano(novoPlano) {
+  var planoLabel = novoPlano.charAt(0).toUpperCase() + novoPlano.slice(1);
+  if (!confirm('Mudar para o plano ' + planoLabel + '? A cobranca proporcional sera aplicada na proxima fatura.')) return;
+  var token = localStorage.getItem('aurum_personal_token');
+  try {
+    var resp = await fetch('/pagamento/mudar-plano', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
+      body: JSON.stringify({novo_plano: novoPlano})
+    });
+    var data = await resp.json();
+    if (resp.ok) {
+      alert('\ud83c\udf89 ' + (data.mensagem || 'Plano alterado com sucesso!'));
+      abrirMeuPlano();
+    } else {
+      alert('Erro: ' + (data.detail || 'Tente novamente'));
+    }
+  } catch (err) {
+    alert('Erro: ' + err.message);
+  }
+}
+
+async function cancelarAssinaturaModal() {
+  if (!confirm('Tem certeza que quer cancelar sua assinatura?\n\nVoce mantem acesso ate o final do periodo atual.')) return;
+  var token = localStorage.getItem('aurum_personal_token');
+  try {
+    var resp = await fetch('/pagamento/cancelar-assinatura', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token}
+    });
+    var data = await resp.json();
+    if (resp.ok) {
+      alert(data.mensagem || 'Cancelamento agendado');
+      abrirMeuPlano();
+    } else {
+      alert('Erro: ' + (data.detail || 'Tente novamente'));
+    }
+  } catch (err) {
+    alert('Erro: ' + err.message);
+  }
+}
+
+async function reativarAssinatura() {
+  if (!confirm('Reativar sua assinatura? Ela continuara ativa normalmente.')) return;
+  var token = localStorage.getItem('aurum_personal_token');
+  try {
+    var resp = await fetch('/pagamento/reativar-assinatura', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token}
+    });
+    var data = await resp.json();
+    if (resp.ok) {
+      alert('\ud83c\udf89 ' + (data.mensagem || 'Assinatura reativada!'));
+      abrirMeuPlano();
+    } else {
+      alert('Erro: ' + (data.detail || 'Tente novamente'));
+    }
+  } catch (err) {
+    alert('Erro: ' + err.message);
   }
 }
 </script>

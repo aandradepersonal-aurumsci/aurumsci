@@ -331,14 +331,14 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <!-- SPLASH -->
 <div id="splash">
   <div class="splash-logo"><svg viewBox="0 0 44 44" width="52" height="52" style="margin-right:8px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:58px;font-weight:400;letter-spacing:6px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:22px;font-style:italic;color:#fff;margin-left:4px;margin-bottom:8px">sci.</span></div>
-  <div class="splash-sub">CIÊNCIA QUE VIRA RESULTADO</div>
+  <div class="splash-sub" data-i18n="cienciaResultado">CIÊNCIA QUE VIRA RESULTADO</div>
   <div class="splash-bar"><div class="splash-prog"></div></div>
 </div>
 
 <!-- LOGIN -->
 <div id="screen-login" style="display:flex">
   <div class="login-logo" style="display:flex;align-items:baseline;gap:4px;justify-content:center;margin:0 auto"><svg viewBox="0 0 44 44" width="36" height="36" style="margin-right:6px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:42px;font-weight:400;letter-spacing:4px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:16px;font-style:italic;color:#fff;margin-left:3px">sci.</span></div>
-  <div class="login-tag" id="l-tag">CIÊNCIA QUE VIRA RESULTADO</div>
+  <div class="login-tag" id="l-tag" data-i18n="cienciaResultado">CIÊNCIA QUE VIRA RESULTADO</div>
   <div class="lang-row">
     <button class="lang-btn active" onclick="setLang('pt',this)">🇧🇷 PT</button>
     <button class="lang-btn" onclick="setLang('en',this)">🇺🇸 EN</button>
@@ -376,7 +376,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
           \u{1F5D1}\uFE0F <span>Excluir minha conta</span>
         </div>
         <div onclick="fazerLogout()" style="padding:10px 14px;font-size:14px;color:var(--vermelho);cursor:pointer;border-radius:10px;display:flex;align-items:center;gap:10px" onmouseover="this.style.background='rgba(255,75,75,.08)'" onmouseout="this.style.background='transparent'">
-          🚪 <span>Sair da conta</span>
+          🚪 <span data-i18n="sairConta">Sair da conta</span>
         </div>
       </div>
     </div>
@@ -397,7 +397,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 
   <!-- SCREEN AVALIAÇÃO -->
   <div class="screen" id="screen-avaliacao">
-    <div class="section-title" id="t-aval-titulo">AVALIAÇÃO</div>
+    <div class="section-title" id="t-aval-titulo" data-i18n="avaliacaoTitulo">AVALIAÇÃO</div>
     <div class="section-sub" id="t-aval-sub">Acompanhe sua evolução física completa</div>
     <!-- ABAS TEAM AURUM -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:16px;border-radius:12px;overflow:hidden;border:1px solid var(--borda)">
@@ -460,15 +460,15 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       <div class="aval-card" onclick="abrirModalDocumentos()" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));border-color:rgba(201,168,76,.25);position:relative">
         <div style="position:absolute;top:8px;left:8px;background:var(--ouro);color:#000;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">0️⃣</div>
         <div class="aval-icon">📄</div>
-        <div class="aval-titulo">DOCUMENTOS</div>
-        <div class="aval-sub">PAR-Q · Consentimento · Termo</div>
+        <div class="aval-titulo" data-i18n="documentos">DOCUMENTOS</div>
+        <div class="aval-sub" data-i18n="parqDesc">PAR-Q · Consentimento · Termo</div>
         <div id="docs-badge" style="display:none;position:absolute;top:8px;right:8px;background:#FF4B4B;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px">PENDENTE</div>
       </div>
       <div class="aval-card" onclick="abrirModal('modal-anamnese')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(75,159,255,.08),rgba(75,159,255,.02));border-color:rgba(75,159,255,.25);position:relative">
         <div style="position:absolute;top:8px;left:8px;background:var(--azul);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">1️⃣</div>
         <div class="aval-icon">📝</div>
-        <div class="aval-titulo">ANAMNESE</div>
-        <div class="aval-sub">Objetivo · Nível · Saúde</div>
+        <div class="aval-titulo" data-i18n="anamnese">ANAMNESE</div>
+        <div class="aval-sub" data-i18n="anamneseDesc">Objetivo · Nível · Saúde</div>
       </div>
     </div>
 
@@ -478,31 +478,31 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       <div class="aval-card" onclick="abrirModal('modal-postural')" style="position:relative">
         <div style="position:absolute;top:8px;left:8px;background:var(--azul);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">2️⃣</div>
         <div class="aval-icon">🧍</div>
-        <div class="aval-titulo">POSTURAL</div>
-        <div class="aval-sub" id="t-aval1">Análise com IA</div>
+        <div class="aval-titulo" data-i18n="postural">POSTURAL</div>
+        <div class="aval-sub" id="t-aval1" data-i18n="posturalDesc">Análise com IA</div>
       </div>
       <div class="aval-card" onclick="abrirModal('modal-medidas')" style="position:relative">
         <div style="position:absolute;top:8px;left:8px;background:var(--azul);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">3️⃣</div>
         <div class="aval-icon">📏</div>
-        <div class="aval-titulo">MEDIDAS</div>
-        <div class="aval-sub" id="t-aval3">Circunferências</div>
+        <div class="aval-titulo" data-i18n="medidas">MEDIDAS</div>
+        <div class="aval-sub" id="t-aval3" data-i18n="medidasDesc">Circunferências</div>
       </div>
       <div class="aval-card" onclick="abrirModal('modal-composicao')" style="position:relative">
         <div style="position:absolute;top:8px;left:8px;background:var(--azul);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">4️⃣</div>
         <div class="aval-icon">⚖️</div>
-        <div class="aval-titulo">COMPOSIÇÃO</div>
-        <div class="aval-sub" id="t-aval4">Peso e gordura</div>
+        <div class="aval-titulo" data-i18n="composicao">COMPOSIÇÃO</div>
+        <div class="aval-sub" id="t-aval4" data-i18n="composicaoDesc">Peso e gordura</div>
       </div>
       <div class="aval-card" onclick="abrirModal('modal-testes')" style="position:relative">
         <div style="position:absolute;top:8px;left:8px;background:var(--azul);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">5️⃣</div>
         <div class="aval-icon">❤️</div>
-        <div class="aval-titulo">TESTES</div>
-        <div class="aval-sub" id="t-aval2">VO2, FC, Força</div>
+        <div class="aval-titulo" data-i18n="testes">TESTES</div>
+        <div class="aval-sub" id="t-aval2" data-i18n="testesDesc">VO2, FC, Força</div>
       </div>
       <div class="aval-card" onclick="abrirModalNutri()" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.04));border-color:rgba(201,168,76,.3);position:relative">
         <div style="position:absolute;top:8px;left:8px;background:var(--ouro);color:#000;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">6️⃣</div>
         <div class="aval-icon">🥗</div>
-        <div class="aval-titulo">NUTRIÇÃO</div>
+        <div class="aval-titulo" data-i18n="nutricao">NUTRIÇÃO</div>
         <div class="aval-sub">Sugestão baseada em evidências</div>
       </div>
     </div>
@@ -510,28 +510,28 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 
   <!-- SCREEN EVOLUÇÃO -->
   <div class="screen" id="screen-evolucao">
-    <div class="section-title" id="t-evol-titulo">RESULTADOS</div>
+    <div class="section-title" id="t-evol-titulo" data-i18n="resultadosTitulo">RESULTADOS</div>
     <div id="evolucao-content"></div>
   </div>
 
   <!-- SCREEN PERIODIZAÇÃO -->
   <div class="screen" id="screen-periodo">
-    <div class="periodo-titulo" id="t-periodo-titulo">PERIODIZAÇÃO</div>
+    <div class="periodo-titulo" id="t-periodo-titulo" data-i18n="periodizacaoTitulo">PERIODIZAÇÃO</div>
     <div class="periodo-sub" id="t-periodo-sub">Como seu treino evolui ao longo do tempo</div>
     <div id="periodo-content"></div>
   </div>
 
   <!-- SCREEN LOJA -->
   <div class="screen" id="screen-loja">
-    <div class="section-title" id="t-loja-titulo">LOJINHA</div>
-    <div class="section-sub" id="t-loja-sub">Tudo para treinar melhor</div>
+    <div class="section-title" id="t-loja-titulo" data-i18n="lojinhaTitulo">LOJINHA</div>
+    <div class="section-sub" id="t-loja-sub" data-i18n="lojinhaSub">Tudo para treinar melhor</div>
     <div id="loja-content"></div>
   </div>
 
   <!-- FINANCEIRO -->
   <div class="screen" id="screen-fin">
-    <div class="section-title">FINANCEIRO</div>
-    <div class="section-sub">Seu plano e pagamentos</div>
+    <div class="section-title" data-i18n="financeiroTitulo">FINANCEIRO</div>
+    <div class="section-sub" data-i18n="financeiroSub">Seu plano e pagamentos</div>
     <div id="fin-content"><div style="text-align:center;padding:40px;color:var(--cinza)">Carregando...</div></div>
   </div>
 
@@ -568,7 +568,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <!-- MODAL AJUDA -->
 <div class="ajuda-overlay" id="ajuda-overlay" onclick="fecharAjuda()">
   <div class="ajuda-card" onclick="event.stopPropagation()">
-    <div class="ajuda-titulo" id="ajuda-titulo">COMO USAR</div>
+    <div class="ajuda-titulo" id="ajuda-titulo" data-i18n="comoUsar">COMO USAR</div>
     <div id="ajuda-corpo"></div>
     <button class="btn-fechar-ajuda" onclick="fecharAjuda()">ENTENDI ✓</button>
   </div>
@@ -576,9 +576,9 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 
 <!-- TIMER OVERLAY -->
 <div id="timer-overlay">
-  <div class="timer-badge" id="timer-tipo-badge">METABÓLICO</div>
+  <div class="timer-badge" id="timer-tipo-badge" data-i18n="timerMetabolico">METABÓLICO</div>
   <div class="timer-ex-nome" id="timer-ex-nome"></div>
-  <div class="timer-label" id="timer-label">INTERVALO</div>
+  <div class="timer-label" id="timer-label" data-i18n="timerIntervalo">INTERVALO</div>
   <div class="timer-ring-wrap">
     <svg class="timer-ring-bg" viewBox="0 0 220 220">
       <circle cx="110" cy="110" r="96" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="12"/>
@@ -632,7 +632,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <div class="modal-full" id="modal-postural">
   <div class="modal-header">
     <button class="modal-back" onclick="fecharModal('modal-postural')">←</button>
-    <div class="modal-titulo">ANÁLISE POSTURAL</div>
+    <div class="modal-titulo" data-i18n="analisePostural">ANÁLISE POSTURAL</div>
   </div>
   <div class="modal-body">
     <div class="onb-dica"><strong style="color:var(--ouro)">Como posicionar:</strong> De pé, relaxado, pés levemente afastados, braços soltos, olhar fixo no horizonte. Use roupa mínima.</div>
@@ -673,18 +673,18 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <div class="modal-full" id="modal-testes">
   <div class="modal-header">
     <button class="modal-back" onclick="fecharModal('modal-testes')">←</button>
-    <div class="modal-titulo">TESTES FÍSICOS</div>
+    <div class="modal-titulo" data-i18n="testesFisicos">TESTES FÍSICOS</div>
   </div>
   <div class="modal-body">
-    <div class="section-sub">Escolha o teste para realizar</div>
+    <div class="section-sub" data-i18n="escolhaTeste">Escolha o teste para realizar</div>
 
     <!-- VO2 MAX -->
     <div class="teste-card" onclick="abrirTeste('vo2')">
       <div class="teste-header">
         <div class="teste-icon">🫁</div>
         <div class="teste-info">
-          <div class="teste-nome">VO2 MÁX</div>
-          <div class="teste-desc">Cooper 12min / Teste da Milha</div>
+          <div class="teste-nome" data-i18n="vo2max">VO2 MÁX</div>
+          <div class="teste-desc" data-i18n="cooperMilha">Cooper 12min / Teste da Milha</div>
         </div>
         <span class="teste-badge badge-verde">Todos</span>
       </div>
@@ -695,8 +695,8 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       <div class="teste-header">
         <div class="teste-icon">💪</div>
         <div class="teste-info">
-          <div class="teste-nome">FORÇA MUSCULAR</div>
-          <div class="teste-desc">Flexão / Barra / Agachamento</div>
+          <div class="teste-nome" data-i18n="forcaMuscular">FORÇA MUSCULAR</div>
+          <div class="teste-desc" data-i18n="flexaoBarra">Flexão / Barra / Agachamento</div>
         </div>
         <span class="teste-badge badge-amarelo">Todos</span>
       </div>
@@ -707,7 +707,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       <div class="teste-header">
         <div class="teste-icon">🦵</div>
         <div class="teste-info">
-          <div class="teste-nome">POTÊNCIA MMII</div>
+          <div class="teste-nome" data-i18n="potenciaMmii">POTÊNCIA MMII</div>
           <div class="teste-desc">Sentar e levantar — Jones et al. (1999)</div>
         </div>
         <span class="teste-badge badge-verde">Funcional</span>
@@ -723,7 +723,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <div class="modal-full" id="modal-medidas">
   <div class="modal-header">
     <button class="modal-back" onclick="fecharModal('modal-medidas')">←</button>
-    <div class="modal-titulo">CIRCUNFERÊNCIAS</div>
+    <div class="modal-titulo" data-i18n="circunferencias">CIRCUNFERÊNCIAS</div>
   </div>
   <div class="modal-body" id="body-medidas"></div>
 </div>
@@ -732,7 +732,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <div class="modal-full" id="modal-composicao">
   <div class="modal-header">
     <button class="modal-back" onclick="fecharModal('modal-composicao')">←</button>
-    <div class="modal-titulo">COMPOSIÇÃO CORPORAL</div>
+    <div class="modal-titulo" data-i18n="composicaoCorporal">COMPOSIÇÃO CORPORAL</div>
   </div>
   <div class="modal-body" id="body-composicao"></div>
 </div>
@@ -741,7 +741,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <div class="modal-full" id="modal-nutri">
   <div class="modal-header">
     <button class="modal-back" onclick="fecharModal('modal-nutri')">←</button>
-    <div class="modal-titulo">SUGESTÃO NUTRICIONAL</div>
+    <div class="modal-titulo" data-i18n="sugestaoNutricional">SUGESTÃO NUTRICIONAL</div>
   </div>
   <div class="modal-body" id="body-nutri">
     <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:14px;margin-bottom:16px">
@@ -889,6 +889,52 @@ var TX = {
     // Treino
     checkinBtn:'✓ FAZER CHECK-IN',
     auriAviso:'Como posso te ajudar hoje?',
+    // ── HEADER & SAUDAÇÃO ──
+    cienciaResultado:'CIÊNCIA QUE VIRA RESULTADO',
+    splashTag:'ALUNO',
+    // ── MENU AVATAR ──
+    excluirConta:'Excluir minha conta', sairConta:'Sair da conta',
+    menuPerfil:'MEU PERFIL',
+    // ── AVALIAÇÃO ──
+    avaliacaoTitulo:'AVALIAÇÃO', comoUsar:'COMO USAR',
+    documentos:'DOCUMENTOS', anamnese:'ANAMNESE',
+    postural:'POSTURAL', medidas:'MEDIDAS', composicao:'COMPOSIÇÃO',
+    testes:'TESTES', nutricao:'NUTRIÇÃO',
+    parqDesc:'PAR-Q · Consentimento · Termo',
+    anamneseDesc:'Objetivo · Nível · Saúde',
+    posturalDesc:'Análise com IA', medidasDesc:'Circunferências',
+    composicaoDesc:'Peso e gordura', testesDesc:'VO2, FC, Força',
+    // ── RESULTADOS / PERIODIZAÇÃO / LOJA / FINANCEIRO ──
+    resultadosTitulo:'RESULTADOS', periodizacaoTitulo:'PERIODIZAÇÃO',
+    lojinhaTitulo:'LOJINHA', lojinhaSub:'Tudo para treinar melhor',
+    financeiroTitulo:'FINANCEIRO', financeiroSub:'Seu plano e pagamentos',
+    carregando:'Carregando...',
+    // ── TIMER ──
+    timerMetabolico:'METABÓLICO', timerIntervalo:'INTERVALO',
+    // ── MODAIS ──
+    analisePostural:'ANÁLISE POSTURAL', testesFisicos:'TESTES FÍSICOS',
+    escolhaTeste:'Escolha o teste para realizar',
+    circunferencias:'CIRCUNFERÊNCIAS', composicaoCorporal:'COMPOSIÇÃO CORPORAL',
+    sugestaoNutricional:'SUGESTÃO NUTRICIONAL',
+    vo2max:'VO2 MÁX', cooperMilha:'Cooper 12min / Teste da Milha',
+    forcaMuscular:'FORÇA MUSCULAR',
+    flexaoBarra:'Flexão / Barra / Agachamento',
+    potenciaMmii:'POTÊNCIA MMII',
+    todos:'Todos', funcional:'Funcional',
+    // ── COMO POSICIONAR (postural) ──
+    comoPosicionar:'Como posicionar:',
+    posicionarTexto:'De pé, relaxado, pés levemente afastados, braços soltos, olhar fixo no horizonte. Use roupa mínima.',
+    // ── PASSO A PASSO AVALIAÇÃO ──
+    passo1:'Preencha os', passoAdocs:'DOCUMENTOS',
+    passo1desc:'PAR-Q e consentimento',
+    passo2:'Preencha a', passoAanamnese:'ANAMNESE',
+    passo2desc:'histórico de saúde',
+    passo3:'Realize os', passoAtestes:'TESTES',
+    passo3desc:'VO2, força e potência',
+    passo4:'Tire as fotos para', passoApostural:'ANÁLISE POSTURAL',
+    passo4desc:'com IA',
+    passo5:'Registre suas', passoAmedidas:'MEDIDAS',
+    passo5desc:'e composição corporal',
   },
   en: {
     emailLabel:'EMAIL', senhaLabel:'PASSWORD', entrar:'LOGIN',
@@ -914,6 +960,52 @@ var TX = {
     obj4:'Health & Wellness ❤️', obj5:'Strength 🏋️', obj6:'Flexibility 🧘',
     dias2:'2x', dias3:'3x', dias4:'4x', dias5:'5x',
     checkinBtn:'✓ CHECK-IN', auriAviso:'How can I help you today?',
+    // ── HEADER ──
+    cienciaResultado:'SCIENCE THAT BRINGS RESULTS',
+    splashTag:'CLIENT',
+    // ── AVATAR MENU ──
+    excluirConta:'Delete my account', sairConta:'Logout',
+    menuPerfil:'MY PROFILE',
+    // ── ASSESSMENT ──
+    avaliacaoTitulo:'ASSESSMENT', comoUsar:'HOW TO USE',
+    documentos:'DOCUMENTS', anamnese:'HEALTH HISTORY',
+    postural:'POSTURAL', medidas:'MEASUREMENTS', composicao:'COMPOSITION',
+    testes:'TESTS', nutricao:'NUTRITION',
+    parqDesc:'PAR-Q · Consent · Agreement',
+    anamneseDesc:'Goal · Level · Health',
+    posturalDesc:'AI Analysis', medidasDesc:'Circumferences',
+    composicaoDesc:'Weight and fat', testesDesc:'VO2, HR, Strength',
+    // ── RESULTS / PERIODIZATION / SHOP / FINANCIAL ──
+    resultadosTitulo:'RESULTS', periodizacaoTitulo:'PERIODIZATION',
+    lojinhaTitulo:'SHOP', lojinhaSub:'Everything for better training',
+    financeiroTitulo:'FINANCIAL', financeiroSub:'Your plan and payments',
+    carregando:'Loading...',
+    // ── TIMER ──
+    timerMetabolico:'METABOLIC', timerIntervalo:'REST',
+    // ── MODALS ──
+    analisePostural:'POSTURAL ANALYSIS', testesFisicos:'FITNESS TESTS',
+    escolhaTeste:'Choose the test to perform',
+    circunferencias:'CIRCUMFERENCES', composicaoCorporal:'BODY COMPOSITION',
+    sugestaoNutricional:'NUTRITION SUGGESTION',
+    vo2max:'VO2 MAX', cooperMilha:'Cooper 12min / Mile Test',
+    forcaMuscular:'MUSCULAR STRENGTH',
+    flexaoBarra:'Push-up / Pull-up / Squat',
+    potenciaMmii:'LOWER LIMB POWER',
+    todos:'All', funcional:'Functional',
+    // ── HOW TO POSITION ──
+    comoPosicionar:'How to position:',
+    posicionarTexto:'Standing, relaxed, feet slightly apart, arms loose, eyes fixed on horizon. Use minimal clothing.',
+    // ── STEP-BY-STEP ASSESSMENT ──
+    passo1:'Fill out the', passoAdocs:'DOCUMENTS',
+    passo1desc:'PAR-Q and consent',
+    passo2:'Complete the', passoAanamnese:'HEALTH HISTORY',
+    passo2desc:'health background',
+    passo3:'Perform the', passoAtestes:'TESTS',
+    passo3desc:'VO2, strength and power',
+    passo4:'Take photos for', passoApostural:'POSTURAL ANALYSIS',
+    passo4desc:'with AI',
+    passo5:'Record your', passoAmedidas:'MEASUREMENTS',
+    passo5desc:'and body composition',
   },
   es: {
     emailLabel:'EMAIL', senhaLabel:'CONTRASEÑA', entrar:'ENTRAR',
@@ -939,6 +1031,52 @@ var TX = {
     obj4:'Salud y Calidad de Vida ❤️', obj5:'Fuerza 🏋️', obj6:'Flexibilidad 🧘',
     dias2:'2x', dias3:'3x', dias4:'4x', dias5:'5x',
     checkinBtn:'✓ CHECK-IN', auriAviso:'¿Cómo puedo ayudarte hoy?',
+    // ── ENCABEZADO ──
+    cienciaResultado:'CIENCIA QUE TRAE RESULTADOS',
+    splashTag:'ALUMNO',
+    // ── MENÚ AVATAR ──
+    excluirConta:'Eliminar mi cuenta', sairConta:'Salir',
+    menuPerfil:'MI PERFIL',
+    // ── EVALUACIÓN ──
+    avaliacaoTitulo:'EVALUACIÓN', comoUsar:'CÓMO USAR',
+    documentos:'DOCUMENTOS', anamnese:'ANAMNESIS',
+    postural:'POSTURAL', medidas:'MEDIDAS', composicao:'COMPOSICIÓN',
+    testes:'PRUEBAS', nutricao:'NUTRICIÓN',
+    parqDesc:'PAR-Q · Consentimiento · Término',
+    anamneseDesc:'Objetivo · Nivel · Salud',
+    posturalDesc:'Análisis con IA', medidasDesc:'Circunferencias',
+    composicaoDesc:'Peso y grasa', testesDesc:'VO2, FC, Fuerza',
+    // ── RESULTADOS / PERIODIZACIÓN / TIENDA / FINANCIERO ──
+    resultadosTitulo:'RESULTADOS', periodizacaoTitulo:'PERIODIZACIÓN',
+    lojinhaTitulo:'TIENDA', lojinhaSub:'Todo para entrenar mejor',
+    financeiroTitulo:'FINANCIERO', financeiroSub:'Tu plan y pagos',
+    carregando:'Cargando...',
+    // ── TIMER ──
+    timerMetabolico:'METABÓLICO', timerIntervalo:'DESCANSO',
+    // ── MODALES ──
+    analisePostural:'ANÁLISIS POSTURAL', testesFisicos:'PRUEBAS FÍSICAS',
+    escolhaTeste:'Elige la prueba a realizar',
+    circunferencias:'CIRCUNFERENCIAS', composicaoCorporal:'COMPOSICIÓN CORPORAL',
+    sugestaoNutricional:'SUGERENCIA NUTRICIONAL',
+    vo2max:'VO2 MÁX', cooperMilha:'Cooper 12min / Test de la Milla',
+    forcaMuscular:'FUERZA MUSCULAR',
+    flexaoBarra:'Flexión / Barra / Sentadilla',
+    potenciaMmii:'POTENCIA MIEMBROS INF.',
+    todos:'Todos', funcional:'Funcional',
+    // ── CÓMO POSICIONAR ──
+    comoPosicionar:'Cómo posicionarse:',
+    posicionarTexto:'De pie, relajado, pies ligeramente separados, brazos sueltos, mirada fija al horizonte. Usa ropa mínima.',
+    // ── PASO A PASO EVALUACIÓN ──
+    passo1:'Complete los', passoAdocs:'DOCUMENTOS',
+    passo1desc:'PAR-Q y consentimiento',
+    passo2:'Complete la', passoAanamnese:'ANAMNESIS',
+    passo2desc:'historial de salud',
+    passo3:'Realice las', passoAtestes:'PRUEBAS',
+    passo3desc:'VO2, fuerza y potencia',
+    passo4:'Tome fotos para', passoApostural:'ANÁLISIS POSTURAL',
+    passo4desc:'con IA',
+    passo5:'Registre sus', passoAmedidas:'MEDIDAS',
+    passo5desc:'y composición corporal',
   }
 };
 function T(k){ return (TX[lang]||TX['pt'])[k] || (TX['pt'])[k] || k; }
@@ -983,23 +1121,71 @@ function setLang(l, el){
   lang = l; localStorage.setItem('aurum_lang', l);
   document.querySelectorAll('.lang-row .lang-btn').forEach(function(b){ b.classList.remove('active'); });
   el.classList.add('active');
+  atualizarTextos();  // FIX: traduz tela login tambem
+  if(typeof atualizarData === 'function') atualizarData();
 }
 function setLangApp(l, el){
   lang = l; localStorage.setItem('aurum_lang', l);
   document.querySelectorAll('.lang-mini-row .lang-mini').forEach(function(b){ b.classList.remove('active'); });
   el.classList.add('active');
   atualizarTextos();
+  if(typeof atualizarData === 'function') atualizarData();
   renderTreino();
   chatHist = [];
   var msgs = document.getElementById('chat-msgs');
   if(msgs) msgs.innerHTML = '<div class="msg msg-auri"><span class="msg-tag">AURI</span>' + T('auriMsg') + '</div>';
 }
 function atualizarTextos(){
+  // SISTEMA UNIVERSAL data-i18n - atualiza TODOS os elementos automaticamente
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key = el.getAttribute('data-i18n');
+    var trad = T(key);
+    if(trad && trad !== key) el.textContent = trad;
+  });
+
+  // PLACEHOLDERS - via data-i18n-placeholder
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+    var key = el.getAttribute('data-i18n-placeholder');
+    var trad = T(key);
+    if(trad && trad !== key) el.placeholder = trad;
+  });
+
+  // COMPATIBILIDADE - IDs antigos t-XXX (mantém)
   var els = {
-    't-tab1': T('tab1'), 't-tab2': T('tab2'), 't-tab3': T('tab3'), 't-tab4': T('tab4'), 't-tab5': T('tab5'), 't-tab6': T('tab6'),
-    't-online': T('online'), 't-msg-auri': T('auriMsg'), 'auri-bubble-msg': T('auriSauda')
+    't-tab1': T('tab1'), 't-tab2': T('tab2'), 't-tab3': T('tab3'),
+    't-tab4': T('tab4'), 't-tab5': T('tab5'), 't-tab6': T('tab6'),
+    't-online': T('online'), 't-msg-auri': T('auriMsg'),
+    'auri-bubble-msg': T('auriSauda')
   };
-  Object.keys(els).forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent=els[id]; });
+  Object.keys(els).forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.textContent=els[id];
+  });
+}
+
+// ── DATA LOCALIZADA ───────────────────────────────────────────
+var DIAS_SEMANA_AL = {
+  pt: ['domingo','segunda','terça','quarta','quinta','sexta','sábado'],
+  en: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+  es: ['domingo','lunes','martes','miércoles','jueves','viernes','sábado']
+};
+var MESES_AL = {
+  pt: ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'],
+  en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+  es: ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']
+};
+function atualizarData(){
+  var d = new Date();
+  var diasArr = DIAS_SEMANA_AL[lang] || DIAS_SEMANA_AL['pt'];
+  var mesesArr = MESES_AL[lang] || MESES_AL['pt'];
+  var els = document.querySelectorAll('[data-localized-date]');
+  els.forEach(function(el){
+    if(lang === 'en'){
+      el.textContent = diasArr[d.getDay()] + ', ' + mesesArr[d.getMonth()] + ' ' + d.getDate();
+    } else {
+      el.textContent = diasArr[d.getDay()] + ', ' + d.getDate() + ' de ' + mesesArr[d.getMonth()];
+    }
+  });
 }
 
 // ── THEME ─────────────────────────────────────────────

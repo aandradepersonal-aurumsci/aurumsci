@@ -540,6 +540,13 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                 if session.get("customer"):
                     aluno.stripe_customer_id = session["customer"]
                 db.commit()
+                # ALUNO AUTONOMO - tracking de trial
+                from datetime import timedelta
+                aluno.assinatura_status = "trialing"
+                aluno.data_inicio_trial = datetime.utcnow()
+                aluno.data_fim_trial = datetime.utcnow() + timedelta(days=7)
+                aluno.valor_assinatura = 4990
+                db.commit()
                 enviar_email_boas_vindas(aluno.nome, aluno.email)
 
         personal_id = None
@@ -593,6 +600,16 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                     db.commit()
                 except Exception:
                     pass
+# ALUNO AUTONOMO - update status
+            aluno = db.query(Aluno).filter(Aluno.stripe_subscription_id == stripe_sub_id).first()
+            if aluno:
+                try:
+                    aluno.assinatura_status = sub.get("status", "active")
+                    if sub.get("current_period_end"):
+                        aluno.data_proxima_cobranca = datetime.fromtimestamp(sub["current_period_end"])
+                    db.commit()
+                except Exception as e:
+                    print(f"[WEBHOOK ALUNO updated] {e}")
 
     if event["type"] in ["customer.subscription.deleted", "customer.subscription.paused"]:
         sub = event["data"]["object"]
@@ -610,7 +627,57 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                 <a href='https://aurumsc.com.br/pro' style='display:block;text-align:center;background:#C9A84C;color:#000;padding:16px;border-radius:12px;text-decoration:none;font-weight:900;margin-top:16px'>REATIVAR ASSINATURA</a>
                 </body></html>"""
                 enviar_email(para=personal.email, assunto="Sua assinatura AurumSci foi cancelada", html=html_cancel)
+# ALUNO AUTONOMO - cancelamento
+            aluno = db.query(Aluno).filter(Aluno.stripe_subscription_id == stripe_sub_id).first()
+            if aluno:
+                try:
+                    aluno.ativo = False
+                    aluno.assinatura_status = "canceled"
+                    aluno.data_cancelamento = datetime.utcnow()
+                    db.commit()
+                    primeiro_nome_aluno = aluno.nome.split()[0] if aluno.nome else "Aluno"
+                    html_cancel_aluno = f"""<html><body style='background:#0A0A0F;font-family:Arial;padding:40px'>
+                    <h2 style='color:#C9A84C'>Assinatura cancelada, {primeiro_nome_aluno}</h2>
+                    <p style='color:#ccc'>Seus dados ficam salvos por 30 dias. Reative quando quiser!</p>
+                    <a href='https://aurumsc.com.br/aluno' style='display:block;text-align:center;background:#C9A84C;color:#000;padding:16px;border-radius:12px;text-decoration:none;font-weight:900;margin-top:16px'>REATIVAR ASSINATURA</a>
+                    </body></html>"""
+                    enviar_email(para=aluno.email, assunto="Sua assinatura AurumSci foi cancelada", html=html_cancel_aluno)
+                except Exception as e:
+                    print(f"[WEBHOOK ALUNO deleted] {e}")
+# ALUNO AUTONOMO - renovacao mensal
+    if event["type"] == "invoice.payment_succeeded":
+        invoice = event["data"]["object"]
+        stripe_sub_id = invoice.get("subscription")
+        if stripe_sub_id:
+            aluno = db.query(Aluno).filter(Aluno.stripe_subscription_id == stripe_sub_id).first()
+            if aluno:
+                try:
+                    aluno.assinatura_status = "active"
+                    if invoice.get("period_end"):
+                        aluno.data_proxima_cobranca = datetime.fromtimestamp(invoice["period_end"])
+                    db.commit()
+                except Exception as e:
+                    print(f"[WEBHOOK ALUNO payment_succeeded] {e}")
 
+    # ALUNO AUTONOMO - cartao recusado
+    if event["type"] == "invoice.payment_failed":
+        invoice = event["data"]["object"]
+        stripe_sub_id = invoice.get("subscription")
+        if stripe_sub_id:
+            aluno = db.query(Aluno).filter(Aluno.stripe_subscription_id == stripe_sub_id).first()
+            if aluno:
+                try:
+                    aluno.assinatura_status = "past_due"
+                    db.commit()
+                    primeiro_nome_aluno = aluno.nome.split()[0] if aluno.nome else "Aluno"
+                    html_failed = f"""<html><body style='background:#0A0A0F;font-family:Arial;padding:40px'>
+                    <h2 style='color:#FF4B4B'>Atencao, {primeiro_nome_aluno}!</h2>
+                    <p style='color:#ccc'>Nao conseguimos processar sua mensalidade. Atualize seu metodo de pagamento.</p>
+                    <a href='https://aurumsc.com.br/aluno' style='display:block;text-align:center;background:#FF4B4B;color:#fff;padding:16px;border-radius:12px;text-decoration:none;font-weight:900;margin-top:16px'>ATUALIZAR PAGAMENTO</a>
+                    </body></html>"""
+                    enviar_email(para=aluno.email, assunto="Problema no pagamento AurumSci", html=html_failed)
+                except Exception as e:
+                    print(f"[WEBHOOK ALUNO payment_failed] {e}")
     return {"status": "ok"}
 
 

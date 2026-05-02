@@ -204,7 +204,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <!-- SPLASH -->
 <div id="splash">
   <div class="splash-logo" style="display:flex;align-items:baseline;gap:6px"><svg viewBox="0 0 44 44" width="52" height="52" style="margin-right:8px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:58px;font-weight:400;letter-spacing:6px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:22px;font-style:italic;color:#fff;margin-left:4px">sci.</span><span style="font-family:Arial,sans-serif;font-size:20px;font-weight:700;color:#4B9FFF;margin-left:4px">PRO</span></div>
-  <div class="splash-sub">CIÊNCIA QUE VIRA RESULTADO</div>
+  <div class="splash-sub" data-i18n="cienciaResultado">CIÊNCIA QUE VIRA RESULTADO</div>
   <div class="splash-tag">PERSONAL TRAINER</div>
   <div class="splash-bar"><div class="splash-progress" id="splash-bar"></div></div>
 </div>
@@ -212,8 +212,8 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <!-- LOGIN -->
 <div id="screen-login" style="display:flex">
   <div class="login-logo" style="display:flex;align-items:baseline;gap:4px"><svg viewBox="0 0 44 44" width="36" height="36" style="margin-right:6px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:42px;font-weight:400;letter-spacing:4px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:16px;font-style:italic;color:#fff;margin-left:3px">sci.</span><span style="font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#4B9FFF;margin-left:3px">PRO</span></div>
-  <div class="login-tag">CIÊNCIA QUE VIRA RESULTADO</div>
-  <div class="login-role">👨‍💼 ÁREA DO PERSONAL</div>
+  <div class="login-tag" data-i18n="cienciaResultado">CIÊNCIA QUE VIRA RESULTADO</div>
+  <div class="login-role" data-i18n="areaPersonal">👨‍💼 ÁREA DO PERSONAL</div>
 
   <div class="lang-row">
     <button class="lang-btn active" onclick="setLang('pt',this)">🇧🇷 PT</button>
@@ -248,7 +248,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <button class="lang-mini" onclick="setLangApp('es',this)">ES</button>
       </div>
       <div class="btn-icon" onclick="toggleTheme()" id="theme-btn">🌙</div>
-      <div style="display:flex;flex-direction:column;align-items:center;cursor:pointer" onclick="toggleMenuPerfil(event)"><div class="avatar" id="avatar-inicial" style="position:relative">A</div><div style="font-size:8px;color:var(--cinza);margin-top:2px;letter-spacing:0.5px">MENU</div></div>
+      <div style="display:flex;flex-direction:column;align-items:center;cursor:pointer" onclick="toggleMenuPerfil(event)"><div class="avatar" id="avatar-inicial" style="position:relative">A</div><div style="font-size:8px;color:var(--cinza);margin-top:2px;letter-spacing:0.5px" data-i18n="menuLabel">MENU</div></div>
     </div>
   </div>
 
@@ -783,6 +783,9 @@ var TR = {
     erroGeral:'Erro', preencherCampos:'Preencha todos os campos',
     // ── LOJA ──
     loja:'LOJA', equipamentos:'Equipamentos', strap:'Strap', magnesio:'Magnésio',
+    // ── LOGIN PRO ──
+    cienciaResultado:'CIÊNCIA QUE VIRA RESULTADO', areaPersonal:'👨‍💼 ÁREA DO PERSONAL',
+    menuLabel:'MENU',
   },
   en: {
     // ── HEADER ──
@@ -841,6 +844,9 @@ var TR = {
     erroGeral:'Error', preencherCampos:'Please fill in all fields',
     // ── SHOP ──
     loja:'SHOP', equipamentos:'Equipment', strap:'Strap', magnesio:'Magnesium',
+    // ── LOGIN PRO ──
+    cienciaResultado:'SCIENCE THAT BRINGS RESULTS', areaPersonal:'👨‍💼 PERSONAL TRAINER AREA',
+    menuLabel:'MENU',
   },
   es: {
     // ── HEADER ──
@@ -899,6 +905,9 @@ var TR = {
     erroGeral:'Error', preencherCampos:'Por favor complete todos los campos',
     // ── TIENDA ──
     loja:'TIENDA', equipamentos:'Equipos', strap:'Strap', magnesio:'Magnesio',
+    // ── LOGIN PRO ──
+    cienciaResultado:'CIENCIA QUE TRAE RESULTADOS', areaPersonal:'👨‍💼 ÁREA DEL ENTRENADOR',
+    menuLabel:'MENÚ',
   }
 };
 
@@ -913,12 +922,9 @@ window.onload = function(){
     }
   }, 2200);
 
-  // Data
-  var dias = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
-  var meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-  var d = new Date();
-  var el = document.getElementById('t-data');
-  if(el) el.textContent = dias[d.getDay()] + ', ' + d.getDate() + ' de ' + meses[d.getMonth()];
+  // Data localizada
+  atualizarData();
+  atualizarTextos();
 
   // Bubble
   setTimeout(function(){
@@ -932,6 +938,8 @@ function setLang(l, el){
   lang = l; localStorage.setItem('aurum_personal_lang', l);
   document.querySelectorAll('.lang-row .lang-btn').forEach(function(b){ b.classList.remove('active'); });
   el.classList.add('active');
+  atualizarTextos();  // FIX: traduz tela de login tambem
+  atualizarData();    // FIX: localiza data
 }
 
 function setLangApp(l, el){
@@ -939,6 +947,7 @@ function setLangApp(l, el){
   document.querySelectorAll('.lang-mini-row .lang-mini').forEach(function(b){ b.classList.remove('active'); });
   el.classList.add('active');
   atualizarTextos();
+  atualizarData();
   chatHist = [];
   var msgs = document.getElementById('chat-msgs');
   if(msgs) msgs.innerHTML = '<div class="msg msg-auri"><span class="msg-tag">AURI</span>' + T('auriSaudacao') + '</div>';
@@ -972,6 +981,33 @@ function atualizarTextos(){
   var t2=document.getElementById('t-tab2'); if(t2) t2.textContent = T('tab2');
   var t3=document.getElementById('t-tab3'); if(t3) t3.textContent = T('tab3');
   var t4=document.getElementById('t-tab4'); if(t4) t4.textContent = T('tab4');
+}
+
+// ── DATA LOCALIZADA ───────────────────────────────────────────
+var DIAS_SEMANA = {
+  pt: ['domingo','segunda','terça','quarta','quinta','sexta','sábado'],
+  en: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+  es: ['domingo','lunes','martes','miércoles','jueves','viernes','sábado']
+};
+var MESES = {
+  pt: ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'],
+  en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+  es: ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']
+};
+
+function atualizarData(){
+  var d = new Date();
+  var diasArr = DIAS_SEMANA[lang] || DIAS_SEMANA['pt'];
+  var mesesArr = MESES[lang] || MESES['pt'];
+  var el = document.getElementById('t-data');
+  if(!el) return;
+  if(lang === 'en'){
+    // Formato EN: Saturday, May 2
+    el.textContent = diasArr[d.getDay()] + ', ' + mesesArr[d.getMonth()] + ' ' + d.getDate();
+  } else {
+    // Formato PT/ES: sábado, 2 de maio
+    el.textContent = diasArr[d.getDay()] + ', ' + d.getDate() + ' de ' + mesesArr[d.getMonth()];
+  }
 }
 
 // ── THEME ─────────────────────────────────────────────────────

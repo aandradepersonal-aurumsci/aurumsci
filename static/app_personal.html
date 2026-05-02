@@ -222,14 +222,14 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   </div>
 
   <div class="field">
-    <label id="l-email">EMAIL</label>
-    <input type="email" id="login-email" placeholder="seu@email.com">
+    <label data-i18n="emailLabel">EMAIL</label>
+    <input type="email" id="login-email" placeholder="seu@email.com" data-i18n-placeholder="placeholderEmail">
   </div>
   <div class="field">
-    <label id="l-senha">SENHA</label>
+    <label data-i18n="senhaLabel">SENHA</label>
     <div class="senha-wrapper"><input type="password" id="login-senha" placeholder="••••••••"><button type="button" class="senha-toggle" onclick="toggleSenha('login-senha', this)">👁️</button></div>
   </div>
-  <button class="btn-gold" onclick="fazerLogin()" id="btn-entrar">ENTRAR</button>
+  <button onclick="fazerLogin()" data-i18n="entrarBtn">ENTRAR</button>
   <div style="text-align:center;margin-top:14px"><a href="#" onclick="abrirEsqueciSenha(); return false;" style="color:var(--ouro);font-size:13px;text-decoration:none">Esqueci minha senha</a></div>
   <div class="login-link" style="margin-top:14px">
     <span id="l-sem-conta">Não tem conta? </span><a href="#" onclick="mostrarToast('Contate o suporte AurumSci')">Fale conosco</a>
@@ -727,22 +727,178 @@ var filtroAtual = 'todos';
 // ── TRADUÇÕES ─────────────────────────────────────────────────
 var TR = {
   pt: {
+    // ── HEADER & SAUDAÇÃO ──
     bomDia:'BOM DIA', boaTarde:'BOA TARDE', boaNoite:'BOA NOITE',
-    online:'Online', tab1:'INÍCIO', tab2:'ALUNOS', tab3:'FINANÇAS', tab4:'AURI',
+    online:'Online',
+    // ── ABAS ──
+    tab1:'INÍCIO', tab2:'ALUNOS', tab3:'FINANÇAS', tab4:'AURI',
+    // ── LOGIN ──
+    emailLabel:'EMAIL', senhaLabel:'SENHA', entrarBtn:'ENTRAR',
+    esqueciSenha:'Esqueci minha senha',
+    placeholderEmail:'seu@email.com', placeholderSenha:'••••••••',
+    // ── AURI ──
     auriSaudacao:'Olá! Sou o AURI 💪 Posso te ajudar com gestão de alunos, protocolos de treino e muito mais!',
     auriPersonal:'Como posso te ajudar hoje? 💪',
+    auriPlaceholder:'Pergunte algo...',
+    // ── BOTÕES COMUNS ──
+    salvar:'SALVAR', cancelar:'CANCELAR', fechar:'FECHAR', voltar:'VOLTAR',
+    proximo:'PRÓXIMO →', confirmar:'CONFIRMAR', editar:'EDITAR', excluir:'EXCLUIR',
+    enviar:'ENVIAR', adicionar:'ADICIONAR', remover:'REMOVER', continuar:'CONTINUAR',
+    sair:'Sair', tentarNovamente:'Tentar novamente', entendi:'ENTENDI ✓',
+    // ── INÍCIO / DASHBOARD ──
+    bemVindo:'BEM-VINDO', resumoHoje:'RESUMO DE HOJE', alunosAtivos:'ALUNOS ATIVOS',
+    pagamentosPendentes:'PAGAMENTOS PENDENTES', receitaMes:'RECEITA DO MÊS',
+    novosAlunos:'NOVOS ALUNOS', aulasHoje:'AULAS HOJE',
+    // ── ALUNOS ──
+    novoAluno:'+ NOVO ALUNO', criarAluno:'CRIAR ALUNO', buscarAluno:'🔍 Buscar aluno...',
+    todos:'Todos', ativos:'Ativos', inativos:'Inativos', pendentes:'Pendentes',
+    nomeAluno:'Nome do aluno', telefoneLabel:'TELEFONE', cpfLabel:'CPF',
+    sexoLabel:'SEXO', idadeLabel:'IDADE', objetivoLabel:'OBJETIVO', nivelLabel:'NÍVEL',
+    masculino:'Masculino', feminino:'Feminino',
+    // Objetivos
+    hipertrofia:'Hipertrofia', emagrecimento:'Emagrecimento',
+    condicionamento:'Condicionamento', flexibilidade:'Flexibilidade',
+    forca:'Força',
+    // Níveis
+    iniciante:'Iniciante', intermediario:'Intermediário', avancado:'Avançado',
+    // ── FINANÇAS ──
+    pagamentos:'PAGAMENTOS', receita:'RECEITA', vencimento:'VENCIMENTO',
+    pago:'✓ PAGO', pendente:'PENDENTE', atrasado:'ATRASADO',
+    fecharMes:'FECHAR MÊS', mes:'Mês', ano:'Ano', dia:'Dia',
+    descricaoLabel:'DESCRIÇÃO', valorLabel:'VALOR', quantidadeLabel:'QUANTIDADE',
+    aulas:'AULAS', limite:'LIMITE', recebido:'RECEBIDO',
+    // ── AVALIAÇÕES ──
+    avaliacao:'AVALIAÇÃO', composicao:'⚖️ COMPOSIÇÃO', gordura:'⚖️ GORDURA',
+    bioimpedancia:'⚖️ BIOIMPEDÂNCIA', funcional:'⏱️ FUNCIONAL',
+    foto:'Foto', frente:'FRENTE', lateral:'LATERAL', costas:'COSTAS',
+    tronco:'TRONCO', membros:'MEMBROS', periodizacao:'PERIODIZAÇÃO',
+    // ── MENU AVATAR ──
+    menuPerfil:'MEU PERFIL', meuPlano:'MEU PLANO', configuracoes:'CONFIGURAÇÕES',
+    sairConta:'Sair',
+    // ── PLANOS ──
+    planoBronze:'BRONZE', planoPrata:'PRATA', planoOuro:'OURO', planoDiamante:'DIAMANTE',
+    reativar:'REATIVAR', upgradePlano:'FAZER UPGRADE',
+    // ── ERROS ──
+    erroLogin:'Email ou senha incorretos', erroConexao:'Erro de conexão',
+    erroGeral:'Erro', preencherCampos:'Preencha todos os campos',
+    // ── LOJA ──
+    loja:'LOJA', equipamentos:'Equipamentos', strap:'Strap', magnesio:'Magnésio',
   },
   en: {
+    // ── HEADER ──
     bomDia:'GOOD MORNING', boaTarde:'GOOD AFTERNOON', boaNoite:'GOOD EVENING',
-    online:'Online', tab1:'HOME', tab2:'CLIENTS', tab3:'FINANCES', tab4:'AURI',
+    online:'Online',
+    // ── TABS ──
+    tab1:'HOME', tab2:'CLIENTS', tab3:'FINANCES', tab4:'AURI',
+    // ── LOGIN ──
+    emailLabel:'EMAIL', senhaLabel:'PASSWORD', entrarBtn:'LOGIN',
+    esqueciSenha:'Forgot my password',
+    placeholderEmail:'your@email.com', placeholderSenha:'••••••••',
+    // ── AURI ──
     auriSaudacao:'Hi! I am AURI 💪 I can help you with client management, training protocols and more!',
     auriPersonal:'How can I help you today? 💪',
+    auriPlaceholder:'Ask something...',
+    // ── COMMON BUTTONS ──
+    salvar:'SAVE', cancelar:'CANCEL', fechar:'CLOSE', voltar:'BACK',
+    proximo:'NEXT →', confirmar:'CONFIRM', editar:'EDIT', excluir:'DELETE',
+    enviar:'SEND', adicionar:'ADD', remover:'REMOVE', continuar:'CONTINUE',
+    sair:'Logout', tentarNovamente:'Try again', entendi:'GOT IT ✓',
+    // ── HOME / DASHBOARD ──
+    bemVindo:'WELCOME', resumoHoje:'TODAY\'S SUMMARY', alunosAtivos:'ACTIVE CLIENTS',
+    pagamentosPendentes:'PENDING PAYMENTS', receitaMes:'MONTHLY REVENUE',
+    novosAlunos:'NEW CLIENTS', aulasHoje:'CLASSES TODAY',
+    // ── CLIENTS ──
+    novoAluno:'+ NEW CLIENT', criarAluno:'CREATE CLIENT', buscarAluno:'🔍 Search client...',
+    todos:'All', ativos:'Active', inativos:'Inactive', pendentes:'Pending',
+    nomeAluno:'Client name', telefoneLabel:'PHONE', cpfLabel:'TAX ID',
+    sexoLabel:'GENDER', idadeLabel:'AGE', objetivoLabel:'GOAL', nivelLabel:'LEVEL',
+    masculino:'Male', feminino:'Female',
+    // Goals
+    hipertrofia:'Hypertrophy', emagrecimento:'Weight Loss',
+    condicionamento:'Conditioning', flexibilidade:'Flexibility',
+    forca:'Strength',
+    // Levels
+    iniciante:'Beginner', intermediario:'Intermediate', avancado:'Advanced',
+    // ── FINANCES ──
+    pagamentos:'PAYMENTS', receita:'REVENUE', vencimento:'DUE DATE',
+    pago:'✓ PAID', pendente:'PENDING', atrasado:'OVERDUE',
+    fecharMes:'CLOSE MONTH', mes:'Month', ano:'Year', dia:'Day',
+    descricaoLabel:'DESCRIPTION', valorLabel:'VALUE', quantidadeLabel:'QUANTITY',
+    aulas:'CLASSES', limite:'LIMIT', recebido:'RECEIVED',
+    // ── ASSESSMENTS ──
+    avaliacao:'ASSESSMENT', composicao:'⚖️ COMPOSITION', gordura:'⚖️ FAT',
+    bioimpedancia:'⚖️ BIOIMPEDANCE', funcional:'⏱️ FUNCTIONAL',
+    foto:'Photo', frente:'FRONT', lateral:'SIDE', costas:'BACK',
+    tronco:'TRUNK', membros:'LIMBS', periodizacao:'PERIODIZATION',
+    // ── AVATAR MENU ──
+    menuPerfil:'MY PROFILE', meuPlano:'MY PLAN', configuracoes:'SETTINGS',
+    sairConta:'Logout',
+    // ── PLANS ──
+    planoBronze:'BRONZE', planoPrata:'SILVER', planoOuro:'GOLD', planoDiamante:'DIAMOND',
+    reativar:'REACTIVATE', upgradePlano:'UPGRADE PLAN',
+    // ── ERRORS ──
+    erroLogin:'Incorrect email or password', erroConexao:'Connection error',
+    erroGeral:'Error', preencherCampos:'Please fill in all fields',
+    // ── SHOP ──
+    loja:'SHOP', equipamentos:'Equipment', strap:'Strap', magnesio:'Magnesium',
   },
   es: {
+    // ── HEADER ──
     bomDia:'BUENOS DÍAS', boaTarde:'BUENAS TARDES', boaNoite:'BUENAS NOCHES',
-    online:'En línea', tab1:'INICIO', tab2:'ALUMNOS', tab3:'FINANZAS', tab4:'AURI',
+    online:'En línea',
+    // ── PESTAÑAS ──
+    tab1:'INICIO', tab2:'ALUMNOS', tab3:'FINANZAS', tab4:'AURI',
+    // ── LOGIN ──
+    emailLabel:'EMAIL', senhaLabel:'CONTRASEÑA', entrarBtn:'INGRESAR',
+    esqueciSenha:'Olvidé mi contraseña',
+    placeholderEmail:'tu@email.com', placeholderSenha:'••••••••',
+    // ── AURI ──
     auriSaudacao:'¡Hola! Soy AURI 💪 ¡Puedo ayudarte con gestión de alumnos, protocolos de entrenamiento y más!',
     auriPersonal:'¿Cómo puedo ayudarte hoy? 💪',
+    auriPlaceholder:'Pregunta algo...',
+    // ── BOTONES COMUNES ──
+    salvar:'GUARDAR', cancelar:'CANCELAR', fechar:'CERRAR', voltar:'VOLVER',
+    proximo:'SIGUIENTE →', confirmar:'CONFIRMAR', editar:'EDITAR', excluir:'ELIMINAR',
+    enviar:'ENVIAR', adicionar:'AGREGAR', remover:'QUITAR', continuar:'CONTINUAR',
+    sair:'Salir', tentarNovamente:'Intentar de nuevo', entendi:'ENTENDIDO ✓',
+    // ── INICIO / PANEL ──
+    bemVindo:'BIENVENIDO', resumoHoje:'RESUMEN DE HOY', alunosAtivos:'ALUMNOS ACTIVOS',
+    pagamentosPendentes:'PAGOS PENDIENTES', receitaMes:'INGRESOS DEL MES',
+    novosAlunos:'NUEVOS ALUMNOS', aulasHoje:'CLASES HOY',
+    // ── ALUMNOS ──
+    novoAluno:'+ NUEVO ALUMNO', criarAluno:'CREAR ALUMNO', buscarAluno:'🔍 Buscar alumno...',
+    todos:'Todos', ativos:'Activos', inativos:'Inactivos', pendentes:'Pendientes',
+    nomeAluno:'Nombre del alumno', telefoneLabel:'TELÉFONO', cpfLabel:'IDENTIFICACIÓN',
+    sexoLabel:'SEXO', idadeLabel:'EDAD', objetivoLabel:'OBJETIVO', nivelLabel:'NIVEL',
+    masculino:'Masculino', feminino:'Femenino',
+    // Objetivos
+    hipertrofia:'Hipertrofia', emagrecimento:'Pérdida de peso',
+    condicionamento:'Acondicionamiento', flexibilidade:'Flexibilidad',
+    forca:'Fuerza',
+    // Niveles
+    iniciante:'Principiante', intermediario:'Intermedio', avancado:'Avanzado',
+    // ── FINANZAS ──
+    pagamentos:'PAGOS', receita:'INGRESOS', vencimento:'VENCIMIENTO',
+    pago:'✓ PAGADO', pendente:'PENDIENTE', atrasado:'ATRASADO',
+    fecharMes:'CERRAR MES', mes:'Mes', ano:'Año', dia:'Día',
+    descricaoLabel:'DESCRIPCIÓN', valorLabel:'VALOR', quantidadeLabel:'CANTIDAD',
+    aulas:'CLASES', limite:'LÍMITE', recebido:'RECIBIDO',
+    // ── EVALUACIONES ──
+    avaliacao:'EVALUACIÓN', composicao:'⚖️ COMPOSICIÓN', gordura:'⚖️ GRASA',
+    bioimpedancia:'⚖️ BIOIMPEDANCIA', funcional:'⏱️ FUNCIONAL',
+    foto:'Foto', frente:'FRENTE', lateral:'LATERAL', costas:'ESPALDA',
+    tronco:'TRONCO', membros:'EXTREMIDADES', periodizacao:'PERIODIZACIÓN',
+    // ── MENÚ AVATAR ──
+    menuPerfil:'MI PERFIL', meuPlano:'MI PLAN', configuracoes:'CONFIGURACIÓN',
+    sairConta:'Salir',
+    // ── PLANES ──
+    planoBronze:'BRONCE', planoPrata:'PLATA', planoOuro:'ORO', planoDiamante:'DIAMANTE',
+    reativar:'REACTIVAR', upgradePlano:'MEJORAR PLAN',
+    // ── ERRORES ──
+    erroLogin:'Email o contraseña incorrectos', erroConexao:'Error de conexión',
+    erroGeral:'Error', preencherCampos:'Por favor complete todos los campos',
+    // ── TIENDA ──
+    loja:'TIENDA', equipamentos:'Equipos', strap:'Strap', magnesio:'Magnesio',
   }
 };
 
@@ -789,10 +945,27 @@ function setLangApp(l, el){
 }
 
 function atualizarTextos(){
+  // SAUDAÇÃO BASEADA NA HORA
   var h = new Date().getHours();
   var sauda = h < 12 ? T('bomDia') : h < 18 ? T('boaTarde') : T('boaNoite');
-  var el = document.getElementById('t-saudacao');
-  if(el) el.textContent = sauda + ',';
+  var elSauda = document.getElementById('t-saudacao');
+  if(elSauda) elSauda.textContent = sauda + ',';
+
+  // SISTEMA UNIVERSAL data-i18n - atualiza TODOS os elementos automaticamente
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key = el.getAttribute('data-i18n');
+    var trad = T(key);
+    if(trad && trad !== key) el.textContent = trad;
+  });
+
+  // PLACEHOLDERS - via data-i18n-placeholder
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+    var key = el.getAttribute('data-i18n-placeholder');
+    var trad = T(key);
+    if(trad && trad !== key) el.placeholder = trad;
+  });
+
+  // COMPATIBILIDADE - IDs antigos t-XXX (mantém)
   var el2 = document.getElementById('t-online');
   if(el2) el2.textContent = T('online');
   var t1=document.getElementById('t-tab1'); if(t1) t1.textContent = T('tab1');

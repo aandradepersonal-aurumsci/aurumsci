@@ -236,22 +236,21 @@ def criar_sessao(dados: CheckoutSchema, db: Session = Depends(get_db)):
                     )
             except stripe.error.InvalidRequestError:
                 pass
+        # Validacao: Price ID configurado?
+        if not settings.STRIPE_PRICE_ALUNO:
+            raise HTTPException(status_code=500, detail="Plano Aluno nao configurado. Contate o suporte.")
+        
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             line_items=[{
-                "price_data": {
-                    "currency": "brl",
-                    "product_data": {"name": dados.plano},
-                    "unit_amount": dados.valor,
-                    "recurring": {"interval": "month"}
-                },
+                "price": settings.STRIPE_PRICE_ALUNO,
                 "quantity": 1
             }],
             mode="subscription",
             subscription_data={"trial_period_days": 7},
             success_url="https://www.aurumsc.com.br/aluno?pagamento=sucesso",
             cancel_url="https://www.aurumsc.com.br/aluno?pagamento=cancelado",
-            metadata={"aluno_id": str(dados.aluno_id)},
+            metadata={"aluno_id": str(dados.aluno_id), "produto": "aluno"},
         )
         return {"url": session.url, "session_id": session.id}
     except HTTPException:

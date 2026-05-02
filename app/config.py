@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     STRIPE_PRICE_PRATA: str = ""
     STRIPE_PRICE_OURO: str = ""
     STRIPE_PRICE_DIAMANTE: str = ""
+    # Stripe - Price ID do plano ALUNO (criado em 02/05/2026)
+    STRIPE_PRICE_ALUNO: str = ""
 
     SMTP_HOST: str = "smtp.gmail.com"
     SMTP_PORT: int = 587

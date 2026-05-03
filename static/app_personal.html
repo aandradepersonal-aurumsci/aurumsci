@@ -359,6 +359,9 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <button class="btn-novo-aluno" onclick="abrirModalNovoAluno()">
       ➕ <span id="t-novo-aluno" data-i18n="novoAlunoBtn">Novo Aluno</span>
     </button>
+    <button class="btn-novo-aluno" onclick="enviarQuestionarioOnboarding()" style="background:rgba(37,211,102,.08);border:1px dashed rgba(37,211,102,.4);color:#25D366;margin-bottom:16px">
+      📱 <span data-i18n="convidarAluno">Convidar Aluno (Questionário)</span>
+    </button>
 
     <input class="busca-input" type="text" id="busca-aluno" placeholder="🔍 Buscar aluno..." oninput="filtrarAlunos()">
 
@@ -4566,6 +4569,75 @@ function gerarCobrancaAluno(alunoId){
     if(servicosExtrasCache[alunoId]) servicosExtrasCache[alunoId] = [];
     mostrarToast('✅ Cobrança de R$ ' + total.toFixed(2) + ' gerada!');
   }, 1000);
+}
+
+
+// ── ENVIAR QUESTIONARIO/ONBOARDING (sessao 03/05/2026) ──
+function enviarQuestionarioOnboarding(){
+  mostrarToast('Gerando link...');
+  
+  fetch('/app-personal/onboarding/gerar-link', {
+    method: 'POST',
+    headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'}
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(!d.ok){
+      mostrarToast('Erro ao gerar link: ' + (d.detail || 'tente novamente'));
+      return;
+    }
+    
+    // Abre modal pra escolher como enviar
+    var modal = document.createElement('div');
+    modal.style = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px';
+    modal.onclick = function(e){ if(e.target === modal) modal.remove(); };
+    
+    var msg = d.mensagem_whatsapp || '';
+    var url = d.url || '';
+    var usos = d.total_usos || 0;
+    
+    modal.innerHTML = 
+      '<div style="background:#12121A;border:2px solid var(--ouro);border-radius:20px;padding:24px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto" onclick="event.stopPropagation()">' +
+        '<div style="font-family:Bebas Neue;font-size:24px;color:var(--ouro);text-align:center;letter-spacing:2px;margin-bottom:8px">📱 CONVIDAR ALUNO</div>' +
+        '<div style="font-size:12px;color:var(--cinza);text-align:center;margin-bottom:20px">Aluno preenche questionario e ja recebe treino base</div>' +
+        
+        '<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:14px;margin-bottom:14px">' +
+          '<div style="font-size:10px;color:var(--ouro);letter-spacing:2px;margin-bottom:6px">LINK DO QUESTIONARIO</div>' +
+          '<div style="color:#fff;font-size:12px;word-break:break-all;font-family:monospace">' + url + '</div>' +
+          '<div style="font-size:11px;color:var(--cinza);margin-top:6px">Ja convidou ' + usos + ' alunos</div>' +
+        '</div>' +
+        
+        '<div style="display:flex;flex-direction:column;gap:10px">' +
+          '<button id="btn-onboard-wpp" style="width:100%;padding:14px;background:#25D366;border:none;border-radius:10px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">📱 ENVIAR POR WHATSAPP</button>' +
+          '<button id="btn-onboard-copy" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer">📋 COPIAR LINK</button>' +
+          '<button id="btn-onboard-close" style="width:100%;padding:10px;background:transparent;border:1px solid var(--borda);border-radius:8px;color:var(--cinza);font-size:13px;cursor:pointer">FECHAR</button>' +
+        '</div>' +
+      '</div>';
+    
+    document.body.appendChild(modal);
+    
+    document.getElementById('btn-onboard-wpp').onclick = function(){
+      var wppUrl = 'https://wa.me/?text=' + encodeURIComponent(msg);
+      window.open(wppUrl, '_blank');
+      mostrarToast('Abrindo WhatsApp...');
+    };
+    
+    document.getElementById('btn-onboard-copy').onclick = function(){
+      navigator.clipboard.writeText(url).then(function(){
+        mostrarToast('Link copiado!');
+      }).catch(function(){
+        prompt('Copie o link:', url);
+      });
+    };
+    
+    document.getElementById('btn-onboard-close').onclick = function(){
+      modal.remove();
+    };
+  })
+  .catch(function(e){
+    console.error(e);
+    mostrarToast('Erro de conexao');
+  });
 }
 
 </script>

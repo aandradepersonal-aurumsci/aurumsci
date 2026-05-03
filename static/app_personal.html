@@ -204,16 +204,16 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <!-- SPLASH -->
 <div id="splash">
   <div class="splash-logo" style="display:flex;align-items:baseline;gap:6px"><svg viewBox="0 0 44 44" width="52" height="52" style="margin-right:8px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:58px;font-weight:400;letter-spacing:6px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:22px;font-style:italic;color:#fff;margin-left:4px">sci.</span><span style="font-family:Arial,sans-serif;font-size:20px;font-weight:700;color:#4B9FFF;margin-left:4px">PRO</span></div>
-  <div class="splash-sub" data-i18n="cienciaResultado">CIÊNCIA QUE VIRA RESULTADO</div>
-  <div class="splash-tag" data-i18n="splashTag">PERSONAL TRAINER</div>
+  <div class="splash-sub">CIÊNCIA QUE VIRA RESULTADO</div>
+  <div class="splash-tag">PERSONAL TRAINER</div>
   <div class="splash-bar"><div class="splash-progress" id="splash-bar"></div></div>
 </div>
 
 <!-- LOGIN -->
 <div id="screen-login" style="display:flex">
   <div class="login-logo" style="display:flex;align-items:baseline;gap:4px"><svg viewBox="0 0 44 44" width="36" height="36" style="margin-right:6px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:42px;font-weight:400;letter-spacing:4px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:16px;font-style:italic;color:#fff;margin-left:3px">sci.</span><span style="font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#4B9FFF;margin-left:3px">PRO</span></div>
-  <div class="login-tag" data-i18n="cienciaResultado">CIÊNCIA QUE VIRA RESULTADO</div>
-  <div class="login-role" data-i18n="areaPersonal">👨‍💼 ÁREA DO PERSONAL</div>
+  <div class="login-tag">CIÊNCIA QUE VIRA RESULTADO</div>
+  <div class="login-role">👨‍💼 ÁREA DO PERSONAL</div>
 
   <div class="lang-row">
     <button class="lang-btn active" onclick="setLang('pt',this)">🇧🇷 PT</button>
@@ -222,17 +222,17 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   </div>
 
   <div class="field">
-    <label data-i18n="emailLabel">EMAIL</label>
-    <input type="email" id="login-email" placeholder="seu@email.com" data-i18n-placeholder="placeholderEmail">
+    <label id="l-email">EMAIL</label>
+    <input type="email" id="login-email" placeholder="seu@email.com">
   </div>
   <div class="field">
-    <label data-i18n="senhaLabel">SENHA</label>
+    <label id="l-senha">SENHA</label>
     <div class="senha-wrapper"><input type="password" id="login-senha" placeholder="••••••••"><button type="button" class="senha-toggle" onclick="toggleSenha('login-senha', this)">👁️</button></div>
   </div>
-  <button onclick="fazerLogin()" data-i18n="entrarBtn">ENTRAR</button>
-  <div style="text-align:center;margin-top:14px"><a href="#" onclick="abrirEsqueciSenha(); return false;" style="color:var(--ouro);font-size:13px;text-decoration:none" data-i18n="esqueciSenha">Esqueci minha senha</a></div>
+  <button class="btn-gold" onclick="fazerLogin()" id="btn-entrar">ENTRAR</button>
+  <div style="text-align:center;margin-top:14px"><a href="#" onclick="abrirEsqueciSenha(); return false;" style="color:var(--ouro);font-size:13px;text-decoration:none">Esqueci minha senha</a></div>
   <div class="login-link" style="margin-top:14px">
-    <span id="l-sem-conta" data-i18n="naoTemConta">Não tem conta? </span><a href="#" onclick="mostrarToast('Contate o suporte AurumSci')" data-i18n="faleConosco">Fale conosco</a>
+    <span id="l-sem-conta">Não tem conta? </span><a href="#" onclick="mostrarToast('Contate o suporte AurumSci')">Fale conosco</a>
   </div>
 </div>
 
@@ -248,24 +248,24 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <button class="lang-mini" onclick="setLangApp('es',this)">ES</button>
       </div>
       <div class="btn-icon" onclick="toggleTheme()" id="theme-btn">🌙</div>
-      <div style="display:flex;flex-direction:column;align-items:center;cursor:pointer" onclick="toggleMenuPerfil(event)"><div class="avatar" id="avatar-inicial" style="position:relative">A</div><div style="font-size:8px;color:var(--cinza);margin-top:2px;letter-spacing:0.5px" data-i18n="menuLabel">MENU</div></div>
+      <div style="display:flex;flex-direction:column;align-items:center;cursor:pointer" onclick="toggleMenuPerfil(event)"><div class="avatar" id="avatar-inicial" style="position:relative">A</div><div style="font-size:8px;color:var(--cinza);margin-top:2px;letter-spacing:0.5px">MENU</div></div>
     </div>
   </div>
 
   <!-- MENU PERFIL / LOGOUT -->
   <div id="menu-perfil" style="display:none;position:fixed;top:56px;right:12px;background:var(--card);border:1px solid var(--borda);border-radius:14px;padding:8px;z-index:9999;min-width:160px;box-shadow:0 8px 32px rgba(0,0,0,0.4)">
     <div style="padding:8px 12px;font-size:12px;color:var(--cinza);border-bottom:1px solid var(--borda);margin-bottom:6px" id="menu-nome-personal">—</div>
-    <div onclick="abrirWhiteLabel()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🎨 <span data-i18n="personalizarLogo">Personalizar logo</span></div>
-    <div onclick="baixarMeuContrato()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">📄 <span data-i18n="meuContrato">Meu Contrato</span></div>
-<div onclick="abrirMeuPlano()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">💎 <span data-i18n="meuPlano">Meu Plano</span></div>
-    <div onclick="excluirMinhaConta()" style="padding:10px 12px;font-size:14px;color:#FF4B4B;cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px;border-top:1px solid var(--borda);margin-top:6px;padding-top:10px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🗑️ <span data-i18n="excluirConta">Excluir minha conta</span></div>
-    <div onclick="fazerLogout()" style="padding:10px 12px;font-size:14px;color:#FF4B4B;cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px;margin-top:2px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🚪 <span data-i18n="sairConta">Sair</span></div>
+    <div onclick="abrirWhiteLabel()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🎨 <span>Personalizar logo</span></div>
+    <div onclick="baixarMeuContrato()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">📄 <span>Meu Contrato</span></div>
+<div onclick="abrirMeuPlano()" style="padding:10px 12px;font-size:14px;color:var(--texto);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">💎 <span>Meu Plano</span></div>
+    <div onclick="excluirMinhaConta()" style="padding:10px 12px;font-size:14px;color:#FF4B4B;cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px;border-top:1px solid var(--borda);margin-top:6px;padding-top:10px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🗑️ <span>Excluir minha conta</span></div>
+    <div onclick="fazerLogout()" style="padding:10px 12px;font-size:14px;color:#FF4B4B;cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px;margin-top:2px" onmouseover="this.style.background='var(--borda)'" onmouseout="this.style.background='transparent'">🚪 <span>Sair</span></div>
   </div>
 
   <!-- MODAL WHITE LABEL -->
   <div id="modal-whitelabel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10000;align-items:center;justify-content:center">
     <div style="background:var(--card);border-radius:20px;padding:28px;width:88%;max-width:340px">
-      <div style="font-family:'Bebas Neue';font-size:22px;color:var(--ouro2);margin-bottom:6px" data-i18n="personalizarLogoTitulo">Personalizar Logo</div>
+      <div style="font-family:'Bebas Neue';font-size:22px;color:var(--ouro2);margin-bottom:6px">Personalizar Logo</div>
       <div style="font-size:13px;color:var(--cinza);margin-bottom:20px">Substitua o logo AurumSci pelo seu. Aparece no topo do app.</div>
       <div id="preview-logo-wl" style="text-align:center;margin-bottom:16px;min-height:50px;display:flex;align-items:center;justify-content:center"></div>
       <label style="display:block;background:var(--ouro2);color:#000;text-align:center;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;margin-bottom:10px">
@@ -273,13 +273,13 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <input type="file" accept="image/*" style="display:none" onchange="uploadLogoWL(this)">
       </label>
       <div style="margin-bottom:10px">
-        <div style="font-size:11px;color:var(--cinza);margin-bottom:6px" data-i18n="nomeNegocio">NOME DO SEU NEGÓCIO (opcional)</div>
+        <div style="font-size:11px;color:var(--cinza);margin-bottom:6px">NOME DO SEU NEGÓCIO (opcional)</div>
         <input id="wl-nome-input" placeholder="Ex: João Fitness, Studio Silva..." style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);font-size:14px;box-sizing:border-box">
       </div>
       <button onclick="usarAurumSci()" style="width:100%;padding:10px;background:rgba(201,168,76,.1);border:1px solid var(--ouro);color:var(--ouro);border-radius:12px;cursor:pointer;margin-bottom:10px;font-weight:700;font-size:13px">⚡ Usar logo AurumSci (padrão)</button>
-      <button onclick="removerLogoWL()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--borda);color:var(--cinza);border-radius:12px;cursor:pointer;margin-bottom:10px" data-i18n="removerLogo">Remover logo personalizado</button>
+      <button onclick="removerLogoWL()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--borda);color:var(--cinza);border-radius:12px;cursor:pointer;margin-bottom:10px">Remover logo personalizado</button>
       <button onclick="salvarLogoWL()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),#F0C040);border:none;border-radius:12px;color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;cursor:pointer;margin-bottom:10px">✅ SALVAR E APLICAR</button>
-      <button onclick="document.getElementById('modal-whitelabel').style.display='none'" style="width:100%;padding:12px;background:var(--borda);color:var(--texto);border:none;border-radius:12px;cursor:pointer;font-weight:600" data-i18n="fechar">Fechar</button>
+      <button onclick="document.getElementById('modal-whitelabel').style.display='none'" style="width:100%;padding:12px;background:var(--borda);color:var(--texto);border:none;border-radius:12px;cursor:pointer;font-weight:600">Fechar</button>
     </div>
   </div>
   <input type="file" id="wl-file-input" accept="image/*" style="display:none" onchange="uploadLogoWL(this)">
@@ -302,19 +302,19 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:16px">
       <div style="background:var(--bg2);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center">
         <div style="font-family:Bebas Neue;font-size:26px;color:var(--verde)"><span id="stat-alunos">0</span><span id="stat-limite" style="font-size:18px;color:var(--cinza);font-weight:normal"></span></div>
-        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px" data-i18n="cardAtivos">ATIVOS</div>
+        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px">ATIVOS</div>
       </div>
       <div style="background:var(--bg2);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center">
         <div style="font-family:Bebas Neue;font-size:26px;color:var(--ouro2)" id="stat-checkins">0</div>
-        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px" data-i18n="cardCheckins">CHECK-INS</div>
+        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px">CHECK-INS</div>
       </div>
       <div style="background:var(--bg2);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center">
         <div style="font-family:Bebas Neue;font-size:26px;color:var(--vermelho)" id="stat-pendentes">0</div>
-        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px" data-i18n="cardPendentes">PENDENTES</div>
+        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px">PENDENTES</div>
       </div>
       <div style="background:var(--bg2);border-radius:12px;border:1px solid var(--borda);padding:12px;text-align:center">
         <div style="font-family:Bebas Neue;font-size:20px;color:var(--verde)" id="stat-receita">R$0</div>
-        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px" data-i18n="cardReceita">RECEITA</div>
+        <div style="font-size:9px;color:var(--cinza);letter-spacing:1px">RECEITA</div>
       </div>
     </div>
 
@@ -329,23 +329,23 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
       <div onclick="mudarTab('alunos', document.querySelector('.tab:nth-child(2)'))" style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:16px;cursor:pointer;text-align:center">
         <div style="font-size:28px;margin-bottom:6px">👥</div>
-        <div style="font-family:Bebas Neue;font-size:16px;color:var(--ouro2)" data-i18n="quickAlunos">ALUNOS</div>
-        <div style="font-size:11px;color:var(--cinza)" data-i18n="verTodos">Ver todos</div>
+        <div style="font-family:Bebas Neue;font-size:16px;color:var(--ouro2)">ALUNOS</div>
+        <div style="font-size:11px;color:var(--cinza)">Ver todos</div>
       </div>
       <div onclick="mudarTab('loja', document.querySelector('.tab:nth-child(3)'))" style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.15);border-radius:14px;padding:16px;cursor:pointer;text-align:center">
         <div style="font-size:28px;margin-bottom:6px">🛒</div>
-        <div style="font-family:Bebas Neue;font-size:16px;color:var(--verde)" data-i18n="quickLoja">LOJA PRO</div>
-        <div style="font-size:11px;color:var(--cinza)" data-i18n="quickEquip">Equipamentos</div>
+        <div style="font-family:Bebas Neue;font-size:16px;color:var(--verde)">LOJA PRO</div>
+        <div style="font-size:11px;color:var(--cinza)">Equipamentos</div>
       </div>
       <div onclick="mudarTab('fin', document.querySelector('.tab:nth-child(4)'))" style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.15);border-radius:14px;padding:16px;cursor:pointer;text-align:center">
         <div style="font-size:28px;margin-bottom:6px">💰</div>
-        <div style="font-family:Bebas Neue;font-size:16px;color:var(--azul)" data-i18n="quickFinancas">FINANÇAS</div>
-        <div style="font-size:11px;color:var(--cinza)" data-i18n="quickPagamentos">Pagamentos</div>
+        <div style="font-family:Bebas Neue;font-size:16px;color:var(--azul)">FINANÇAS</div>
+        <div style="font-size:11px;color:var(--cinza)">Pagamentos</div>
       </div>
       <div onclick="abrirAulas()" style="background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.15);border-radius:14px;padding:16px;cursor:pointer;text-align:center">
         <div style="font-size:28px;margin-bottom:6px">📅</div>
-        <div style="font-family:Bebas Neue;font-size:16px;color:var(--verde)" data-i18n="quickAulas">AULAS</div>
-        <div style="font-size:11px;color:var(--cinza)" data-i18n="quickCheckinDiario">Check-in diário</div>
+        <div style="font-family:Bebas Neue;font-size:16px;color:var(--verde)">AULAS</div>
+        <div style="font-size:11px;color:var(--cinza)">Check-in diário</div>
       </div>
     </div>
     <div id="alunos-recentes" style="display:none"></div>
@@ -354,22 +354,22 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <!-- ALUNOS -->
   <div class="screen" id="screen-alunos">
     <div class="section-title" id="t-titulo-alunos">ALUNOS</div>
-    <div class="section-sub" id="t-sub-alunos" data-i18n="gerencieAlunos">Gerencie seus alunos</div>
+    <div class="section-sub" id="t-sub-alunos">Gerencie seus alunos</div>
 
     <button class="btn-novo-aluno" onclick="abrirModalNovoAluno()">
-      ➕ <span id="t-novo-aluno" data-i18n="novoAlunoBtn">Novo Aluno</span>
+      ➕ <span id="t-novo-aluno">Novo Aluno</span>
     </button>
 
     <input class="busca-input" type="text" id="busca-aluno" placeholder="🔍 Buscar aluno..." oninput="filtrarAlunos()">
 
     <div class="filtros">
-      <div class="filtro active" onclick="filtroStatus('todos',this)" id="f-todos" data-i18n="filtroTodos">Todos</div>
-      <div class="filtro" onclick="filtroStatus('ativo',this)" id="f-ativos" data-i18n="filtroAtivos">Ativos</div>
-      <div class="filtro" onclick="filtroStatus('inativo',this)" id="f-inativos" data-i18n="filtroInativos">Inativos</div>
+      <div class="filtro active" onclick="filtroStatus('todos',this)" id="f-todos">Todos</div>
+      <div class="filtro" onclick="filtroStatus('ativo',this)" id="f-ativos">Ativos</div>
+      <div class="filtro" onclick="filtroStatus('inativo',this)" id="f-inativos">Inativos</div>
     </div>
 
     <div id="lista-alunos">
-      <div style="text-align:center;padding:40px;color:var(--cinza)" data-i18n="carregandoAlunos">Carregando alunos...</div>
+      <div style="text-align:center;padding:40px;color:var(--cinza)">Carregando alunos...</div>
     </div>
   </div>
 
@@ -384,7 +384,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       <div style="flex:1;text-align:center;font-family:Bebas Neue;font-size:20px;color:var(--ouro2);letter-spacing:1.5px" id="aulas-data-display">--/--/----</div>
       <button onclick="aulasNavegar(1)" style="background:transparent;border:none;color:var(--ouro);font-size:24px;cursor:pointer;padding:4px 12px">›</button>
     </div>
-    <button onclick="aulasIrParaHoje()" style="width:100%;background:rgba(201,168,76,.1);border:1px solid var(--ouro);color:var(--ouro);padding:8px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:16px" data-i18n="aulasHoje">HOJE</button>
+    <button onclick="aulasIrParaHoje()" style="width:100%;background:rgba(201,168,76,.1);border:1px solid var(--ouro);color:var(--ouro);padding:8px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:16px">HOJE</button>
     
     <!-- Autocomplete -->
     <div style="position:relative;margin-bottom:20px">
@@ -393,14 +393,14 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     </div>
     
     <!-- Lista do dia -->
-    <div style="font-family:Bebas Neue;font-size:16px;color:var(--ouro2);letter-spacing:1.5px;margin-bottom:8px" data-i18n="alunosTreinaram">ALUNOS QUE TREINARAM</div>
+    <div style="font-family:Bebas Neue;font-size:16px;color:var(--ouro2);letter-spacing:1.5px;margin-bottom:8px">ALUNOS QUE TREINARAM</div>
     <div id="aulas-lista">
-      <div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px" data-i18n="nenhumaAula">Nenhuma aula registrada</div>
+      <div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px">Nenhuma aula registrada</div>
     </div>
     
     <!-- Resumo -->
     <div id="aulas-resumo" style="margin-top:20px;padding:16px;background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.2);border-radius:12px;text-align:center">
-      <div style="font-size:11px;color:var(--cinza);letter-spacing:1.5px" data-i18n="totalDia">TOTAL DO DIA</div>
+      <div style="font-size:11px;color:var(--cinza);letter-spacing:1.5px">TOTAL DO DIA</div>
       <div style="font-family:Bebas Neue;font-size:32px;color:var(--verde)" id="aulas-total">0</div>
     </div>
   </div>
@@ -416,7 +416,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <!-- FINANCEIRO -->
   <div class="screen" id="screen-fin">
     <div class="section-title" id="t-titulo-fin">FINANCEIRO</div>
-    <div class="section-sub" id="t-sub-fin" data-i18n="controlePagamentos">Controle de pagamentos</div>
+    <div class="section-sub" id="t-sub-fin">Controle de pagamentos</div>
 
     <div class="fin-resumo">
       <div class="fin-card">
@@ -727,259 +727,22 @@ var filtroAtual = 'todos';
 // ── TRADUÇÕES ─────────────────────────────────────────────────
 var TR = {
   pt: {
-    // ── HEADER & SAUDAÇÃO ──
     bomDia:'BOM DIA', boaTarde:'BOA TARDE', boaNoite:'BOA NOITE',
-    online:'Online',
-    // ── ABAS ──
-    tab1:'INÍCIO', tab2:'ALUNOS', tab3:'FINANÇAS', tab4:'AURI',
-    // ── LOGIN ──
-    emailLabel:'EMAIL', senhaLabel:'SENHA', entrarBtn:'ENTRAR',
-    esqueciSenha:'Esqueci minha senha',
-    placeholderEmail:'seu@email.com', placeholderSenha:'••••••••',
-    // ── AURI ──
+    online:'Online', tab1:'INÍCIO', tab2:'ALUNOS', tab3:'FINANÇAS', tab4:'AURI',
     auriSaudacao:'Olá! Sou o AURI 💪 Posso te ajudar com gestão de alunos, protocolos de treino e muito mais!',
     auriPersonal:'Como posso te ajudar hoje? 💪',
-    auriPlaceholder:'Pergunte algo...',
-    // ── BOTÕES COMUNS ──
-    salvar:'SALVAR', cancelar:'CANCELAR', fechar:'FECHAR', voltar:'VOLTAR',
-    proximo:'PRÓXIMO →', confirmar:'CONFIRMAR', editar:'EDITAR', excluir:'EXCLUIR',
-    enviar:'ENVIAR', adicionar:'ADICIONAR', remover:'REMOVER', continuar:'CONTINUAR',
-    sair:'Sair', tentarNovamente:'Tentar novamente', entendi:'ENTENDI ✓',
-    // ── INÍCIO / DASHBOARD ──
-    bemVindo:'BEM-VINDO', resumoHoje:'RESUMO DE HOJE', alunosAtivos:'ALUNOS ATIVOS',
-    pagamentosPendentes:'PAGAMENTOS PENDENTES', receitaMes:'RECEITA DO MÊS',
-    novosAlunos:'NOVOS ALUNOS', aulasHoje:'AULAS HOJE',
-    // ── ALUNOS ──
-    novoAluno:'+ NOVO ALUNO', criarAluno:'CRIAR ALUNO', buscarAluno:'🔍 Buscar aluno...',
-    todos:'Todos', ativos:'Ativos', inativos:'Inativos', pendentes:'Pendentes',
-    nomeAluno:'Nome do aluno', telefoneLabel:'TELEFONE', cpfLabel:'CPF',
-    sexoLabel:'SEXO', idadeLabel:'IDADE', objetivoLabel:'OBJETIVO', nivelLabel:'NÍVEL',
-    masculino:'Masculino', feminino:'Feminino',
-    // Objetivos
-    hipertrofia:'Hipertrofia', emagrecimento:'Emagrecimento',
-    condicionamento:'Condicionamento', flexibilidade:'Flexibilidade',
-    forca:'Força',
-    // Níveis
-    iniciante:'Iniciante', intermediario:'Intermediário', avancado:'Avançado',
-    // ── FINANÇAS ──
-    pagamentos:'PAGAMENTOS', receita:'RECEITA', vencimento:'VENCIMENTO',
-    pago:'✓ PAGO', pendente:'PENDENTE', atrasado:'ATRASADO',
-    fecharMes:'FECHAR MÊS', mes:'Mês', ano:'Ano', dia:'Dia',
-    descricaoLabel:'DESCRIÇÃO', valorLabel:'VALOR', quantidadeLabel:'QUANTIDADE',
-    aulas:'AULAS', limite:'LIMITE', recebido:'RECEBIDO',
-    // ── AVALIAÇÕES ──
-    avaliacao:'AVALIAÇÃO', composicao:'⚖️ COMPOSIÇÃO', gordura:'⚖️ GORDURA',
-    bioimpedancia:'⚖️ BIOIMPEDÂNCIA', funcional:'⏱️ FUNCIONAL',
-    foto:'Foto', frente:'FRENTE', lateral:'LATERAL', costas:'COSTAS',
-    tronco:'TRONCO', membros:'MEMBROS', periodizacao:'PERIODIZAÇÃO',
-    // ── MENU AVATAR ──
-    menuPerfil:'MEU PERFIL', meuPlano:'MEU PLANO', configuracoes:'CONFIGURAÇÕES',
-    sairConta:'Sair',
-    // ── PLANOS ──
-    planoBronze:'BRONZE', planoPrata:'PRATA', planoOuro:'OURO', planoDiamante:'DIAMANTE',
-    reativar:'REATIVAR', upgradePlano:'FAZER UPGRADE',
-    // ── ERROS ──
-    erroLogin:'Email ou senha incorretos', erroConexao:'Erro de conexão',
-    erroGeral:'Erro', preencherCampos:'Preencha todos os campos',
-    // ── LOJA ──
-    loja:'LOJA', equipamentos:'Equipamentos', strap:'Strap', magnesio:'Magnésio',
-    // ── LOGIN PRO ──
-    cienciaResultado:'CIÊNCIA QUE VIRA RESULTADO', areaPersonal:'👨‍💼 ÁREA DO PERSONAL',
-    menuLabel:'MENU',
-    splashTag:'PERSONAL TRAINER',
-    naoTemConta:'Não tem conta? ', faleConosco:'Fale conosco',
-    // ── MENU AVATAR ──
-    personalizarLogo:'Personalizar logo', meuContrato:'Meu Contrato',
-    excluirConta:'Excluir minha conta',
-    // ── DASHBOARD CARDS ──
-    cardAtivos:'ATIVOS', cardCheckins:'CHECK-INS', cardPendentes:'PENDENTES', cardReceita:'RECEITA',
-    // ── QUICK ACTIONS ──
-    quickAlunos:'ALUNOS', verTodos:'Ver todos',
-    quickLoja:'LOJA PRO', quickEquip:'Equipamentos',
-    quickFinancas:'FINANÇAS', quickPagamentos:'Pagamentos',
-    quickAulas:'AULAS', quickCheckinDiario:'Check-in diário',
-    // ── ABA ALUNOS ──
-    gerencieAlunos:'Gerencie seus alunos', novoAlunoBtn:'Novo Aluno',
-    filtroTodos:'Todos', filtroAtivos:'Ativos', filtroInativos:'Inativos',
-    carregandoAlunos:'Carregando alunos...',
-    // ── AULAS ──
-    aulasHoje:'HOJE', alunosTreinaram:'ALUNOS QUE TREINARAM',
-    nenhumaAula:'Nenhuma aula registrada', totalDia:'TOTAL DO DIA',
-    // ── FINANÇAS ──
-    controlePagamentos:'Controle de pagamentos',
-    // ── WHITE LABEL ──
-    personalizarLogoTitulo:'Personalizar Logo', nomeNegocio:'NOME DO SEU NEGÓCIO (opcional)',
-    removerLogo:'Remover logo personalizado',
   },
   en: {
-    // ── HEADER ──
     bomDia:'GOOD MORNING', boaTarde:'GOOD AFTERNOON', boaNoite:'GOOD EVENING',
-    online:'Online',
-    // ── TABS ──
-    tab1:'HOME', tab2:'CLIENTS', tab3:'FINANCES', tab4:'AURI',
-    // ── LOGIN ──
-    emailLabel:'EMAIL', senhaLabel:'PASSWORD', entrarBtn:'LOGIN',
-    esqueciSenha:'Forgot my password',
-    placeholderEmail:'your@email.com', placeholderSenha:'••••••••',
-    // ── AURI ──
+    online:'Online', tab1:'HOME', tab2:'CLIENTS', tab3:'FINANCES', tab4:'AURI',
     auriSaudacao:'Hi! I am AURI 💪 I can help you with client management, training protocols and more!',
     auriPersonal:'How can I help you today? 💪',
-    auriPlaceholder:'Ask something...',
-    // ── COMMON BUTTONS ──
-    salvar:'SAVE', cancelar:'CANCEL', fechar:'CLOSE', voltar:'BACK',
-    proximo:'NEXT →', confirmar:'CONFIRM', editar:'EDIT', excluir:'DELETE',
-    enviar:'SEND', adicionar:'ADD', remover:'REMOVE', continuar:'CONTINUE',
-    sair:'Logout', tentarNovamente:'Try again', entendi:'GOT IT ✓',
-    // ── HOME / DASHBOARD ──
-    bemVindo:'WELCOME', resumoHoje:'TODAY\'S SUMMARY', alunosAtivos:'ACTIVE CLIENTS',
-    pagamentosPendentes:'PENDING PAYMENTS', receitaMes:'MONTHLY REVENUE',
-    novosAlunos:'NEW CLIENTS', aulasHoje:'CLASSES TODAY',
-    // ── CLIENTS ──
-    novoAluno:'+ NEW CLIENT', criarAluno:'CREATE CLIENT', buscarAluno:'🔍 Search client...',
-    todos:'All', ativos:'Active', inativos:'Inactive', pendentes:'Pending',
-    nomeAluno:'Client name', telefoneLabel:'PHONE', cpfLabel:'TAX ID',
-    sexoLabel:'GENDER', idadeLabel:'AGE', objetivoLabel:'GOAL', nivelLabel:'LEVEL',
-    masculino:'Male', feminino:'Female',
-    // Goals
-    hipertrofia:'Hypertrophy', emagrecimento:'Weight Loss',
-    condicionamento:'Conditioning', flexibilidade:'Flexibility',
-    forca:'Strength',
-    // Levels
-    iniciante:'Beginner', intermediario:'Intermediate', avancado:'Advanced',
-    // ── FINANCES ──
-    pagamentos:'PAYMENTS', receita:'REVENUE', vencimento:'DUE DATE',
-    pago:'✓ PAID', pendente:'PENDING', atrasado:'OVERDUE',
-    fecharMes:'CLOSE MONTH', mes:'Month', ano:'Year', dia:'Day',
-    descricaoLabel:'DESCRIPTION', valorLabel:'VALUE', quantidadeLabel:'QUANTITY',
-    aulas:'CLASSES', limite:'LIMIT', recebido:'RECEIVED',
-    // ── ASSESSMENTS ──
-    avaliacao:'ASSESSMENT', composicao:'⚖️ COMPOSITION', gordura:'⚖️ FAT',
-    bioimpedancia:'⚖️ BIOIMPEDANCE', funcional:'⏱️ FUNCTIONAL',
-    foto:'Photo', frente:'FRONT', lateral:'SIDE', costas:'BACK',
-    tronco:'TRUNK', membros:'LIMBS', periodizacao:'PERIODIZATION',
-    // ── AVATAR MENU ──
-    menuPerfil:'MY PROFILE', meuPlano:'MY PLAN', configuracoes:'SETTINGS',
-    sairConta:'Logout',
-    // ── PLANS ──
-    planoBronze:'BRONZE', planoPrata:'SILVER', planoOuro:'GOLD', planoDiamante:'DIAMOND',
-    reativar:'REACTIVATE', upgradePlano:'UPGRADE PLAN',
-    // ── ERRORS ──
-    erroLogin:'Incorrect email or password', erroConexao:'Connection error',
-    erroGeral:'Error', preencherCampos:'Please fill in all fields',
-    // ── SHOP ──
-    loja:'SHOP', equipamentos:'Equipment', strap:'Strap', magnesio:'Magnesium',
-    // ── LOGIN PRO ──
-    cienciaResultado:'SCIENCE THAT BRINGS RESULTS', areaPersonal:'👨‍💼 PERSONAL TRAINER AREA',
-    menuLabel:'MENU',
-    splashTag:'PERSONAL TRAINER',
-    naoTemConta:"Don't have an account? ", faleConosco:'Contact us',
-    // ── AVATAR MENU ──
-    personalizarLogo:'Customize logo', meuContrato:'My Contract',
-    excluirConta:'Delete my account',
-    // ── DASHBOARD CARDS ──
-    cardAtivos:'ACTIVE', cardCheckins:'CHECK-INS', cardPendentes:'PENDING', cardReceita:'REVENUE',
-    // ── QUICK ACTIONS ──
-    quickAlunos:'CLIENTS', verTodos:'See all',
-    quickLoja:'PRO SHOP', quickEquip:'Equipment',
-    quickFinancas:'FINANCES', quickPagamentos:'Payments',
-    quickAulas:'CLASSES', quickCheckinDiario:'Daily check-in',
-    // ── CLIENTS TAB ──
-    gerencieAlunos:'Manage your clients', novoAlunoBtn:'New Client',
-    filtroTodos:'All', filtroAtivos:'Active', filtroInativos:'Inactive',
-    carregandoAlunos:'Loading clients...',
-    // ── CLASSES ──
-    aulasHoje:'TODAY', alunosTreinaram:'CLIENTS WHO TRAINED',
-    nenhumaAula:'No class registered', totalDia:'DAY TOTAL',
-    // ── FINANCES ──
-    controlePagamentos:'Payment control',
-    // ── WHITE LABEL ──
-    personalizarLogoTitulo:'Customize Logo', nomeNegocio:'YOUR BUSINESS NAME (optional)',
-    removerLogo:'Remove custom logo',
   },
   es: {
-    // ── HEADER ──
     bomDia:'BUENOS DÍAS', boaTarde:'BUENAS TARDES', boaNoite:'BUENAS NOCHES',
-    online:'En línea',
-    // ── PESTAÑAS ──
-    tab1:'INICIO', tab2:'ALUMNOS', tab3:'FINANZAS', tab4:'AURI',
-    // ── LOGIN ──
-    emailLabel:'EMAIL', senhaLabel:'CONTRASEÑA', entrarBtn:'INGRESAR',
-    esqueciSenha:'Olvidé mi contraseña',
-    placeholderEmail:'tu@email.com', placeholderSenha:'••••••••',
-    // ── AURI ──
+    online:'En línea', tab1:'INICIO', tab2:'ALUMNOS', tab3:'FINANZAS', tab4:'AURI',
     auriSaudacao:'¡Hola! Soy AURI 💪 ¡Puedo ayudarte con gestión de alumnos, protocolos de entrenamiento y más!',
     auriPersonal:'¿Cómo puedo ayudarte hoy? 💪',
-    auriPlaceholder:'Pregunta algo...',
-    // ── BOTONES COMUNES ──
-    salvar:'GUARDAR', cancelar:'CANCELAR', fechar:'CERRAR', voltar:'VOLVER',
-    proximo:'SIGUIENTE →', confirmar:'CONFIRMAR', editar:'EDITAR', excluir:'ELIMINAR',
-    enviar:'ENVIAR', adicionar:'AGREGAR', remover:'QUITAR', continuar:'CONTINUAR',
-    sair:'Salir', tentarNovamente:'Intentar de nuevo', entendi:'ENTENDIDO ✓',
-    // ── INICIO / PANEL ──
-    bemVindo:'BIENVENIDO', resumoHoje:'RESUMEN DE HOY', alunosAtivos:'ALUMNOS ACTIVOS',
-    pagamentosPendentes:'PAGOS PENDIENTES', receitaMes:'INGRESOS DEL MES',
-    novosAlunos:'NUEVOS ALUMNOS', aulasHoje:'CLASES HOY',
-    // ── ALUMNOS ──
-    novoAluno:'+ NUEVO ALUMNO', criarAluno:'CREAR ALUMNO', buscarAluno:'🔍 Buscar alumno...',
-    todos:'Todos', ativos:'Activos', inativos:'Inactivos', pendentes:'Pendientes',
-    nomeAluno:'Nombre del alumno', telefoneLabel:'TELÉFONO', cpfLabel:'IDENTIFICACIÓN',
-    sexoLabel:'SEXO', idadeLabel:'EDAD', objetivoLabel:'OBJETIVO', nivelLabel:'NIVEL',
-    masculino:'Masculino', feminino:'Femenino',
-    // Objetivos
-    hipertrofia:'Hipertrofia', emagrecimento:'Pérdida de peso',
-    condicionamento:'Acondicionamiento', flexibilidade:'Flexibilidad',
-    forca:'Fuerza',
-    // Niveles
-    iniciante:'Principiante', intermediario:'Intermedio', avancado:'Avanzado',
-    // ── FINANZAS ──
-    pagamentos:'PAGOS', receita:'INGRESOS', vencimento:'VENCIMIENTO',
-    pago:'✓ PAGADO', pendente:'PENDIENTE', atrasado:'ATRASADO',
-    fecharMes:'CERRAR MES', mes:'Mes', ano:'Año', dia:'Día',
-    descricaoLabel:'DESCRIPCIÓN', valorLabel:'VALOR', quantidadeLabel:'CANTIDAD',
-    aulas:'CLASES', limite:'LÍMITE', recebido:'RECIBIDO',
-    // ── EVALUACIONES ──
-    avaliacao:'EVALUACIÓN', composicao:'⚖️ COMPOSICIÓN', gordura:'⚖️ GRASA',
-    bioimpedancia:'⚖️ BIOIMPEDANCIA', funcional:'⏱️ FUNCIONAL',
-    foto:'Foto', frente:'FRENTE', lateral:'LATERAL', costas:'ESPALDA',
-    tronco:'TRONCO', membros:'EXTREMIDADES', periodizacao:'PERIODIZACIÓN',
-    // ── MENÚ AVATAR ──
-    menuPerfil:'MI PERFIL', meuPlano:'MI PLAN', configuracoes:'CONFIGURACIÓN',
-    sairConta:'Salir',
-    // ── PLANES ──
-    planoBronze:'BRONCE', planoPrata:'PLATA', planoOuro:'ORO', planoDiamante:'DIAMANTE',
-    reativar:'REACTIVAR', upgradePlano:'MEJORAR PLAN',
-    // ── ERRORES ──
-    erroLogin:'Email o contraseña incorrectos', erroConexao:'Error de conexión',
-    erroGeral:'Error', preencherCampos:'Por favor complete todos los campos',
-    // ── TIENDA ──
-    loja:'TIENDA', equipamentos:'Equipos', strap:'Strap', magnesio:'Magnesio',
-    // ── LOGIN PRO ──
-    cienciaResultado:'CIENCIA QUE TRAE RESULTADOS', areaPersonal:'👨‍💼 ÁREA DEL ENTRENADOR',
-    menuLabel:'MENÚ',
-    splashTag:'ENTRENADOR PERSONAL',
-    naoTemConta:'¿No tienes cuenta? ', faleConosco:'Contáctanos',
-    // ── MENÚ AVATAR ──
-    personalizarLogo:'Personalizar logo', meuContrato:'Mi Contrato',
-    excluirConta:'Eliminar mi cuenta',
-    // ── DASHBOARD CARDS ──
-    cardAtivos:'ACTIVOS', cardCheckins:'CHECK-INS', cardPendentes:'PENDIENTES', cardReceita:'INGRESOS',
-    // ── QUICK ACTIONS ──
-    quickAlunos:'ALUMNOS', verTodos:'Ver todos',
-    quickLoja:'TIENDA PRO', quickEquip:'Equipos',
-    quickFinancas:'FINANZAS', quickPagamentos:'Pagos',
-    quickAulas:'CLASES', quickCheckinDiario:'Check-in diario',
-    // ── PESTAÑA ALUMNOS ──
-    gerencieAlunos:'Gestiona tus alumnos', novoAlunoBtn:'Nuevo Alumno',
-    filtroTodos:'Todos', filtroAtivos:'Activos', filtroInativos:'Inactivos',
-    carregandoAlunos:'Cargando alumnos...',
-    // ── CLASES ──
-    aulasHoje:'HOY', alunosTreinaram:'ALUMNOS QUE ENTRENARON',
-    nenhumaAula:'Ninguna clase registrada', totalDia:'TOTAL DEL DÍA',
-    // ── FINANZAS ──
-    controlePagamentos:'Control de pagos',
-    // ── WHITE LABEL ──
-    personalizarLogoTitulo:'Personalizar Logo', nomeNegocio:'NOMBRE DE SU NEGOCIO (opcional)',
-    removerLogo:'Remover logo personalizado',
   }
 };
 
@@ -994,9 +757,12 @@ window.onload = function(){
     }
   }, 2200);
 
-  // Data localizada
-  atualizarData();
-  atualizarTextos();
+  // Data
+  var dias = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+  var meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  var d = new Date();
+  var el = document.getElementById('t-data');
+  if(el) el.textContent = dias[d.getDay()] + ', ' + d.getDate() + ' de ' + meses[d.getMonth()];
 
   // Bubble
   setTimeout(function(){
@@ -1010,8 +776,6 @@ function setLang(l, el){
   lang = l; localStorage.setItem('aurum_personal_lang', l);
   document.querySelectorAll('.lang-row .lang-btn').forEach(function(b){ b.classList.remove('active'); });
   el.classList.add('active');
-  atualizarTextos();  // FIX: traduz tela de login tambem
-  atualizarData();    // FIX: localiza data
 }
 
 function setLangApp(l, el){
@@ -1019,67 +783,22 @@ function setLangApp(l, el){
   document.querySelectorAll('.lang-mini-row .lang-mini').forEach(function(b){ b.classList.remove('active'); });
   el.classList.add('active');
   atualizarTextos();
-  atualizarData();
   chatHist = [];
   var msgs = document.getElementById('chat-msgs');
   if(msgs) msgs.innerHTML = '<div class="msg msg-auri"><span class="msg-tag">AURI</span>' + T('auriSaudacao') + '</div>';
 }
 
 function atualizarTextos(){
-  // SAUDAÇÃO BASEADA NA HORA
   var h = new Date().getHours();
   var sauda = h < 12 ? T('bomDia') : h < 18 ? T('boaTarde') : T('boaNoite');
-  var elSauda = document.getElementById('t-saudacao');
-  if(elSauda) elSauda.textContent = sauda + ',';
-
-  // SISTEMA UNIVERSAL data-i18n - atualiza TODOS os elementos automaticamente
-  document.querySelectorAll('[data-i18n]').forEach(function(el){
-    var key = el.getAttribute('data-i18n');
-    var trad = T(key);
-    if(trad && trad !== key) el.textContent = trad;
-  });
-
-  // PLACEHOLDERS - via data-i18n-placeholder
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
-    var key = el.getAttribute('data-i18n-placeholder');
-    var trad = T(key);
-    if(trad && trad !== key) el.placeholder = trad;
-  });
-
-  // COMPATIBILIDADE - IDs antigos t-XXX (mantém)
+  var el = document.getElementById('t-saudacao');
+  if(el) el.textContent = sauda + ',';
   var el2 = document.getElementById('t-online');
   if(el2) el2.textContent = T('online');
   var t1=document.getElementById('t-tab1'); if(t1) t1.textContent = T('tab1');
   var t2=document.getElementById('t-tab2'); if(t2) t2.textContent = T('tab2');
   var t3=document.getElementById('t-tab3'); if(t3) t3.textContent = T('tab3');
   var t4=document.getElementById('t-tab4'); if(t4) t4.textContent = T('tab4');
-}
-
-// ── DATA LOCALIZADA ───────────────────────────────────────────
-var DIAS_SEMANA = {
-  pt: ['domingo','segunda','terça','quarta','quinta','sexta','sábado'],
-  en: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
-  es: ['domingo','lunes','martes','miércoles','jueves','viernes','sábado']
-};
-var MESES = {
-  pt: ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'],
-  en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
-  es: ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']
-};
-
-function atualizarData(){
-  var d = new Date();
-  var diasArr = DIAS_SEMANA[lang] || DIAS_SEMANA['pt'];
-  var mesesArr = MESES[lang] || MESES['pt'];
-  var el = document.getElementById('t-data');
-  if(!el) return;
-  if(lang === 'en'){
-    // Formato EN: Saturday, May 2
-    el.textContent = diasArr[d.getDay()] + ', ' + mesesArr[d.getMonth()] + ' ' + d.getDate();
-  } else {
-    // Formato PT/ES: sábado, 2 de maio
-    el.textContent = diasArr[d.getDay()] + ', ' + d.getDate() + ' de ' + mesesArr[d.getMonth()];
-  }
 }
 
 // ── THEME ─────────────────────────────────────────────────────
@@ -1585,7 +1304,7 @@ function aulasCarregarLista() {
     var container = document.getElementById('aulas-lista');
     
     if(lista.length === 0) {
-      container.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px" data-i18n="nenhumaAula">Nenhuma aula registrada</div>';
+      container.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px">Nenhuma aula registrada</div>';
     } else {
       var html = '';
       lista.forEach(function(a){
@@ -1897,6 +1616,112 @@ function renderFinanceiro(){
     cardSoma += '</div>';
     cardSoma += '</div></div>';
     document.getElementById('card-soma').innerHTML = cardSoma;
+  
+  // ============================================================
+  // NOVA SEÇÃO - DIA 10 DO MÊS - IMPOSTO A PAGAR
+  // ============================================================
+  var hoje = new Date();
+  var diaAtual = hoje.getDate();
+  var mesAtual = hoje.getMonth();
+  var anoAtual = hoje.getFullYear();
+  
+  // Verifica se hoje é próximo do dia 10 (entre dia 1 e 15)
+  var mostrarAlertaDia10 = (diaAtual >= 1 && diaAtual <= 15);
+  
+  if(mostrarAlertaDia10 && (recebido > 0 || pendente > 0)){
+    var cardDia10 = '<div style="background:linear-gradient(135deg,#1A1A2E,#12121A);border:2px solid var(--ouro);border-radius:16px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden">';
+    
+    // Background decorativo
+    cardDia10 += '<div style="position:absolute;top:-20px;right:-20px;font-size:120px;opacity:.03">💰</div>';
+    
+    // Título com animação
+    cardDia10 += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
+    cardDia10 += '<div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro);letter-spacing:2px">⚠️ DIA 10 — SEPARAR IMPOSTO</div>';
+    cardDia10 += '</div>';
+    
+    // Detectar regime do personal (por enquanto hardcoded, depois vem do backend)
+    var regimePersonal = localStorage.getItem('regime_tributario') || 'simples'; // simples, autonomo, presumido
+    
+    var totalMes = recebido + pendente;
+    var impostoAPagar = 0;
+    var aliquota = 0;
+    var descricaoRegime = '';
+    var corRegime = '';
+    var codigoBarras = '';
+    
+    if(regimePersonal === 'simples'){
+      aliquota = 6.0; // Anexo III Simples Nacional
+      impostoAPagar = totalMes * (aliquota/100);
+      descricaoRegime = 'SIMPLES NACIONAL (Anexo III)';
+      corRegime = 'var(--verde)';
+      codigoBarras = gerarCodigoBarrasDAS(impostoAPagar, anoAtual, mesAtual);
+    } else if(regimePersonal === 'autonomo'){
+      aliquota = 27.5; // IR pessoa física + estimativa ISS/INSS
+      impostoAPagar = totalMes * (aliquota/100);
+      descricaoRegime = 'AUTÔNOMO (Carnê-Leão)';
+      corRegime = '#FF4B4B';
+      codigoBarras = gerarCodigoBarrasDARF(impostoAPagar, '0190'); // código IR PF
+    } else if(regimePersonal === 'presumido'){
+      aliquota = 11.33; // Lucro Presumido (IR+CSLL+PIS+COFINS)
+      impostoAPagar = totalMes * (aliquota/100);
+      descricaoRegime = 'LUCRO PRESUMIDO';
+      corRegime = 'var(--ouro2)';
+      codigoBarras = '(múltiplos DARFs necessários)';
+    }
+    
+    // Card principal com valor
+    cardDia10 += '<div style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:12px;padding:16px;margin-bottom:12px">';
+    cardDia10 += '<div style="text-align:center">';
+    cardDia10 += '<div style="font-size:11px;color:var(--cinza);margin-bottom:6px">' + descricaoRegime + ' · ~' + aliquota + '%</div>';
+    cardDia10 += '<div style="font-family:Bebas Neue;font-size:42px;color:' + corRegime + ';text-shadow:0 2px 8px rgba(0,0,0,.3)">R$ ' + impostoAPagar.toFixed(2).replace('.',',') + '</div>';
+    cardDia10 += '<div style="font-size:12px;color:var(--cinza);margin-top:4px">Separar até dia 10 · Pagar até dia 20</div>';
+    cardDia10 += '</div></div>';
+    
+    // Breakdown
+    cardDia10 += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">';
+    cardDia10 += '<div style="background:var(--bg2);border:1px solid var(--borda);border-radius:10px;padding:10px;text-align:center">';
+    cardDia10 += '<div style="font-size:10px;color:var(--cinza)">RECEITA DO MÊS</div>';
+    cardDia10 += '<div style="font-family:Bebas Neue;font-size:20px;color:#fff">R$ ' + totalMes.toFixed(2).replace('.',',') + '</div>';
+    cardDia10 += '</div>';
+    cardDia10 += '<div style="background:var(--bg2);border:1px solid var(--borda);border-radius:10px;padding:10px;text-align:center">';
+    cardDia10 += '<div style="font-size:10px;color:var(--cinza)">LÍQUIDO (após imposto)</div>';
+    cardDia10 += '<div style="font-family:Bebas Neue;font-size:20px;color:var(--verde)">R$ ' + (totalMes - impostoAPagar).toFixed(2).replace('.',',') + '</div>';
+    cardDia10 += '</div></div>';
+    
+    // Código de barras (se disponível)
+    if(codigoBarras && codigoBarras.length > 10){
+      cardDia10 += '<div style="background:var(--bg);border:1px solid var(--borda);border-radius:10px;padding:12px;margin-bottom:10px">';
+      cardDia10 += '<div style="font-size:10px;color:var(--ouro);font-weight:700;margin-bottom:6px">📋 CÓDIGO DE BARRAS</div>';
+      cardDia10 += '<div style="font-family:monospace;font-size:11px;color:#fff;background:#000;padding:8px;border-radius:6px;overflow-x:auto;white-space:nowrap">' + codigoBarras + '</div>';
+      cardDia10 += '<button onclick="copiarCodigoBarras(&quot;' + codigoBarras + '&quot;)" style="width:100%;padding:8px;background:var(--ouro);border:none;border-radius:8px;color:#000;font-size:12px;font-weight:700;margin-top:8px;cursor:pointer">📋 COPIAR CÓDIGO</button>';
+      cardDia10 += '</div>';
+    }
+    
+    // Botão pagar
+    var linkPagamento = regimePersonal === 'simples' ? 
+      'https://www8.receita.fazenda.gov.br/SimplesNacional/Aplicacoes/ATSPO/pgmei.app/Identificacao' :
+      'https://carneleao.receita.fazenda.gov.br';
+    
+    cardDia10 += '<a href="' + linkPagamento + '" target="_blank" style="display:block;padding:14px;background:linear-gradient(135deg,' + corRegime + ',' + corRegime + ');border-radius:12px;text-align:center;text-decoration:none;font-family:Bebas Neue;font-size:16px;color:#000;box-shadow:0 4px 12px rgba(0,0,0,.2)">';
+    cardDia10 += '💳 PAGAR ' + (regimePersonal === 'simples' ? 'DAS' : 'DARF') + ' AGORA';
+    cardDia10 += '</a>';
+    
+    // Configurar regime (se não configurado)
+    if(!localStorage.getItem('regime_tributario')){
+      cardDia10 += '<button onclick="abrirModalRegimeFiscal()" style="width:100%;padding:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:10px;color:var(--ouro);font-size:12px;margin-top:8px;cursor:pointer">⚙️ Configurar meu regime tributário</button>';
+    }
+    
+    cardDia10 += '<div style="font-size:9px;color:#555;text-align:center;margin-top:10px;line-height:1.5">Cálculo estimado. Valores podem variar conforme faixa de faturamento e município. Consulte seu contador.</div>';
+    cardDia10 += '</div>';
+    
+    // Inserir ANTES do card-trib
+    var cardTribPos = document.getElementById('card-trib');
+    if(cardTribPos && cardTribPos.parentNode){
+      var tempDiv = document.createElement('div');
+      tempDiv.innerHTML = cardDia10;
+      cardTribPos.parentNode.insertBefore(tempDiv.firstChild, cardTribPos);
+    }
+  }
   }
 
   var html = '<button onclick="abrirModalPagamento()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer;margin-bottom:14px">➕ REGISTRAR PAGAMENTO</button>';
@@ -4346,6 +4171,112 @@ async function reativarAssinatura() {
     alert('Erro: ' + err.message);
   }
 }
+
+// ============================================================
+// FUNÇÕES FINANCEIRO DAS
+// ============================================================
+
+function gerarCodigoBarrasDAS(valor, ano, mes){
+  // Simplificado - em produção, usar API da Receita
+  // Código de barras DAS tem 48 dígitos
+  var cnpj = '00000000000000'; // CNPJ do personal (viria do backend)
+  var competencia = String(ano).slice(2,4) + String(mes+1).padStart(2,'0'); // AAMM
+  var valorCentavos = Math.round(valor * 100);
+  var valorStr = String(valorCentavos).padStart(11,'0');
+  
+  // Estrutura simplificada (exemplo educacional)
+  var codigo = '00190000090' + cnpj + competencia + valorStr + '000000000000';
+  return codigo.slice(0,48); // Primeiros 48 dígitos
+}
+
+function gerarCodigoBarrasDARF(valor, codigoReceita){
+  // DARF tem estrutura diferente
+  // Código de receita: 0190 = IR Pessoa Física
+  var periodo = new Date();
+  var competencia = String(periodo.getFullYear()).slice(2,4) + String(periodo.getMonth()+1).padStart(2,'0');
+  var valorCentavos = Math.round(valor * 100);
+  var valorStr = String(valorCentavos).padStart(11,'0');
+  
+  // Estrutura simplificada
+  var codigo = codigoReceita + '0' + competencia + valorStr + '00000000000000000000';
+  return codigo.slice(0,48);
+}
+
+function copiarCodigoBarras(codigo){
+  navigator.clipboard.writeText(codigo).then(function(){
+    mostrarToast('✅ Código copiado!');
+  }).catch(function(){
+    // Fallback para navegadores antigos
+    var temp = document.createElement('textarea');
+    temp.value = codigo;
+    document.body.appendChild(temp);
+    temp.select();
+    document.execCommand('copy');
+    document.body.removeChild(temp);
+    mostrarToast('✅ Código copiado!');
+  });
+}
+
+function abrirModalRegimeFiscal(){
+  var modal = '<div style="position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px" onclick="this.remove()">';
+  modal += '<div style="background:#12121A;border:2px solid var(--ouro);border-radius:20px;padding:24px;max-width:480px;width:100%" onclick="event.stopPropagation()">';
+  modal += '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro);margin-bottom:16px;text-align:center">⚙️ CONFIGURAR REGIME TRIBUTÁRIO</div>';
+  
+  modal += '<div style="font-size:12px;color:var(--cinza);margin-bottom:16px;text-align:center;line-height:1.6">Escolha seu regime fiscal para calcular automaticamente os impostos a pagar todo dia 10</div>';
+  
+  // Opção Simples Nacional
+  modal += '<div onclick="salvarRegime(&quot;simples&quot;)" style="background:rgba(0,229,160,.08);border:2px solid rgba(0,229,160,.3);border-radius:14px;padding:16px;margin-bottom:12px;cursor:pointer;transition:all .2s" onmouseover="this.style.background=&quot;rgba(0,229,160,.15)&quot;" onmouseout="this.style.background=&quot;rgba(0,229,160,.08)&quot;">';
+  modal += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+  modal += '<div style="font-family:Bebas Neue;font-size:18px;color:var(--verde)">😎 SIMPLES NACIONAL</div>';
+  modal += '<div style="font-family:Bebas Neue;font-size:24px;color:var(--verde)">~6%</div>';
+  modal += '</div>';
+  modal += '<div style="font-size:11px;color:var(--cinza);line-height:1.6">ME ou SLU (Sociedade Limitada Unipessoal) no Simples. <strong style="color:#fff">1 guia DAS única</strong> pagando todos os impostos (IR, PIS, COFINS, CSLL, ISS, INSS). Anexo III ou V.</div>';
+  modal += '</div>';
+  
+  // Opção Autônomo
+  modal += '<div onclick="salvarRegime(&quot;autonomo&quot;)" style="background:rgba(255,75,75,.08);border:2px solid rgba(255,75,75,.3);border-radius:14px;padding:16px;margin-bottom:12px;cursor:pointer;transition:all .2s" onmouseover="this.style.background=&quot;rgba(255,75,75,.15)&quot;" onmouseout="this.style.background=&quot;rgba(255,75,75,.08)&quot;">';
+  modal += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+  modal += '<div style="font-family:Bebas Neue;font-size:18px;color:#FF4B4B">😰 AUTÔNOMO (CPF)</div>';
+  modal += '<div style="font-family:Bebas Neue;font-size:24px;color:#FF4B4B">~27%</div>';
+  modal += '</div>';
+  modal += '<div style="font-size:11px;color:var(--cinza);line-height:1.6">Pessoa Física sem CNPJ. Paga via <strong style="color:#fff">Carnê-Leão</strong> (IR até 27,5%), ISS municipal (~5%), e INSS (11-20%). Múltiplos DARFs.</div>';
+  modal += '</div>';
+  
+  // Opção Lucro Presumido
+  modal += '<div onclick="salvarRegime(&quot;presumido&quot;)" style="background:rgba(201,168,76,.08);border:2px solid rgba(201,168,76,.3);border-radius:14px;padding:16px;margin-bottom:16px;cursor:pointer;transition:all .2s" onmouseover="this.style.background=&quot;rgba(201,168,76,.15)&quot;" onmouseout="this.style.background=&quot;rgba(201,168,76,.08)&quot;">';
+  modal += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+  modal += '<div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2)">🏢 LUCRO PRESUMIDO</div>';
+  modal += '<div style="font-family:Bebas Neue;font-size:24px;color:var(--ouro2)">~11%</div>';
+  modal += '</div>';
+  modal += '<div style="font-size:11px;color:var(--cinza);line-height:1.6">CNPJ fora do Simples (faturamento alto). Paga <strong style="color:#fff">IR, CSLL, PIS, COFINS</strong> separados via múltiplos DARFs. Mais complexo, requer contador.</div>';
+  modal += '</div>';
+  
+  modal += '<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:12px;margin-bottom:12px">';
+  modal += '<div style="font-size:11px;color:var(--ouro2);font-weight:700;margin-bottom:4px">💡 DICA</div>';
+  modal += '<div style="font-size:11px;color:var(--cinza);line-height:1.6">Se você não tem CNPJ, escolha <strong style="color:#fff">Autônomo</strong>. Se tem CNPJ no Simples Nacional, escolha <strong style="color:#fff">Simples Nacional</strong>. Esta configuração determina o cálculo automático de impostos.</div>';
+  modal += '</div>';
+  
+  modal += '<button onclick="this.closest(&quot;div[style*=fixed]&quot;).remove()" style="width:100%;padding:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);font-size:13px;cursor:pointer">Cancelar</button>';
+  modal += '</div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', modal);
+}
+
+function salvarRegime(regime){
+  localStorage.setItem('regime_tributario', regime);
+  var regimeNome = regime === 'simples' ? 'Simples Nacional (~6%)' : 
+                   regime === 'autonomo' ? 'Autônomo (~27%)' : 
+                   'Lucro Presumido (~11%)';
+  mostrarToast('✅ Regime configurado: ' + regimeNome);
+  
+  // Fechar modal
+  var modals = document.querySelectorAll('div[style*="fixed"]');
+  modals.forEach(function(m){ if(m.onclick) m.remove(); });
+  
+  // Re-renderizar finanças
+  renderFinanceiro();
+}
+
 </script>
 </body>
 </html>

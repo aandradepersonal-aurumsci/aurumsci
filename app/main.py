@@ -72,6 +72,15 @@ def auto_migrate():
         "ALTER TABLE personals ADD COLUMN IF NOT EXISTS cref_validado_em TIMESTAMP",
         "ALTER TABLE personals ADD COLUMN IF NOT EXISTS contrato_aceito_em TIMESTAMP",
         "ALTER TABLE personals ADD COLUMN IF NOT EXISTS contrato_aceito_ip VARCHAR(45)",
+        # Stripe + Assinatura no Aluno (02/05/2026)
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS stripe_customer_id VARCHAR(100)",
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS stripe_subscription_id VARCHAR(100)",
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS assinatura_status VARCHAR(20) DEFAULT 'sem_assinatura'",
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS data_inicio_trial TIMESTAMP",
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS data_fim_trial TIMESTAMP",
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS data_proxima_cobranca TIMESTAMP",
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS valor_assinatura INTEGER DEFAULT 4990",
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS data_cancelamento TIMESTAMP",
     ]
     
     with engine.connect() as conn:

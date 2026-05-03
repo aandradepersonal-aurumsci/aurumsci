@@ -1403,3 +1403,53 @@ def baixar_contrato_pdf(personal: Personal = Depends(get_personal_atual), db: Se
         filename=f"contrato_aurumsci_{personal.nome.replace(' ', '_')}.pdf"
     )
 
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# AULAS DE UM ALUNO ESPECIFICO NO MES — Para modal de cobranca
+# ──────────────────────────────────────────────────────────────────────────────
+@router.get("/aulas/aluno/{aluno_id}/mes")
+def aulas_aluno_mes(
+    aluno_id: int,
+    ano: int,
+    mes: int,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """
+    Retorna check-ins de UM aluno em UM mes.
+    Usado pelo modal de cobranca (botao $ dourado).
+    """
+    from app.routers.treino import PresencaTreino
+    from datetime import date as date_cls
+    from calendar import monthrange
+    
+    if mes < 1 or mes > 12:
+        raise HTTPException(400, "Mes invalido")
+    
+    aluno = db.query(Aluno).filter(
+        Aluno.id == aluno_id,
+        Aluno.personal_id == personal.id
+    ).first()
+    
+    if not aluno:
+        raise HTTPException(404, "Aluno nao encontrado")
+    
+    primeiro_dia = date_cls(ano, mes, 1)
+    ultimo_dia = date_cls(ano, mes, monthrange(ano, mes)[1])
+    
+    presencas = db.query(PresencaTreino).filter(
+        PresencaTreino.aluno_id == aluno_id,
+        PresencaTreino.data >= primeiro_dia,
+        PresencaTreino.data <= ultimo_dia
+    ).all()
+    
+    datas = [p.data.isoformat() for p in presencas]
+    
+    return {
+        "aluno_id": aluno_id,
+        "ano": ano,
+        "mes": mes,
+        "checkins": len(presencas),
+        "datas": datas
+    }

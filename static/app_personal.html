@@ -1084,6 +1084,7 @@ function renderAlunos(alunos){
     html += '<div style="display:flex;align-items:center;gap:8px" onclick="event.stopPropagation()">';
     if(a.precisa_reavaliar) html += '<span style="font-size:10px;background:#FF4B4B;color:#fff;border-radius:6px;padding:2px 5px">📊 VER EVOLUÇÃO</span>';
     if(a.ativo) { var nomeClean = (a.nome||'').replace(/['"]/g,''); html += '<button data-id="' + a.id + '" data-nome="' + nomeClean + '" onclick="event.stopPropagation();marcarAulaHoje(this.dataset.id, this.dataset.nome)" style="background:var(--verde);color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ AULA</button>'; }
+    html += '<button onclick="event.stopPropagation();abrirCobrancaAluno(' + a.id + ')" style="background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#000;border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">💰</button>';
     html += '<div class="aluno-status ' + (a.ativo ? 'status-ativo' : 'status-inativo') + '"></div>';
     html += '<span style="font-size:18px;color:var(--cinza)">›</span></div></div>';
   });
@@ -1706,10 +1707,7 @@ function renderFinanceiro(){
     cardDia10 += '💳 PAGAR ' + (regimePersonal === 'simples' ? 'DAS' : 'DARF') + ' AGORA';
     cardDia10 += '</a>';
     
-    // Configurar regime (se não configurado)
-    if(!localStorage.getItem('regime_tributario')){
-      cardDia10 += '<button onclick="abrirModalRegimeFiscal()" style="width:100%;padding:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:10px;color:var(--ouro);font-size:12px;margin-top:8px;cursor:pointer">⚙️ Configurar meu regime tributário</button>';
-    }
+
     
     cardDia10 += '<div style="font-size:9px;color:#555;text-align:center;margin-top:10px;line-height:1.5">Cálculo estimado. Valores podem variar conforme faixa de faturamento e município. Consulte seu contador.</div>';
     cardDia10 += '</div>';
@@ -1748,6 +1746,14 @@ function renderFinanceiro(){
     });
   }
   document.getElementById('lista-pagamentos').innerHTML = html;
+  
+  // MODAL AUTOMÁTICO - primeira vez que abre FINANÇAS
+  // Verifica se regime já foi configurado
+  setTimeout(function(){
+    if(!localStorage.getItem('regime_tributario')){
+      abrirModalRegimeFiscal();
+    }
+  }, 500); // delay pra garantir que página renderizou
 }
 
 function marcarPagoDB(pid){
@@ -4256,7 +4262,10 @@ function abrirModalRegimeFiscal(){
   modal += '<div style="font-size:11px;color:var(--cinza);line-height:1.6">Se você não tem CNPJ, escolha <strong style="color:#fff">Autônomo</strong>. Se tem CNPJ no Simples Nacional, escolha <strong style="color:#fff">Simples Nacional</strong>. Esta configuração determina o cálculo automático de impostos.</div>';
   modal += '</div>';
   
-  modal += '<button onclick="this.closest(&quot;div[style*=fixed]&quot;).remove()" style="width:100%;padding:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);font-size:13px;cursor:pointer">Cancelar</button>';
+  modal += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+  modal += '<button onclick="assumirSimplesPadrao()" style="padding:12px;background:rgba(0,229,160,.15);border:1px solid rgba(0,229,160,.3);border-radius:10px;color:var(--verde);font-size:12px;cursor:pointer;font-weight:700">✓ Usar Simples (~6%)</button>';
+  modal += '<button onclick="this.closest(&quot;div[style*=fixed]&quot;).remove()" style="padding:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--cinza);font-size:12px;cursor:pointer">Escolher depois</button>';
+  modal += '</div>';
   modal += '</div></div>';
   
   document.body.insertAdjacentHTML('beforeend', modal);
@@ -4275,6 +4284,168 @@ function salvarRegime(regime){
   
   // Re-renderizar finanças
   renderFinanceiro();
+}
+
+function assumirSimplesPadrao(){
+  // Atalho para assumir Simples Nacional como padrão
+  salvarRegime('simples');
+}
+
+
+// ============================================================
+// SISTEMA DE COBRANÇA DO ALUNO
+// ============================================================
+
+function abrirCobrancaAluno(alunoId){
+  var aluno = todosAlunos.find(function(a){ return a.id === alunoId; });
+  if(!aluno) return;
+  
+  // Buscar check-ins do mês atual
+  var hoje = new Date();
+  var mesAtual = hoje.getMonth();
+  var anoAtual = hoje.getFullYear();
+  var checkins = 0; // TODO: buscar do backend
+  
+  var modeloCobr = aluno.modelo_cobranca || 'mensal';
+  var valorAula = parseFloat(aluno.valor_aula) || 150;
+  var qtdCombinada = parseInt(aluno.qtd_aulas_mes) || 12;
+  var valorMensal = parseFloat(aluno.valor_mensal) || (valorAula * qtdCombinada);
+  
+  var modal = '<div style="position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;overflow-y:auto;padding:20px" onclick="this.remove()">';
+  modal += '<div style="background:#12121A;border:2px solid var(--ouro);border-radius:20px;padding:24px;max-width:600px;margin:40px auto" onclick="event.stopPropagation()">';
+  
+  // Título
+  modal += '<div style="font-family:Bebas Neue;font-size:24px;color:var(--ouro);margin-bottom:20px;text-align:center">💰 COBRANÇA DO ALUNO</div>';
+  modal += '<div style="font-size:16px;color:#fff;text-align:center;margin-bottom:24px">' + aluno.nome + '</div>';
+  
+  // MODELO DE COBRANÇA
+  modal += '<div style="background:var(--bg2);border:1px solid var(--borda);border-radius:14px;padding:18px;margin-bottom:16px">';
+  modal += '<div style="font-size:11px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:12px">📋 MODELO DE COBRANÇA</div>';
+  
+  // POR AULA
+  modal += '<label style="display:block;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer" onclick="alterarModelo(&quot;aula&quot;, ' + alunoId + ')">';
+  modal += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">';
+  modal += '<input type="radio" name="modelo_cobr" value="aula" ' + (modeloCobr === 'aula' ? 'checked' : '') + '>';
+  modal += '<span style="font-family:Bebas Neue;font-size:16px;color:var(--ouro2)">POR AULA</span>';
+  modal += '</div>';
+  modal += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;font-size:11px">';
+  modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Valor da aula</div><div style="color:#fff;font-weight:700">R$ ' + valorAula.toFixed(2) + '</div></div>';
+  modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Combinadas</div><div style="color:#fff;font-weight:700">' + qtdCombinada + ' aulas</div></div>';
+  modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Check-ins</div><div style="color:var(--verde);font-weight:700">' + checkins + ' ✅</div></div>';
+  modal += '</div>';
+  if(modeloCobr === 'aula'){
+    var totalAula = checkins * valorAula;
+    modal += '<div style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:8px;padding:8px;margin-top:8px;text-align:center">';
+    modal += '<div style="font-size:10px;color:var(--cinza)">COBRANÇA</div>';
+    modal += '<div style="font-family:Bebas Neue;font-size:20px;color:var(--ouro2)">' + checkins + ' × R$ ' + valorAula.toFixed(0) + ' = R$ ' + totalAula.toFixed(2) + '</div>';
+    modal += '</div>';
+  }
+  modal += '</label>';
+  
+  // POR MÊS
+  modal += '<label style="display:block;background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:12px;padding:14px;cursor:pointer" onclick="alterarModelo(&quot;mensal&quot;, ' + alunoId + ')">';
+  modal += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">';
+  modal += '<input type="radio" name="modelo_cobr" value="mensal" ' + (modeloCobr === 'mensal' ? 'checked' : '') + '>';
+  modal += '<span style="font-family:Bebas Neue;font-size:16px;color:var(--verde)">POR MÊS</span>';
+  modal += '</div>';
+  modal += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;font-size:11px">';
+  modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Valor mensal</div><div style="color:#fff;font-weight:700">R$ ' + valorMensal.toFixed(2) + '</div></div>';
+  modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Combinadas</div><div style="color:#fff;font-weight:700">' + qtdCombinada + ' aulas</div></div>';
+  modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Check-ins</div><div style="color:var(--cinza);font-weight:700">' + checkins + ' (info)</div></div>';
+  modal += '</div>';
+  if(modeloCobr === 'mensal'){
+    modal += '<div style="background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);border-radius:8px;padding:8px;margin-top:8px;text-align:center">';
+    modal += '<div style="font-size:10px;color:var(--cinza)">COBRANÇA</div>';
+    modal += '<div style="font-family:Bebas Neue;font-size:20px;color:var(--verde)">R$ ' + valorMensal.toFixed(2) + ' (fixo)</div>';
+    modal += '</div>';
+  }
+  modal += '</label>';
+  
+  modal += '</div>';
+  
+  // SERVIÇOS EXTRAS
+  modal += '<div style="background:var(--bg2);border:1px solid var(--borda);border-radius:14px;padding:18px;margin-bottom:16px" id="servicos-container">';
+  modal += '<div style="font-size:11px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:12px">➕ SERVIÇOS EXTRAS</div>';
+  modal += '<div id="lista-servicos-' + alunoId + '">';
+  // Lista de serviços (vazia inicialmente)
+  modal += '<div style="color:var(--cinza);font-size:12px;text-align:center;padding:12px">Nenhum serviço adicionado</div>';
+  modal += '</div>';
+  modal += '<button onclick="adicionarServicoExtra(' + alunoId + ')" style="width:100%;padding:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:10px;color:var(--ouro);font-size:13px;margin-top:8px;cursor:pointer">➕ ADICIONAR SERVIÇO</button>';
+  modal += '</div>';
+  
+  // VALOR TOTAL
+  var valorBase = modeloCobr === 'aula' ? (checkins * valorAula) : valorMensal;
+  var valorServicos = 0; // TODO: somar serviços
+  var valorTotal = valorBase + valorServicos;
+  
+  modal += '<div style="background:linear-gradient(135deg,#1A1A2E,#12121A);border:2px solid var(--ouro);border-radius:14px;padding:18px;margin-bottom:16px">';
+  modal += '<div style="font-size:11px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:12px;text-align:center">💰 VALOR TOTAL</div>';
+  modal += '<div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--borda)">';
+  modal += '<div style="color:var(--cinza);font-size:13px">' + (modeloCobr === 'aula' ? 'Aulas (' + checkins + '×)' : 'Mensalidade') + ':</div>';
+  modal += '<div style="color:#fff;font-size:13px;font-weight:700">R$ ' + valorBase.toFixed(2) + '</div>';
+  modal += '</div>';
+  modal += '<div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--borda)">';
+  modal += '<div style="color:var(--cinza);font-size:13px">Serviços:</div>';
+  modal += '<div style="color:#fff;font-size:13px;font-weight:700" id="total-servicos-' + alunoId + '">R$ ' + valorServicos.toFixed(2) + '</div>';
+  modal += '</div>';
+  modal += '<div style="display:grid;grid-template-columns:1fr auto;gap:8px">';
+  modal += '<div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro)">TOTAL:</div>';
+  modal += '<div style="font-family:Bebas Neue;font-size:24px;color:var(--ouro)" id="valor-total-' + alunoId + '">R$ ' + valorTotal.toFixed(2) + '</div>';
+  modal += '</div>';
+  modal += '</div>';
+  
+  // BOTÃO FECHAR E GERAR
+  modal += '<button onclick="gerarCobrancaAluno(' + alunoId + ')" style="width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:14px;color:#000;font-family:Bebas Neue;font-size:18px;cursor:pointer;box-shadow:0 4px 12px rgba(201,168,76,.3)">💳 FECHAR E GERAR COBRANÇA</button>';
+  
+  modal += '<button onclick="this.closest(&quot;div[style*=fixed]&quot;).remove()" style="width:100%;padding:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--cinza);font-size:13px;margin-top:8px;cursor:pointer">Cancelar</button>';
+  
+  modal += '</div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', modal);
+}
+
+function alterarModelo(modelo, alunoId){
+  // TODO: salvar no backend
+  console.log('Modelo alterado para:', modelo, 'aluno:', alunoId);
+  // Reabrir modal atualizado
+  setTimeout(function(){
+    var modals = document.querySelectorAll('div[style*="position:fixed"]');
+    modals.forEach(function(m){ m.remove(); });
+    abrirCobrancaAluno(alunoId);
+  }, 100);
+}
+
+function adicionarServicoExtra(alunoId){
+  var descricao = prompt('Descrição do serviço:\n(ex: Avaliação física completa)');
+  if(!descricao) return;
+  
+  var valor = prompt('Valor do serviço (R$):');
+  if(!valor) return;
+  valor = parseFloat(valor.replace(',','.'));
+  if(isNaN(valor)) return;
+  
+  // TODO: salvar no backend
+  mostrarToast('✅ Serviço adicionado: ' + descricao + ' - R$ ' + valor.toFixed(2));
+  
+  // Reabrir modal atualizado
+  setTimeout(function(){
+    var modals = document.querySelectorAll('div[style*="position:fixed"]');
+    modals.forEach(function(m){ m.remove(); });
+    abrirCobrancaAluno(alunoId);
+  }, 500);
+}
+
+function gerarCobrancaAluno(alunoId){
+  // TODO: endpoint backend gerar cobrança
+  mostrarToast('💳 Gerando cobrança...');
+  console.log('Gerar cobrança para aluno:', alunoId);
+  
+  // Fechar modal
+  setTimeout(function(){
+    var modals = document.querySelectorAll('div[style*="position:fixed"]');
+    modals.forEach(function(m){ m.remove(); });
+    mostrarToast('✅ Cobrança gerada com sucesso!');
+  }, 1000);
 }
 
 </script>

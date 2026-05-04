@@ -1453,3 +1453,101 @@ def aulas_aluno_mes(
         "checkins": len(presencas),
         "datas": datas
     }
+
+
+# ==========================================
+# ENVIO DE RECIBO POR EMAIL (sessao 03/05/2026)
+# ==========================================
+
+class ReciboEmailPayload(BaseModel):
+    aluno_id: Optional[int] = None
+    aluno_nome: str
+    aluno_email: str
+    descricao: str
+    valor: float
+    data_vencimento: str
+
+@router.post("/financeiro/enviar-recibo-email")
+def enviar_recibo_email(
+    dados: ReciboEmailPayload,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Envia recibo por email para o aluno (mesmo template do PDF, em HTML)"""
+    try:
+        from app.services.email_service import enviar_email
+        from datetime import datetime
+        
+        # Numero do recibo (sequencial baseado em timestamp)
+        numero_recibo = f"REC-{datetime.now().strftime('%y%m%d%H%M')}"
+        valor_fmt = f"R$ {dados.valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        
+        # Tributos estimados (Simples Nacional ~6%)
+        tributos = dados.valor * 0.06
+        tributos_fmt = f"R$ {tributos:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        
+        assunto = f"Recibo de Pagamento - {numero_recibo}"
+        
+        corpo_html = f"""
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0A0A0F;color:#fff;padding:30px;border-radius:12px">
+          <div style="text-align:center;margin-bottom:30px">
+            <h1 style="color:#C9A84C;font-size:32px;letter-spacing:3px;margin:0">AURUMSCI</h1>
+            <p style="color:#888;font-size:11px;letter-spacing:2px;margin:5px 0">CIENCIA QUE VIRA RESULTADO</p>
+          </div>
+          
+          <div style="background:#12121A;border:2px solid #C9A84C;border-radius:12px;padding:24px;margin-bottom:20px">
+            <div style="text-align:center;margin-bottom:20px">
+              <div style="font-size:11px;color:#C9A84C;letter-spacing:2px">RECIBO DE PAGAMENTO</div>
+              <div style="font-size:14px;color:#fff;margin-top:4px">{numero_recibo}</div>
+            </div>
+            
+            <div style="border-top:1px solid #333;border-bottom:1px solid #333;padding:16px 0;margin:16px 0">
+              <div style="font-size:11px;color:#888;letter-spacing:1px;margin-bottom:4px">PRESTADOR</div>
+              <div style="font-size:15px;color:#fff;margin-bottom:12px">{personal.nome}</div>
+              
+              <div style="font-size:11px;color:#888;letter-spacing:1px;margin-bottom:4px">TOMADOR</div>
+              <div style="font-size:15px;color:#fff">{dados.aluno_nome}</div>
+            </div>
+            
+            <div style="margin:16px 0">
+              <div style="font-size:11px;color:#888;letter-spacing:1px;margin-bottom:4px">DESCRICAO</div>
+              <div style="font-size:14px;color:#fff;margin-bottom:12px">{dados.descricao}</div>
+              
+              <div style="font-size:11px;color:#888;letter-spacing:1px;margin-bottom:4px">DATA</div>
+              <div style="font-size:14px;color:#fff">{dados.data_vencimento}</div>
+            </div>
+            
+            <div style="background:linear-gradient(135deg,#C9A84C,#E5C76B);padding:20px;border-radius:8px;text-align:center;margin:20px 0">
+              <div style="font-size:11px;color:#0A0A0F;letter-spacing:2px;margin-bottom:4px">VALOR PAGO</div>
+              <div style="font-size:32px;color:#0A0A0F;font-weight:bold">{valor_fmt}</div>
+            </div>
+            
+            <div style="background:rgba(201,168,76,.05);padding:12px;border-radius:8px;font-size:11px;color:#888;line-height:1.6">
+              <b style="color:#C9A84C">Tributos estimados (Simples Nacional):</b><br>
+              DAS ~6%: {tributos_fmt}<br>
+              <i>Valores aproximados. Consulte seu contador.</i>
+            </div>
+          </div>
+          
+          <div style="text-align:center;color:#888;font-size:11px;line-height:1.6">
+            <p>Recibo gerado automaticamente pelo AurumSci PRO</p>
+            <p>Qualquer duvida, entre em contato com {personal.nome}</p>
+            <p style="margin-top:20px;color:#C9A84C">aurumsc.com.br</p>
+          </div>
+        </div>
+        """
+        
+        enviar_email(dados.aluno_email, assunto, corpo_html)
+        
+        return {
+            "ok": True,
+            "mensagem": f"Recibo enviado para {dados.aluno_email}",
+            "numero_recibo": numero_recibo
+        }
+    except Exception as e:
+        print(f"[RECIBO_EMAIL] Erro: {e}")
+        return {
+            "ok": False,
+            "erro": str(e)
+        }
+

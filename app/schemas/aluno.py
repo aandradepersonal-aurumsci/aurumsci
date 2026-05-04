@@ -68,6 +68,12 @@ class AlunoListagem(BaseModel):
     foto_url: Optional[str] = None
     idade: Optional[int] = None
     precisa_reavaliar: Optional[bool] = None
+    # BUG FIX 04/05/2026: incluir cobranca pra modal 💰 ler valores reais
+    ciclo_cobranca: Optional[str] = None
+    valor_aula: Optional[float] = None
+    valor_mensal: Optional[float] = None
+    dia_fechamento: Optional[int] = None
+    dias_vencimento: Optional[int] = None
     model_config = {"from_attributes": True}
 
 class PaginacaoAlunos(BaseModel):

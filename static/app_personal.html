@@ -2134,17 +2134,38 @@ function salvarPagamento(){
         document.querySelector('[style*="position:fixed"]').remove();
         mostrarToast('✅ Recebimento registrado!');
         carregarFinanceiro();
-        // Guarda dados para recibo
+        // Guarda dados para recibo (com mais info pra email/whatsapp)
+        var alunoObj = todosAlunos.find(function(a){ return a.nome === alunoNome; });
+        var descRecibo = '';
+        if(tipo.value==='aulas'){
+          var qtdR = document.getElementById('pag-qtd-aulas').value;
+          var valR = document.getElementById('pag-val-aula').value;
+          descRecibo = qtdR + ' aulas x R$' + valR;
+        } else if(tipo.value==='mensal'){
+          descRecibo = 'Mensalidade';
+        } else {
+          descRecibo = (document.getElementById('pag-desc-serv')||{}).value || 'Servico';
+        }
         window._reciboData = {
           alunoNome: alunoNome,
+          alunoEmail: alunoObj ? (alunoObj.email||'') : '',
+          alunoTelefone: alunoObj ? (alunoObj.telefone||'') : '',
+          alunoId: alunoObj ? alunoObj.id : null,
           tipo: tipo,
           total: total,
+          desc: descRecibo,
           venc: (dia && mes && ano) ? (dia+'/'+mes+'/'+ano) : new Date().toLocaleDateString('pt-BR')
         };
         // Mostra botao de recibo
         var btnRec = document.createElement('div');
         btnRec.style = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:9999;width:90%;max-width:360px';
-        btnRec.innerHTML = '<button onclick="gerarRecibo();this.parentElement.remove()" style="width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:14px;color:#0A0A0F;font-family:Bebas Neue;font-size:20px;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.4)">🧾 GERAR RECIBO PDF</button>';
+        btnRec.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px;background:#12121A;border:2px solid var(--ouro);border-radius:14px;padding:14px;box-shadow:0 4px 20px rgba(201,168,76,.4)">' +
+          '<div style="font-family:Bebas Neue;font-size:14px;color:var(--ouro);text-align:center;letter-spacing:1px;margin-bottom:4px">📋 ENVIAR RECIBO</div>' +
+          '<button onclick="gerarRecibo()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer">🧾 PDF (IMPRIMIR)</button>' +
+          '<button onclick="enviarReciboWhatsApp()" style="width:100%;padding:14px;background:#25D366;border:none;border-radius:10px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">📱 WHATSAPP</button>' +
+          '<button onclick="enviarReciboEmail()" style="width:100%;padding:14px;background:#4B9FFF;border:none;border-radius:10px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">📧 EMAIL</button>' +
+          '<button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:8px;background:transparent;border:1px solid var(--borda);border-radius:8px;color:var(--cinza);font-size:12px;cursor:pointer">FECHAR</button>' +
+        '</div>';
         document.body.appendChild(btnRec);
         setTimeout(function(){ if(btnRec.parentElement) btnRec.remove(); }, 10000);
       });
@@ -3263,7 +3284,11 @@ function salvarDadosAluno(id){
   })
   .then(function(r){ return r.json(); })
   .then(function(res){
-    if(res.ok){ alert('✅ Dados salvos!'); }
+    if(res.ok){ 
+      alert('✅ Dados salvos!');
+      // BUG FIX 04/05/2026: recarregar todosAlunos pra modal cobranca pegar valores novos
+      carregarAlunos();
+    }
     else { alert('❌ Erro: ' + (res.detail||res.error||'desconhecido')); }
   })
   .catch(function(e){ alert('❌ Erro: ' + e); });
@@ -4637,6 +4662,68 @@ function enviarQuestionarioOnboarding(){
   .catch(function(e){
     console.error(e);
     mostrarToast('Erro de conexao');
+  });
+}
+
+
+// ENVIO DE RECIBO WHATSAPP/EMAIL
+function enviarReciboWhatsApp(){
+  var d = window._reciboData;
+  if(!d){ mostrarToast('Dados do recibo nao disponiveis'); return; }
+  
+  var primeiroNome = (d.alunoNome||'').split(' ')[0];
+  var msg = 'Ola *' + primeiroNome + '*! Aqui esta seu recibo:\n\n';
+  msg += 'Data: ' + d.venc + '\n';
+  msg += d.desc + '\n';
+  msg += 'Valor: *R$ ' + d.total.toFixed(2).replace('.',',') + '*\n\n';
+  msg += 'Qualquer duvida estou aqui!\n\n';
+  msg += '- *AurumSci PRO*';
+  
+  var tel = (d.alunoTelefone||'').replace(/\D/g,'');
+  if(tel.length === 11) tel = '55' + tel;
+  
+  if(!tel){ 
+    mostrarToast('Aluno sem telefone cadastrado'); 
+    return; 
+  }
+  
+  var url = 'https://wa.me/' + tel + '?text=' + encodeURIComponent(msg);
+  window.open(url, '_blank');
+  mostrarToast('Abrindo WhatsApp...');
+}
+
+function enviarReciboEmail(){
+  var d = window._reciboData;
+  if(!d){ mostrarToast('Dados do recibo nao disponiveis'); return; }
+  if(!d.alunoEmail){ mostrarToast('Aluno sem email cadastrado'); return; }
+  
+  if(!confirm('Enviar recibo por email para ' + d.alunoEmail + '?')) return;
+  
+  mostrarToast('Enviando email...');
+  
+  fetch('/app-personal/financeiro/enviar-recibo-email', {
+    method: 'POST',
+    headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
+    body: JSON.stringify({
+      aluno_id: d.alunoId,
+      aluno_nome: d.alunoNome,
+      aluno_email: d.alunoEmail,
+      descricao: d.desc,
+      valor: d.total,
+      data_vencimento: d.venc
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(resp){
+    if(resp.ok){
+      mostrarToast('Email enviado para ' + d.alunoEmail);
+    } else {
+      mostrarToast('Erro: ' + (resp.detail || resp.erro || 'tente novamente'));
+    }
+  })
+  .catch(function(e){ 
+    console.error(e);
+    mostrarToast('Erro de conexao'); 
   });
 }
 

@@ -266,12 +266,40 @@ def excluir_conta(
     # Lista todos os alunos desse personal
     alunos_ids = [a.id for a in db.query(Aluno).filter(Aluno.personal_id == personal_id).all()]
     
-    # Apaga em cascata (ordem importa pra nao quebrar FK)
+    # BUG FIX 04/05/2026: cascade COMPLETO via SQL direto (igual BUG 2 dos alunos)
+    from sqlalchemy import text
+    
     if alunos_ids:
-        db.query(AlunoCredencial).filter(AlunoCredencial.aluno_id.in_(alunos_ids)).delete(synchronize_session=False)
-        db.query(PresencaTreino).filter(PresencaTreino.aluno_id.in_(alunos_ids)).delete(synchronize_session=False)
-        db.query(Pagamento).filter(Pagamento.aluno_id.in_(alunos_ids)).delete(synchronize_session=False)
-        db.query(Aluno).filter(Aluno.personal_id == personal_id).delete(synchronize_session=False)
+        try:
+            # Hierarquia treino (mais profundo primeiro)
+            db.execute(text("""
+                DELETE FROM exercicios_sessao 
+                WHERE sessao_id IN (
+                    SELECT s.id FROM sessoes_treino s 
+                    JOIN planos_treino p ON s.plano_id = p.id 
+                    WHERE p.aluno_id = ANY(:aids)
+                )
+            """), {"aids": alunos_ids})
+            
+            db.execute(text("""
+                DELETE FROM sessoes_treino 
+                WHERE plano_id IN (
+                    SELECT id FROM planos_treino WHERE aluno_id = ANY(:aids)
+                )
+            """), {"aids": alunos_ids})
+            
+            db.execute(text("DELETE FROM planos_treino WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
+            db.execute(text("DELETE FROM presencas WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
+            db.execute(text("DELETE FROM anamneses WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
+            db.execute(text("DELETE FROM avaliacoes_fisicas WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
+            db.execute(text("DELETE FROM mensagens_chat WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
+            db.execute(text("DELETE FROM pagamentos WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
+            db.execute(text("DELETE FROM aluno_credenciais WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
+            db.execute(text("DELETE FROM alunos WHERE personal_id = :pid"), {"pid": personal_id})
+        except Exception as e:
+            db.rollback()
+            logger.error(f"Erro ao deletar alunos do personal {personal_id}: {e}")
+            raise HTTPException(500, f"Erro ao excluir conta: {str(e)}")
     
     # Apaga tokens de reset
     db.query(TokenResetSenha).filter(

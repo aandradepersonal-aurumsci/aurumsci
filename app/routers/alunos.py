@@ -94,6 +94,7 @@ def excluir_permanente(aluno_id: int, personal: Personal = Depends(get_personal_
         db.execute(text("DELETE FROM avaliacoes_fisicas WHERE aluno_id = :aid"), {"aid": aluno_id})
         db.execute(text("DELETE FROM mensagens_chat WHERE aluno_id = :aid"), {"aid": aluno_id})
         db.execute(text("DELETE FROM pagamentos WHERE aluno_id = :aid"), {"aid": aluno_id})
+        db.execute(text("DELETE FROM contratos_servico WHERE aluno_id = :aid"), {"aid": aluno_id})
         db.execute(text("DELETE FROM aluno_credenciais WHERE aluno_id = :aid"), {"aid": aluno_id})
         
         # 3. Por ultimo, o aluno

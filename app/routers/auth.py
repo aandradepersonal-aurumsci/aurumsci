@@ -294,6 +294,7 @@ def excluir_conta(
             db.execute(text("DELETE FROM avaliacoes_fisicas WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
             db.execute(text("DELETE FROM mensagens_chat WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
             db.execute(text("DELETE FROM pagamentos WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
+            db.execute(text("DELETE FROM contratos_servico WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
             db.execute(text("DELETE FROM aluno_credenciais WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
             db.execute(text("DELETE FROM alunos WHERE personal_id = :pid"), {"pid": personal_id})
         except Exception as e:

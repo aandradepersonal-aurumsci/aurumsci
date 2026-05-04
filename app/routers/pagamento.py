@@ -526,6 +526,110 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
 
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
+        
+        # BUG FIX 04/05/2026: cobranca avulsa (sem subscription)
+        # Detecta cobranca avulsa, atualiza status + envia recibo automatico
+        try:
+            session_id = session.get("id")
+            if session_id and not session.get("subscription"):
+                from sqlalchemy import text
+                from datetime import date, datetime
+                
+                # Busca cobranca pelo stripe_invoice_id (que e o session_id)
+                cobranca = db.execute(text("""
+                    SELECT id, aluno_id, valor, descricao, status 
+                    FROM cobrancas 
+                    WHERE stripe_invoice_id = :sid
+                """), {"sid": session_id}).fetchone()
+                
+                if cobranca and cobranca[4] != "pago":
+                    # Atualiza status na tabela cobrancas
+                    db.execute(text("""
+                        UPDATE cobrancas 
+                        SET status = 'pago', 
+                            data_pagamento = :hoje,
+                            metodo_pagamento = 'cartao',
+                            atualizado_em = NOW()
+                        WHERE id = :cid
+                    """), {"hoje": date.today(), "cid": cobranca[0]})
+                    db.commit()
+                    print(f"[WEBHOOK STRIPE] Cobranca {cobranca[0]} marcada como PAGA")
+                    
+                    # Busca aluno e personal
+                    aluno_cob = db.query(Aluno).filter(Aluno.id == cobranca[1]).first()
+                    if aluno_cob and aluno_cob.email:
+                        personal_cob = db.query(Personal).filter(Personal.id == aluno_cob.personal_id).first()
+                        
+                        # Envia email automatico (HTML inline - mesmo template do enviar_recibo_email)
+                        try:
+                            from app.services.email_service import enviar_email
+                            
+                            numero_recibo = f"REC-{datetime.now().strftime('%y%m%d%H%M')}"
+                            valor = float(cobranca[2])
+                            valor_fmt = f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+                            tributos = valor * 0.06
+                            tributos_fmt = f"R$ {tributos:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+                            descricao = cobranca[3] or "Personal Training"
+                            data_pag = date.today().strftime("%d/%m/%Y")
+                            personal_nome = personal_cob.nome if personal_cob else "Personal"
+                            
+                            corpo_html = f"""
+                            <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0A0A0F;color:#fff;padding:30px;border-radius:12px">
+                              <div style="text-align:center;margin-bottom:30px">
+                                <h1 style="color:#C9A84C;font-size:32px;letter-spacing:3px;margin:0">AURUMSCI</h1>
+                                <p style="color:#888;font-size:11px;letter-spacing:2px;margin:5px 0">CIENCIA QUE VIRA RESULTADO</p>
+                                <p style="color:#4CAF50;font-size:13px;margin-top:10px">PAGAMENTO CONFIRMADO</p>
+                              </div>
+                              <div style="background:#12121A;border:2px solid #C9A84C;border-radius:12px;padding:24px;margin-bottom:20px">
+                                <div style="text-align:center;margin-bottom:20px">
+                                  <div style="font-size:11px;color:#C9A84C;letter-spacing:2px">RECIBO DE PAGAMENTO</div>
+                                  <div style="font-size:14px;color:#fff;margin-top:4px">{numero_recibo}</div>
+                                </div>
+                                <div style="border-top:1px solid #333;border-bottom:1px solid #333;padding:16px 0;margin:16px 0">
+                                  <div style="font-size:11px;color:#888;letter-spacing:1px;margin-bottom:4px">PRESTADOR</div>
+                                  <div style="font-size:15px;color:#fff;margin-bottom:12px">{personal_nome}</div>
+                                  <div style="font-size:11px;color:#888;letter-spacing:1px;margin-bottom:4px">TOMADOR</div>
+                                  <div style="font-size:15px;color:#fff">{aluno_cob.nome}</div>
+                                </div>
+                                <div style="margin:16px 0">
+                                  <div style="font-size:11px;color:#888;letter-spacing:1px;margin-bottom:4px">DESCRICAO</div>
+                                  <div style="font-size:14px;color:#fff;margin-bottom:12px">{descricao}</div>
+                                  <div style="font-size:11px;color:#888;letter-spacing:1px;margin-bottom:4px">DATA</div>
+                                  <div style="font-size:14px;color:#fff">{data_pag}</div>
+                                </div>
+                                <div style="background:linear-gradient(135deg,#C9A84C,#E5C76B);padding:20px;border-radius:8px;text-align:center;margin:20px 0">
+                                  <div style="font-size:11px;color:#0A0A0F;letter-spacing:2px;margin-bottom:4px">VALOR PAGO</div>
+                                  <div style="font-size:32px;color:#0A0A0F;font-weight:bold">{valor_fmt}</div>
+                                </div>
+                                <div style="background:rgba(201,168,76,.05);padding:12px;border-radius:8px;font-size:11px;color:#888;line-height:1.6">
+                                  <b style="color:#C9A84C">Tributos estimados (Simples Nacional):</b><br>
+                                  DAS ~6%: {tributos_fmt}<br>
+                                  <i>Valores aproximados. Consulte seu contador.</i>
+                                </div>
+                              </div>
+                              <div style="text-align:center;color:#888;font-size:11px;line-height:1.6">
+                                <p>Recibo gerado automaticamente apos confirmacao de pagamento</p>
+                                <p style="margin-top:20px;color:#C9A84C">aurumsc.com.br</p>
+                              </div>
+                            </div>
+                            """
+                            
+                            assunto = f"Pagamento Confirmado - {numero_recibo}"
+                            
+                            # Email pro aluno
+                            enviar_email(aluno_cob.email, assunto, corpo_html)
+                            print(f"[WEBHOOK STRIPE] Recibo enviado pra ALUNO: {aluno_cob.email}")
+                            
+                            # Email pro personal (copia pro contador)
+                            if personal_cob and personal_cob.email:
+                                assunto_p = f"[COPIA] Pagamento recebido de {aluno_cob.nome} - {valor_fmt}"
+                                enviar_email(personal_cob.email, assunto_p, corpo_html)
+                                print(f"[WEBHOOK STRIPE] Copia enviada pro PERSONAL: {personal_cob.email}")
+                        except Exception as e_email:
+                            print(f"[WEBHOOK STRIPE] Erro ao enviar email: {e_email}")
+        except Exception as e:
+            print(f"[WEBHOOK STRIPE] Erro cobranca avulsa: {e}")
+        
         aluno_id = None
         try:
             aluno_id = session["metadata"]["aluno_id"]

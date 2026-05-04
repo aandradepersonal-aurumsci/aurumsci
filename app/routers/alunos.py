@@ -61,13 +61,48 @@ async def upload_foto(aluno_id: int, foto: UploadFile = File(...), personal: Per
 
 @router.delete("/{aluno_id}/permanente")
 def excluir_permanente(aluno_id: int, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
-    from app.routers.portal_aluno import AlunoCredencial
-    from app.routers.treino import PresencaTreino
-    from app.routers.financeiro import Pagamento
+    """BUG FIX 04/05/2026: cascade COMPLETO - deleta hierarquia inteira em ordem"""
+    from sqlalchemy import text
+    
     aluno = buscar_aluno(aluno_id, personal.id, db)
-    db.query(AlunoCredencial).filter(AlunoCredencial.aluno_id == aluno_id).delete()
-    db.query(PresencaTreino).filter(PresencaTreino.aluno_id == aluno_id).delete()
-    db.query(Pagamento).filter(Pagamento.aluno_id == aluno_id).delete()
-    db.delete(aluno)
-    db.commit()
-    return {"mensagem": f"Aluno {aluno.nome} excluído permanentemente"}
+    nome_aluno = aluno.nome
+    
+    try:
+        # 1. Hierarquia treino (mais profundo primeiro)
+        # ExercicioSessao -> SessaoTreino -> PlanoTreino
+        db.execute(text("""
+            DELETE FROM exercicios_sessao 
+            WHERE sessao_id IN (
+                SELECT s.id FROM sessoes_treino s 
+                JOIN planos_treino p ON s.plano_id = p.id 
+                WHERE p.aluno_id = :aid
+            )
+        """), {"aid": aluno_id})
+        
+        db.execute(text("""
+            DELETE FROM sessoes_treino 
+            WHERE plano_id IN (
+                SELECT id FROM planos_treino WHERE aluno_id = :aid
+            )
+        """), {"aid": aluno_id})
+        
+        db.execute(text("DELETE FROM planos_treino WHERE aluno_id = :aid"), {"aid": aluno_id})
+        
+        # 2. Outras tabelas dependentes
+        db.execute(text("DELETE FROM presencas WHERE aluno_id = :aid"), {"aid": aluno_id})
+        db.execute(text("DELETE FROM anamneses WHERE aluno_id = :aid"), {"aid": aluno_id})
+        db.execute(text("DELETE FROM avaliacoes_fisicas WHERE aluno_id = :aid"), {"aid": aluno_id})
+        db.execute(text("DELETE FROM mensagens_chat WHERE aluno_id = :aid"), {"aid": aluno_id})
+        db.execute(text("DELETE FROM pagamentos WHERE aluno_id = :aid"), {"aid": aluno_id})
+        db.execute(text("DELETE FROM aluno_credenciais WHERE aluno_id = :aid"), {"aid": aluno_id})
+        
+        # 3. Por ultimo, o aluno
+        db.execute(text("DELETE FROM alunos WHERE id = :aid"), {"aid": aluno_id})
+        
+        db.commit()
+        return {"mensagem": f"Aluno {nome_aluno} excluido permanentemente"}
+    
+    except Exception as e:
+        db.rollback()
+        print(f"[DELETE ERROR] aluno_id={aluno_id}: {e}")
+        raise HTTPException(500, f"Erro ao excluir: {str(e)}")

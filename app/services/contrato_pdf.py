@@ -163,34 +163,14 @@ def gerar_pdf_contrato(personal, output_dir="static/contratos"):
         texto_style
     ))
     
-    story.append(Paragraph("7. RESPONSABILIDADE FISCAL", secao_style))
-    story.append(Paragraph(
-        "7.1 O Personal é o ÚNICO e EXCLUSIVO responsável pelas obrigações fiscais "
-        "dos serviços prestados aos seus alunos, incluindo:<br/>"
-        "a) Emissão de notas fiscais de serviço (NFS-e) conforme legislação municipal;<br/>"
-        "b) Recolhimento de tributos (ISS, IR, INSS, DAS, conforme regime tributário);<br/>"
-        "c) Manutenção de CNPJ e inscrição municipal regulares.<br/><br/>"
-        "7.2 AurumSci é PLATAFORMA TECNOLÓGICA. Os recibos gerados pelo sistema são "
-        "comprovantes de pagamento (sem valor fiscal). Os relatórios financeiros são "
-        "ferramentas de apoio à apuração — não substituem documentos fiscais oficiais.<br/><br/>"
-        "7.3 AurumSci NÃO emite, valida ou transmite documentos fiscais perante "
-        "Prefeituras, Receita Federal ou qualquer órgão público.<br/><br/>"
-        "7.4 Autuações, multas, juros ou penalidades fiscais decorrentes de omissão, "
-        "atraso ou erro na emissão de notas ou no recolhimento de tributos são de "
-        "responsabilidade EXCLUSIVA do Personal.<br/><br/>"
-        "7.5 O Personal declara possuir contador habilitado ou conhecimento técnico "
-        "suficiente para cumprir suas obrigações fiscais.",
-        texto_style
-    ))
-    
-    story.append(Paragraph("8. PROTEÇÃO DE DADOS (LGPD)", secao_style))
+    story.append(Paragraph("7. PROTEÇÃO DE DADOS (LGPD)", secao_style))
     story.append(Paragraph(
         "Dados dos alunos pertencem ao personal. AurumSci não comercializa nem "
         "compartilha. Personal pode exportar/excluir dados a qualquer momento.",
         texto_style
     ))
     
-    story.append(Paragraph("9. JURISDIÇÃO", secao_style))
+    story.append(Paragraph("8. JURISDIÇÃO", secao_style))
     story.append(Paragraph(
         f"Foro da comarca de São Paulo/SP. Lei brasileira aplicável. "
         f"Versão 1.0 datada de {datetime.now().strftime('%d/%m/%Y')}.",

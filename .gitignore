@@ -33,3 +33,8 @@ app/routers/pagamento-*.py
 app/*.db
 
 static/contratos/*.pdf
+
+# Proteção EXTRA pra backups de .env (05/05/2026)
+.env*
+*.env
+*.env.*

@@ -148,7 +148,7 @@ async def onboarding(
         aluno_id=aluno.id,
         personal_id=aluno.personal_id,
         nome=f"Plano {dados.objetivo.capitalize()} — {dados.nivel_experiencia.capitalize()}",
-        objetivo=dados.objetivo if dados.objetivo else None,
+        objetivo=dados.objetivo.upper() if dados.objetivo else None,
         nivel=dados.nivel_experiencia,
         dias_semana=dados.dias_disponiveis,
         semanas_total=12,

@@ -239,9 +239,9 @@ def responder_questionario(
     db.flush()
     
     # 6. Cria credencial de acesso (senha = 6 primeiros digitos do CPF)
-    from app.routers.portal_aluno import UsuarioAluno, pwd_context
+    from app.routers.portal_aluno import AlunoCredencial, pwd_context
     senha_inicial = cpf_limpo[:6]
-    credencial = UsuarioAluno(
+    credencial = AlunoCredencial(
         aluno_id=novo_aluno.id,
         email=dados.email,
         senha_hash=pwd_context.hash(senha_inicial)

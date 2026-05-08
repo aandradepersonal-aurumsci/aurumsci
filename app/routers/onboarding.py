@@ -230,8 +230,8 @@ def responder_questionario(
         cpf=cpf_limpo,
         personal_id=personal.id,
         ativo=True,
-        objetivo=dados.objetivo.upper() if dados.objetivo else None,
-        nivel_experiencia=dados.nivel.upper() if dados.nivel else None,
+        objetivo=dados.objetivo if dados.objetivo else None,
+        nivel_experiencia=dados.nivel if dados.nivel else None,
         data_nascimento=data_nasc_obj,
         sexo=sexo_obj,
     )
@@ -281,7 +281,7 @@ def responder_questionario(
             import json
             
             periodizacao = gerar_periodizacao(
-                objetivo=dados.objetivo.upper() if dados.objetivo else None,
+                objetivo=dados.objetivo if dados.objetivo else None,
                 nivel=dados.nivel,
                 dias_semana=dados.dias_semana,
                 semanas_total=12,
@@ -294,7 +294,7 @@ def responder_questionario(
                 aluno_id=novo_aluno.id,
                 personal_id=personal.id,
                 nome=f"Plano {dados.objetivo.capitalize()} - {dados.nivel.capitalize()}",
-                objetivo=dados.objetivo.upper() if dados.objetivo else None,
+                objetivo=dados.objetivo if dados.objetivo else None,
                 nivel=dados.nivel,
                 dias_semana=dados.dias_semana,
                 semanas_total=12,

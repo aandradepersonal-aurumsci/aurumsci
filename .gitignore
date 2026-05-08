@@ -33,3 +33,44 @@ app/routers/pagamento-*.py
 app/*.db
 
 static/contratos/*.pdf
+
+# Backups locais que NUNCA vão pro git
+*.ANTES_*
+*.OLD_*
+*.OLD
+*.PRE_*
+*.ESTADO_*
+*.v2_antes_*
+*.bak
+
+# .env e variantes (SENSÍVEL)
+.env
+.env.*
+*.env
+
+# Pastas de backup
+backups/
+
+# Variantes antigas dos apps
+**/app_personal_TRILINGUAL*.html
+**/app_personal_BRAVO*.html
+**/app_personal_COMPLETO*.html
+**/app_personal_DAS*.html
+**/app_personal_v1-*.html
+**/app_aluno_v23-*.html
+**/app_aluno_FIX*.html
+**/app_aluno_TRI*.html
+
+
+# Mais padrões de backup que escaparam
+*.v2_antes_*
+*.v3_antes_*
+*_antes_*
+
+# Scripts de teste local
+test_*.py
+
+# Bancos SQLite locais (legado, não usar — Railway é a fonte da verdade)
+*.db
+*.sqlite
+*.sqlite3

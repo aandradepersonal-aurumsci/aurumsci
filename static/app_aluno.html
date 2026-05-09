@@ -2105,6 +2105,15 @@ function renderTreino(){
         '<div class="sessao-nome">' + sessaoNome + '</div>' +
         '<div class="sessao-meta"><span>⏱ 45-60min</span><span>💪 ' + exercicios.length + ' exercícios</span></div></div>';
 
+      // Mensagem educativa sobre descanso (AurumSci Way: educa, não impõe)
+      treinoHtml += '<div style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.18);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start">' +
+        '<div style="font-size:18px;flex-shrink:0">💡</div>' +
+        '<div style="font-size:11px;color:var(--cinza);line-height:1.5">' +
+          '<strong style="color:var(--texto)">Descanso é parte do treino.</strong> ' +
+          'Se hoje seu corpo pede descanso, ouça ele. O treino estará aqui amanhã. ' +
+          'Você decide o ritmo — eu só preparo o caminho. 💪' +
+        '</div></div>';
+
       // Bloco de aquecimento
       treinoHtml += '<div class="card" style="margin-bottom:14px;cursor:pointer" onclick="this.querySelector(\'.aquec-body\').style.display=this.querySelector(\'.aquec-body\').style.display===\'none\'?\'block\':\'none\'">' +
         '<div class="card-line azul"></div>' +
@@ -2196,23 +2205,14 @@ function renderTreino(){
         treinoHtml += '</div>';
       }
     } else {
-      var diasSemana = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
-      var proximoDia = new Date();
-      proximoDia.setDate(proximoDia.getDate() + 1);
-      var dIdx = proximoDia.getDay();
-      var proximoDiaNome = diasSemana[dIdx === 0 ? 6 : dIdx - 1];
+      // Filosofia AurumSci: "App é ferramenta que ajuda, não impõe."
+      // Se não veio treino (raro), mostra mensagem amigável.
       treinoHtml = '<div class="card"><div class="card-line azul"></div>' +
         '<div style="text-align:center;padding:24px 20px">' +
-        '<div style="font-size:48px;margin-bottom:12px">😴</div>' +
-        '<div style="font-family:Bebas Neue;font-size:26px;color:var(--azul);letter-spacing:1px">DIA DE DESCANSO</div>' +
-        '<div style="font-size:13px;color:var(--cinza);margin-top:8px;line-height:1.6">Recuperação é parte do treino!<br>Músculos crescem durante o descanso. 💪</div>' +
-        '</div></div>' +
-        '<div class="card" style="margin-top:12px"><div class="card-line ouro"></div>' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0">' +
-        '<div><div style="font-size:10px;color:var(--cinza);letter-spacing:1px">PRÓXIMO TREINO</div>' +
-        '<div style="font-family:Bebas Neue;font-size:20px;margin-top:4px">' + proximoDiaNome + ' →</div></div>' +
-        '<div style="font-size:32px">🏋️</div></div>' +
-        '<div style="font-size:12px;color:var(--cinza);margin-top:8px">Aproveite para alongar ou descansar bem!</div></div>';
+        '<div style="font-size:48px;margin-bottom:12px">💪</div>' +
+        '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro);letter-spacing:1px">PREPARANDO SEU TREINO</div>' +
+        '<div style="font-size:13px;color:var(--cinza);margin-top:8px;line-height:1.6">Seu plano está sendo preparado.<br>Em instantes seu treino estará disponível!<br><br>Se persistir, fale com seu personal. 💪</div>' +
+        '</div></div>';
     }
     document.getElementById('treino-content').innerHTML = html + treinoHtml;
   }).catch(function(){

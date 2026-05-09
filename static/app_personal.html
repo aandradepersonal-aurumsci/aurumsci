@@ -4598,17 +4598,44 @@ async function gerarCobrancaAluno(alunoId){
   if(!confirm('Gerar cobrança de ' + aluno.nome + '?\n\nModelo: ' + modeloCobr.toUpperCase() + '\nValor base: R$ ' + valorBase.toFixed(2) + '\nServiços: R$ ' + valorServicos.toFixed(2) + '\nTOTAL: R$ ' + total.toFixed(2))) return;
   
   mostrarToast('💳 Gerando cobrança...');
-  console.log('[GERAR COBRANCA] Aluno:', aluno.nome, 'Total:', total, 'Modelo:', modeloCobr);
   
-  // TODO próxima sessão: enviar pro backend salvar
-  
-  setTimeout(function(){
-    var modals = document.querySelectorAll('div[style*="position:fixed"]');
-    modals.forEach(function(m){ m.remove(); });
-    // Limpar serviços do cache (foram cobrados)
-    if(servicosExtrasCache[alunoId]) servicosExtrasCache[alunoId] = [];
-    mostrarToast('✅ Cobrança de R$ ' + total.toFixed(2) + ' gerada!');
-  }, 1000);
+  fetch('/app-personal/financeiro/fechar-mes-aluno/' + alunoId, {
+    method: 'POST',
+    headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'}
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.ok) {
+      return fetch('/app-personal/financeiro/gerar-link-pagamento/' + d.cobranca_id, {
+        method: 'POST',
+        headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'}
+      }).then(function(r){ return r.json(); }).then(function(stripe){
+        return {cobranca: d, stripe: stripe};
+      });
+    } else {
+      throw new Error(d.detail || 'Erro ao fechar mes');
+    }
+  })
+  .then(function(res){
+    if(res.stripe.ok) {
+      var url = res.stripe.url_pagamento;
+      var resumo = 'COBRANCA ENVIADA!\n\nAluno: ' + aluno.nome + '\nValor: R$ ' + res.cobranca.valor.toFixed(2) + '\nEmail enviado pro aluno!\n\nLINK STRIPE:\n' + url;
+      alert(resumo);
+      if(navigator.clipboard) {
+        navigator.clipboard.writeText(url);
+        mostrarToast('Link copiado e email enviado!');
+      }
+      if(servicosExtrasCache[alunoId]) servicosExtrasCache[alunoId] = [];
+      var modals = document.querySelectorAll('div[style*="position:fixed"]');
+      modals.forEach(function(m){ m.remove(); });
+    } else {
+      mostrarToast(res.stripe.detail || 'Erro ao gerar link');
+    }
+  })
+  .catch(function(e){
+    console.error('[GERAR COBRANCA ERROR]', e);
+    mostrarToast(e.message || 'Erro de conexao');
+  });
 }
 
 

@@ -4561,7 +4561,7 @@ function removerServicoExtra(alunoId, index){
   }
 }
 
-function gerarCobrancaAluno(alunoId){
+async function gerarCobrancaAluno(alunoId){
   var aluno = todosAlunos.find(function(a){ return a.id === alunoId; });
   if(!aluno) return;
   
@@ -4570,11 +4570,26 @@ function gerarCobrancaAluno(alunoId){
   var valorAula = parseFloat(aluno.valor_aula) || 150;
   var qtdCombinada = parseInt(aluno.qtd_aulas_mes) || 12;
   var valorMensal = parseFloat(aluno.valor_mensal) || (valorAula * qtdCombinada);
+
+// Busca checkins do mês atual via API (mesmo padrão de abrirCobrancaAluno)
+  var hoje = new Date();
+  var mesAtual = hoje.getMonth();
+  var anoAtual = hoje.getFullYear();
+  var checkins = 0;
   
-  // Buscar checkins do modal aberto (já foi calculado)
-  var checkinsTxt = document.querySelector('[id^="lista-servicos-"]');
+  try {
+    var resp = await fetch('/app-personal/aulas/aluno/' + alunoId + '/mes?ano=' + anoAtual + '&mes=' + (mesAtual+1), {
+      headers: {'Authorization': 'Bearer ' + token}
+    });
+    if(resp.ok) {
+      var dados = await resp.json();
+      checkins = dados.checkins || 0;
+    }
+  } catch(e) {
+    console.error('Erro ao buscar checkins:', e);
+  }
   
-  var valorBase = modeloCobr === 'mensal' ? valorMensal : 0; // POR AULA precisa ler checkins
+  var valorBase = modeloCobr === 'aula' ? (checkins * valorAula) : valorMensal;  
   var servicosAluno = servicosExtrasCache[alunoId] || [];
   var valorServicos = 0;
   servicosAluno.forEach(function(s){ valorServicos += s.valor; });

@@ -342,27 +342,30 @@ async def treino_hoje(
     if not plano:
         return {"mensagem": "Nenhum plano ativo. Faça o onboarding primeiro!"}
 
-    data_inicio = plano.data_inicio if plano.data_inicio else date.today()
-    dias_desde_inicio = (date.today() - data_inicio).days
-    dias_treino = plano.dias_semana or 3
-    dia_na_semana = dias_desde_inicio % 7
+    # ── FILA CONTÍNUA DE TREINO ──────────────────────────────────────────────
+    # Filosofia AurumSci: "App é ferramenta que ajuda, não impõe."
+    # Sistema sempre mostra o PRÓXIMO treino pendente.
+    # Aluno decide quando descansar (não fazendo check-in).
+    # Próximo treino = total de check-ins % número de sessões (rotação A,B,C,A,B,C...)
+    from app.routers.treino import PresencaTreino
 
-    if dia_na_semana >= dias_treino:
-        return {
-            "mensagem": "Hoje é dia de descanso! Recuperação também é treino.",
-            "dica": "Aproveite para fazer mobilidade ou caminhada leve."
-        }
-
-    idx_sessao = dia_na_semana % dias_treino
-    sessao = db.query(SessaoTreino).filter(
+    sessoes = db.query(SessaoTreino).filter(
         SessaoTreino.plano_id == plano.id
-    ).order_by(SessaoTreino.dia_semana).offset(idx_sessao).first()
+    ).order_by(SessaoTreino.dia_semana).all()
 
-    if not sessao:
-        return {
-            "mensagem": "Hoje é dia de descanso! Recuperação também é treino.",
-            "dica": "Aproveite para fazer mobilidade ou caminhada leve."
-        }
+    if not sessoes:
+        return {"mensagem": "Plano sem sessões cadastradas. Avise seu personal."}
+
+    # Conta check-ins do aluno (regra de negócio: 1 aluno = 1 plano ativo)
+    total_checkins = db.query(PresencaTreino).filter(
+        PresencaTreino.aluno_id == aluno.id,
+        PresencaTreino.presente == True
+    ).count()
+
+    # Próximo treino = checkins % num_sessoes (rotaciona A, B, C em loop)
+    idx_proximo = total_checkins % len(sessoes)
+    sessao = sessoes[idx_proximo]
+    # ─────────────────────────────────────────────────────────────────────────
 
     exercicios = db.query(ExercicioSessao).filter(
         ExercicioSessao.sessao_id == sessao.id

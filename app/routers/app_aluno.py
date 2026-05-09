@@ -342,33 +342,27 @@ async def treino_hoje(
     if not plano:
         return {"mensagem": "Nenhum plano ativo. Faça o onboarding primeiro!"}
 
-    # ── NOVA LÓGICA: Fila contínua baseada em check-ins ──────────────────────
-    # Filosofia AurumSci: "App é ferramenta que ajuda, não impõe."
-    # Sistema sempre mostra o PRÓXIMO treino pendente.
-    # Aluno decide quando descansar (não fazendo check-in).
-    # Próximo treino = total de check-ins % número de sessões (rotação em loop)
+    data_inicio = plano.data_inicio if plano.data_inicio else date.today()
+    dias_desde_inicio = (date.today() - data_inicio).days
+    dias_treino = plano.dias_semana or 3
+    dia_na_semana = dias_desde_inicio % 7
 
-    from app.routers.treino import RegistroPresenca
+    if dia_na_semana >= dias_treino:
+        return {
+            "mensagem": "Hoje é dia de descanso! Recuperação também é treino.",
+            "dica": "Aproveite para fazer mobilidade ou caminhada leve."
+        }
 
-    # Busca TODAS as sessões do plano ordenadas por dia_semana
-    sessoes = db.query(SessaoTreino).filter(
+    idx_sessao = dia_na_semana % dias_treino
+    sessao = db.query(SessaoTreino).filter(
         SessaoTreino.plano_id == plano.id
-    ).order_by(SessaoTreino.dia_semana).all()
+    ).order_by(SessaoTreino.dia_semana).offset(idx_sessao).first()
 
-    if not sessoes:
-        return {"mensagem": "Plano sem sessões cadastradas. Avise seu personal."}
-
-    # Conta check-ins do aluno desde o início do plano
-    total_checkins = db.query(RegistroPresenca).filter(
-        RegistroPresenca.aluno_id == aluno.id,
-        RegistroPresenca.plano_id == plano.id,
-        RegistroPresenca.presente == True
-    ).count()
-
-    # Próximo treino = checkins % num_sessoes (rotaciona A, B, C, A, B, C...)
-    idx_proximo = total_checkins % len(sessoes)
-    sessao = sessoes[idx_proximo]
-    # ─────────────────────────────────────────────────────────────────────────
+    if not sessao:
+        return {
+            "mensagem": "Hoje é dia de descanso! Recuperação também é treino.",
+            "dica": "Aproveite para fazer mobilidade ou caminhada leve."
+        }
 
     exercicios = db.query(ExercicioSessao).filter(
         ExercicioSessao.sessao_id == sessao.id

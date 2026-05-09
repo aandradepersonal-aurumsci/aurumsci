@@ -10,13 +10,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, EmailStr
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import Session
-
 from app.database import get_db
 from app.models import Base, Personal, Aluno
-
 router = APIRouter(prefix="/recuperar-senha", tags=["Recuperar Senha"])
-
-
 # ─── Tabela de tokens ─────────────────────────────────────────
 class TokenResetSenha(Base):
     __tablename__ = "tokens_reset_senha"
@@ -28,31 +24,21 @@ class TokenResetSenha(Base):
     criado_em = Column(DateTime, default=datetime.utcnow)
     expira_em = Column(DateTime, nullable=False)
     usado = Column(Boolean, default=False)
-
-
 # ─── Schemas ──────────────────────────────────────────────────
 class SolicitarReset(BaseModel):
     email: EmailStr
-
-
 class RedefinirSenha(BaseModel):
     token: str
     nova_senha: str
-
-
 # ─── Helper: hash de senha ────────────────────────────────────
 def _hash_senha(senha_plain: str) -> str:
     """Reusa o pwd_context que ja existe no projeto."""
     from app.routers.portal_aluno import pwd_context
     return pwd_context.hash(senha_plain)
-
-
 def _validar_senha(senha: str):
     """Senha forte: minimo 8 chars."""
     if len(senha) < 8:
         raise HTTPException(400, "Senha deve ter pelo menos 8 caracteres")
-
-
 # ─── Endpoint 1: SOLICITAR reset ──────────────────────────────
 @router.post("/solicitar")
 def solicitar_reset(dados: SolicitarReset, db: Session = Depends(get_db)):
@@ -68,9 +54,9 @@ def solicitar_reset(dados: SolicitarReset, db: Session = Depends(get_db)):
         user_id = personal.id
         nome = personal.nome
     else:
-        # Procura no ALUNO (tabela usuario_aluno tem o email de login)
-        from app.routers.portal_aluno import UsuarioAluno
-        usuario = db.query(UsuarioAluno).filter(UsuarioAluno.email == email_lower).first()
+        # Procura no ALUNO (tabela aluno_credenciais tem o email de login)
+        from app.routers.portal_aluno import AlunoCredencial
+        usuario = db.query(AlunoCredencial).filter(AlunoCredencial.email == email_lower).first()
         if usuario:
             aluno = db.query(Aluno).filter(Aluno.id == usuario.aluno_id).first()
             tipo = "aluno"
@@ -139,8 +125,6 @@ def solicitar_reset(dados: SolicitarReset, db: Session = Depends(get_db)):
         "ok": True,
         "mensagem": "Se este email estiver cadastrado, voce recebera um link em alguns minutos."
     }
-
-
 # ─── Endpoint 2: VALIDAR token ────────────────────────────────
 @router.get("/validar/{token}")
 def validar_token(token: str, db: Session = Depends(get_db)):
@@ -155,8 +139,6 @@ def validar_token(token: str, db: Session = Depends(get_db)):
         return {"valido": False, "motivo": "Link expirado (validade: 1h)"}
     
     return {"valido": True, "tipo": t.tipo, "email": t.email}
-
-
 # ─── Endpoint 3: REDEFINIR senha ──────────────────────────────
 @router.post("/redefinir")
 def redefinir_senha(dados: RedefinirSenha, db: Session = Depends(get_db)):
@@ -181,8 +163,8 @@ def redefinir_senha(dados: RedefinirSenha, db: Session = Depends(get_db)):
             raise HTTPException(404, "Usuario nao encontrado")
         personal.senha_hash = nova_hash
     elif t.tipo == "aluno":
-        from app.routers.portal_aluno import UsuarioAluno
-        usuario = db.query(UsuarioAluno).filter(UsuarioAluno.aluno_id == t.user_id).first()
+        from app.routers.portal_aluno import AlunoCredencial
+        usuario = db.query(AlunoCredencial).filter(AlunoCredencial.aluno_id == t.user_id).first()
         if not usuario:
             raise HTTPException(404, "Usuario nao encontrado")
         usuario.senha_hash = nova_hash

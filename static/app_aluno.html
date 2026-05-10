@@ -2864,6 +2864,7 @@ function salvarComposicao(){
 
 // ── POSTURAL ──────────────────────────────────────────
 var fotosPostural = {frente: null, lado: null, costas: null};
+var ultimaAnalisePostural = null;
 
 function fotoPostural(tipo, input){
   if(!input.files[0]) return;
@@ -2919,6 +2920,7 @@ function analisarPostura(){
   .then(function(d){
     loading.style.display = 'none'; btn.disabled = false; btn.style.opacity = '1';
     if(d.detail){ resultado.innerHTML = '<div style="color:var(--vermelho);padding:16px;text-align:center">Erro: ' + d.detail + '</div>'; return; }
+    ultimaAnalisePostural = d;
     var html = '<div class="card"><div class="card-line ouro"></div>' +
       '<div style="font-family:Bebas Neue;font-size:20px;color:var(--ouro2);margin-bottom:12px;letter-spacing:1px">RESULTADO DA ANÁLISE</div>';
     var dev = d.desvios || {};
@@ -2931,6 +2933,8 @@ function analisarPostura(){
       html += '</div>';
     }
     html += '</div>';
+    html += '<button class="btn-gold" onclick="salvarPostural()" style="width:100%;margin-top:16px">💾 SALVAR ANÁLISE</button>';
+    html += '<div style="font-size:11px;color:var(--cinza);text-align:center;margin-top:10px;line-height:1.5">Ao salvar, os exercícios corretivos serão adicionados automaticamente à sua lista de exercícios do dia.</div>';
     resultado.innerHTML = html;
     // Marca postural como feita pra esconder o card "faça sua avaliação" no treino
     localStorage.setItem('aurum_postural_feita', '1');
@@ -3493,6 +3497,37 @@ function salvarAnamnese(){
     .catch(function(err){
       console.warn('Erro salvar anamnese:', err);
       mostrarToast('Erro ao salvar — tente novamente');
+    });
+}
+
+function salvarPostural(){
+  if(!ultimaAnalisePostural){
+    mostrarToast('⚠️ Faça a análise antes de salvar');
+    return;
+  }
+  mostrarToast('⏳ Salvando análise...');
+  fetch('/postural-ia/salvar', {
+    method: 'POST',
+    headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
+    body: JSON.stringify({
+      desvios: ultimaAnalisePostural.desvios || {},
+      observacoes: ultimaAnalisePostural.observacoes || '',
+      recomendacoes: ultimaAnalisePostural.recomendacoes || []
+    })
+  })
+    .then(function(r){ return r.ok ? r.json() : Promise.reject('salvar-postural'); })
+    .then(function(d){
+      mostrarToast('🧍 Análise salva! Corretivos no seu treino.');
+      localStorage.setItem('aurum_postural_feita', '1');
+      fecharModal('modal-postural');
+      // Recarrega treino pra puxar os corretivos persistidos do banco
+      setTimeout(function(){
+        if(typeof renderTreino === 'function') renderTreino();
+      }, 600);
+    })
+    .catch(function(err){
+      console.warn('Erro salvar postural:', err);
+      mostrarToast('Erro ao salvar análise — tente novamente');
     });
 }
 

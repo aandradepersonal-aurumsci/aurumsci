@@ -530,8 +530,15 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
         # BUG FIX 04/05/2026: cobranca avulsa (sem subscription)
         # Detecta cobranca avulsa, atualiza status + envia recibo automatico
         try:
-            session_id = session.get("id")
-            if session_id and not session.get("subscription"):
+            try:
+                session_id = session["id"]
+            except (KeyError, AttributeError):
+                session_id = None
+            try:
+                _has_sub = bool(session["subscription"])
+            except (KeyError, AttributeError):
+                _has_sub = False
+            if session_id and not _has_sub:
                 from sqlalchemy import text
                 from datetime import date, datetime
                 
@@ -639,10 +646,16 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
             aluno = db.query(Aluno).filter(Aluno.id == int(aluno_id)).first()
             if aluno:
                 aluno.ativo = True
-                if session.get("subscription"):
-                    aluno.stripe_subscription_id = session["subscription"]
-                if session.get("customer"):
-                    aluno.stripe_customer_id = session["customer"]
+                try:
+                    if session["subscription"]:
+                        aluno.stripe_subscription_id = session["subscription"]
+                except (KeyError, AttributeError):
+                    pass
+                try:
+                    if session["customer"]:
+                        aluno.stripe_customer_id = session["customer"]
+                except (KeyError, AttributeError):
+                    pass
                 db.commit()
                 # ALUNO AUTONOMO - tracking de trial
                 from datetime import timedelta
@@ -666,10 +679,16 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                 personal.ativo = True
                 personal.plano = plano
                 personal.assinatura_status = "ativa"
-                if session.get("subscription"):
-                    personal.stripe_subscription_id = session["subscription"]
-                if session.get("customer"):
-                    personal.stripe_customer_id = session["customer"]
+                try:
+                    if session["subscription"]:
+                        personal.stripe_subscription_id = session["subscription"]
+                except (KeyError, AttributeError):
+                    pass
+                try:
+                    if session["customer"]:
+                        personal.stripe_customer_id = session["customer"]
+                except (KeyError, AttributeError):
+                    pass
                 db.commit()
                 enviar_email_boas_vindas_personal(personal.nome, personal.email, plano)
                 enviar_email(

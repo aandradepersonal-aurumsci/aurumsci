@@ -1,0 +1,1 @@
+Bug postural: feature 95% pronta, falta botao SALVAR no modal + funcao salvarPostural() copia de salvarAnamnese (linha 3427). Endpoint POST /postural-ia/salvar existe. Backend retorna corretivos_posturais (app_aluno.py:347). Frontend exibe (app_aluno.html linhas 2186-2193). 30-60min trabalho.

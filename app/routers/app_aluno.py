@@ -889,3 +889,31 @@ def white_label(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(
         "nome_personal": personal.nome,
         "cref": personal.cref or ""
     }
+
+
+@router.get("/meu-link-onboarding")
+def meu_link_onboarding(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    """Retorna o link de onboarding do personal do aluno."""
+    from app.models import Personal, OnboardingLink
+    import os
+
+    if not aluno.personal_id:
+        return {"url": None, "tem_link": False}
+
+    personal = db.query(Personal).filter(Personal.id == aluno.personal_id).first()
+    if not personal:
+        return {"url": None, "tem_link": False}
+
+    link = db.query(OnboardingLink).filter(
+        OnboardingLink.personal_id == personal.id,
+        OnboardingLink.ativo == True
+    ).first()
+
+    if not link:
+        return {"url": None, "tem_link": False}
+
+    base_url = os.getenv("BASE_URL", "https://www.aurumsc.com.br")
+    return {
+        "url": f"{base_url}/onboarding/{link.token}",
+        "tem_link": True
+    }

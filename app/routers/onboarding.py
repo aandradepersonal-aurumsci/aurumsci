@@ -61,14 +61,14 @@ def gerar_link_onboarding(
         "criado_em": link.criado_em.isoformat() if link.criado_em else None,
         "mensagem_whatsapp": (
             f"Olá! 🏆\n\n"
-            f"Lancei meu novo sistema de treinamento, o *AurumSci*!\n\n"
+            f"Bem-vindo(a) à *família AurumSci*!\n\n"	 
             f"📱 Preencha seu cadastro em apenas 3 minutos e *já receba seu treino* pra começar hoje mesmo:\n\n"
             f"{base_url}/onboarding/{link.token}\n\n"
             f"💡 Como funciona:\n"
             f"✅ Você preenche o questionário (3 min)\n"
             f"✅ Recebe um treino base por email\n"
             f"✅ Já começa a treinar imediatamente\n"
-            f"✅ Na nossa avaliação presencial, ajusto 100% pra você\n\n"
+	    f"✅ Após sua avaliação completa, seu treino fica 100% específico pra você\n\n"
             f"Qualquer dúvida, me chame!\n"
             f"— {personal.nome}"
         )

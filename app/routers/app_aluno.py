@@ -326,6 +326,49 @@ async def analise_postural(
     }
 
 
+# ── SCHEMA: dados que o frontend envia ao salvar análise postural ────────────
+class SalvarPosturalSchema(BaseModel):
+    desvios: dict = {}
+    observacoes: str = ""
+    recomendacoes: list = []
+
+
+@router.post("/postural/salvar")
+async def salvar_postural(
+    dados: SalvarPosturalSchema,
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db),
+):
+    """
+    Salva análise postural VALIDADA pelo aluno (após revisão da análise da IA).
+    Persiste:
+      - desvios individuais (cabeca, ombros, coluna, quadril, joelhos, pes)
+      - observacoes + recomendacoes (como JSON dentro de postura_observacoes)
+    Os corretivos salvos aqui são lidos pelo /treino-hoje e exibidos no treino.
+    """
+    import json
+    aval = _get_ou_criar_avaliacao(aluno.id, db)
+    # Salva desvios individuais (preserva valor existente se campo vier vazio)
+    if dados.desvios:
+        aval.postura_cabeca  = dados.desvios.get("cabeca")  or aval.postura_cabeca
+        aval.postura_ombros  = dados.desvios.get("ombros")  or aval.postura_ombros
+        aval.postura_coluna  = dados.desvios.get("coluna")  or aval.postura_coluna
+        aval.postura_quadril = dados.desvios.get("quadril") or aval.postura_quadril
+        aval.postura_joelhos = dados.desvios.get("joelhos") or aval.postura_joelhos
+        aval.postura_pes     = dados.desvios.get("pes")     or aval.postura_pes
+    # Salva observações + recomendações como JSON no campo Text existente
+    aval.postura_observacoes = json.dumps({
+        "texto":         dados.observacoes,
+        "recomendacoes": dados.recomendacoes,
+    }, ensure_ascii=False)
+    db.commit()
+    return {
+        "sucesso": True,
+        "mensagem": "Análise postural salva! Os corretivos aparecerão no seu treino.",
+        "total_corretivos": len(dados.recomendacoes),
+    }
+
+
 @router.get("/treino-hoje")
 async def treino_hoje(
     aluno: Aluno = Depends(get_aluno_logado),
@@ -385,6 +428,21 @@ async def treino_hoje(
             "coluna": ultima_aval.postura_coluna,
         }
 
+    # ── Corretivos posturais salvos via /postural/salvar ──────────────────
+    # postura_observacoes pode ser:
+    #   (a) JSON {"texto": "...", "recomendacoes": [...]} via /postural/salvar
+    #   (b) texto puro (avaliações antigas anteriores ao botão SALVAR)
+    # Try/except mantém compatibilidade total com dados antigos.
+    corretivos_posturais = []
+    if ultima_aval and ultima_aval.postura_observacoes:
+        try:
+            import json
+            obs_dados = json.loads(ultima_aval.postura_observacoes)
+            if isinstance(obs_dados, dict):
+                corretivos_posturais = obs_dados.get("recomendacoes", []) or []
+        except (json.JSONDecodeError, TypeError, ValueError):
+            pass  # texto antigo (não-JSON), ignora silenciosamente
+
     lista_ex = []
     for e in exercicios:
         ex_obj = db.query(Exercicio).filter(Exercicio.id == e.exercicio_id).first()
@@ -404,7 +462,8 @@ async def treino_hoje(
         "data": str(date.today()),
         "exercicios": lista_ex,
         "total_exercicios": len(lista_ex),
-        "postura_resumo": postura_resumo
+        "postura_resumo": postura_resumo,
+        "corretivos_posturais": corretivos_posturais
     }
 
 

@@ -3506,7 +3506,7 @@ function salvarPostural(){
     return;
   }
   mostrarToast('⏳ Salvando análise...');
-  fetch('/postural-ia/salvar', {
+  fetch('/app-aluno/postural/salvar', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
     body: JSON.stringify({

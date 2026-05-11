@@ -917,3 +917,86 @@ def meu_link_onboarding(aluno: Aluno = Depends(get_aluno_logado), db: Session = 
         "url": f"{base_url}/onboarding/{link.token}",
         "tem_link": True
     }
+
+
+
+@router.get("/anamnese")
+def get_anamnese(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    """Retorna anamnese do aluno (patologias, medicacoes, outras condicoes)."""
+    from app.routers.anamnese import Anamnese
+    
+    anam = db.query(Anamnese).filter(Anamnese.aluno_id == aluno.id).order_by(Anamnese.id.desc()).first()
+    if not anam:
+        return {
+            "patologias_marcadas": [],
+            "doencas_cronicas": "",
+            "outras_condicoes": "",
+            "medicamentos_uso": ""
+        }
+    
+    doencas = anam.doencas_cronicas or ""
+    patologias = []
+    outras = ""
+    
+    if "Outras:" in doencas:
+        partes = doencas.split("Outras:")
+        patologias_raw = partes[0].strip().rstrip(",| ")
+        outras = partes[1].strip() if len(partes) > 1 else ""
+    else:
+        patologias_raw = doencas
+    
+    if patologias_raw:
+        patologias = [p.strip() for p in patologias_raw.split(",") if p.strip()]
+    
+    return {
+        "patologias_marcadas": patologias,
+        "patologias": patologias,
+        "doencas_cronicas": doencas,
+        "outras_condicoes": outras,
+        "medicamentos_uso": anam.medicamentos_uso or "",
+        "medicacoes": anam.medicamentos_uso or ""
+    }
+
+
+@router.post("/anamnese")
+def post_anamnese(
+    dados: dict,
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """Salva/atualiza anamnese do aluno."""
+    from app.routers.anamnese import Anamnese
+    from datetime import date as _date
+    
+    patologias = dados.get("patologias", []) or []
+    outras = dados.get("outras_condicoes", "") or ""
+    medicacoes = dados.get("medicacoes", "") or dados.get("medicamentos_uso", "") or ""
+    
+    patologias_str = ",".join(patologias) if patologias else ""
+    if outras:
+        if patologias_str:
+            doencas_final = patologias_str + " | Outras: " + outras
+        else:
+            doencas_final = "Outras: " + outras
+    else:
+        doencas_final = patologias_str
+    
+    anam = db.query(Anamnese).filter(Anamnese.aluno_id == aluno.id).order_by(Anamnese.id.desc()).first()
+    
+    if anam:
+        anam.doencas_cronicas = doencas_final
+        anam.medicamentos_uso = medicacoes
+        anam.data_avaliacao = _date.today()
+    else:
+        anam = Anamnese(
+            aluno_id=aluno.id,
+            data_avaliacao=_date.today(),
+            doencas_cronicas=doencas_final,
+            medicamentos_uso=medicacoes
+        )
+        db.add(anam)
+    
+    db.commit()
+    db.refresh(anam)
+    
+    return {"ok": True, "anamnese_id": anam.id}

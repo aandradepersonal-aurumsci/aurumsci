@@ -568,9 +568,11 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                         personal_cob = db.query(Personal).filter(Personal.id == aluno_cob.personal_id).first()
                         
                         # Envia email automatico (HTML inline - mesmo template do enviar_recibo_email)
+                        # FIX 13/05/2026: removido 'from app.services.email_service import enviar_email'
+                        # daqui - estava sombreando o import global (linha 10) e causando
+                        # UnboundLocalError na linha 694 (webhook crashava em retry, Stripe
+                        # reentregava evento por 3 dias, gerando emails diarios duplicados).
                         try:
-                            from app.services.email_service import enviar_email
-                            
                             numero_recibo = f"REC-{datetime.now().strftime('%y%m%d%H%M')}"
                             valor = float(cobranca[2])
                             valor_fmt = f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")

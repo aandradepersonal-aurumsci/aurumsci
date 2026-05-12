@@ -60,6 +60,10 @@ class AvaliacaoFisica(Base):
     postura_joelhos = Column(String(1000))
     postura_pes = Column(String(1000))
     postura_observacoes = Column(Text)
+    foto_postural_frente = Column(Text)
+    foto_postural_lado = Column(Text)
+    foto_postural_costas = Column(Text)
+    postural_data = Column(DateTime)
     observacoes = Column(Text)
     criado_em = Column(DateTime, default=datetime.utcnow)
 

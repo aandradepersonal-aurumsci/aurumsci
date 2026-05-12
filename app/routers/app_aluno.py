@@ -308,6 +308,15 @@ async def analise_postural(
     aval.postura_joelhos     = resultado.joelhos
     aval.postura_pes         = resultado.pes
     aval.postura_observacoes = resultado.observacoes
+    # Salva as 3 fotos em base64 (Sprint 3 - persistencia visual)
+    if foto_frente_b64:
+        aval.foto_postural_frente = foto_frente_b64
+    if foto_lado_b64:
+        aval.foto_postural_lado = foto_lado_b64
+    if foto_costas_b64:
+        aval.foto_postural_costas = foto_costas_b64
+    from datetime import datetime as _dt
+    aval.postural_data = _dt.utcnow()
     db.commit()
 
     return {
@@ -1000,3 +1009,61 @@ def post_anamnese(
     db.refresh(anam)
     
     return {"ok": True, "anamnese_id": anam.id}
+
+
+
+@router.get("/postural/atual")
+def get_postural_atual(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    """Retorna analise postural mais recente do aluno (fotos + analise + corretivos)."""
+    import json
+    aval = _get_ou_criar_avaliacao(aluno.id, db)
+    
+    # Verifica se tem analise postural feita
+    tem_analise = bool(
+        aval.postura_observacoes or 
+        aval.foto_postural_frente or 
+        aval.foto_postural_lado or 
+        aval.foto_postural_costas
+    )
+    
+    if not tem_analise:
+        return {
+            "tem_analise": False,
+            "fotos": {"frente": None, "lado": None, "costas": None},
+            "desvios": {},
+            "observacoes": "",
+            "recomendacoes": [],
+            "data": None
+        }
+    
+    # Parseia observacoes (JSON com texto + recomendacoes)
+    obs_texto = ""
+    recomendacoes = []
+    if aval.postura_observacoes:
+        try:
+            obs_data = json.loads(aval.postura_observacoes)
+            obs_texto = obs_data.get("texto", "")
+            recomendacoes = obs_data.get("recomendacoes", [])
+        except (json.JSONDecodeError, TypeError):
+            # Se nao for JSON, usa como texto puro
+            obs_texto = aval.postura_observacoes or ""
+    
+    return {
+        "tem_analise": True,
+        "fotos": {
+            "frente": aval.foto_postural_frente,
+            "lado": aval.foto_postural_lado,
+            "costas": aval.foto_postural_costas
+        },
+        "desvios": {
+            "cabeca": aval.postura_cabeca,
+            "ombros": aval.postura_ombros,
+            "coluna": aval.postura_coluna,
+            "quadril": aval.postura_quadril,
+            "joelhos": aval.postura_joelhos,
+            "pes": aval.postura_pes
+        },
+        "observacoes": obs_texto,
+        "recomendacoes": recomendacoes,
+        "data": aval.postural_data.isoformat() if aval.postural_data else None
+    }

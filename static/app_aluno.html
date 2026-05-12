@@ -2455,11 +2455,8 @@ function renderPeriodo(){
   .then(function(d){
     if(!d || d.detail || !d.ciclos){ document.getElementById('periodo-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">Faca o onboarding primeiro!</div>'; return; }
     var totalCheckins = d.total_checkins || 0;
-    var diasSemana = d.dias_semana || 3;
-    // Sprint: Fase por SEMANAS (ciclo 8 sem = 2 mesos)
-    // Sem 1-2: Adaptacao | Sem 3-4: Hipertrofia | Sem 5-6: Intensificacao | Sem 7-8: Deload
-    var semanasCompletas = Math.floor(totalCheckins / diasSemana);
-    var faseAtual = semanasCompletas < 2 ? 0 : semanasCompletas < 4 ? 1 : semanasCompletas < 6 ? 2 : 3;
+    // Fase por checkins: 0-8 Adaptacao, 9-24 Hipertrofia, 25-32 Intensificacao, 33+ Deload
+    var faseAtual = totalCheckins < 9 ? 0 : totalCheckins < 25 ? 1 : totalCheckins < 33 ? 2 : 3;
     var refs = {'ADAPTACAO':'Kraemer & Ratamess (2004) · ACSM','HIPERTROFIA':'Schoenfeld (2010) · J Strength Cond Res · Rhea et al. (2002)','INTENSIFICACAO':'Zatsiorsky & Kraemer (2006) · Strength Training','DELOAD':'Rhea et al. (2002) · Bazgir et al. (2021)','ATIVACAO':'ACSM (2021) · Physical Activity Guidelines','ACELERACAO':'Gibala et al. (2012) · J Physiol','MANUTENCAO':'Bickel et al. (2011) · Med Sci Sports Exerc','BASE':'Seiler (2010) · Int J Sports Physiol','POTENCIA':'Laursen & Jenkins (2002) · Sports Med','ACUMULACAO':'Issurin (2010) · Sports Med · Bompa & Haff (2009)','TRANSMUTACAO':'Issurin (2010) · Sports Med','REALIZACAO':'Bompa & Haff (2009) · Periodization Theory'};
     var cores = {'ADAPTACAO':['rgba(75,159,255,.08)','rgba(75,159,255,.4)','var(--azul)'],'HIPERTROFIA':['rgba(201,168,76,.08)','rgba(201,168,76,.4)','var(--ouro2)'],'INTENSIFICACAO':['rgba(255,75,75,.08)','rgba(255,75,75,.4)','#FF6B6B'],'DELOAD':['rgba(0,229,160,.08)','rgba(0,229,160,.4)','var(--verde)'],'ATIVACAO':['rgba(75,159,255,.08)','rgba(75,159,255,.4)','var(--azul)'],'ACELERACAO':['rgba(255,75,75,.08)','rgba(255,75,75,.4)','#FF6B6B'],'MANUTENCAO':['rgba(0,229,160,.08)','rgba(0,229,160,.4)','var(--verde)'],'BASE':['rgba(75,159,255,.08)','rgba(75,159,255,.4)','var(--azul)'],'POTENCIA':['rgba(255,75,75,.08)','rgba(255,75,75,.4)','#FF6B6B'],'ACUMULACAO':['rgba(75,159,255,.08)','rgba(75,159,255,.4)','var(--azul)'],'TRANSMUTACAO':['rgba(201,168,76,.08)','rgba(201,168,76,.4)','var(--ouro2)'],'REALIZACAO':['rgba(255,75,75,.08)','rgba(255,75,75,.4)','#FF6B6B']};
     function getChave(nome){ return nome.replace(/FASE \d+ — /,'').split(' ')[0]; }

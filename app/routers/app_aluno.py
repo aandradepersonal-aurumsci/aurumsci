@@ -124,6 +124,17 @@ async def onboarding(
     from app.routers.treino import PlanoTreino, SessaoTreino, Exercicio, ExercicioSessao
     import json
 
+    # -- ATUALIZA dados do aluno (FIX 12/05/2026) --
+    # Sem isso, GET /periodizacao le nivel antigo do banco
+    # e ignora a escolha feita na anamnese.
+    if dados.objetivo:
+        aluno.objetivo = dados.objetivo.upper()
+    if dados.nivel_experiencia:
+        aluno.nivel_experiencia = dados.nivel_experiencia.upper()
+    if dados.dias_disponiveis:
+        aluno.dias_semana = dados.dias_disponiveis
+    db.flush()
+
     # Desativa plano anterior
     plano_existente = db.query(PlanoTreino).filter(
         PlanoTreino.aluno_id == aluno.id,

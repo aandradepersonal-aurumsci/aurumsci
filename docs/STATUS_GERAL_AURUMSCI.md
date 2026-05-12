@@ -597,3 +597,14 @@ Próximo Claude/dev, antes de começar:
 > **Status do documento**: ✅ ATUALIZADO 10/05/2026 13h30
 > **Próximo update**: após próxima sessão
 > **Mantenedor**: Claude + André (sessões contínuas)
+
+## 11/05/2026 - TARDE/NOITE
+
+VITORIAS: 3 commits (8a7ce0d docs + c3acd5b mensagem familia AurumSci + 9d8bcf0 endpoint /meu-link-onboarding). Sprint 1 BACKEND deployado e testado (curl status 401 = ok). Visao produto v2 consolidada. Plano sprints ordenado.
+
+PROXIMA SESSAO: Sprint 1 FRONTEND (banner anamnese vazia chamando GET /meu-link-onboarding) + investigar email duplicado boas-vindas.
+11/05/2026 - DIA HISTORICO - 3 sprints, 6 commits, Sprint 3 revertido (migration). Restaurar amanha: ALTER TABLE x4 + re-push. Backups locais preservados.
+12/05/2026 - MANHÃ/TARDE - Sprint 4 (composição modal lê do banco - commit ccc3e65), Sprint Periodização v1 (nível-aware commit ff41a93), Sprint 5 REVERTIDO (semanas hardcoded confundiu). BUG CRÍTICO DESCOBERTO: POST /app-aluno/onboarding linha 116 NÃO atualiza aluno.objetivo/nivel_experiencia/dias_semana E duplica planos. Próxima sessão: fix completo anamnese (atualizar aluno + desativar planos antigos + 1 plano novo limpo). Backups locais preservados.
+12/05/2026 - MANHÃ/TARDE - Sprint 4 (composição modal lê do banco - commit ccc3e65), Sprint Periodização v1 (nível-aware commit ff41a93), Sprint 5 REVERTIDO (semanas hardcoded confundiu). BUG CRÍTICO DESCOBERTO: POST /app-aluno/onboarding linha 116 NÃO atualiza aluno.objetivo/nivel_experiencia/dias_semana E duplica planos. Próxima sessão: fix completo anamnese (atualizar aluno + desativar planos antigos + 1 plano novo limpo). Backups locais preservados.
+
+12/05/2026 - TARDE - FIX DEPLOYADO commit 1f3882c. POST /app-aluno/onboarding agora atualiza aluno.objetivo + aluno.nivel_experiencia + aluno.dias_semana antes de criar PlanoTreino. Bug do nivel_experiencia nao persistido = RESOLVIDO. Testado em producao: aluno Avancado/Hipertrofia/3x ve 'VOCE ESTA AQUI' na Fase 2 HIPERTROFIA (antes mostrava Fase 1 Adaptacao). Iniciante/Emagrecimento/5x ve Fase 1 ATIVACAO. Frontend leu nivel correto do banco end-to-end. PENDENCIA: desativar MULTIPLOS planos antigos (hoje so desativa o primeiro via .first() linha 127) - fica para commit separado. Proxima sessao: decidir unificacao PRO<->aluno (3 modelos Ondulatoria/Blocos/Mista vs hardcode de fases) OU seguir pente fino dos modais (postural, medidas, composicao, testes).

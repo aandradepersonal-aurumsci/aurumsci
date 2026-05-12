@@ -592,7 +592,8 @@ def periodizacao(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends
         PresencaTreino.aluno_id == aluno.id
     ).count()
 
-    return {"objetivo": objetivo, "nivel": nivel, "ciclos": ciclos, "total_checkins": total_checkins}
+    dias_semana = aluno.dias_semana or 3
+    return {"objetivo": objetivo, "nivel": nivel, "ciclos": ciclos, "total_checkins": total_checkins, "dias_semana": dias_semana}
 
 
 @router.get("/reavaliacao")

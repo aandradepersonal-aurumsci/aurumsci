@@ -636,8 +636,6 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div class="modal-titulo" data-i18n="analisePostural">ANÁLISE POSTURAL</div>
   </div>
   <div class="modal-body">
-    <div id="postural-existente" style="display:none"></div>
-    <div id="postural-fluxo-novo">
     <div class="onb-dica"><strong style="color:var(--ouro)">Como posicionar:</strong> De pé, relaxado, pés levemente afastados, braços soltos, olhar fixo no horizonte. Use roupa mínima.</div>
     <div class="foto-grid">
       <div>
@@ -669,7 +667,6 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       <div style="font-size:11px;margin-top:6px;color:var(--cinza)">Isso pode levar alguns segundos</div>
     </div>
     <div id="post-resultado"></div>
-    </div>
   </div>
 </div>
 
@@ -2581,7 +2578,6 @@ function abrirModal(id){
   if(id === 'modal-composicao') renderModalComposicao();
   if(id === 'modal-nutri') { /* handled by abrirModalNutri */ }
   if(id === 'modal-anamnese') renderAnamnese();
-  if(id === 'modal-postural') setTimeout(carregarPosturalExistente, 100);
 }
 function voltarParaAvaliacao(){
   document.getElementById('screen-onboarding').style.display='none';
@@ -3907,62 +3903,6 @@ function carregarBannerAvaliacao(){
       slot.innerHTML = '';
     }
   }).catch(function(){});
-}
-
-
-// SPRINT 3 - Postural existente
-function carregarPosturalExistente(){
-  fetch('/app-aluno/postural/atual', {headers:{'Authorization':'Bearer '+token}})
-  .then(function(r){ return r.ok ? r.json() : null; })
-  .then(function(d){
-    var bloco = document.getElementById('postural-existente');
-    var fluxoNovo = document.getElementById('postural-fluxo-novo');
-    if(!bloco || !fluxoNovo) return;
-    if(!d || !d.tem_analise){
-      bloco.style.display = 'none';
-      fluxoNovo.style.display = 'block';
-      return;
-    }
-    var dataStr = d.data ? new Date(d.data).toLocaleDateString('pt-BR') : 'data nao registrada';
-    var html = '<div style="background:linear-gradient(135deg,rgba(75,159,255,.08),rgba(75,159,255,.02));border:1px solid rgba(75,159,255,.25);border-radius:12px;padding:16px;margin-bottom:16px">';
-    html += '<div style="font-family:Bebas Neue;font-size:16px;color:var(--azul);letter-spacing:1px;margin-bottom:4px">✅ ANÁLISE REGISTRADA</div>';
-    html += '<div style="font-size:12px;color:var(--cinza);margin-bottom:12px">Realizada em ' + dataStr + '</div>';
-    if(d.fotos && (d.fotos.frente || d.fotos.lado || d.fotos.costas)){
-      html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">';
-      ['frente','lado','costas'].forEach(function(tipo){
-        var foto = d.fotos[tipo];
-        var label = tipo === 'frente' ? 'FRENTE' : tipo === 'lado' ? 'LATERAL' : 'COSTAS';
-        if(foto){
-          html += '<div><div style="font-size:9px;color:var(--cinza);text-align:center;margin-bottom:4px;letter-spacing:1px">' + label + '</div>';
-          html += '<img src="data:image/jpeg;base64,' + foto + '" style="width:100%;border-radius:8px;border:1px solid rgba(255,255,255,.1)" /></div>';
-        } else {
-          html += '<div><div style="font-size:9px;color:var(--cinza);text-align:center;margin-bottom:4px;letter-spacing:1px">' + label + '</div>';
-          html += '<div style="aspect-ratio:1;background:rgba(255,255,255,.05);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;opacity:.4">📷</div></div>';
-        }
-      });
-      html += '</div>';
-    }
-    if(d.observacoes){
-      html += '<div style="font-size:13px;color:#ccc;line-height:1.5;margin-bottom:12px;padding:10px;background:rgba(0,0,0,.2);border-radius:8px">' + d.observacoes + '</div>';
-    }
-    if(d.recomendacoes && d.recomendacoes.length > 0){
-      html += '<div style="font-size:11px;color:var(--ouro);letter-spacing:1px;margin-bottom:6px">🧍 CORRETIVOS NO TREINO</div>';
-      html += '<div style="font-size:12px;color:var(--cinza);margin-bottom:12px">' + d.recomendacoes.length + ' exercícios corretivos ativos no seu treino diário</div>';
-    }
-    html += '</div>';
-    html += '<button onclick="refazerPostural()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:18px;letter-spacing:2px;cursor:pointer">🔄 REFAZER ANÁLISE</button>';
-    html += '<div style="font-size:11px;color:var(--cinza);text-align:center;margin-top:8px">Atualize quando achar necessário acompanhar evolução</div>';
-    bloco.innerHTML = html;
-    bloco.style.display = 'block';
-    fluxoNovo.style.display = 'none';
-  })
-  .catch(function(e){ console.error('Erro postural:', e); });
-}
-function refazerPostural(){
-  var bloco = document.getElementById('postural-existente');
-  var fluxoNovo = document.getElementById('postural-fluxo-novo');
-  if(bloco) bloco.style.display = 'none';
-  if(fluxoNovo) fluxoNovo.style.display = 'block';
 }
 
 </script>

@@ -2818,6 +2818,20 @@ function renderModalComposicao(){
   var peso_salvo = localStorage.getItem('aurum_peso') || '';
   var gord_salvo = localStorage.getItem('aurum_gord') || '';
   var mm_salvo = localStorage.getItem('aurum_mm') || '';
+  // Sprint 4: busca dados do banco (mais confiavel que localStorage)
+  fetch('/app-aluno/meus-resultados', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d && (d.peso || d.percentual_gordura || d.massa_magra_kg)){
+      var elPeso = document.getElementById('comp-peso');
+      var elGord = document.getElementById('comp-gord');
+      var elMm = document.getElementById('comp-mm');
+      if(elPeso && d.peso) { elPeso.value = d.peso; localStorage.setItem('aurum_peso', d.peso); }
+      if(elGord && d.percentual_gordura) { elGord.value = d.percentual_gordura; localStorage.setItem('aurum_gord', d.percentual_gordura); }
+      if(elMm && d.massa_magra_kg) { elMm.value = d.massa_magra_kg; localStorage.setItem('aurum_mm', d.massa_magra_kg); }
+      if(d.percentual_gordura) mostrarResultadoComposicao();
+    }
+  }).catch(function(){});
   var info_perfil = (idade && sexo) ? '<div style="background:rgba(75,159,255,.08);border:1px solid rgba(75,159,255,.2);border-radius:10px;padding:10px;margin-bottom:12px;font-size:12px;color:var(--azul)">👤 Análise para: <b>'+(sexo==='M'?'Masculino':'Feminino')+', '+idade+' anos</b></div>' : '';
   document.getElementById('body-composicao').innerHTML =
     '<div class="onb-dica">Informe os dados da sua bioimpedância ou dobras cutâneas.</div>' +

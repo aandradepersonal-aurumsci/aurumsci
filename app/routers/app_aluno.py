@@ -611,29 +611,56 @@ async def verificar_reavaliacao(
     aluno: Aluno = Depends(get_aluno_logado),
     db: Session = Depends(get_db)
 ):
-    """Verifica se o aluno precisa reavaliar (a cada 60 dias)."""
+    """Verifica se o aluno precisa reavaliar E/OU responder overtraining (bimestral - 56 dias).
+
+    FIX 13/05/2026: Unifica reavaliacao + overtraining no mesmo gatilho bimestral.
+    Antes: reavaliacao 60 dias / overtraining 30 dias (separados).
+    Agora: ambos 56 dias (8 semanas - janela de adaptacao muscular Schoenfeld 2017).
+    """
+    import json
     from app.routers.avaliacao import AvaliacaoFisica
 
     ultima = db.query(AvaliacaoFisica).filter(
         AvaliacaoFisica.aluno_id == aluno.id
     ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
 
+    # Helper: extrai data do ultimo overtraining das observacoes (JSON)
+    def overtraining_pendente_check(aval):
+        if not aval or not aval.observacoes:
+            return True  # sem overtraining registrado = pendente
+        try:
+            obs = json.loads(aval.observacoes)
+            ot_data_str = obs.get("overtraining_data")
+            if not ot_data_str:
+                return True
+            ot_data = date.fromisoformat(ot_data_str)
+            return (date.today() - ot_data).days >= 56
+        except Exception:
+            return True
+
     if not ultima:
-        return {"precisa_reavaliar": True, "mensagem": "Faça sua primeira avaliação!"}
-
-    dias = (date.today() - ultima.data_avaliacao).days
-    proxima = ultima.data_avaliacao + timedelta(days=60)
-    faltam = (proxima - date.today()).days
-
-    if dias >= 60:
         return {
             "precisa_reavaliar": True,
+            "overtraining_pendente": True,
+            "mensagem": "Faça sua primeira avaliação!"
+        }
+
+    dias = (date.today() - ultima.data_avaliacao).days
+    proxima = ultima.data_avaliacao + timedelta(days=56)
+    faltam = (proxima - date.today()).days
+    ot_pendente = overtraining_pendente_check(ultima)
+
+    if dias >= 56:
+        return {
+            "precisa_reavaliar": True,
+            "overtraining_pendente": ot_pendente,
             "dias_desde_ultima": dias,
             "mensagem": f"Já faz {dias} dias desde sua última avaliação!"
         }
 
     return {
         "precisa_reavaliar": False,
+        "overtraining_pendente": ot_pendente,
         "dias_desde_ultima": dias,
         "faltam_dias": faltam,
         "proxima_data": str(proxima),

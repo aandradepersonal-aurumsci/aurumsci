@@ -1038,3 +1038,101 @@ def post_anamnese(
     db.refresh(anam)
     
     return {"ok": True, "anamnese_id": anam.id}
+
+
+
+# ════════════════════════════════════════════════════════════════════
+# FIX 14/05/2026: Endpoint para aluno salvar VO2 / HRR / PA
+# Resolve bug "VO2 nao tem botao SALVAR" - identificado no pente fino 13/05.
+# Aluno preenche teste no app, dispara este POST, dados persistem em
+# AvaliacaoFisica. Sync com /aluno-portal/avaliacoes detecta vo2max,
+# faz card HRR sumir e banner amarelo de reavaliacao tambem sumir
+# (porque AvaliacaoFisica recente reseta os 56 dias do bimestral).
+# ════════════════════════════════════════════════════════════════════
+
+class Vo2SalvarSchema(BaseModel):
+    protocolo: str  # "cooper" | "milha" | "step"
+    valor_teste: float  # cooper=distancia(m), milha=tempo(min), step=FC(bpm)
+    vo2_calculado: float  # ml/kg/min - calculado no frontend
+    classificacao: Optional[str] = None  # "Excelente", "Bom", "Regular", "Fraco"
+    fc_pico: Optional[int] = None
+    fc_1min: Optional[int] = None
+    pa_repouso_sis: Optional[int] = None
+    pa_repouso_dia: Optional[int] = None
+    pa_pos_sis: Optional[int] = None
+    pa_pos_dia: Optional[int] = None
+
+
+@router.post("/vo2-salvar")
+def salvar_vo2(
+    dados: Vo2SalvarSchema,
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """Aluno salva resultado do teste VO2 (Cooper/Milha/Step) + HRR + PA.
+    
+    Campos VO2 (vo2max, classificacao_vo2, teste_cooper_metros) salvos em
+    colunas reais de AvaliacaoFisica. Campos HRR/PA salvos em observacoes JSON
+    (sem migration ate ter necessidade real - decisao pente fino 14/05).
+    """
+    import json
+    from app.routers.avaliacao import AvaliacaoFisica
+    
+    # Procura AvaliacaoFisica do dia (cria se nao existir)
+    hoje = date.today()
+    aval = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno.id,
+        AvaliacaoFisica.data_avaliacao == hoje
+    ).first()
+    
+    if not aval:
+        aval = AvaliacaoFisica(aluno_id=aluno.id, data_avaliacao=hoje)
+        db.add(aval)
+    
+    # Campos reais em AvaliacaoFisica
+    aval.vo2max = dados.vo2_calculado
+    if dados.classificacao:
+        aval.classificacao_vo2 = dados.classificacao
+    if dados.protocolo == "cooper":
+        aval.teste_cooper_metros = dados.valor_teste
+    
+    # Campos HRR + PA + protocolo em observacoes (JSON)
+    extras = {
+        "vo2_protocolo": dados.protocolo,
+        "vo2_valor_teste": dados.valor_teste,
+        "vo2_data": str(hoje),
+    }
+    if dados.fc_pico is not None:
+        extras["hrr_fc_pico"] = dados.fc_pico
+    if dados.fc_1min is not None:
+        extras["hrr_fc_1min"] = dados.fc_1min
+        # Calcula HRR (queda em 1 min) - Cole 1999
+        if dados.fc_pico is not None:
+            extras["hrr_queda_1min"] = dados.fc_pico - dados.fc_1min
+    if dados.pa_repouso_sis is not None:
+        extras["pa_repouso_sis"] = dados.pa_repouso_sis
+    if dados.pa_repouso_dia is not None:
+        extras["pa_repouso_dia"] = dados.pa_repouso_dia
+    if dados.pa_pos_sis is not None:
+        extras["pa_pos_sis"] = dados.pa_pos_sis
+    if dados.pa_pos_dia is not None:
+        extras["pa_pos_dia"] = dados.pa_pos_dia
+    
+    # Merge com observacoes existentes (preserva overtraining_data etc)
+    try:
+        existing = json.loads(aval.observacoes or "{}")
+        existing.update(extras)
+        aval.observacoes = json.dumps(existing, ensure_ascii=False)
+    except Exception:
+        aval.observacoes = json.dumps(extras, ensure_ascii=False)
+    
+    db.commit()
+    db.refresh(aval)
+    
+    return {
+        "ok": True,
+        "avaliacao_id": aval.id,
+        "vo2max": aval.vo2max,
+        "classificacao_vo2": aval.classificacao_vo2,
+        "data": str(aval.data_avaliacao)
+    }

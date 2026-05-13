@@ -3062,6 +3062,8 @@ function renderTesteVO2(area){
     '<div class="result-input-row"><div class="result-input-label">PA pós diastólica</div><input class="result-input-val" type="number" id="vo2-pa-pos-d" placeholder="90"><div class="result-input-un">mmHg</div></div>' +
     '<button class="btn-gold" style="margin-top:8px;background:linear-gradient(135deg,#FF4B4B,#FF8C00)" onclick="calcularVO2comHRR()">CALCULAR HRR ❤️</button>' +
     '<div id="vo2-hrr-resultado" style="margin-top:10px"></div>' +
+    '<button class="btn-gold" style="margin-top:16px;width:100%;background:linear-gradient(135deg,var(--verde),#00B37E);padding:14px;font-size:15px;letter-spacing:1.5px" onclick="salvarVo2Completo()">💾 SALVAR AVALIAÇÃO COMPLETA</button>' +
+    '<div id="vo2-salvar-status" style="margin-top:10px;text-align:center;font-size:12px"></div>' +
     '</div>' +
     '</div>';
 }
@@ -3173,6 +3175,97 @@ function calcularVO2comHRR(){
     (msg ? '<div style="margin-top:10px;font-size:12px;color:var(--cinza);line-height:1.6">' + msg + '</div>' : '') +
     aviso +
     '</div>';
+}
+
+// ════════════════════════════════════════════════════════════════════
+// FIX 14/05/2026: Salva VO2 + HRR + PA no backend
+// Resolve bug "VO2 nao tem botao SALVAR" identificado no pente fino 13/05.
+// Detecta qual protocolo foi calculado (cooper/milha/step) lendo qual
+// div de resultado tem conteudo, coleta todos os valores preenchidos
+// (HRR + PA), faz POST /app-aluno/vo2-salvar.
+// ════════════════════════════════════════════════════════════════════
+function salvarVo2Completo(){
+  var status = document.getElementById('vo2-salvar-status');
+  if(status) status.innerHTML = '<span style="color:var(--cinza)">⏳ Salvando...</span>';
+
+  var protocolo = null, valor_teste = null, vo2_calculado = null, classificacao = null;
+
+  var cooperRes = document.getElementById('vo2-resultado');
+  var milhaRes = document.getElementById('milha-resultado');
+  var stepRes = document.getElementById('step-resultado');
+
+  if(cooperRes && cooperRes.innerHTML.indexOf('ml/kg/min') !== -1){
+    protocolo = 'cooper';
+    valor_teste = parseFloat(document.getElementById('vo2-dist').value) || 0;
+  } else if(milhaRes && milhaRes.innerHTML.indexOf('ml/kg/min') !== -1){
+    protocolo = 'milha';
+    valor_teste = parseFloat(document.getElementById('milha-tempo').value) || 0;
+  } else if(stepRes && stepRes.innerHTML.indexOf('ml/kg/min') !== -1){
+    protocolo = 'step';
+    valor_teste = parseFloat(document.getElementById('step-fc').value) || 0;
+  }
+
+  if(!protocolo){
+    if(status) status.innerHTML = '<span style="color:var(--vermelho)">❌ Calcule um teste (Cooper, Milha ou Step) antes de salvar</span>';
+    return;
+  }
+
+  var resEl = protocolo === 'cooper' ? cooperRes : (protocolo === 'milha' ? milhaRes : stepRes);
+  var match = resEl.innerHTML.match(/(\d+(?:\.\d+)?)\s*<[^>]*>\s*ml\/kg\/min/);
+  if(!match) match = resEl.innerHTML.match(/(\d+(?:\.\d+)?)\s*ml\/kg\/min/);
+  if(match) vo2_calculado = parseFloat(match[1]);
+
+  var classifMatch = resEl.innerHTML.match(/(Superior|Excelente|Bom|Boa|Regular|Fraco)/i);
+  if(classifMatch) classificacao = classifMatch[1];
+
+  if(!vo2_calculado){
+    if(status) status.innerHTML = '<span style="color:var(--vermelho)">❌ Erro ao ler VO2 calculado. Recalcule o teste.</span>';
+    return;
+  }
+
+  var payload = {
+    protocolo: protocolo,
+    valor_teste: valor_teste,
+    vo2_calculado: vo2_calculado
+  };
+  if(classificacao) payload.classificacao = classificacao;
+
+  var fc_pico = parseInt(document.getElementById('vo2-hrr-pico').value);
+  var fc_1min = parseInt(document.getElementById('vo2-hrr-1min').value);
+  var pa_rep_s = parseInt(document.getElementById('vo2-pa-rep').value);
+  var pa_rep_d = parseInt(document.getElementById('vo2-pa-rep-d').value);
+  var pa_pos_s = parseInt(document.getElementById('vo2-pa-pos').value);
+  var pa_pos_d = parseInt(document.getElementById('vo2-pa-pos-d').value);
+
+  if(!isNaN(fc_pico)) payload.fc_pico = fc_pico;
+  if(!isNaN(fc_1min)) payload.fc_1min = fc_1min;
+  if(!isNaN(pa_rep_s)) payload.pa_repouso_sis = pa_rep_s;
+  if(!isNaN(pa_rep_d)) payload.pa_repouso_dia = pa_rep_d;
+  if(!isNaN(pa_pos_s)) payload.pa_pos_sis = pa_pos_s;
+  if(!isNaN(pa_pos_d)) payload.pa_pos_dia = pa_pos_d;
+
+  fetch('/app-aluno/vo2-salvar', {
+    method: 'POST',
+    headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  })
+  .then(function(r){
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function(d){
+    if(d && d.ok){
+      if(status) status.innerHTML = '<span style="color:var(--verde)">✅ Salvo! VO2 ' + d.vo2max + ' ml/kg/min - ' + (d.classificacao_vo2 || '') + '</span>';
+      localStorage.setItem('aurum_hrr_feito', '1');
+      if(typeof mostrarToast === 'function') mostrarToast('Avaliação salva com sucesso! ✅');
+    } else {
+      if(status) status.innerHTML = '<span style="color:var(--vermelho)">❌ Erro inesperado ao salvar</span>';
+    }
+  })
+  .catch(function(e){
+    console.error('Erro salvar VO2:', e);
+    if(status) status.innerHTML = '<span style="color:var(--vermelho)">❌ Erro ao salvar: ' + e.message + '</span>';
+  });
 }
 
 function renderTesteForca(area){

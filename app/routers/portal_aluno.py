@@ -50,6 +50,8 @@ class AlunoTokenResposta(BaseModel):
     token_type: str = "bearer"
     aluno_id: int
     nome: str
+    sexo: Optional[str] = None
+    idade: Optional[int] = None
 
 class CriarAcesso(BaseModel):
     aluno_id: int
@@ -134,15 +136,34 @@ def login_aluno(dados: AlunoLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=403, detail="Acesso desativado. Verifique sua assinatura em aurumsc.com.br")
     if aluno.personal_id is None and not aluno.ativo:
         raise HTTPException(status_code=403, detail="Assinatura inativa. Acesse aurumsc.com.br para renovar.")
+    # FIX 14/05/2026: Valida personal (se houver) antes de retornar
     if aluno.personal_id is not None:
         from app.models import Personal as PersonalModel
         personal = db.query(PersonalModel).filter(PersonalModel.id == aluno.personal_id).first()
         if personal and personal.assinatura_status not in ('trial', 'ativa'):
             raise HTTPException(status_code=403, detail="Seu personal não possui assinatura ativa.")
-        return AlunoTokenResposta(
+    
+    # FIX 14/05/2026: Calcula idade real do aluno (era hardcoded 30 no frontend)
+    # e retorna sexo + idade no payload de login. Frontend (linha 1317-1318
+    # do app_aluno.html) ja le esses campos e salva no localStorage para
+    # classificacao correta de VO2, forca, gordura, etc.
+    hoje = date.today()
+    idade_calc = None
+    if aluno.data_nascimento:
+        idade_calc = hoje.year - aluno.data_nascimento.year - (
+            (hoje.month, hoje.day) < (aluno.data_nascimento.month, aluno.data_nascimento.day)
+        )
+    sexo_str = aluno.sexo.value if aluno.sexo else None
+    
+    # FIX 14/05/2026: Return unificado - vale para aluno COM ou SEM personal.
+    # Antes: aluno autonomo (personal_id=None) caia em fim de funcao sem
+    # return, resultando em erro 500 ou None ao logar. Agora retorna OK.
+    return AlunoTokenResposta(
         access_token=criar_token_aluno(aluno.id),
         aluno_id=aluno.id,
         nome=aluno.nome,
+        sexo=sexo_str,
+        idade=idade_calc,
     )
 
 

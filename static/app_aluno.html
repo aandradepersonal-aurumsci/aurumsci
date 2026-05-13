@@ -3128,8 +3128,12 @@ function calcularVO2(){
   var idade = parseInt(localStorage.getItem('aurum_idade')||'30');
   var sexo = localStorage.getItem('aurum_sexo')||'M';
   var classif = classificarVO2(vo2, idade, sexo);
-  var fcPos = parseFloat(document.getElementById('vo2-fc-pos').value)||0;
-  var fcRep = parseFloat(document.getElementById('vo2-fc-rep').value)||0;
+  // FIX 14/05/2026: IDs vo2-fc-pos e vo2-fc-rep nao existem mais no HTML
+  // (foram removidos em redesign passado). Leitura defensiva impede TypeError.
+  var fcPosEl = document.getElementById('vo2-fc-pos');
+  var fcRepEl = document.getElementById('vo2-fc-rep');
+  var fcPos = fcPosEl ? (parseFloat(fcPosEl.value)||0) : 0;
+  var fcRep = fcRepEl ? (parseFloat(fcRepEl.value)||0) : 0;
   document.getElementById('vo2-resultado').innerHTML =
     '<div class="classificacao-box" style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2)">' +
     '<div class="class-titulo" style="color:var(--verde)">VO2 MÁXIMO ESTIMADO</div>' +

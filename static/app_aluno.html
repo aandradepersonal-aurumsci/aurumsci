@@ -3325,6 +3325,26 @@ function salvarForca(){
     '<div style="margin-top:10px;font-size:10px;color:var(--cinza);opacity:.8">📚 ACSM 2022 · Canadian Fitness Survey · Jones et al. (1999) Res Q Exerc Sport</div>' +
     '</div>';
   mostrarToast('Resultados calculados!');
+  
+  // FIX 14/05/2026 NOITE: persiste resultado no backend (POST /forca-salvar)
+  var payload_forca = {};
+  if(flexao) payload_forca.flexao_reps = flexao;
+  if(barra) payload_forca.barra_reps = barra;
+  if(abdom) payload_forca.abdom_reps = abdom;
+  if(cf) {
+    payload_forca.classificacao_flexao = cf.txt;
+    payload_forca.faixa_etaria = cf.faixa;
+  }
+  fetch('/app-aluno/forca-salvar', {
+    method: 'POST',
+    headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
+    body: JSON.stringify(payload_forca)
+  })
+  .then(function(r){ return r.ok ? r.json() : Promise.reject('HTTP ' + r.status); })
+  .then(function(d){
+    if(d && d.ok) mostrarToast('💪 Força calculada e SALVA!');
+  })
+  .catch(function(e){ console.warn('Erro salvar Forca:', e); });
 }
 
 function renderTesteMMII(area){
@@ -3349,6 +3369,23 @@ function calcularMMII(){
     '<div class="class-desc" style="color:' + cm.cor + '">' + cm.txt + ' · Faixa ' + cm.faixa + '</div>' +
     '<div style="margin-top:10px;font-size:10px;color:var(--cinza);opacity:.8">📚 Jones et al. (1999) Res Q Exerc Sport · Rikli & Jones Senior Fitness Test</div>' +
     '</div>';
+  
+  // FIX 14/05/2026 NOITE: persiste resultado no backend (POST /potencia-salvar)
+  var payload_mmii = {mmii_reps: reps};
+  if(cm) {
+    payload_mmii.classificacao = cm.txt;
+    payload_mmii.faixa_etaria = cm.faixa;
+  }
+  fetch('/app-aluno/potencia-salvar', {
+    method: 'POST',
+    headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
+    body: JSON.stringify(payload_mmii)
+  })
+  .then(function(r){ return r.ok ? r.json() : Promise.reject('HTTP ' + r.status); })
+  .then(function(d){
+    if(d && d.ok) mostrarToast('🦵 Potência calculada e SALVA!');
+  })
+  .catch(function(e){ console.warn('Erro salvar Potencia:', e); });
 }
 function renderTesteFC(area){
   area.innerHTML = '<div class="card"><div class="card-line vermelho" style="background:linear-gradient(90deg,var(--vermelho),#FF8C00)"></div>' +

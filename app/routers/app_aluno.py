@@ -1136,3 +1136,124 @@ def salvar_vo2(
         "classificacao_vo2": aval.classificacao_vo2,
         "data": str(aval.data_avaliacao)
     }
+
+
+
+# ════════════════════════════════════════════════════════════════════
+# FIX 14/05/2026 NOITE: Endpoints para aluno salvar Forca + Potencia MMII
+# Mesmo padrao do /vo2-salvar (commit e85f9f0).
+# Resolve bug "Forca/Potencia calcula mas nao salva" - confirmado
+# pelo JSON /aluno-portal/avaliacoes (campos ausentes).
+# Dados salvos em observacoes JSON (sem migration pre-Apple).
+# ════════════════════════════════════════════════════════════════════
+
+class ForcaSalvarSchema(BaseModel):
+    flexao_reps: Optional[int] = None
+    barra_reps: Optional[int] = None
+    abdom_reps: Optional[int] = None
+    classificacao_flexao: Optional[str] = None
+    faixa_etaria: Optional[str] = None
+
+
+class PotenciaSalvarSchema(BaseModel):
+    mmii_reps: int  # sentar e levantar 30s
+    classificacao: Optional[str] = None
+    faixa_etaria: Optional[str] = None
+
+
+@router.post("/forca-salvar")
+def salvar_forca(
+    dados: ForcaSalvarSchema,
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """Aluno salva resultado de Testes de Forca (Flexao + Barra + Abdominal)."""
+    import json
+    from app.routers.avaliacao import AvaliacaoFisica
+    
+    hoje = date.today()
+    aval = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno.id,
+        AvaliacaoFisica.data_avaliacao == hoje
+    ).first()
+    
+    if not aval:
+        aval = AvaliacaoFisica(aluno_id=aluno.id, data_avaliacao=hoje)
+        db.add(aval)
+    
+    # Tudo em observacoes JSON (sem migration)
+    extras = {"forca_data": str(hoje)}
+    if dados.flexao_reps is not None:
+        extras["forca_flexao_reps"] = dados.flexao_reps
+    if dados.barra_reps is not None:
+        extras["forca_barra_reps"] = dados.barra_reps
+    if dados.abdom_reps is not None:
+        extras["forca_abdom_reps"] = dados.abdom_reps
+    if dados.classificacao_flexao:
+        extras["forca_classificacao_flexao"] = dados.classificacao_flexao
+    if dados.faixa_etaria:
+        extras["forca_faixa_etaria"] = dados.faixa_etaria
+    
+    try:
+        existing = json.loads(aval.observacoes or "{}")
+        existing.update(extras)
+        aval.observacoes = json.dumps(existing, ensure_ascii=False)
+    except Exception:
+        aval.observacoes = json.dumps(extras, ensure_ascii=False)
+    
+    db.commit()
+    db.refresh(aval)
+    
+    return {
+        "ok": True,
+        "avaliacao_id": aval.id,
+        "data": str(aval.data_avaliacao),
+        "salvo": extras
+    }
+
+
+@router.post("/potencia-salvar")
+def salvar_potencia(
+    dados: PotenciaSalvarSchema,
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """Aluno salva resultado de Potencia MMII (Sentar e Levantar 30s)."""
+    import json
+    from app.routers.avaliacao import AvaliacaoFisica
+    
+    hoje = date.today()
+    aval = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno.id,
+        AvaliacaoFisica.data_avaliacao == hoje
+    ).first()
+    
+    if not aval:
+        aval = AvaliacaoFisica(aluno_id=aluno.id, data_avaliacao=hoje)
+        db.add(aval)
+    
+    extras = {
+        "mmii_data": str(hoje),
+        "mmii_reps": dados.mmii_reps,
+    }
+    if dados.classificacao:
+        extras["mmii_classificacao"] = dados.classificacao
+    if dados.faixa_etaria:
+        extras["mmii_faixa_etaria"] = dados.faixa_etaria
+    
+    try:
+        existing = json.loads(aval.observacoes or "{}")
+        existing.update(extras)
+        aval.observacoes = json.dumps(existing, ensure_ascii=False)
+    except Exception:
+        aval.observacoes = json.dumps(extras, ensure_ascii=False)
+    
+    db.commit()
+    db.refresh(aval)
+    
+    return {
+        "ok": True,
+        "avaliacao_id": aval.id,
+        "data": str(aval.data_avaliacao),
+        "salvo": extras
+    }

@@ -9,6 +9,7 @@ PUT  /aluno-portal/senha          → alterar senha
 """
 
 from datetime import datetime, timedelta, timezone, date
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status  # noqa: F401
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session

@@ -1,9 +1,107 @@
 # 📊 AURUMSCI — STATUS GERAL DO PROJETO
 
 > **Documento mestre de estado atual**
-> Atualizado: domingo, 10/05/2026, 13h30
+> Atualizado: quarta-feira, 14/05/2026, 21h00 (sessao tarde+noite)
 > Próximo update: após próxima sessão de trabalho
 > **PROPÓSITO**: Próxima sessão (Claude/dev) lê este documento e sabe TUDO sobre onde estamos.
+
+---
+
+## 🗓️ SESSÃO 14/05/2026 — VO2 + IDADE DINÂMICA + FORÇA + MMII (HISTÓRICA)
+
+### 🏆 7 commits em produção
+
+**Tarde — Ciclo VO2 + idade dinâmica:**
+- `e85f9f0` Backend POST /app-aluno/vo2-salvar
+- `3697c8b` Frontend botão SALVAR + função salvarVo2Completo
+- `4d81a5c` Fix Cooper (IDs órfãos vo2-fc-pos/rep removidos em redesign anterior)
+- `88549e0` Login retorna sexo+idade real + return unificado p/ aluno autônomo
+- `c947e0e` Hotfix Optional import (NameError em produção, ~5 min downtime)
+
+**Noite — Ciclo Força + Potência MMII:**
+- `f3ba481` Backend POST /forca-salvar + /potencia-salvar (mesmo padrão VO2)
+- `3901033` Frontend dispara fetch após calcular (toasts confirmam)
+
+### ✅ Estado validado end-to-end (André testou)
+
+- 3 protocolos VO2 (Cooper/Milha/Step) salvam e classificam por idade real
+- Cooper, Milha, Step todos com HRR funcionando
+- Força (Flexão+Barra+Abdominal) calcula + salva no banco
+- Potência MMII (Sentar e Levantar 30s) calcula + salva no banco
+- Idade do banco → localStorage → classificação correta (testou com 01/01/1990=36; depois real=51 → "Faixa 50-59 anos" funcionou)
+- Aluno autônomo (Porta B) loga sem erro 500
+
+### 🎯 PRÓXIMA SESSÃO — Onde paramos
+
+**Backend salva tudo, frontend RESULTADOS ainda não exibe os novos campos.**
+Dashboard "MEUS RESULTADOS" hoje mostra apenas peso/gordura/MM/VO2.
+Os dados de Força+MMII+HRR+PA+Postural+Abdômen estão **no banco**, esperando renderização.
+
+### 📋 PRIORIDADES PRÓXIMA SESSÃO (ordem)
+
+**1. Card RESULTADOS expandido (~45-60 min) — VITÓRIA RÁPIDA**
+- Expandir GET /meus-resultados retornando TODOS os campos do banco
+- Frontend renderizar visualmente Força + MMII + HRR + PA + Postural + Abdômen
+- Validar: o que tá salvo aparece na tela
+
+**2. Validação Postural ao vivo (~20 min)**
+- Endpoint /postural/salvar EXISTE, função salvarPostural() EXISTE
+- André testou e ficou impressão "não salva" mas pode ser dashboard não exibir
+- Possivelmente RESOLVIDO após prioridade 1
+
+**3. Anamnese pré-popular tela edição (~30 min)**
+- Bug visual: modal abre vazio em OBJETIVO/NÍVEL/DIAS
+- Backend SALVA (treino é gerado certo)
+- Causa raiz: campo `dias_semana` NÃO EXISTE no model Aluno
+  (linhas 60-86 de `app/models/__init__.py`)
+- Endpoint /onboarding faz `aluno.dias_semana = X` que SQLAlchemy IGNORA silenciosamente
+- Fix: ler de `PlanoTreino` que TEM `dias_semana` persistido
+
+**4. Classificação Abdômen H≤90cm/M≤80cm (~30 min) — SACADA ANDRÉ**
+- Marcador metabólico que André usa profissionalmente
+- Cutoffs NIH/IDF/OMS (mais protetores que cintura/quadril)
+- Já em circunferências, falta classificação visual + exibição
+
+**5. Gráficos de evolução (~3-4h, sessão dedicada)**
+- Endpoint /aluno-portal/avaliacoes JÁ retorna histórico
+- Falta UI gráfica + biblioteca (Chart.js?)
+
+**6. Investigações menores:**
+- Rótulo "ÚLTIMA AVALIAÇÃO DO PERSONAL" mesmo p/ autônomo
+- Endpoint /meus-resultados duplicado (linhas 260 e 277)
+- Classificação VO2 divergente tela vs banco
+- IMC — DECISÃO ANDRÉ: vago, não priorizar
+- Cintura/quadril — DECISÃO ANDRÉ: NÃO implementar
+- Risco cardiovascular: campo null apesar de HRR+PA salvos
+
+### 🚀 PÓS-APPLE (roadmap registrado)
+
+- 🤖 Auri esperto com sistema (knowledge base AurumSci)
+- 🇧🇷 Cores Brasil VO2 (Cooper verde / Step amarelo / Milha azul)
+- 🩺 Alertas clínicos PA (ACSM 2022 + SBC 2020)
+- ❤️ HRR 2 min profissional
+- 📧 Email único bimestral
+- 🔄 Circuito fechado overtraining → ajuste treino
+- 📱 Tela "Editar Perfil" no app aluno (incluindo data_nascimento)
+- 💎 Frase paráfrase Cooper: "Treinar ajuda. Mas só treinar não imuniza. Avalie. Mantenha em dia."
+
+### 🪞 Observações metodológicas
+
+**"Audit before refactor" funcionou EXCELENTE.** Sem o método de André, Claude teria proposto refatores prematuros. Mapear → confirmar arquitetura → fix cirúrgico.
+
+**NameError em produção (c947e0e):** `python3 -m py_compile` NÃO pega tipos não importados. Reforço: também rodar `python3 -c "from app.routers import X"`. Adotado a partir de `f3ba481`, zero downtime nos 2 commits seguintes.
+
+**Bug Cooper enterrado vivo:** IDs órfãos `vo2-fc-pos/rep` removidos em redesign anterior. `null.value` → TypeError → Cooper E HRR quebrados em cascata. Descoberto porque André testou os 3 protocolos meticulosamente.
+
+**Padrão "Backend SALVA, Frontend não LÊ":** identificado em 3 lugares (dashboard, anamnese, força/MMII). Parcialmente resolvido. Próxima sessão fecha.
+
+### 💎 Filosofia clínica registrada
+
+André descartou IMC (vago) e razão cintura/quadril (vago) com base em 20 anos de prática + literatura (ACSM, NIH, OMS, Després). Manteve circunferência abdominal isolada (H≤90/M≤80cm). AurumSci diferenciado por marcadores clínicos robustos (% gordura 9 pontos, VO2max, HRR, abdômen isolado, PA repouso+esforço).
+
+### 🏢 Vitória empresarial paralela
+
+**CNPJ pronto** (confirmado durante a sessão). AurumSci passou de "André faz" para "Empresa AurumSci". Habilita: NF, Stripe PJ, App Store como empresa, contratos PJ, crédito empresarial.
 
 ---
 

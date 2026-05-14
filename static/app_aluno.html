@@ -2756,10 +2756,13 @@ function renderGraficoRadar(atual){
   // Usa estimativas de excelencia por metrica
   function norm(val, max){ if(val == null) return 0; return Math.min(100, (val/max)*100); }
   
+  // FIX 15/05/2026 TARDE: removida Flexibilidade do radar (aluno autonomo
+  // nao tem teste de flexibilidade no app - banco de Wells e ferramenta
+  // do PRO). Voltara quando implementarmos sit-and-reach com marcos
+  // anatomicos (proxima sessao dedicada). Radar agora com 4 dimensoes.
   var dados = [
     norm(atual.flexao_reps, 50),         // Forca (50 reps = excelente)
     norm(atual.vo2max, 55),               // Cardio (55 ml/kg/min = excelente)
-    norm(atual.flexibilidade_cm, 35),     // Flexibilidade (35cm = excelente)
     norm(atual.mmii_reps, 30),            // MMII (30 reps = excelente)
     100 - norm(atual.percentual_gordura, 35) // Composicao (gordura BAIXA = melhor, invertido)
   ];
@@ -2772,7 +2775,7 @@ function renderGraficoRadar(atual){
   window._chartRadar = new Chart(canvas, {
     type: 'radar',
     data: {
-      labels: ['Forca', 'Cardio', 'Flexibilidade', 'MMII', 'Composicao'],
+      labels: ['Forca', 'Cardio', 'MMII', 'Composicao'],
       datasets: [{
         data: dados,
         borderColor: '#C9A84C',

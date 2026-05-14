@@ -259,16 +259,81 @@ async def registrar_bioimpedancia(
 
 @router.get("/meus-resultados")
 def meus_resultados(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    """
+    FIX 15/05/2026: Endpoint expandido para Card RESULTADOS (file mignon).
+    Retorna TUDO que JA EXISTE no banco (sem inventar classificacao):
+    - Composicao: peso, gordura+classif, massa magra
+    - Flexibilidade (se houver) + classif
+    - Cardio: VO2+classif, HRR (numero)
+    - Forca: flexao+classif, barra (numero), abdominal (numero)
+    - Potencia MMII (numero+classif)
+    
+    FORA do retorno (decisao produto Andre 15/05/2026):
+    - IMC (vago clinicamente)
+    - Cintura/Quadril (sem classif pronta)
+    - Postura (corretivos ja vao pro treino)
+    """
+    import json
     from app.routers.avaliacao import AvaliacaoFisica
-    av = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno.id).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+    
+    av = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno.id
+    ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+    
     if not av:
         return {}
+    
+    # Le dados extras do JSON observacoes (HRR, Forca, MMII salvos
+    # ontem nos commits f3ba481 e e85f9f0).
+    extras = {}
+    try:
+        if av.observacoes:
+            extras = json.loads(av.observacoes)
+    except Exception:
+        pass
+    
     return {
+        "data_avaliacao": str(av.data_avaliacao) if av.data_avaliacao else None,
+        
+        "composicao": {
+            "peso": av.peso,
+            "percentual_gordura": av.percentual_gordura,
+            "classificacao_gordura": av.classificacao_gordura,
+            "massa_magra_kg": av.massa_magra_kg,
+        },
+        
+        "flexibilidade": {
+            "valor_cm": av.teste_flexibilidade_cm,
+            "classificacao": av.classificacao_flexibilidade,
+        },
+        
+        "cardio": {
+            "vo2max": av.vo2max,
+            "classificacao_vo2": av.classificacao_vo2,
+            "hrr_bpm": extras.get("hrr_recuperacao") or extras.get("hrr_1min"),
+        },
+        
+        "forca": {
+            "flexao_reps": av.teste_flexao_num or extras.get("forca_flexao_reps"),
+            "classificacao_flexao": av.classificacao_flexao or extras.get("forca_classificacao_flexao"),
+            "faixa_etaria_flexao": extras.get("forca_faixa_etaria"),
+            "barra_reps": av.teste_barra_num or extras.get("forca_barra_reps"),
+            "abdominal_reps": extras.get("forca_abdom_reps"),
+        },
+        
+        "potencia_mmii": {
+            "reps_30s": extras.get("mmii_reps"),
+            "classificacao": extras.get("mmii_classificacao"),
+            "faixa_etaria": extras.get("mmii_faixa_etaria"),
+        },
+        
+        # Manter campos antigos pra compatibilidade com o frontend atual
+        # (renderizacao existente PESO/GORDURA/MASSA MAGRA continua funcionando
+        # ate o frontend ser atualizado no proximo commit)
         "peso": av.peso,
         "percentual_gordura": av.percentual_gordura,
         "massa_magra_kg": av.massa_magra_kg,
         "vo2max": av.vo2max,
-        "data_avaliacao": str(av.data_avaliacao) if av.data_avaliacao else None,
         "postura_cabeca": av.postura_cabeca,
         "postura_observacoes": av.postura_observacoes,
     }

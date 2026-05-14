@@ -2498,9 +2498,11 @@ function renderEvolucao(){
     
     // ─── HELPER: render delta (variacao) ──────────────
     function renderDelta(val, unidade, inverter){
-      if(val === null || val === undefined) return '';
+      // FIX 15/05/2026: nao renderiza quando null/undefined/zero
+      // (zero = mesma avaliacao, nao vende nada, vira ruido visual)
+      if(val === null || val === undefined || val === 0) return '';
       var positivo = inverter ? (val < 0) : (val > 0);
-      var cor = val === 0 ? 'var(--cinza)' : (positivo ? 'var(--verde)' : 'var(--vermelho)');
+      var cor = positivo ? 'var(--verde)' : 'var(--vermelho)';
       var sinal = val > 0 ? '+' : '';
       return '<div style="font-size:11px;color:' + cor + ';margin-top:4px;font-weight:600">' + sinal + val + ' ' + unidade + ' desde anterior</div>';
     }

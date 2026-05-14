@@ -602,33 +602,97 @@ async def registrar_presenca(
 
 @router.get("/resultado")
 def resultado(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
-    """Retorna evolução física do aluno."""
+    """
+    FIX 15/05/2026: Expandido para Card RESULTADOS (file mignon).
+    Retorna TODOS os dados que existem + deltas (variacoes) quando ha
+    avaliacao anterior. Le campos diretos do model + JSON observacoes.
+    
+    DECISOES PRODUTO (Andre):
+    - FORA: IMC, Cintura/Quadril, Postura, RCQ, PA
+    - DELTAS: so calculados quando atual E anterior tem o valor
+    - Sem inventar classificacao (so usa as ja persistidas)
+    """
+    import json
     from app.routers.avaliacao import AvaliacaoFisica
-
+    
     avals = db.query(AvaliacaoFisica).filter(
         AvaliacaoFisica.aluno_id == aluno.id
     ).order_by(AvaliacaoFisica.data_avaliacao.desc()).all()
-
+    
     if not avals:
         return {"detail": "Sem avaliacoes"}
-
+    
     atual = avals[0]
     anterior = avals[1] if len(avals) > 1 else None
-
-    variacao_peso = None
-    if anterior and atual.peso and anterior.peso:
-        variacao_peso = round(float(atual.peso) - float(anterior.peso), 1)
-
+    
+    extras_atual = {}
+    extras_anterior = {}
+    try:
+        if atual.observacoes:
+            extras_atual = json.loads(atual.observacoes)
+    except Exception:
+        pass
+    try:
+        if anterior and anterior.observacoes:
+            extras_anterior = json.loads(anterior.observacoes)
+    except Exception:
+        pass
+    
+    def delta(a, b, casas=1):
+        if a is None or b is None:
+            return None
+        try:
+            return round(float(a) - float(b), casas)
+        except Exception:
+            return None
+    
     massa_magra = atual.massa_magra_kg
     if not massa_magra and atual.peso and atual.percentual_gordura:
         massa_magra = round(float(atual.peso) * (1 - float(atual.percentual_gordura) / 100), 1)
-
+    
+    flexao_atual = atual.teste_flexao_num if atual.teste_flexao_num is not None else extras_atual.get("forca_flexao_reps")
+    barra_atual = atual.teste_barra_num if atual.teste_barra_num is not None else extras_atual.get("forca_barra_reps")
+    abdom_atual = extras_atual.get("forca_abdom_reps")
+    mmii_atual = extras_atual.get("mmii_reps")
+    hrr_atual = extras_atual.get("hrr_recuperacao") or extras_atual.get("hrr_1min")
+    flexi_atual = atual.teste_flexibilidade_cm
+    
+    flexao_anterior = None
+    flexi_anterior = None
+    mmii_anterior = extras_anterior.get("mmii_reps") if anterior else None
+    if anterior:
+        flexao_anterior = anterior.teste_flexao_num if anterior.teste_flexao_num is not None else extras_anterior.get("forca_flexao_reps")
+        flexi_anterior = anterior.teste_flexibilidade_cm
+    
     return {
         "peso_atual": float(atual.peso) if atual.peso else None,
         "percentual_gordura": float(atual.percentual_gordura) if atual.percentual_gordura else None,
         "massa_magra": float(massa_magra) if massa_magra else None,
-        "variacao_peso": variacao_peso,
-        "data": str(atual.data_avaliacao)
+        "variacao_peso": delta(atual.peso, anterior.peso if anterior else None, 1),
+        "data": str(atual.data_avaliacao),
+        "classificacao_gordura": atual.classificacao_gordura,
+        "variacao_gordura": delta(atual.percentual_gordura, anterior.percentual_gordura if anterior else None, 1),
+        "variacao_massa_magra": delta(massa_magra, anterior.massa_magra_kg if anterior else None, 1),
+        "flexibilidade_cm": flexi_atual,
+        "classificacao_flexibilidade": atual.classificacao_flexibilidade,
+        "variacao_flexibilidade": delta(flexi_atual, flexi_anterior, 1),
+        "vo2max": float(atual.vo2max) if atual.vo2max else None,
+        "classificacao_vo2": atual.classificacao_vo2,
+        "variacao_vo2": delta(atual.vo2max, anterior.vo2max if anterior else None, 1),
+        "hrr_bpm": hrr_atual,
+        "flexao_reps": flexao_atual,
+        "classificacao_flexao": atual.classificacao_flexao or extras_atual.get("forca_classificacao_flexao"),
+        "faixa_etaria_flexao": extras_atual.get("forca_faixa_etaria"),
+        "variacao_flexao": delta(flexao_atual, flexao_anterior, 0),
+        "barra_reps": barra_atual,
+        "abdominal_reps": abdom_atual,
+        "mmii_reps": mmii_atual,
+        "mmii_classificacao": extras_atual.get("mmii_classificacao"),
+        "mmii_faixa_etaria": extras_atual.get("mmii_faixa_etaria"),
+        "variacao_mmii": delta(mmii_atual, mmii_anterior, 0),
+        "tem_anterior": anterior is not None,
+        "data_anterior": str(anterior.data_avaliacao) if anterior else None,
+        "total_avaliacoes": len(avals),
     }
 
 

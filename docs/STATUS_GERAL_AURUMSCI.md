@@ -1,9 +1,142 @@
 # 📊 AURUMSCI — STATUS GERAL DO PROJETO
 
 > **Documento mestre de estado atual**
-> Atualizado: quarta-feira, 14/05/2026, 21h00 (sessao tarde+noite)
+> Atualizado: quinta-feira, 15/05/2026, 12h30 (sessao manha) - retorno apos almoco
 > Próximo update: após próxima sessão de trabalho
 > **PROPÓSITO**: Próxima sessão (Claude/dev) lê este documento e sabe TUDO sobre onde estamos.
+
+---
+
+## 🗓️ SESSAO 15/05/2026 - MANHA (Anamnese + Card RESULTADOS = File Mignon)
+
+### 🏆 6 commits em producao
+
+**Anamnese pre-popular (parte de cima OBJETIVO/NIVEL/DIAS):**
+- `2bd1f2b` Backend: login retorna 3 campos (le PlanoTreino.dias_semana)
+- `2cb3e0d` Frontend: 3 setItem no callback do login
+
+**Card RESULTADOS expandido (FILE MIGNON):**
+- `8ea53c3` Backend: /meus-resultados expandido (ESTRATEGIA ERRADA - linha 277)
+- `bbf8559` Backend: /resultado expandido com deltas (LINHA CERTA 603)
+- `add937f` Frontend: renderEvolucao expandida com 4 grupos novos
+- `bc586f3` Fix: esconde delta=0 (visual limpo)
+
+### Estado validado end-to-end (Andre testou + print)
+
+**Anamnese pre-popular:**
+- Logout/login -> localStorage recebe os 3 campos
+- Modal Anamnese abre com OBJETIVO + NIVEL + DIAS pre-selecionados
+- Bug do 11/05/2026 ("Backend salva, frontend nao LE") FINALMENTE morto
+- Workaround: dias_semana vem de PlanoTreino (campo nao existe no model Aluno)
+
+**Card RESULTADOS expandido:**
+- Card motivacional topo (gradiente dourado)
+- COMPOSICAO: Peso + Gordura+classif + Massa Magra
+- CARDIO: VO2+classif + HRR
+- FORCA: Flexao+classif, Barra, Abdominal
+- POTENCIA MMII: reps+classif+faixa
+- Deltas renderizam SO quando ha progresso real (>0 ou <0, esconde =0/null)
+
+### 💎 Decisoes de produto registradas (15/05 manha)
+
+**Filosofia File Mignon:**
+"Card RESULTADOS = asset de MARKETING, nao tela secundaria.
+4 funcoes: retencao + venda + conteudo Ciencia Hipertrofia + clinica.
+Insight do aluno de marketing: cliente compra resultado."
+
+**Filosofia Postura:**
+"Postura NAO entra no Card RESULTADOS. Mesmo embalada como 'avaliada',
+mostrar lembra o aluno que e torto. Postura nao muda significativamente
+(so atenua). Corretivos ja vao automaticamente pro treino."
+
+**Filosofia Decisoes de UI:**
+"Se faz aqui, faz em tudo. Cada decisao implica em coerencia visual,
+3 idiomas, manutencao futura. SO USA o que JA EXISTE no sistema."
+
+**Filosofia Editorial (validado por Andre):**
+"AurumSci VENDE entrega real, so nao COLOCA IMPORTANCIA no que e negativo.
+E DESIGN HIERARQUICO, nao mistica. Tom Aurum ja existe no sistema (Auri
+fala assim no check-in de presenca): DADOS antes de JULGAMENTO, CAMINHO
+antes de PROBLEMA, OBJETIVO antes de CRITICA, CONVITE antes de SENTENCA."
+
+**Barra fixa - decisao pedagogica:**
+1 campo mantido. Sem refator. Personal sugere isometria pra iniciantes.
+
+### 🪞 Observacoes metodologicas da manha
+
+**Audit before refactor SALVOU 3x:**
+1. /meus-resultados expandido errado (frontend usa /resultado linha 603)
+2. Banner "ULTIMA AVALIACAO DO PERSONAL" confundido com aba RESULTADOS
+3. Banner modo dia bugado pertence ao refator do link questionario
+
+**Tag git pre-mudanca grande:** v1.0-pre-resultados-expandido criada
+antes de mexer no Card. Blindagem 3 camadas.
+
+**Bug arquitetural mapeado (cleanup futuro):**
+- linha 260: /meus-resultados DUPLICADO #1
+- linha 342: /meus-resultados DUPLICADO #2 (FastAPI usa este)
+- linha 603: /resultado ATIVO usado pelo frontend
+
+---
+
+## 🎯 ESQUELETO TARDE 15/05/2026 - PROXIMAS BATALHAS
+
+### PRIORIDADE 1 - Banners modo dia/noite (~60-90 min)
+
+Bug visual: banners "ULTIMA AVALIACAO DO PERSONAL", "COMPLETE SEU
+CADASTRO" e cards "VOCE PREENCHE" tem cores fixas (preto+dourado) que
+ficam ILEGIVEIS em modo dia.
+
+**LIGADO ao refator maior:** banner "COMPLETE SEU CADASTRO" tem botao
+"ABRIR QUESTIONARIO" que conecta ao link de onboarding. Refator pode
+implicar mexer em mais lugares (principio "se faz aqui faz em tudo").
+
+Estrategia: CSS variables, auditar todos lugares similares, testar
+em modo dia E noite.
+
+### PRIORIDADE 2 - Graficos Chart.js (~3-4h sessao dedicada)
+
+Conceito: dashboard analitico TIPO POWER BI dentro do AurumSci.
+Asset de marketing maximo. Vira screenshot pra TikTok/YouTube/Stories.
+
+Plano: Chart.js via CDN + backend expandir historico + 3 graficos de
+linha (peso/gordura/VO2) + KPI cards motivacionais.
+
+JA TEMOS: /aluno-portal/avaliacoes retorna historico (IDs 13-16+),
+Card RESULTADOS atual mostra atual + delta vs anterior.
+
+### PRIORIDADE 3 - Link onboarding Aluno autonomo
+
+Espelho do link do PRO mas pelo Aluno autonomo (Porta B). Refator do
+questionario de onboarding ligado ao banner "COMPLETE SEU CADASTRO".
+
+3 campos JA RETORNAM via login (commits 2bd1f2b/2cb3e0d): objetivo,
+nivel_experiencia, dias_semana. Falta: criar link proprio do aluno.
+
+### PRIORIDADE 4 - App PRO espelhando aluno (varias sessoes)
+
+PRO precisa Card RESULTADOS expandido com visao clinica COMPLETA
+(inclui Postura, Cintura, PA - personal precisa do clinico).
+Espelhar tudo que aluno tem + features so-PRO.
+
+### PRIORIDADE 5 - Trilingual no Card RESULTADOS (~2h)
+
+Sistema base ja existe (linhas 870-918 PT, 990-1057 EN, 1019+ ES).
+Novo Card precisa traduzir rotulos + classificacoes + mensagens.
+Importante pos-Apple (Apple Store EUA pede ingles).
+
+### PRIORIDADE 6 - Auri esperta (pos-Apple, ~1h30-2h)
+
+Conforme decisao 14/05: 3 niveis (knowledge base + dados aluno +
+proativa). Tom: dado + contexto + caminho + convite.
+
+### Bugs menores mapeados (cleanup futuro)
+
+- Endpoint /meus-resultados DUPLICADO (linhas 260 e 277)
+- Classificacao VO2 divergente tela vs banco
+- Risco cardiovascular: campo null
+- Rotulo "ULTIMA AVALIACAO DO PERSONAL" para autonomo
+- App Aluno nao permite cadastro de data_nascimento
 
 ---
 

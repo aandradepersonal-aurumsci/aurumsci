@@ -2194,6 +2194,14 @@ function renderTreino(){
           }
         })
         .catch(function(e){ console.warn('Erro sync avaliacoes:', e); });
+      // FIX 15/05/2026 TARDE: se ja existem corretivos no banco, postural ESTA feita
+      // (mesmo que localStorage tenha perdido o flag por logout/sessao nova).
+      // Sincroniza localStorage e esconde o aviso "faca postural" enganoso.
+      var temCorretivos = (d.corretivos_posturais && d.corretivos_posturais.length > 0);
+      if(temCorretivos){
+        localStorage.setItem('aurum_postural_feita', '1');
+        posturalFeita = '1';
+      }
       if(!posturalFeita || !hrrFeito){
         treinoHtml = treinoHtml + renderDicaAvaliacao(posturalFeita, hrrFeito);
       }

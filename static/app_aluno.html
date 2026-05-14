@@ -325,6 +325,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 }
 .senha-toggle:hover { opacity: 1; }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -522,6 +523,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   <!-- SCREEN EVOLUÇÃO -->
   <div class="screen" id="screen-evolucao">
     <div class="section-title" id="t-evol-titulo" data-i18n="resultadosTitulo">RESULTADOS</div>
+    <div id="dashboard-evolucao"></div>
     <div id="evolucao-content"></div>
   </div>
 
@@ -2484,6 +2486,20 @@ function concluirTreino(idx){
 // ── EVOLUÇÃO ──────────────────────────────────────────
 function renderEvolucao(){
   // FIX 15/05/2026: Card RESULTADOS expandido (file mignon).
+  // DASHBOARD AURUMSCI - PATCH 19 (15/05/2026 tarde): Renderiza dashboard
+  // de evolucao ACIMA do Card RESULTADOS atual. Usa Chart.js para grafico
+  // de linha temporal + radar perfil. Serve 3 personas:
+  // - Adolescente: visual rapido (graficos bonitos)
+  // - Adulto: numero + classificacao (KPI cards com delta)
+  // - Idoso: texto explicativo embaixo de cada grafico
+  // 
+  // Estrategia: fetch /aluno-portal/avaliacoes (historico expandido no
+  // commit b9ba13f), renderiza dashboard, depois continua flow normal
+  // que renderiza Card RESULTADOS (intocado).
+  
+  renderDashboardEvolucao();
+  
+  
   // Renderiza TODOS os dados que existem + deltas (variacoes) quando ha
   // avaliacao anterior. Backend /resultado retorna estrutura expandida
   // (commit bbf8559). Renderizacao inteligente: campo null = nao renderiza.
@@ -2600,6 +2616,192 @@ function renderEvolucao(){
   }).catch(function(){
     document.getElementById('evolucao-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">Complete sua avaliação!</div>';
   });
+}
+
+
+function renderDashboardEvolucao(){
+  // Container do dashboard ACIMA do Card RESULTADOS
+  var slot = document.getElementById('dashboard-evolucao');
+  if(!slot) return; // Sem container, nada a fazer
+  
+  fetch('/aluno-portal/avaliacoes', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.ok ? r.json() : []; })
+  .then(function(avals){
+    if(!avals || avals.length === 0){
+      slot.innerHTML = '';
+      return;
+    }
+    
+    // Backend retorna desc (mais recente primeiro). Inverte pra grafico temporal.
+    var avalsAsc = avals.slice().reverse();
+    var atual = avals[0]; // mais recente
+    
+    // ====== CARD NARRATIVA MOTIVACIONAL (topo) ======
+    var html = '<div style="background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.04));border:1px solid rgba(201,168,76,.4);border-radius:16px;padding:18px;margin-bottom:16px">' +
+      '<div style="font-family:Bebas Neue;font-size:18px;letter-spacing:2px;color:var(--ouro);margin-bottom:6px">📈 SUA EVOLUCAO</div>' +
+      '<div style="font-size:12px;color:var(--cinza);line-height:1.6">Acompanhe sua jornada de transformacao. ' + avals.length + ' avaliacao(oes) registrada(s).</div>' +
+      '</div>';
+    
+    // ====== GRAFICO LINHA TEMPORAL + SELETOR ======
+    html += '<div style="background:var(--bg2);border:1px solid var(--borda);border-radius:14px;padding:14px;margin-bottom:14px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
+        '<div style="font-size:11px;letter-spacing:2px;color:var(--ouro);font-weight:700">EVOLUCAO TEMPORAL</div>' +
+        '<select id="metrica-selector" onchange="trocarMetricaGrafico()" style="background:var(--bg3);color:var(--texto);border:1px solid var(--borda);border-radius:8px;padding:4px 8px;font-size:11px">' +
+          '<option value="peso">PESO</option>' +
+          '<option value="percentual_gordura">% GORDURA</option>' +
+          '<option value="vo2max">VO2 MAX</option>' +
+          '<option value="flexao_reps">FLEXAO</option>' +
+        '</select>' +
+      '</div>' +
+      '<div style="position:relative;width:100%;height:180px"><canvas id="chartLinhaTemporal"></canvas></div>' +
+      '<div id="grafico-explicacao" style="font-size:11px;color:var(--cinza);font-style:italic;margin-top:8px;line-height:1.5"></div>' +
+      '</div>';
+    
+    // ====== GRAFICO RADAR PERFIL ATUAL ======
+    html += '<div style="background:var(--bg2);border:1px solid var(--borda);border-radius:14px;padding:14px;margin-bottom:14px">' +
+      '<div style="font-size:11px;letter-spacing:2px;color:var(--ouro);font-weight:700;margin-bottom:10px">PERFIL ATUAL</div>' +
+      '<div style="position:relative;width:100%;height:220px"><canvas id="chartRadarPerfil"></canvas></div>' +
+      '<div style="font-size:11px;color:var(--cinza);font-style:italic;margin-top:8px;line-height:1.5">Quanto mais para fora, melhor. Voce visualiza suas dimensoes em uma so imagem.</div>' +
+      '</div>';
+    
+    slot.innerHTML = html;
+    
+    // Guarda dados globais para o seletor
+    window._avalsAsc = avalsAsc;
+    window._avalAtual = atual;
+    
+    // Renderiza graficos (Chart.js carregado no head)
+    setTimeout(function(){
+      renderGraficoLinha('peso');
+      renderGraficoRadar(atual);
+    }, 100);
+  })
+  .catch(function(){
+    if(slot) slot.innerHTML = '';
+  });
+}
+
+function renderGraficoLinha(metrica){
+  if(typeof Chart === 'undefined') return; // Chart.js nao carregou
+  var avalsAsc = window._avalsAsc || [];
+  if(avalsAsc.length === 0) return;
+  
+  var labels = avalsAsc.map(function(a){ 
+    var d = a.data ? a.data.split('-') : ['','',''];
+    return d[2] + '/' + d[1]; // dd/mm
+  });
+  var dados = avalsAsc.map(function(a){ return a[metrica]; });
+  
+  var labelsMetrica = {
+    'peso':'Peso (kg)',
+    'percentual_gordura':'% Gordura',
+    'vo2max':'VO2 Max (ml/kg/min)',
+    'flexao_reps':'Flexao (reps)'
+  };
+  
+  var explicacoes = {
+    'peso':'Acompanhe a evolucao do seu peso ao longo do tempo. Tendencia descendente em fase de cutting; ascendente em bulking.',
+    'percentual_gordura':'% Gordura mostra sua composicao corporal. Valor menor = mais massa magra proporcionalmente.',
+    'vo2max':'VO2 Max mede sua capacidade cardiorrespiratoria. Quanto maior, melhor seu condicionamento aerobico.',
+    'flexao_reps':'Flexao de braco indica forca de membros superiores. Aumento = ganho de forca.'
+  };
+  
+  var canvas = document.getElementById('chartLinhaTemporal');
+  if(!canvas) return;
+  
+  // Destroi grafico anterior se existir
+  if(window._chartLinha) window._chartLinha.destroy();
+  
+  window._chartLinha = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: labelsMetrica[metrica] || metrica,
+        data: dados,
+        borderColor: '#C9A84C',
+        backgroundColor: 'rgba(201,168,76,0.1)',
+        tension: 0.3,
+        pointBackgroundColor: '#C9A84C',
+        pointRadius: 5,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { 
+          ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 10 } },
+          grid: { color: 'rgba(255,255,255,0.05)' }
+        },
+        x: {
+          ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 10 } },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+  
+  var exp = document.getElementById('grafico-explicacao');
+  if(exp) exp.innerHTML = explicacoes[metrica] || '';
+}
+
+function renderGraficoRadar(atual){
+  if(typeof Chart === 'undefined') return;
+  if(!atual) return;
+  
+  // Normaliza valores para escala 0-100 (radar precisa de escala consistente)
+  // Usa estimativas de excelencia por metrica
+  function norm(val, max){ if(val == null) return 0; return Math.min(100, (val/max)*100); }
+  
+  var dados = [
+    norm(atual.flexao_reps, 50),         // Forca (50 reps = excelente)
+    norm(atual.vo2max, 55),               // Cardio (55 ml/kg/min = excelente)
+    norm(atual.flexibilidade_cm, 35),     // Flexibilidade (35cm = excelente)
+    norm(atual.mmii_reps, 30),            // MMII (30 reps = excelente)
+    100 - norm(atual.percentual_gordura, 35) // Composicao (gordura BAIXA = melhor, invertido)
+  ];
+  
+  var canvas = document.getElementById('chartRadarPerfil');
+  if(!canvas) return;
+  
+  if(window._chartRadar) window._chartRadar.destroy();
+  
+  window._chartRadar = new Chart(canvas, {
+    type: 'radar',
+    data: {
+      labels: ['Forca', 'Cardio', 'Flexibilidade', 'MMII', 'Composicao'],
+      datasets: [{
+        data: dados,
+        borderColor: '#C9A84C',
+        backgroundColor: 'rgba(201,168,76,0.2)',
+        pointBackgroundColor: '#C9A84C',
+        pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        r: {
+          min: 0,
+          max: 100,
+          ticks: { display: false },
+          grid: { color: 'rgba(255,255,255,0.08)' },
+          angleLines: { color: 'rgba(255,255,255,0.08)' },
+          pointLabels: { color: 'rgba(255,255,255,0.7)', font: { size: 11 } }
+        }
+      }
+    }
+  });
+}
+
+function trocarMetricaGrafico(){
+  var sel = document.getElementById('metrica-selector');
+  if(sel) renderGraficoLinha(sel.value);
 }
 
 // ── PERIODIZAÇÃO ──────────────────────────────────────

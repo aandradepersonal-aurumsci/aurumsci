@@ -217,23 +217,40 @@ def perfil(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_d
 
 @router.get("/avaliacoes")
 def avaliacoes(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    # FIX 15/05/2026 TARDE: Endpoint expandido para alimentar dashboard
+    # com graficos (Chart.js). Retorna historico completo (campos diretos +
+    # JSON observacoes onde estao Forca/MMII/HRR salvos ontem).
+    import json
     from app.routers.avaliacao import AvaliacaoFisica
+    
     avals = db.query(AvaliacaoFisica).filter(
         AvaliacaoFisica.aluno_id == aluno.id
     ).order_by(AvaliacaoFisica.data_avaliacao.desc()).all()
-
+    
+    def parse_extras(obs):
+        try:
+            return json.loads(obs) if obs else {}
+        except Exception:
+            return {}
+    
     return [{
         "id": a.id,
         "data": str(a.data_avaliacao),
         "peso": a.peso,
-        "imc": a.imc,
-        "classificacao_imc": a.classificacao_imc,
         "percentual_gordura": a.percentual_gordura,
         "classificacao_gordura": a.classificacao_gordura,
         "massa_magra_kg": a.massa_magra_kg,
         "vo2max": a.vo2max,
         "classificacao_vo2": a.classificacao_vo2,
-        "risco_cardiovascular": a.risco_cardiovascular,
+        "flexibilidade_cm": a.teste_flexibilidade_cm,
+        "classificacao_flexibilidade": a.classificacao_flexibilidade,
+        "flexao_reps": a.teste_flexao_num if a.teste_flexao_num is not None else parse_extras(a.observacoes).get("forca_flexao_reps"),
+        "classificacao_flexao": a.classificacao_flexao or parse_extras(a.observacoes).get("forca_classificacao_flexao"),
+        "barra_reps": a.teste_barra_num if a.teste_barra_num is not None else parse_extras(a.observacoes).get("forca_barra_reps"),
+        "abdominal_reps": parse_extras(a.observacoes).get("forca_abdom_reps"),
+        "mmii_reps": parse_extras(a.observacoes).get("mmii_reps"),
+        "mmii_classificacao": parse_extras(a.observacoes).get("mmii_classificacao"),
+        "hrr_bpm": parse_extras(a.observacoes).get("hrr_recuperacao") or parse_extras(a.observacoes).get("hrr_1min"),
     } for a in avals]
 
 

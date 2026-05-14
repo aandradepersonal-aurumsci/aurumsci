@@ -1316,6 +1316,11 @@ function fazerLogin(){
       if(d.aluno_id) { window._alunoId = d.aluno_id; localStorage.setItem('aurum_aluno_id', d.aluno_id); }
       if(d.sexo) localStorage.setItem('aurum_sexo', d.sexo === 'FEMININO' ? 'F' : 'M');
       if(d.idade) localStorage.setItem('aurum_idade', d.idade);
+      // FIX 15/05/2026: salva dados do treino no localStorage para
+      // renderAnamnese() pre-popular OBJETIVO/NIVEL/DIAS na tela.
+      if(d.objetivo) localStorage.setItem('aurum_objetivo', d.objetivo.toLowerCase());
+      if(d.nivel_experiencia) localStorage.setItem('aurum_nivel', d.nivel_experiencia.toLowerCase());
+      if(d.dias_semana) localStorage.setItem('aurum_dias', d.dias_semana);
       var onbDone = localStorage.getItem('aurum_onb_done');
       if(onbDone){
         mostrarApp();

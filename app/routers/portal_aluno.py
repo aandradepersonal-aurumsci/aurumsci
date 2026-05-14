@@ -53,6 +53,9 @@ class AlunoTokenResposta(BaseModel):
     nome: str
     sexo: Optional[str] = None
     idade: Optional[int] = None
+    objetivo: Optional[str] = None
+    nivel_experiencia: Optional[str] = None
+    dias_semana: Optional[int] = None
 
 class CriarAcesso(BaseModel):
     aluno_id: int
@@ -156,6 +159,25 @@ def login_aluno(dados: AlunoLogin, db: Session = Depends(get_db)):
         )
     sexo_str = aluno.sexo.value if aluno.sexo else None
     
+    # FIX 15/05/2026: Busca PlanoTreino ativo para retornar dias_semana
+    # (campo nao existe no model Aluno, vive em PlanoTreino).
+    # Tambem retorna objetivo + nivel_experiencia para pre-popular
+    # modal anamnese (parte de cima: objetivo/nivel/dias do treino).
+    # Frontend salva esses 3 no localStorage no login.
+    objetivo_str = aluno.objetivo.value if aluno.objetivo else None
+    nivel_str = aluno.nivel_experiencia.value if aluno.nivel_experiencia else None
+    dias_semana_int = None
+    try:
+        from app.routers.treino import PlanoTreino
+        plano = db.query(PlanoTreino).filter(
+            PlanoTreino.aluno_id == aluno.id,
+            PlanoTreino.ativo == True
+        ).first()
+        if plano and plano.dias_semana:
+            dias_semana_int = plano.dias_semana
+    except Exception:
+        pass
+    
     # FIX 14/05/2026: Return unificado - vale para aluno COM ou SEM personal.
     # Antes: aluno autonomo (personal_id=None) caia em fim de funcao sem
     # return, resultando em erro 500 ou None ao logar. Agora retorna OK.
@@ -165,6 +187,9 @@ def login_aluno(dados: AlunoLogin, db: Session = Depends(get_db)):
         nome=aluno.nome,
         sexo=sexo_str,
         idade=idade_calc,
+        objetivo=objetivo_str,
+        nivel_experiencia=nivel_str,
+        dias_semana=dias_semana_int,
     )
 
 

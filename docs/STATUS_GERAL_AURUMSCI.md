@@ -1,7 +1,7 @@
 # 📊 AURUMSCI — STATUS GERAL DO PROJETO
 
 > **Documento mestre de estado atual**
-> Atualizado: quinta-feira, 15/05/2026, 12h30 (sessao manha) - retorno apos almoco
+> Atualizado: quinta-feira, 15/05/2026, 16h35 (sessao tarde fechada) - retomada noite
 > Próximo update: após próxima sessão de trabalho
 > **PROPÓSITO**: Próxima sessão (Claude/dev) lê este documento e sabe TUDO sobre onde estamos.
 
@@ -76,6 +76,143 @@ antes de mexer no Card. Blindagem 3 camadas.
 - linha 260: /meus-resultados DUPLICADO #1
 - linha 342: /meus-resultados DUPLICADO #2 (FastAPI usa este)
 - linha 603: /resultado ATIVO usado pelo frontend
+
+---
+
+## 🗓️ SESSAO 15/05/2026 - TARDE (Bug fixes + Dashboard Power BI)
+
+### 🏆 6 commits em producao
+
+**Bug fixes (3 commits):**
+- `e5685a0` Fix aviso postural (respeitar corretivos ja existentes)
+- `084edc9` Fix banner cadastro modo dia (CSS variables)
+- (NOTA: nao mexemos no banner reavaliacao - era feature CORRETA, 
+   nao bug. Endpoint /reavaliacao retorna precisa_reavaliar e 
+   overtraining_pendente. Banner aparece SO quando backend diz que precisa.)
+
+**Dashboard Power BI (3 commits, MOLHO MADEIRA no filé mignon):**
+- `b9ba13f` Backend /aluno-portal/avaliacoes expandido (campos completos)
+- `68b2fbe` Frontend dashboard com Chart.js (linha temporal + radar + textos)
+- `565d097` Fix radar 4 dim (removeu Flexibilidade - aluno autonomo nao mede)
+- `8c6185f` Fix radar 3 dim fisicas puras (sacada CAPACIDADE vs COMPOSICAO)
+
+### ✅ Dashboard validado end-to-end (Andre testou + print)
+
+**Funcionando:**
+- Card narrativa motivacional topo (gradiente dourado)
+- Grafico LINHA temporal com seletor (PESO/GORDURA/VO2/FLEXAO)
+- Texto explicativo embaixo (persona idoso)
+- Radar PERFIL ATUAL com 3 dimensoes (triangulo)
+- Card RESULTADOS atual embaixo (intocado)
+- 4 avaliacoes registradas no banco de teste do Andre
+- Modo noite OK
+- 3 personas servidas: adolescente (visual), adulto (numero), idoso (texto)
+
+### 💎 Filosofias AurumSci REGISTRADAS (15/05 tarde)
+
+**FILOSOFIA - Audit Before Refactor (3x SALVOU na tarde):**
+1. Banner reavaliacao parecia bug, era feature CORRETA
+2. Endpoint /avaliacoes parecia ter ancora simples, tinha linha em branco
+3. Flexibilidade no radar (Andre pegou em 5 min - bug filosofico Claude)
+
+**FILOSOFIA - Naturezas de medida (sacada Andre):**
+"Radar mostra CAPACIDADE FISICA (o que corpo FAZ),
+nao COMPOSICAO CORPORAL (o que corpo E).
+Misturar naturezas confunde aluno: 3 metricas aumentar=melhor
++ 1 invertida (gordura) gerou confusao mental.
+CAPACIDADE = grafico de radar.
+COMPOSICAO = cards numericos com classificacao."
+
+**FILOSOFIA - Banco de Wells zero em 23cm (sacada Andre):**
+"Zero em 23cm ANTES dos pes evita numeros negativos
+desmotivadores. Aluno NUNCA ve numero negativo,
+sempre numero POSITIVO mesmo com performance baixa.
+Filosofia AurumSci aplicada PRE-Aurum em 1952."
+Aplicacao futura: sit-and-reach para autonomo com
+marcos anatomicos (joelho/canela/tornozelo/pe/passa).
+
+**FILOSOFIA - Design por PERSONA, nao por principio absoluto:**
+"Aluno leigo + Personal profissional + Idoso convivem
+na MESMA TELA. Graficos no topo (profissional),
+numeros crus embaixo (leigo confirma),
+texto explicativo (idoso entende).
+Redundancia intencional = caracteristica, nao bug.
+Excel Avancado prega nao duplicar - mas isso e para
+MESMA persona. Aqui temos 3 personas convivendo."
+
+**FILOSOFIA - "Se faz aqui faz em tudo":**
+Auditoria revelou que aviso postural, banner cadastro,
+banner reavaliacao tinham padroes DIFERENTES de
+condicional. Aviso postural so checava localStorage,
+banner cadastro nao adaptava modo dia, banner reavaliacao
+chamava backend (correto). Lesson: padrao deve ser
+uniforme em features similares.
+
+### 🪞 Bugs ARQUITETURAIS mapeados (cleanup futuro)
+
+**MEU bug filosofico:** Adicionei Flexibilidade no radar do
+aluno autonomo sem checar se app permite preencher. Andre
+pegou em 5 min. Licao: "Backend tem campo" e diferente de
+"App permite preencher".
+
+**Banner reavaliacao - precisa_reavaliar=false + over=true:**
+Aluno teste tem questionario Overtraining pendente, por isso
+banner aparece. Comportamento correto.
+
+**Grafico de LINHA com 4 avaliacoes proximas:**
+Datas 10/05, 11/05, 12/05, 13/05 com valores iguais geram
+linha reta. Quando aluno real tiver avaliacoes mensais com
+valores diferentes, grafico fica visualmente rico.
+
+### 📋 Patches frontend aplicados (mapa)
+
+**static/app_aluno.html (~+10.000 bytes na tarde):**
+- Linha 526: <div id="dashboard-evolucao"> inserido
+- Linha 2197: aviso postural respeita corretivos
+- Linha 2486: renderEvolucao() chama renderDashboardEvolucao()
+- Linha ~2614: funcao renderDashboardEvolucao() criada
+- Linha ~2620: funcao renderGraficoLinha() criada
+- Linha ~2680: funcao renderGraficoRadar() criada
+- Linha 4209: banner cadastro CSS variables
+
+**app/routers/portal_aluno.py (+1.112 bytes):**
+- Linha 218: GET /avaliacoes expandido com 12+ campos
+
+**Chart.js via CDN no <head>** (commit 68b2fbe):
+- cdn.jsdelivr.net/npm/chart.js@4.4.1
+- Disponivel globalmente como window.Chart
+
+---
+
+## 🌙 ESQUELETO NOITE 15/05/2026 - PROXIMAS BATALHAS
+
+### 🥇 PRIORIDADE TOP - Link de onboarding (decisao Andre)
+
+Andre mencionou "link" como proximo passo. Tres possiveis interpretacoes:
+
+**A) Link de onboarding do aluno autonomo (Porta B)**
+- Espelho do link do PRO (commit ca6a9be antigo)
+- Aluno autonomo gera link proprio
+- Banner "COMPLETE SEU CADASTRO" pode receber o link
+- ~1h30-2h sessao dedicada
+
+**B) Link do questionario do banner "COMPLETE SEU CADASTRO"**
+- Botao "ABRIR QUESTIONARIO" sem link funcional ainda
+- ~30-45 min sessao pequena
+
+**C) Link de convite WhatsApp do PRO**
+- Personal envia convite pro aluno entrar
+- Ja existe parcialmente (commit ca6a9be)
+
+CONFIRMAR com Andre na retomada.
+
+### Outras prioridades (mantidas)
+
+1. Sit-and-reach autonomo (marcos anatomicos, escala 23cm zero)
+2. Trilingual no Card RESULTADOS (~2h)
+3. App PRO espelhando aluno (varias sessoes)
+4. Auri esperta (pos-Apple)
+5. Cores Brasil VO2 / Alertas PA / HRR 2 min / Email bimestral
 
 ---
 

@@ -673,7 +673,8 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                     pass
                 db.commit()
                 # ALUNO AUTONOMO - tracking de trial
-                from datetime import timedelta
+                # FIX 16/05/2026: importa datetime junto (shadowing causava UnboundLocalError 500)
+                from datetime import timedelta, datetime
                 aluno.assinatura_status = "trialing"
                 aluno.data_inicio_trial = datetime.utcnow()
                 aluno.data_fim_trial = datetime.utcnow() + timedelta(days=7)

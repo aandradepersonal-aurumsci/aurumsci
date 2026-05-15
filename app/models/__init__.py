@@ -113,7 +113,7 @@ class OnboardingLink(Base):
     """Link de convite que personal envia pros alunos preencherem questionario."""
     __tablename__ = "onboarding_links"
     id = Column(Integer, primary_key=True)
-    personal_id = Column(Integer, ForeignKey("personals.id"), nullable=False)
+    personal_id = Column(Integer, ForeignKey("personals.id"), nullable=True)  # FIX 16/05/2026: nullable para suportar aluno autonomo (sem personal)
     token = Column(String(50), unique=True, nullable=False, index=True)
     ativo = Column(Boolean, default=True)
     total_usos = Column(Integer, default=0)

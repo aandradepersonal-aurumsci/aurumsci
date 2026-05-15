@@ -133,6 +133,44 @@ class QuestionarioPayload(BaseModel):
     medicacao_qual: Optional[str] = None
 
 
+# ============================================================
+# ROTAS DO ALUNO AUTONOMO (publicas, sem personal vinculado)
+# ============================================================
+
+@router.post("/onboarding/auto/gerar-link")
+def gerar_link_autonomo(db: Session = Depends(get_db)):
+    """
+    Gera link de onboarding SEM personal vinculado (aluno autonomo - Porta B).
+    Usado por:
+    - Stripe webhook apos pagamento confirmado (FASE 2)
+    - Pagina publica /comecar do AurumSci (futuro)
+    
+    FIX 16/05/2026: criado para aluno autonomo. Mantem PRO intocado.
+    """
+    
+    # Cria novo token sempre (cada link e unico por uso)
+    token = secrets.token_urlsafe(16)
+    link = OnboardingLink(
+        personal_id=None,  # NULL = aluno autonomo (fix nullable=True em models)
+        token=token,
+        ativo=True,
+        total_usos=0
+    )
+    db.add(link)
+    db.commit()
+    db.refresh(link)
+    
+    base_url = os.getenv("BASE_URL", "https://www.aurumsc.com.br")
+    
+    return {
+        "ok": True,
+        "token": link.token,
+        "url": f"{base_url}/onboarding/{link.token}",
+        "tipo": "autonomo",
+        "criado_em": link.criado_em.isoformat() if link.criado_em else None,
+    }
+
+
 @router.get("/onboarding/{token}", response_class=HTMLResponse)
 def pagina_onboarding(token: str, db: Session = Depends(get_db)):
     """Serve pagina HTML publica do questionario."""
@@ -153,10 +191,17 @@ def pagina_onboarding(token: str, db: Session = Depends(get_db)):
     if os.path.exists(html_path):
         with open(html_path, "r", encoding="utf-8") as f:
             html = f.read()
-        # Injeta dados do personal pra mostrar na pagina
-        personal = db.query(Personal).filter(Personal.id == link.personal_id).first()
-        nome_personal = personal.nome if personal else "Seu Personal"
-        html = html.replace("{{PERSONAL_NOME}}", nome_personal)
+        # FIX 16/05/2026 (PATCH 5): suporta aluno autonomo no HTML
+        if link.personal_id is not None:
+            # Fluxo PRO: aluno convidado pelo personal
+            personal = db.query(Personal).filter(Personal.id == link.personal_id).first()
+            nome_personal = personal.nome if personal else "Seu Personal"
+            boas_vindas = f"Voce foi convidado por <strong>{nome_personal}</strong>"
+        else:
+            # Fluxo AUTONOMO: chegou pelo link direto (Stripe, pagina publica)
+            boas_vindas = "Bem-vindo a familia <strong>AurumSci</strong> 🏆"
+        
+        html = html.replace("{{BOAS_VINDAS_TEXTO}}", boas_vindas)
         html = html.replace("{{TOKEN}}", token)
         return HTMLResponse(content=html)
     
@@ -170,7 +215,10 @@ def responder_questionario(
     request: Request,
     db: Session = Depends(get_db)
 ):
-    """Recebe respostas do questionario, cria aluno + gera treino base + manda emails."""
+    """
+    Recebe respostas do questionario, cria aluno + gera treino base + manda emails.
+    FIX 16/05/2026: suporta aluno autonomo (link.personal_id=None).
+    """
     
     # 1. Valida token
     link = db.query(OnboardingLink).filter(
@@ -181,9 +229,18 @@ def responder_questionario(
     if not link:
         raise HTTPException(404, "Link invalido ou expirado")
     
-    personal = db.query(Personal).filter(Personal.id == link.personal_id).first()
-    if not personal:
-        raise HTTPException(404, "Personal nao encontrado")
+    # FIX 16/05/2026: aluno autonomo nao tem personal vinculado
+    tem_personal = link.personal_id is not None
+    personal = None
+    if tem_personal:
+        personal = db.query(Personal).filter(Personal.id == link.personal_id).first()
+        if not personal:
+            raise HTTPException(404, "Personal nao encontrado")
+    
+    # Variaveis ternarias para uso em multiplos pontos:
+    nome_quem_contata = personal.nome if personal else "Equipe AurumSci"
+    email_destinatario_personal = personal.email if personal else None
+    personal_id_aluno = personal.id if personal else None
     
     # 2. Verifica se email ja existe
     aluno_existente = db.query(Aluno).filter(Aluno.email == dados.email).first()
@@ -206,8 +263,7 @@ def responder_questionario(
         dados.par_q_medicacao
     )
     
-    # 5. Cria aluno vinculado ao personal
-    # Converte data_nascimento (string) pra date
+    # 5. Cria aluno (vinculado ao personal OU autonomo)
     data_nasc_obj = None
     if dados.data_nascimento:
         try:
@@ -216,7 +272,6 @@ def responder_questionario(
         except Exception:
             data_nasc_obj = None
     
-    # Converte sexo M/F pro enum do banco
     from app.models import Sexo as _Sexo
     sexo_obj = None
     if dados.sexo == "M":
@@ -228,7 +283,7 @@ def responder_questionario(
         nome=dados.nome,
         email=dados.email,
         cpf=cpf_limpo,
-        personal_id=personal.id,
+        personal_id=personal_id_aluno,
         ativo=True,
         objetivo=dados.objetivo.upper() if dados.objetivo else None,
         nivel_experiencia=dados.nivel.upper() if dados.nivel else None,
@@ -292,7 +347,7 @@ def responder_questionario(
             
             plano = PlanoTreino(
                 aluno_id=novo_aluno.id,
-                personal_id=personal.id,
+                personal_id=personal_id_aluno,
                 nome=f"Plano {dados.objetivo.capitalize()} - {dados.nivel.capitalize()}",
                 objetivo=dados.objetivo.upper() if dados.objetivo else None,
                 nivel=dados.nivel,
@@ -318,29 +373,39 @@ def responder_questionario(
         except Exception as e:
             print(f"[ONBOARDING] Erro gerar treino: {e}")
     
-    # 9. Manda emails (aluno + personal) - vamos importar dinamicamente
+    # 9. Manda emails (aluno + personal SE houver)
     try:
         from app.services.email_service import enviar_email
         
         # Email pro ALUNO
         if treino_gerado:
             assunto_aluno = "🏆 Bem-vindo à família AurumSci! Seu treino está pronto"
+            proximo_passo_aluno = (
+                f"Marque sua avaliação presencial com {nome_quem_contata} pra refinar 100% pra você!"
+                if tem_personal else
+                "Acesse o app e comece a treinar. Sua próxima avaliação será em 8 semanas."
+            )
             corpo_aluno = f"""
             <h2>Bem-vindo, {dados.nome}! 🏆</h2>
             <p>Seu cadastro foi feito com sucesso e seu <b>treino base já está pronto</b>!</p>
             <p>📱 <b>Acesse o app:</b> https://www.aurumsc.com.br/aluno</p>
             <p>📧 <b>Email:</b> {dados.email}</p>
             <p>🔑 <b>Senha inicial:</b> {senha_inicial} (6 primeiros do seu CPF)</p>
-            <p><b>Próximo passo:</b> Marque sua avaliação presencial com {personal.nome} pra refinar 100% pra você!</p>
+            <p><b>Próximo passo:</b> {proximo_passo_aluno}</p>
             <p>Bons treinos! 💪</p>
             <p>— Equipe AurumSci</p>
             """
         else:
             assunto_aluno = "Cadastro recebido - Aguardando avaliação"
+            contato_aluno = (
+                f"<b>{nome_quem_contata} entrará em contato em até 24h</b>"
+                if tem_personal else
+                "<b>Nossa equipe entrará em contato em até 24h</b>"
+            )
             corpo_aluno = f"""
             <h2>Olá, {dados.nome}! 👋</h2>
             <p>Recebemos seu cadastro com sucesso!</p>
-            <p>Como você indicou alguma condição de saúde, <b>{personal.nome} entrará em contato em até 24h</b> para uma avaliação personalizada antes de iniciar os treinos.</p>
+            <p>Como você indicou alguma condição de saúde, {contato_aluno} para uma avaliação personalizada antes de iniciar os treinos.</p>
             <p>📱 <b>Seu acesso:</b> https://www.aurumsc.com.br/aluno</p>
             <p>📧 <b>Email:</b> {dados.email}</p>
             <p>🔑 <b>Senha:</b> {senha_inicial}</p>
@@ -349,48 +414,54 @@ def responder_questionario(
         
         enviar_email(dados.email, assunto_aluno, corpo_aluno)
         
-        # Email pro PERSONAL
-        if tem_risco:
-            assunto_personal = f"⚠️ Novo aluno com atenção: {dados.nome}"
-            corpo_personal = f"""
-            <h2>⚠️ Novo aluno preencheu o onboarding</h2>
-            <p><b>Nome:</b> {dados.nome}</p>
-            <p><b>Email:</b> {dados.email}</p>
-            <p><b>Objetivo:</b> {dados.objetivo}</p>
-            <p><b>ATENÇÃO - Indicou condição de saúde:</b></p>
-            <ul>
-                {f'<li>Problema cardíaco</li>' if dados.par_q_cardiaco else ''}
-                {f'<li>Dor no peito ao exercitar</li>' if dados.par_q_dor_peito else ''}
-                {f'<li>Dor articular</li>' if dados.par_q_dor_articular else ''}
-                {f'<li>Medicação contínua: {dados.medicacao_qual or "não especificada"}</li>' if dados.par_q_medicacao else ''}
-            </ul>
-            <p><b>Treino NÃO foi gerado automaticamente.</b> Recomendamos avaliação presencial antes de iniciar.</p>
-            """
-        else:
-            assunto_personal = f"🎉 Novo aluno: {dados.nome}"
-            corpo_personal = f"""
-            <h2>🎉 Você ganhou um novo aluno!</h2>
-            <p><b>Nome:</b> {dados.nome}</p>
-            <p><b>Email:</b> {dados.email}</p>
-            <p><b>Objetivo:</b> {dados.objetivo}</p>
-            <p><b>Nível:</b> {dados.nivel}</p>
-            <p><b>Frequência:</b> {dados.dias_semana}x por semana</p>
-            <p>✅ Treino base já foi criado automaticamente.</p>
-            <p>Acesse o app PRO pra ajustar e marcar a avaliação presencial.</p>
-            """
-        
-        enviar_email(personal.email, assunto_personal, corpo_personal)
+        # Email pro PERSONAL (SO se tem personal)
+        if email_destinatario_personal:
+            if tem_risco:
+                assunto_personal = f"⚠️ Novo aluno com atenção: {dados.nome}"
+                corpo_personal = f"""
+                <h2>⚠️ Novo aluno preencheu o onboarding</h2>
+                <p><b>Nome:</b> {dados.nome}</p>
+                <p><b>Email:</b> {dados.email}</p>
+                <p><b>Objetivo:</b> {dados.objetivo}</p>
+                <p><b>ATENÇÃO - Indicou condição de saúde:</b></p>
+                <ul>
+                    {f'<li>Problema cardíaco</li>' if dados.par_q_cardiaco else ''}
+                    {f'<li>Dor no peito ao exercitar</li>' if dados.par_q_dor_peito else ''}
+                    {f'<li>Dor articular</li>' if dados.par_q_dor_articular else ''}
+                    {f'<li>Medicação contínua: {dados.medicacao_qual or "não especificada"}</li>' if dados.par_q_medicacao else ''}
+                </ul>
+                <p><b>Treino NÃO foi gerado automaticamente.</b> Recomendamos avaliação presencial antes de iniciar.</p>
+                """
+            else:
+                assunto_personal = f"🎉 Novo aluno: {dados.nome}"
+                corpo_personal = f"""
+                <h2>🎉 Você ganhou um novo aluno!</h2>
+                <p><b>Nome:</b> {dados.nome}</p>
+                <p><b>Email:</b> {dados.email}</p>
+                <p><b>Objetivo:</b> {dados.objetivo}</p>
+                <p><b>Nível:</b> {dados.nivel}</p>
+                <p><b>Frequência:</b> {dados.dias_semana}x por semana</p>
+                <p>✅ Treino base já foi criado automaticamente.</p>
+                <p>Acesse o app PRO pra ajustar e marcar a avaliação presencial.</p>
+                """
+            
+            enviar_email(email_destinatario_personal, assunto_personal, corpo_personal)
     except Exception as e:
         print(f"[ONBOARDING] Erro enviar email: {e}")
+    
+    # Mensagem final adaptada
+    if treino_gerado:
+        mensagem_final = "Tudo certo! Seu treino tá pronto, confira seu email!"
+    elif tem_personal:
+        mensagem_final = f"Cadastro recebido! {nome_quem_contata} entrará em contato em até 24h."
+    else:
+        mensagem_final = "Cadastro recebido! Nossa equipe entrará em contato em até 24h."
     
     return {
         "ok": True,
         "aluno_id": novo_aluno.id,
         "treino_gerado": treino_gerado,
         "tem_risco": tem_risco,
-        "mensagem": (
-            "Tudo certo! Seu treino tá pronto, confira seu email!" 
-            if treino_gerado else 
-            f"Cadastro recebido! {personal.nome} entrará em contato em até 24h."
-        )
+        "tipo": "pro" if tem_personal else "autonomo",
+        "mensagem": mensagem_final
     }

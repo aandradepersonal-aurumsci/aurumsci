@@ -243,12 +243,20 @@ def responder_questionario(
     personal_id_aluno = personal.id if personal else None
     
     # 2. Verifica se email ja existe
+    # FIX 16/05/2026: aluno autonomo pode COMPLETAR cadastro existente (paid na landing)
     aluno_existente = db.query(Aluno).filter(Aluno.email == dados.email).first()
+    aluno_para_atualizar = None
     if aluno_existente:
-        raise HTTPException(
-            400,
-            "Email ja cadastrado. Se voce ja e aluno do AurumSci, faca login no app."
-        )
+        if not tem_personal:
+            # Fluxo AUTONOMO: aluno ja foi criado na landing (pagamento Stripe)
+            # Aqui ele esta COMPLETANDO o cadastro pelo link do email
+            aluno_para_atualizar = aluno_existente
+        else:
+            # Fluxo PRO: email duplicado e bloqueio mesmo
+            raise HTTPException(
+                400,
+                "Email ja cadastrado. Se voce ja e aluno do AurumSci, faca login no app."
+            )
     
     # 3. Limpa CPF (so numeros)
     cpf_limpo = "".join(filter(str.isdigit, dados.cpf))
@@ -279,29 +287,46 @@ def responder_questionario(
     elif dados.sexo == "F":
         sexo_obj = _Sexo.FEMININO
     
-    novo_aluno = Aluno(
-        nome=dados.nome,
-        email=dados.email,
-        cpf=cpf_limpo,
-        personal_id=personal_id_aluno,
-        ativo=True,
-        objetivo=dados.objetivo.upper() if dados.objetivo else None,
-        nivel_experiencia=dados.nivel.upper() if dados.nivel else None,
-        data_nascimento=data_nasc_obj,
-        sexo=sexo_obj,
-    )
-    db.add(novo_aluno)
-    db.flush()
+    # FIX 16/05/2026: ATUALIZA aluno existente (autonomo) OU CRIA novo (PRO)
+    if aluno_para_atualizar:
+        # Aluno autonomo completando cadastro (ja pagou na landing)
+        aluno_para_atualizar.cpf = cpf_limpo
+        aluno_para_atualizar.objetivo = dados.objetivo.upper() if dados.objetivo else None
+        aluno_para_atualizar.nivel_experiencia = dados.nivel.upper() if dados.nivel else None
+        aluno_para_atualizar.data_nascimento = data_nasc_obj
+        aluno_para_atualizar.sexo = sexo_obj
+        if dados.nome and not aluno_para_atualizar.nome:
+            aluno_para_atualizar.nome = dados.nome
+        novo_aluno = aluno_para_atualizar
+        db.flush()
+    else:
+        # Novo aluno (PRO: convite do personal | autonomo puro: sem cadastro previo)
+        novo_aluno = Aluno(
+            nome=dados.nome,
+            email=dados.email,
+            cpf=cpf_limpo,
+            personal_id=personal_id_aluno,
+            ativo=True,
+            objetivo=dados.objetivo.upper() if dados.objetivo else None,
+            nivel_experiencia=dados.nivel.upper() if dados.nivel else None,
+            data_nascimento=data_nasc_obj,
+            sexo=sexo_obj,
+        )
+        db.add(novo_aluno)
+        db.flush()
     
     # 6. Cria credencial de acesso (senha = 6 primeiros digitos do CPF)
+    # FIX 16/05/2026: autonomo ja tem credencial criada na landing, so cria se nao existir
     from app.routers.portal_aluno import AlunoCredencial, pwd_context
     senha_inicial = cpf_limpo[:6]
-    credencial = AlunoCredencial(
-        aluno_id=novo_aluno.id,
-        email=dados.email,
-        senha_hash=pwd_context.hash(senha_inicial)
-    )
-    db.add(credencial)
+    cred_existente = db.query(AlunoCredencial).filter(AlunoCredencial.aluno_id == novo_aluno.id).first()
+    if not cred_existente:
+        credencial = AlunoCredencial(
+            aluno_id=novo_aluno.id,
+            email=dados.email,
+            senha_hash=pwd_context.hash(senha_inicial)
+        )
+        db.add(credencial)
     
     # 7. Atualiza contador do link
     link.total_usos += 1

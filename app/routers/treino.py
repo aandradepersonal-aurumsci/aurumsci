@@ -56,7 +56,7 @@ class PlanoTreino(Base):
     __table_args__ = {"extend_existing": True}
     id = Column(Integer, primary_key=True)
     aluno_id = Column(Integer, ForeignKey("alunos.id"), nullable=False)
-    personal_id = Column(Integer, ForeignKey("personals.id"), nullable=False)
+    personal_id = Column(Integer, ForeignKey("personals.id"), nullable=True)  # FIX 16/05/2026: nullable para suportar aluno autonomo
     nome = Column(String(150))
     objetivo = Column(String(100))
     nivel = Column(String(50))

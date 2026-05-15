@@ -31,7 +31,19 @@ class CheckoutSchema(BaseModel):
     valor: int = 4990
 
 
-def enviar_email_boas_vindas(nome, email):
+def enviar_email_boas_vindas(nome, email, link_onboarding=None):
+    # FIX 16/05/2026: aceita link_onboarding opcional pra aluno autonomo completar cadastro
+    bloco_link = ""
+    if link_onboarding:
+        bloco_link = f"""
+    <div style="background:#12121A;border:1px solid #C9A84C;border-radius:16px;padding:24px;margin-bottom:20px;text-align:center;">
+      <div style="font-size:18px;font-weight:700;color:#C9A84C;margin-bottom:8px;">📋 PRIMEIRO PASSO</div>
+      <p style="color:#ccc;line-height:1.7;font-size:14px;margin:0 0 16px 0;">
+        Preencha seu cadastro em <strong style="color:#C9A84C;">3 minutos</strong> e abra o app com seu <strong style="color:#C9A84C;">treino pronto pra começar</strong>!
+      </p>
+      <a href="{link_onboarding}" style="display:inline-block;background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#0A0A0F;padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:900;font-size:14px;letter-spacing:2px;">COMPLETAR CADASTRO →</a>
+    </div>
+    """
     html = f"""<!DOCTYPE html>
 <html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;background:#0A0A0F;font-family:Arial,sans-serif;">
@@ -47,6 +59,7 @@ def enviar_email_boas_vindas(nome, email):
         A partir de agora voce esta treinando com <strong style="color:#C9A84C;">ciencia, metodo e inteligencia artificial.</strong>
       </p>
     </div>
+    {bloco_link}
     <div style="text-align:center;margin-bottom:24px;">
       <a href="https://www.aurumsc.com.br/aluno" style="display:inline-block;background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#0A0A0F;padding:16px 40px;border-radius:12px;text-decoration:none;font-weight:900;font-size:16px;letter-spacing:2px;">COMECAR AGORA →</a>
     </div>
@@ -666,7 +679,26 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                 aluno.data_fim_trial = datetime.utcnow() + timedelta(days=7)
                 aluno.valor_assinatura = 4990
                 db.commit()
-                enviar_email_boas_vindas(aluno.nome, aluno.email)
+                # FIX 16/05/2026: gera link onboarding autonomo e envia no email
+                link_onboarding = None
+                try:
+                    import secrets as _secrets, os as _os
+                    from app.models import OnboardingLink as _OnbLink
+                    token_auto = _secrets.token_urlsafe(16)
+                    novo_link = _OnbLink(
+                        personal_id=None,
+                        token=token_auto,
+                        ativo=True,
+                        total_usos=0
+                    )
+                    db.add(novo_link)
+                    db.commit()
+                    base_url = _os.getenv("BASE_URL", "https://www.aurumsc.com.br")
+                    link_onboarding = f"{base_url}/onboarding/{token_auto}"
+                    print(f"[WEBHOOK] Link onboarding gerado pro aluno {aluno.id}: {link_onboarding}")
+                except Exception as e_link:
+                    print(f"[WEBHOOK] Erro gerar link onboarding: {e_link}")
+                enviar_email_boas_vindas(aluno.nome, aluno.email, link_onboarding=link_onboarding)
 
         personal_id = None
         plano = "bronze"

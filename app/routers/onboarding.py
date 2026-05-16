@@ -323,6 +323,7 @@ def responder_questionario(
     
     # 6. Cria credencial de acesso (senha = 6 primeiros digitos do CPF)
     # FIX 16/05/2026: autonomo ja tem credencial criada na landing, so cria se nao existir
+    # FIX 17/05/2026 P4: se aluno autonomo COMPLETOU cadastro, atualiza senha_hash com CPF novo
     from app.routers.portal_aluno import AlunoCredencial, pwd_context
     senha_inicial = cpf_limpo[:6]
     cred_existente = db.query(AlunoCredencial).filter(AlunoCredencial.aluno_id == novo_aluno.id).first()
@@ -333,6 +334,10 @@ def responder_questionario(
             senha_hash=pwd_context.hash(senha_inicial)
         )
         db.add(credencial)
+    elif aluno_para_atualizar:
+        # Autonomo completando cadastro: atualiza senha pra refletir CPF novo
+        cred_existente.senha_hash = pwd_context.hash(senha_inicial)
+        cred_existente.email = dados.email
     
     # 7. Atualiza contador do link
     link.total_usos += 1

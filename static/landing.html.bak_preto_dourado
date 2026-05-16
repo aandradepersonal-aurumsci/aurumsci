@@ -10,11 +10,10 @@
   :root {
     --ouro: #C9A84C;
     --ouro2: #F0C040;
-    --bg: #FAFAF7;
-    --bg2: #F2EFE8;
-    --texto: #1A1A1A;
-    --borda: #E0DCD0;
-    --cinza: #555;
+    --bg: #0A0A0F;
+    --bg2: #12121A;
+    --texto: #F0EDE8;
+    --cinza: #888;
     --azul: #4B9FFF;
   }
 
@@ -124,7 +123,7 @@
 
   .intro-text {
     font-size: 14px;
-    color: rgba(26,26,26,.7);
+    color: rgba(240,237,232,.7);
     line-height: 1.8;
   }
 
@@ -135,7 +134,7 @@
   }
 
   .feature-group {
-    background: rgba(0,0,0,.04);
+    background: rgba(255,255,255,.03);
     border: 1px solid rgba(201,168,76,.12);
     border-radius: 16px;
     padding: 20px;
@@ -156,7 +155,7 @@
     gap: 12px;
     margin-bottom: 10px;
     font-size: 13px;
-    color: rgba(26,26,26,.8);
+    color: rgba(240,237,232,.8);
     line-height: 1.5;
   }
 
@@ -201,7 +200,7 @@
     background: rgba(75,159,255,.08);
     border: 1px solid rgba(75,159,255,.15);
     font-size: 11px;
-    color: rgba(26,26,26,.7);
+    color: rgba(240,237,232,.7);
   }
 
   /* FECHAMENTO */

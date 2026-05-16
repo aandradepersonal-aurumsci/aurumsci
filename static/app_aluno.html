@@ -915,6 +915,10 @@ var TX = {
     composicaoDesc:'Peso e gordura', testesDesc:'VO2, FC, Força',
     // ── RESULTADOS / PERIODIZAÇÃO / LOJA / FINANCEIRO ──
     resultadosTitulo:'RESULTADOS', periodizacaoTitulo:'PERIODIZAÇÃO',
+    seuProgresso:'🏆 SEU PROGRESSO', avalCompletaEm:'Avaliação completa em', comparadoCom:'Comparado com',
+    desdeAnterior:'desde anterior', pesoAtual:'PESO ATUAL', gorduraLabel:'% GORDURA', massaMagraLabel:'MASSA MAGRA',
+    flexibilidadeLabel:'🤸 FLEXIBILIDADE', vo2maxLabel:'❤️ VO2 MÁX', faixaLabel:'Faixa',
+    completeAval:'' + T('completeAval') + '', semDados:'' + T('semDados') + '',
     lojinhaTitulo:'LOJINHA', lojinhaSub:'Tudo para treinar melhor',
     financeiroTitulo:'FINANCEIRO', financeiroSub:'Seu plano e pagamentos',
     carregando:'Carregando...',
@@ -986,6 +990,10 @@ var TX = {
     composicaoDesc:'Weight and fat', testesDesc:'VO2, HR, Strength',
     // ── RESULTS / PERIODIZATION / SHOP / FINANCIAL ──
     resultadosTitulo:'RESULTS', periodizacaoTitulo:'PERIODIZATION',
+    seuProgresso:'🏆 YOUR PROGRESS', avalCompletaEm:'Assessment completed on', comparadoCom:'Compared with',
+    desdeAnterior:'since previous', pesoAtual:'CURRENT WEIGHT', gorduraLabel:'% BODY FAT', massaMagraLabel:'LEAN MASS',
+    flexibilidadeLabel:'🤸 FLEXIBILITY', vo2maxLabel:'❤️ VO2 MAX', faixaLabel:'Range',
+    completeAval:'Complete your assessment to see progress!', semDados:'No data yet!',
     lojinhaTitulo:'SHOP', lojinhaSub:'Everything for better training',
     financeiroTitulo:'FINANCIAL', financeiroSub:'Your plan and payments',
     carregando:'Loading...',
@@ -1057,6 +1065,10 @@ var TX = {
     composicaoDesc:'Peso y grasa', testesDesc:'VO2, FC, Fuerza',
     // ── RESULTADOS / PERIODIZACIÓN / TIENDA / FINANCIERO ──
     resultadosTitulo:'RESULTADOS', periodizacaoTitulo:'PERIODIZACIÓN',
+    seuProgresso:'🏆 TU PROGRESO', avalCompletaEm:'Evaluación completa el', comparadoCom:'Comparado con',
+    desdeAnterior:'desde anterior', pesoAtual:'PESO ACTUAL', gorduraLabel:'% GRASA', massaMagraLabel:'MASA MAGRA',
+    flexibilidadeLabel:'🤸 FLEXIBILIDAD', vo2maxLabel:'❤️ VO2 MÁX', faixaLabel:'Rango',
+    completeAval:'¡Completa tu evaluación para ver progreso!', semDados:'¡Aún sin datos!',
     lojinhaTitulo:'TIENDA', lojinhaSub:'Todo para entrenar mejor',
     financeiroTitulo:'FINANCIERO', financeiroSub:'Tu plan y pagos',
     carregando:'Cargando...',
@@ -2506,16 +2518,16 @@ function renderEvolucao(){
   fetch('/app-aluno/resultado', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
-    if(!d || d.detail){ document.getElementById('evolucao-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">Complete sua avaliação para ver evolução!</div>'; return; }
+    if(!d || d.detail){ document.getElementById('evolucao-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">' + T('completeAval') + '</div>'; return; }
     var html = '';
     
     // ─── CARD MOTIVACIONAL TOPO ───────────────────────
     if(d.data){
       html += '<div style="background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.02));border:1px solid rgba(201,168,76,.3);border-radius:14px;padding:18px;margin-bottom:20px">';
-      html += '<div style="font-size:11px;color:var(--ouro);letter-spacing:2px;margin-bottom:8px">🏆 SEU PROGRESSO</div>';
-      html += '<div style="font-size:16px;color:var(--texto);font-weight:500;margin-bottom:6px">Avaliação completa em ' + d.data + '</div>';
+      html += '<div style="font-size:11px;color:var(--ouro);letter-spacing:2px;margin-bottom:8px">' + T('seuProgresso') + '</div>';
+      html += '<div style="font-size:16px;color:var(--texto);font-weight:500;margin-bottom:6px">' + T('avalCompletaEm') + ' ' + d.data + '</div>';
       if(d.tem_anterior && d.data_anterior){
-        html += '<div style="font-size:12px;color:var(--cinza)">Comparado com: ' + d.data_anterior + '</div>';
+        html += '<div style="font-size:12px;color:var(--cinza)">' + T('comparadoCom') + ': ' + d.data_anterior + '</div>';
       }
       html += '</div>';
     }
@@ -2528,12 +2540,12 @@ function renderEvolucao(){
       var positivo = inverter ? (val < 0) : (val > 0);
       var cor = positivo ? 'var(--verde)' : 'var(--vermelho)';
       var sinal = val > 0 ? '+' : '';
-      return '<div style="font-size:11px;color:' + cor + ';margin-top:4px;font-weight:600">' + sinal + val + ' ' + unidade + ' desde anterior</div>';
+      return '<div style="font-size:11px;color:' + cor + ';margin-top:4px;font-weight:600">' + sinal + val + ' ' + unidade + ' ' + T('desdeAnterior') + '</div>';
     }
     
     // ─── COMPOSICAO CORPORAL ──────────────────────────
     if(d.peso_atual){
-      html += '<div class="metric-big"><div class="metric-label">PESO ATUAL</div><div class="metric-val">' + d.peso_atual + '<span class="metric-unit"> kg</span></div>';
+      html += '<div class="metric-big"><div class="metric-label">' + T('pesoAtual') + '</div><div class="metric-val">' + d.peso_atual + '<span class="metric-unit"> kg</span></div>';
       html += renderDelta(d.variacao_peso, 'kg', true);
       html += '</div>';
     }
@@ -2541,21 +2553,21 @@ function renderEvolucao(){
       var idade=parseInt(localStorage.getItem('aurum_idade')||'30');
       var sexo=localStorage.getItem('aurum_sexo')||'M';
       var cg=classificarGordura(d.percentual_gordura,idade,sexo);
-      html += '<div class="metric-big"><div class="metric-label">% GORDURA</div><div class="metric-val" style="color:'+cg.cor+'">' + d.percentual_gordura + '<span class="metric-unit"> %</span></div>';
+      html += '<div class="metric-big"><div class="metric-label">' + T('gorduraLabel') + '</div><div class="metric-val" style="color:'+cg.cor+'">' + d.percentual_gordura + '<span class="metric-unit"> %</span></div>';
       html += '<div style="font-size:11px;color:'+cg.cor+';margin-top:4px;font-weight:700">'+cg.txt+'</div>';
-      html += '<div style="font-size:10px;color:var(--cinza);margin-top:2px">Faixa '+cg.faixa+' · ACSM 2022</div>';
+      html += '<div style="font-size:10px;color:var(--cinza);margin-top:2px">' + T('faixaLabel') + ' '+cg.faixa+' · ACSM 2022</div>';
       html += renderDelta(d.variacao_gordura, '%', true);
       html += '</div>';
     }
     if(d.massa_magra){
-      html += '<div class="metric-big"><div class="metric-label">MASSA MAGRA</div><div class="metric-val">' + d.massa_magra + '<span class="metric-unit"> kg</span></div>';
+      html += '<div class="metric-big"><div class="metric-label">' + T('massaMagraLabel') + '</div><div class="metric-val">' + d.massa_magra + '<span class="metric-unit"> kg</span></div>';
       html += renderDelta(d.variacao_massa_magra, 'kg', false);
       html += '</div>';
     }
     
     // ─── FLEXIBILIDADE ────────────────────────────────
     if(d.flexibilidade_cm){
-      html += '<div class="metric-big"><div class="metric-label">🤸 FLEXIBILIDADE</div><div class="metric-val">' + d.flexibilidade_cm + '<span class="metric-unit"> cm</span></div>';
+      html += '<div class="metric-big"><div class="metric-label">' + T('flexibilidadeLabel') + '</div><div class="metric-val">' + d.flexibilidade_cm + '<span class="metric-unit"> cm</span></div>';
       if(d.classificacao_flexibilidade) html += '<div style="font-size:11px;color:var(--azul);margin-top:4px;font-weight:700">' + d.classificacao_flexibilidade + '</div>';
       html += renderDelta(d.variacao_flexibilidade, 'cm', false);
       html += '</div>';
@@ -2563,7 +2575,7 @@ function renderEvolucao(){
     
     // ─── CARDIO ───────────────────────────────────────
     if(d.vo2max){
-      html += '<div class="metric-big"><div class="metric-label">❤️ VO2 MÁX</div><div class="metric-val" style="color:var(--azul)">' + d.vo2max + '<span class="metric-unit"> ml/kg/min</span></div>';
+      html += '<div class="metric-big"><div class="metric-label">' + T('vo2maxLabel') + '</div><div class="metric-val" style="color:var(--azul)">' + d.vo2max + '<span class="metric-unit"> ml/kg/min</span></div>';
       if(d.classificacao_vo2) html += '<div style="font-size:11px;color:var(--azul);margin-top:4px;font-weight:700">' + d.classificacao_vo2 + '</div>';
       html += renderDelta(d.variacao_vo2, 'ml/kg/min', false);
       html += '<div style="font-size:10px;color:var(--cinza);margin-top:2px">ACSM 2022 · Cooper / Step / Milha</div>';
@@ -2612,9 +2624,9 @@ function renderEvolucao(){
       html += '</div>';
     }
     
-    document.getElementById('evolucao-content').innerHTML = html || '<div style="color:var(--cinza);text-align:center;padding:40px">Nenhum dado ainda!</div>';
+    document.getElementById('evolucao-content').innerHTML = html || '<div style="color:var(--cinza);text-align:center;padding:40px">' + T('semDados') + '</div>';
   }).catch(function(){
-    document.getElementById('evolucao-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">Complete sua avaliação!</div>';
+    document.getElementById('evolucao-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">' + T('completeAval') + '</div>';
   });
 }
 

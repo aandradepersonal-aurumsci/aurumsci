@@ -68,6 +68,8 @@ class Aluno(Base):
     objetivo = Column(Enum(ObjetivoAluno))
     nivel_experiencia = Column(Enum(NivelExperiencia), default=NivelExperiencia.INICIANTE)
     ativo = Column(Boolean, default=True)
+    assinatura_status = Column(String(20), default="trial")  # FIX 17/05/2026: trial/ativa/cancelada/expirada
+    valor_assinatura = Column(String(20))
     foto_url = Column(String(300))
     criado_em = Column(DateTime, default=datetime.utcnow)
     # Cobranca automatica

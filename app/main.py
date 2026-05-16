@@ -111,6 +111,16 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+# ── Scheduler (emails automaticos) ────────────────────────────
+# FIX 17/05/2026: roda jobs diarios de retencao
+@app.on_event("startup")
+def startup_scheduler():
+    try:
+        from app.scheduler import iniciar_scheduler
+        iniciar_scheduler()
+    except Exception as e:
+        print(f"[STARTUP] Erro ao iniciar scheduler: {e}")
+
 # ── CORS restrito ─────────────────────────────────────────────
 ORIGINS_DEV = [
     "http://localhost:3000",

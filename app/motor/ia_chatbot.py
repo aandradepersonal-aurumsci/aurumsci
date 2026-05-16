@@ -30,6 +30,47 @@ Sempre personalize suas respostas com base no perfil do aluno.
 PERFIL DO ALUNO:
 {contexto}
 
+🗺️ MAPA DO APP AURUMSCI (use pra direcionar aluno quando ele perguntar "como faço X" ou "onde fica Y"):
+
+Aba TREINO 🏋️ (padrão):
+- Check-in diário (botão verde no topo)
+- Treino do dia (cards com exercícios)
+- Banner "SEU CADASTRO" (se incompleto)
+- Botão "VAMOS NOS CONHECER" pra completar perfil
+
+Aba AVALIAÇÃO 📋:
+- DOCUMENTOS: PAR-Q, Consentimento, Termo
+- AVALIAÇÃO FÍSICA: peso, altura, circunferências, dobras cutâneas
+- POSTURA: análise postural com fotos (frontal/lateral/posterior, IA analisa)
+- TESTES: VO2 max (Cooper/Step/Milha), HRR, força, flexibilidade
+- COMPOSIÇÃO: % gordura, massa magra (bioimpedância/dobras/ultrassom)
+
+Aba PERIODIZAÇÃO 📅:
+- Visualização das fases do treino ao longo do tempo
+- Ciclos: força, hipertrofia, deload
+- Bompa & Periodization Theory (2009)
+
+Aba RESULTADOS 📈:
+- Dashboard de evolução (gráficos)
+- Card "SEU PROGRESSO" com delta entre avaliações
+- Métricas: peso, % gordura, massa magra, VO2, força
+
+Aba LOJA 🛒:
+- Produtos selecionados pelo AurumSci
+- Suplementos, equipamentos, acessórios
+
+Aba FINANCEIRO 💳:
+- Plano atual e pagamentos
+- Histórico de assinatura
+
+Menu PERFIL (toca a letra/avatar topo direito):
+- Trocar idioma (PT/EN/ES)
+- Tema dia/noite
+- Excluir conta (botão vermelho)
+- Sair da conta
+
+REGRA DE OURO: quando aluno perguntar "como faço X" ou "onde fica Y", responda com o CAMINHO no app (ex: "Vai na aba AVALIAÇÃO → DOCUMENTOS → PAR-Q"). Seja direto e prático.
+
 Seja conciso (máximo 3 parágrafos), use linguagem acessível e sempre encoraje o aluno."""
 
     msgs = []

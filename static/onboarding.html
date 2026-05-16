@@ -485,6 +485,9 @@ document.getElementById('onboarding-form').addEventListener('submit', async func
 const TX_ONB = {
   pt: {
     tagline: 'CIÊNCIA QUE VIRA RESULTADO',
+    convidadoPor: 'Você foi convidado por',
+    bemVindoFamilia: 'Bem-vindo à família <strong>AurumSci</strong> 🏆',
+    preencha3min: 'Preencha em 3 minutos e receba seu treino base por email!',
     bemVindo: 'BEM-VINDO! 🏆',
     secDados: '👤 DADOS PESSOAIS',
     secNF: '🧾 NOTA FISCAL',
@@ -520,6 +523,9 @@ const TX_ONB = {
   },
   en: {
     tagline: 'SCIENCE THAT TURNS INTO RESULTS',
+    convidadoPor: 'You were invited by',
+    bemVindoFamilia: 'Welcome to the <strong>AurumSci</strong> family 🏆',
+    preencha3min: 'Fill out in 3 minutes and receive your base training by email!',
     bemVindo: 'WELCOME! 🏆',
     secDados: '👤 PERSONAL DATA', secNF: '🧾 INVOICE', secTreino: '🏋️ TRAINING', secAnamnese: '🩺 HEALTH HISTORY',
     nomeCompleto: 'Full name', email: 'Email', cpf: 'Tax ID',
@@ -552,6 +558,9 @@ const TX_ONB = {
   },
   es: {
     tagline: 'CIENCIA QUE SE CONVIERTE EN RESULTADO',
+    convidadoPor: 'Has sido invitado por',
+    bemVindoFamilia: '¡Bienvenido a la familia <strong>AurumSci</strong>! 🏆',
+    preencha3min: '¡Completa en 3 minutos y recibe tu entrenamiento base por email!',
     bemVindo: '¡BIENVENIDO! 🏆',
     secDados: '👤 DATOS PERSONALES', secNF: '🧾 FACTURA', secTreino: '🏋️ ENTRENAMIENTO', secAnamnese: '🩺 HISTORIAL DE SALUD',
     nomeCompleto: 'Nombre completo', email: 'Email', cpf: 'ID Fiscal',
@@ -591,7 +600,12 @@ function setLangOnb(lang, btn) {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (TX_ONB[lang] && TX_ONB[lang][key]) {
-      el.innerHTML = TX_ONB[lang][key];
+      if (key === 'convidadoPor') {
+        const nome = el.getAttribute('data-personal') || '';
+        el.innerHTML = TX_ONB[lang][key] + ' <strong>' + nome + '</strong>';
+      } else {
+        el.innerHTML = TX_ONB[lang][key];
+      }
     }
   });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => {

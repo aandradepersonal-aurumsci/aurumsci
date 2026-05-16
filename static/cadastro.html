@@ -83,7 +83,10 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   </div>
   <div class="field">
     <label>SENHA</label>
-    <input type="password" id="senha" placeholder="mínimo 6 caracteres">
+    <div style="position:relative;">
+      <input type="password" id="senha" placeholder="mínimo 6 caracteres" style="padding-right:45px;width:100%;box-sizing:border-box;">
+      <button type="button" onclick="(function(b){var i=document.getElementById('senha');if(i.type==='password'){i.type='text';b.textContent='🙈';}else{i.type='password';b.textContent='👁️';}})(this)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:20px;cursor:pointer;padding:4px;">👁️</button>
+    </div>
   </div>
 
   <button class="btn-main" id="btn-cadastrar" onclick="cadastrar()">COMEÇAR 7 DIAS GRÁTIS →</button>

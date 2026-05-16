@@ -87,12 +87,22 @@ footer a{color:#444;text-decoration:none}
 
 /* DIVISOR */
 .divisor{height:1px;background:var(--borda);margin:0 24px}
+
+  .lang-row{display:flex;gap:8px;justify-content:center;padding:16px 20px 0;max-width:680px;margin:0 auto;}
+  .lang-btn-lp{flex:1;max-width:90px;padding:8px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#888;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:1px;transition:all .2s;}
+  .lang-btn-lp.active{border-color:#C9A84C;color:#C9A84C;background:rgba(201,168,76,.1);}
+  .lang-btn-lp:hover{border-color:#C9A84C;}
 </style>
 <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
     <link rel="apple-touch-icon-precomposed" href="/static/apple-touch-icon-precomposed.png">
     </head>
 <body>
+  <div class="lang-row">
+    <button class="lang-btn-lp active" onclick="setLangLP('pt',this)">🇧🇷 PT</button>
+    <button class="lang-btn-lp" onclick="setLangLP('en',this)">🇺🇸 EN</button>
+    <button class="lang-btn-lp" onclick="setLangLP('es',this)">🇪🇸 ES</button>
+  </div>
 
 <!-- HERO -->
 <div class="hero">

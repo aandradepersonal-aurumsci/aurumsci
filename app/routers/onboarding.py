@@ -242,9 +242,19 @@ def responder_questionario(
     email_destinatario_personal = personal.email if personal else None
     personal_id_aluno = personal.id if personal else None
     
-    # 2. Verifica se email ja existe
-    # FIX 16/05/2026: aluno autonomo pode COMPLETAR cadastro existente (paid na landing)
+    # 2. Limpa CPF (so numeros) - movido pra cima
+    cpf_limpo = "".join(filter(str.isdigit, dados.cpf))
+    if len(cpf_limpo) != 11:
+        raise HTTPException(400, "CPF invalido")
+    
+    # 3. Verifica se aluno ja existe (busca por EMAIL ou CPF)
+    # FIX 17/05/2026: busca por CPF tambem, nao so email
+    # Causa raiz da duplicata de 16/05: aluno autonomo podia digitar email diferente
+    # do pagamento e sistema criava duplicata
     aluno_existente = db.query(Aluno).filter(Aluno.email == dados.email).first()
+    if not aluno_existente:
+        aluno_existente = db.query(Aluno).filter(Aluno.cpf == cpf_limpo).first()
+    
     aluno_para_atualizar = None
     if aluno_existente:
         if not tem_personal:
@@ -252,16 +262,12 @@ def responder_questionario(
             # Aqui ele esta COMPLETANDO o cadastro pelo link do email
             aluno_para_atualizar = aluno_existente
         else:
-            # Fluxo PRO: email duplicado e bloqueio mesmo
+            # Fluxo PRO: email/CPF duplicado e bloqueio mesmo
             raise HTTPException(
                 400,
-                "Email ja cadastrado. Se voce ja e aluno do AurumSci, faca login no app."
+                "Email ou CPF ja cadastrado. Se voce ja e aluno do AurumSci, faca login no app."
             )
     
-    # 3. Limpa CPF (so numeros)
-    cpf_limpo = "".join(filter(str.isdigit, dados.cpf))
-    if len(cpf_limpo) != 11:
-        raise HTTPException(400, "CPF invalido")
     
     # 4. Verifica PAR-Q (saude)
     tem_risco = (

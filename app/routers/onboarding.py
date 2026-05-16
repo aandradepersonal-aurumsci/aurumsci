@@ -200,7 +200,7 @@ def pagina_onboarding(token: str, db: Session = Depends(get_db)):
             boas_vindas = f'<span data-i18n="convidadoPor" data-personal="{nome_personal}">Voce foi convidado por <strong>{nome_personal}</strong></span>'
         else:
             # Fluxo AUTONOMO: chegou pelo link direto (Stripe, pagina publica)
-            boas_vindas = '<span data-i18n="bemVindoFamilia">Bem-vindo a familia <strong>AurumSci</strong> 🏆</span><br><span data-i18n="preencha3min" style="font-size:14px;color:#888;display:block;margin-top:8px">Preencha em 3 minutos e receba seu treino base por email!</span>'
+            boas_vindas = '<span data-i18n="bemVindoFamilia">Bem-vindo a familia <strong>AurumSci</strong> 🏆</span>'
         
         
         html = html.replace("{{BOAS_VINDAS_TEXTO}}", boas_vindas)

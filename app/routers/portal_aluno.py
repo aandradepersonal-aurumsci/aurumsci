@@ -138,8 +138,10 @@ def login_aluno(dados: AlunoLogin, db: Session = Depends(get_db)):
     aluno = db.query(Aluno).filter(Aluno.id == cred.aluno_id).first()
     if not aluno.ativo:
         raise HTTPException(status_code=403, detail="Acesso desativado. Verifique sua assinatura em aurumsc.com.br")
-    if aluno.personal_id is None and not aluno.ativo:
-        raise HTTPException(status_code=403, detail="Assinatura inativa. Acesse aurumsc.com.br para renovar.")
+    # FIX 17/05/2026: aluno autonomo precisa ter assinatura ativa OU trial
+    if aluno.personal_id is None:
+        if aluno.assinatura_status not in ('trial', 'ativa'):
+            raise HTTPException(status_code=403, detail="Assinatura inativa. Acesse aurumsc.com.br para renovar.")
     # FIX 14/05/2026: Valida personal (se houver) antes de retornar
     if aluno.personal_id is not None:
         from app.models import Personal as PersonalModel

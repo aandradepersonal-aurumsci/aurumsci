@@ -398,6 +398,9 @@ def responder_questionario(
             db.add(plano)
             db.flush()
             
+            # FIX 18/05/2026: importa ExercicioSessao + Exercicio + cria os exercicios da sessao
+            from app.routers.treino import ExercicioSessao
+            
             for i, sessao_p in enumerate(periodizacao.sessoes_prescritas):
                 sessao = SessaoTreino(
                     plano_id=plano.id,
@@ -405,6 +408,28 @@ def responder_questionario(
                     dia_semana=i + 1
                 )
                 db.add(sessao)
+                db.flush()  # gera sessao.id
+                
+                # Cria exercicios da sessao
+                for ex_p in sessao_p.exercicios:
+                    # Procura ou cria exercicio no banco
+                    ex_obj = db.query(Exercicio).filter(Exercicio.nome == ex_p.nome).first()
+                    if not ex_obj:
+                        ex_obj = Exercicio(nome=ex_p.nome, grupo_muscular=ex_p.grupo)
+                        db.add(ex_obj)
+                        db.flush()
+                    
+                    # Cria o vinculo ExercicioSessao
+                    es = ExercicioSessao(
+                        sessao_id=sessao.id,
+                        exercicio_id=ex_obj.id,
+                        ordem=ex_p.ordem,
+                        series=ex_p.series,
+                        repeticoes=ex_p.repeticoes,
+                        tempo_descanso_seg=ex_p.descanso_segundos,
+                        observacoes=ex_p.tecnica_especial or ""
+                    )
+                    db.add(es)
             
             db.commit()
             treino_gerado = True

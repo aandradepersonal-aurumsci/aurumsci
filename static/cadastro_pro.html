@@ -34,6 +34,9 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 .login-link{text-align:center;font-size:13px;color:var(--cinza);margin-top:16px}
 .login-link a{color:var(--ouro);text-decoration:none}
 .plano-badge{text-align:center;background:rgba(75,159,255,.08);border:1px solid rgba(75,159,255,.2);border-radius:10px;padding:10px;font-size:12px;color:var(--azul);margin-bottom:20px;letter-spacing:1px;display:none}
+.lang-bar{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
+.lang-btn-cad{background:transparent;border:1px solid var(--borda);color:var(--cinza);padding:6px 14px;border-radius:10px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:1px;transition:all .2s}
+.lang-btn-cad.active{background:rgba(201,168,76,.12);border-color:var(--ouro);color:var(--ouro)}
 </style>
 <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
@@ -66,63 +69,155 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <svg viewBox="0 0 44 44" width="36" height="36" style="margin-right:6px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#C9A84C" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#C9A84C">A</text></svg>
     <span class="logo-aurum">AURUM</span><span class="logo-sci">sci.</span><span class="logo-pro">PRO</span>
   </div>
-  <div class="tag">CADASTRO DO PERSONAL TRAINER</div>
+  <div class="tag" data-i18n="tagCadastro">CADASTRO DO PERSONAL TRAINER</div>
+  <div class="lang-bar">
+    <button class="lang-btn-cad active" onclick="setLangCadPro('pt',this)">🇧🇷 PT</button>
+    <button class="lang-btn-cad" onclick="setLangCadPro('en',this)">🇺🇸 EN</button>
+    <button class="lang-btn-cad" onclick="setLangCadPro('es',this)">🇪🇸 ES</button>
+  </div>
 
   <div class="card">
     <div id="plano-badge" class="plano-badge"></div>
 
     <div class="trial-badge">
-      <div>🎯 7 DIAS GRÁTIS</div>
-      <div>Sem cobrança agora. Cancele quando quiser.</div>
+      <div data-i18n="seteDias">🎯 7 DIAS GRÁTIS</div>
+      <div data-i18n="semCobranca">Sem cobrança agora. Cancele quando quiser.</div>
     </div>
 
-    <div class="card-titulo">Crie sua conta PRO</div>
-    <div class="card-sub">Preencha seus dados e escolha o plano na próxima etapa.</div>
+    <div class="card-titulo" data-i18n="crieSuaConta">Crie sua conta PRO</div>
+    <div class="card-sub" data-i18n="preenchaDados">Preencha seus dados e escolha o plano na próxima etapa.</div>
 
-    <div class="field"><label>NOME COMPLETO</label><input type="text" id="nome" placeholder="André Andrade"></div>
-    <div class="field"><label>EMAIL</label><input type="email" id="email" placeholder="seu@email.com"></div>
-    <div class="field"><label>CREF</label><input type="text" id="cref" placeholder="000000-G/SP"></div>
-    <div class="field"><label>TELEFONE</label><input type="tel" id="telefone" placeholder="(11) 99999-9999"></div>
-    <div class="field"><label>CPF</label><input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)"></div>
-    <div class="field"><label>SENHA</label><div class="senha-wrapper"><input type="password" id="senha" placeholder="mínimo 8 caracteres"><button type="button" class="senha-toggle" onclick="toggleSenha('senha', this)">👁️</button></div></div>
+    <div class="field"><label data-i18n="lblNome">NOME COMPLETO</label><input type="text" id="nome" placeholder="André Andrade"></div>
+    <div class="field"><label data-i18n="lblEmail">EMAIL</label><input type="email" id="email" placeholder="seu@email.com" data-i18n-ph="phEmail"></div>
+    <div class="field"><label data-i18n="lblCref">CREF</label><input type="text" id="cref" placeholder="000000-G/SP"></div>
+    <div class="field"><label data-i18n="lblTelefone">TELEFONE</label><input type="tel" id="telefone" placeholder="(11) 99999-9999" data-i18n-ph="phTelefone"></div>
+    <div class="field"><label data-i18n="lblCpf">CPF</label><input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)"></div>
+    <div class="field"><label data-i18n="lblSenha">SENHA</label><div class="senha-wrapper"><input type="password" id="senha" placeholder="mínimo 8 caracteres" data-i18n-ph="phSenha"><button type="button" class="senha-toggle" onclick="toggleSenha('senha', this)">👁️</button></div></div>
 
     <!-- TERMO DE RESPONSABILIDADE DO PERSONAL -->
     <div style="background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.15);border-radius:12px;padding:16px;margin-bottom:16px">
-      <div style="font-family:'Bebas Neue';font-size:14px;color:var(--ouro);letter-spacing:1px;margin-bottom:12px">📋 TERMO DE RESPONSABILIDADE PROFISSIONAL</div>
+      <div style="font-family:'Bebas Neue';font-size:14px;color:var(--ouro);letter-spacing:1px;margin-bottom:12px" data-i18n="termoTitulo">📋 TERMO DE RESPONSABILIDADE PROFISSIONAL</div>
       <div id="termo-pro-itens">
         <div class="termo-item" onclick="toggleTermoPro(this)" data-idx="0" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;cursor:pointer">
           <div class="termo-box" style="width:20px;height:20px;border-radius:5px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px"></div>
-          <div style="font-size:12px;color:var(--cinza);line-height:1.6">Possuo registro ativo no CREF e estou habilitado para prescrição de exercícios físicos</div>
+          <div style="font-size:12px;color:var(--cinza);line-height:1.6"><span data-i18n="termo1">Possuo registro ativo no CREF e estou habilitado para prescrição de exercícios físicos</span></div>
         </div>
         <div class="termo-item" onclick="toggleTermoPro(this)" data-idx="1" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;cursor:pointer">
           <div class="termo-box" style="width:20px;height:20px;border-radius:5px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px"></div>
-          <div style="font-size:12px;color:var(--cinza);line-height:1.6">Assumo responsabilidade técnica pela prescrição e acompanhamento dos meus alunos</div>
+          <div style="font-size:12px;color:var(--cinza);line-height:1.6"><span data-i18n="termo2">Assumo responsabilidade técnica pela prescrição e acompanhamento dos meus alunos</span></div>
         </div>
         <div class="termo-item" onclick="toggleTermoPro(this)" data-idx="2" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;cursor:pointer">
           <div class="termo-box" style="width:20px;height:20px;border-radius:5px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px"></div>
-          <div style="font-size:12px;color:var(--cinza);line-height:1.6">Utilizarei a plataforma de forma ética, respeitando o Código de Ética do CONFEF</div>
+          <div style="font-size:12px;color:var(--cinza);line-height:1.6"><span data-i18n="termo3">Utilizarei a plataforma de forma ética, respeitando o Código de Ética do CONFEF</span></div>
         </div>
         <div class="termo-item" onclick="toggleTermoPro(this)" data-idx="3" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;cursor:pointer">
           <div class="termo-box" style="width:20px;height:20px;border-radius:5px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px"></div>
-          <div style="font-size:12px;color:var(--cinza);line-height:1.6">Protegerei os dados dos meus alunos conforme a LGPD (Lei 13.709/2018)</div>
+          <div style="font-size:12px;color:var(--cinza);line-height:1.6"><span data-i18n="termo4">Protegerei os dados dos meus alunos conforme a LGPD (Lei 13.709/2018)</span></div>
         </div>
         <div class="termo-item" onclick="toggleTermoPro(this)" data-idx="4" style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
           <div class="termo-box" style="width:20px;height:20px;border-radius:5px;border:2px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px"></div>
-          <div style="font-size:12px;color:var(--cinza);line-height:1.6">Compreendo que o AurumSci é uma ferramenta de apoio tecnológico e não substitui meu julgamento profissional</div>
+          <div style="font-size:12px;color:var(--cinza);line-height:1.6"><span data-i18n="termo5">Compreendo que o AurumSci é uma ferramenta de apoio tecnológico e não substitui meu julgamento profissional</span></div>
         </div>
       </div>
       <div style="font-size:10px;color:#444;margin-top:10px;line-height:1.6">Resolução CONFEF 307/2015 · LGPD Lei 13.709/2018</div>
     </div>
 
-    <button class="btn-gold" onclick="cadastrar()" id="btn-cadastrar" style="opacity:.4;pointer-events:none">COMEÇAR 7 DIAS GRÁTIS →</button>
-    <div class="loading" id="loading">⏳ Criando sua conta... Aguarde!</div>
+    <button class="btn-gold" onclick="cadastrar()" id="btn-cadastrar" data-i18n="btnComecar" style="opacity:.4;pointer-events:none">COMEÇAR 7 DIAS GRÁTIS →</button>
+    <div class="loading" id="loading" data-i18n="criandoConta">⏳ Criando sua conta... Aguarde!</div>
     <div class="error" id="error"></div>
   </div>
 
-  <div class="login-link">Já tem conta? <a href="/personal">Fazer login</a></div>
+  <div class="login-link"><span data-i18n="jaTemConta">Já tem conta?</span> <a href="/personal" data-i18n="fazerLogin">Fazer login</a></div>
 </div>
 
 <script>
+// ── TRILINGUAL PT/EN/ES (18/05/2026) ──────────────────────────
+var TX_CAD_PRO = {
+  pt: {
+    tagCadastro:'CADASTRO DO PERSONAL TRAINER',
+    seteDias:'🎯 7 DIAS GRÁTIS',
+    semCobranca:'Sem cobrança agora. Cancele quando quiser.',
+    crieSuaConta:'Crie sua conta PRO',
+    preenchaDados:'Preencha seus dados e escolha o plano na próxima etapa.',
+    lblNome:'NOME COMPLETO', lblEmail:'EMAIL', lblCref:'CREF', lblTelefone:'TELEFONE',
+    lblCpf:'CPF', lblSenha:'SENHA',
+    phEmail:'seu@email.com', phTelefone:'(11) 99999-9999', phSenha:'mínimo 8 caracteres',
+    termoTitulo:'📋 TERMO DE RESPONSABILIDADE PROFISSIONAL',
+    termo1:'Possuo registro ativo no CREF e estou habilitado para prescrição de exercícios físicos',
+    termo2:'Assumo responsabilidade técnica pela prescrição e acompanhamento dos meus alunos',
+    termo3:'Utilizarei a plataforma de forma ética, respeitando o Código de Ética do CONFEF',
+    termo4:'Protegerei os dados dos meus alunos conforme a LGPD (Lei 13.709/2018)',
+    termo5:'Compreendo que o AurumSci é uma ferramenta de apoio tecnológico e não substitui meu julgamento profissional',
+    btnComecar:'COMEÇAR 7 DIAS GRÁTIS →',
+    criandoConta:'⏳ Criando sua conta... Aguarde!',
+    jaTemConta:'Já tem conta?', fazerLogin:'Fazer login',
+  },
+  en: {
+    tagCadastro:'PERSONAL TRAINER SIGN UP',
+    seteDias:'🎯 7-DAY FREE TRIAL',
+    semCobranca:'No charge now. Cancel anytime.',
+    crieSuaConta:'Create your PRO account',
+    preenchaDados:'Fill in your details and choose the plan in the next step.',
+    lblNome:'FULL NAME', lblEmail:'EMAIL', lblCref:'LICENSE (CREF)', lblTelefone:'PHONE',
+    lblCpf:'TAX ID', lblSenha:'PASSWORD',
+    phEmail:'your@email.com', phTelefone:'(11) 99999-9999', phSenha:'minimum 8 characters',
+    termoTitulo:'📋 PROFESSIONAL RESPONSIBILITY TERM',
+    termo1:'I have an active CREF registration and am qualified to prescribe physical exercises',
+    termo2:'I assume technical responsibility for prescribing and following up my students',
+    termo3:'I will use the platform ethically, respecting the CONFEF Code of Ethics',
+    termo4:'I will protect my students data according to LGPD (Brazilian Law 13.709/2018)',
+    termo5:'I understand that AurumSci is a technological support tool and does not replace my professional judgment',
+    btnComecar:'START 7-DAY FREE TRIAL →',
+    criandoConta:'⏳ Creating your account... Please wait!',
+    jaTemConta:'Already have an account?', fazerLogin:'Log in',
+  },
+  es: {
+    tagCadastro:'REGISTRO DEL PERSONAL TRAINER',
+    seteDias:'🎯 7 DÍAS GRATIS',
+    semCobranca:'Sin cobro ahora. Cancela cuando quieras.',
+    crieSuaConta:'Crea tu cuenta PRO',
+    preenchaDados:'Completa tus datos y elige el plan en el siguiente paso.',
+    lblNome:'NOMBRE COMPLETO', lblEmail:'EMAIL', lblCref:'REGISTRO (CREF)', lblTelefone:'TELÉFONO',
+    lblCpf:'CPF', lblSenha:'CONTRASEÑA',
+    phEmail:'tu@email.com', phTelefone:'(11) 99999-9999', phSenha:'mínimo 8 caracteres',
+    termoTitulo:'📋 TÉRMINO DE RESPONSABILIDAD PROFESIONAL',
+    termo1:'Poseo registro activo en CREF y estoy habilitado para prescripción de ejercicios físicos',
+    termo2:'Asumo responsabilidad técnica por la prescripción y acompañamiento de mis alumnos',
+    termo3:'Utilizaré la plataforma de forma ética, respetando el Código de Ética del CONFEF',
+    termo4:'Protegeré los datos de mis alumnos conforme la LGPD (Ley 13.709/2018)',
+    termo5:'Entiendo que AurumSci es una herramienta de apoyo tecnológico y no sustituye mi juicio profesional',
+    btnComecar:'COMENZAR 7 DÍAS GRATIS →',
+    criandoConta:'⏳ Creando tu cuenta... ¡Aguarda!',
+    jaTemConta:'¿Ya tienes cuenta?', fazerLogin:'Iniciar sesión',
+  }
+};
+
+function setLangCadPro(lang, btn){
+  document.querySelectorAll('.lang-btn-cad').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (TX_CAD_PRO[lang] && TX_CAD_PRO[lang][key]) {
+      el.innerHTML = TX_CAD_PRO[lang][key];
+    }
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.getAttribute('data-i18n-ph');
+    if (TX_CAD_PRO[lang] && TX_CAD_PRO[lang][key]) {
+      el.setAttribute('placeholder', TX_CAD_PRO[lang][key]);
+    }
+  });
+  try{ localStorage.setItem('aurum_lang_cad_pro', lang); }catch(e){}
+}
+
+window.addEventListener('DOMContentLoaded', function(){
+  try{
+    var saved = localStorage.getItem('aurum_lang_cad_pro') || 'pt';
+    var btn = document.querySelector('.lang-btn-cad[onclick*="\'' + saved + '\'"]');
+    setLangCadPro(saved, btn);
+  }catch(e){}
+});
+
 var termoPro = [];
 function toggleTermoPro(el){
   var idx = parseInt(el.dataset.idx);

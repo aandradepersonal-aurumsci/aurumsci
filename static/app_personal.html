@@ -2467,7 +2467,7 @@ function avalAba(aba){
       if(d.nome){ var e=document.getElementById('an-nome'); if(e) e.value=d.nome; }
       if(d.peso){ var e=document.getElementById('an-peso'); if(e) e.value=d.peso; }
       if(d.altura){ var e=document.getElementById('an-altura'); if(e) e.value=d.altura; }
-      if(d.sexo){ var e=document.getElementById('an-sexo'); if(e) e.value=d.sexo; }
+      if(d.sexo){ var e=document.getElementById('an-sexo'); if(e){ var s=String(d.sexo).toUpperCase(); e.value = (s==='MASCULINO'||s==='M') ? 'M' : ((s==='FEMININO'||s==='F') ? 'F' : ''); } }
       if(d.nivel){ var e=document.getElementById('an-nivel'); if(e) e.value=d.nivel.toLowerCase(); }
       if(d.objetivo){ var e=document.getElementById('an-objetivo'); if(e) e.value=d.objetivo.toLowerCase(); }
       if(d.data_nascimento){

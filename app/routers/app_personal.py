@@ -361,9 +361,15 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
                 descricao_dores=an.dores,
                 observacoes=an.observacoes
             ))
-        # Atualiza tambem campos do Aluno (peso, altura, sexo, nivel, objetivo)
-        if an.peso: aluno.peso = an.peso
-        if hasattr(an, 'altura') and an.altura: aluno.altura = an.altura
+        # FIX 18/05/2026: peso/altura salvos em AvaliacaoFisica
+        if an.peso or (hasattr(an, 'altura') and an.altura):
+            from app.routers.avaliacao import AvaliacaoFisica
+            av = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno_id, AvaliacaoFisica.data_avaliacao == date.today()).first()
+            if not av:
+                av = AvaliacaoFisica(aluno_id=aluno_id, data_avaliacao=date.today())
+                db.add(av)
+            if an.peso: av.peso = an.peso
+            if hasattr(an, 'altura') and an.altura: av.estatura = an.altura
         if hasattr(an, 'nivel') and an.nivel:
             try:
                 from app.models import NivelExperiencia
@@ -464,11 +470,14 @@ def get_anamnese_aluno(aluno_id: int, personal: Personal = Depends(get_personal_
     
     anam = db.query(Anamnese).filter(Anamnese.aluno_id == aluno_id).order_by(Anamnese.id.desc()).first()
     
-    # Dados do Aluno (peso, altura, sexo, nivel, objetivo)
+    # FIX 18/05/2026: peso/altura vem de AvaliacaoFisica, nao de Aluno
+    from app.routers.avaliacao import AvaliacaoFisica
+    av = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno_id).order_by(AvaliacaoFisica.id.desc()).first()
+    
     return {
         "nome": aluno.nome,
-        "peso": aluno.peso,
-        "altura": aluno.altura,
+        "peso": av.peso if av else None,
+        "altura": av.estatura if av else None,
         "sexo": aluno.sexo.value if aluno.sexo else None,
         "nivel": aluno.nivel_experiencia.value if aluno.nivel_experiencia else None,
         "objetivo": aluno.objetivo.value if aluno.objetivo else None,

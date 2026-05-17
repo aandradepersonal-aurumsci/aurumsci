@@ -340,16 +340,42 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
 
     if secao == "anamnese" and dados.anamnese:
         an = dados.anamnese
-        obs = f"Patologias: {an.patologias or '—'} | Dores: {an.dores or '—'} | Liberação: {an.liberacao_medica or '—'} | {an.observacoes or ''}"
+        # FIX 18/05/2026: salva nos campos estruturados do model (nao mais em obs concatenada)
         existente = db.query(Anamnese).filter(Anamnese.aluno_id == aluno_id).first()
         if existente:
             existente.objetivo_detalhado = an.objetivo
             existente.lesoes_anteriores = an.cirurgias
+            existente.cirurgias = an.cirurgias
             existente.medicamentos_uso = an.medicamentos
-            existente.observacoes = obs
+            existente.doencas_cronicas = an.patologias  # patologias estruturadas
+            existente.descricao_dores = an.dores  # dores como texto livre
+            existente.observacoes = an.observacoes  # observacoes APENAS observacoes do personal
         else:
-            db.add(Anamnese(aluno_id=aluno_id, objetivo_detalhado=an.objetivo, lesoes_anteriores=an.cirurgias, medicamentos_uso=an.medicamentos, observacoes=obs))
+            db.add(Anamnese(
+                aluno_id=aluno_id,
+                objetivo_detalhado=an.objetivo,
+                lesoes_anteriores=an.cirurgias,
+                cirurgias=an.cirurgias,
+                medicamentos_uso=an.medicamentos,
+                doencas_cronicas=an.patologias,
+                descricao_dores=an.dores,
+                observacoes=an.observacoes
+            ))
+        # Atualiza tambem campos do Aluno (peso, altura, sexo, nivel, objetivo)
         if an.peso: aluno.peso = an.peso
+        if hasattr(an, 'altura') and an.altura: aluno.altura = an.altura
+        if hasattr(an, 'nivel') and an.nivel:
+            try:
+                from app.models import NivelExperiencia
+                aluno.nivel_experiencia = NivelExperiencia[an.nivel.upper()]
+            except Exception:
+                pass
+        if an.objetivo:
+            try:
+                from app.models import Objetivo
+                aluno.objetivo = Objetivo[an.objetivo.upper()]
+            except Exception:
+                pass
         db.commit()
         return {"mensagem": f"Anamnese salva para {aluno.nome}!", "secao": secao, "data": str(date.today())}
 
@@ -423,6 +449,38 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
 
     db.commit()
     return {"mensagem": f"Seção '{secao}' salva para {aluno.nome}!", "secao": secao, "data": str(date.today())}
+
+
+@router.get("/aluno/{aluno_id}/anamnese")
+def get_anamnese_aluno(aluno_id: int, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    """Retorna a anamnese mais recente do aluno pra pre-popular o frontend.
+    FIX 18/05/2026: criado pra resolver bug de dados nao persistirem visualmente.
+    """
+    from app.models import Aluno
+    from app.routers.anamnese import Anamnese
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal.id).first()
+    if not aluno:
+        raise HTTPException(status_code=404, detail="Aluno nao encontrado")
+    
+    anam = db.query(Anamnese).filter(Anamnese.aluno_id == aluno_id).order_by(Anamnese.id.desc()).first()
+    
+    # Dados do Aluno (peso, altura, sexo, nivel, objetivo)
+    return {
+        "nome": aluno.nome,
+        "peso": aluno.peso,
+        "altura": aluno.altura,
+        "sexo": aluno.sexo.value if aluno.sexo else None,
+        "nivel": aluno.nivel_experiencia.value if aluno.nivel_experiencia else None,
+        "objetivo": aluno.objetivo.value if aluno.objetivo else None,
+        "data_nascimento": str(aluno.data_nascimento) if aluno.data_nascimento else None,
+        # Dados da Anamnese
+        "patologias": anam.doencas_cronicas if anam else None,
+        "dores": anam.descricao_dores if anam else None,
+        "cirurgias": anam.cirurgias or anam.lesoes_anteriores if anam else None,
+        "medicamentos": anam.medicamentos_uso if anam else None,
+        "objetivo_detalhado": anam.objetivo_detalhado if anam else None,
+        "observacoes": anam.observacoes if anam else None,
+    }
 
 
 @router.post("/aluno/{aluno_id}/postural")

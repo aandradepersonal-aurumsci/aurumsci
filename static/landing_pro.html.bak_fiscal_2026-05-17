@@ -333,7 +333,84 @@ footer a{color:#444;text-decoration:none}
 
 <div class="divisor"></div>
 
+<!-- GESTÃO FISCAL -->
+<section>
+  <div class="section-tag">GESTÃO FISCAL</div>
+  <h2 class="section-titulo">Quanto você paga de imposto?</h2>
+  <p class="section-sub">O AurumSci PRO calcula automaticamente — e mostra como você pode pagar muito menos.</p>
 
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+    <div style="background:rgba(255,75,75,.08);border:1px solid rgba(255,75,75,.25);border-radius:16px;padding:20px;text-align:center">
+      <div style="font-family:'Bebas Neue';font-size:14px;color:#FF4B4B;margin-bottom:8px">😰 CPF (AUTÔNOMO)</div>
+      <div style="font-family:'Bebas Neue';font-size:44px;color:#FF4B4B;line-height:1">35-40%</div>
+      <div style="font-size:11px;color:#888;margin-top:8px;line-height:1.6">IR até 27,5%<br>ISS 5% (São Paulo)<br>INSS 11-20%</div>
+    </div>
+    <div style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);border-radius:16px;padding:20px;text-align:center">
+      <div style="font-family:'Bebas Neue';font-size:14px;color:#00E5A0;margin-bottom:8px">😎 CNPJ (SIMPLES)</div>
+      <div style="font-family:'Bebas Neue';font-size:44px;color:#00E5A0;line-height:1">~6%</div>
+      <div style="font-size:11px;color:#888;margin-top:8px;line-height:1.6">Tudo incluso<br>numa guia única<br>DAS mensal</div>
+    </div>
+  </div>
+
+  <!-- Simulador interativo -->
+  <div style="background:#12121A;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:20px;margin-bottom:16px">
+    <div style="font-size:11px;color:#C9A84C;letter-spacing:2px;font-weight:700;margin-bottom:12px">💰 SIMULE SEU FATURAMENTO</div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:12px;color:#888;margin-bottom:6px">Quanto você recebe por mês?</div>
+      <input id="fat-input" type="number" placeholder="Ex: 5000" oninput="calcFiscal()" 
+        style="width:100%;padding:12px;background:#0A0A0F;border:1px solid rgba(201,168,76,0.2);border-radius:10px;color:#fff;font-size:16px;font-family:'Bebas Neue';letter-spacing:1px">
+    </div>
+    <div id="fat-resultado" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div style="background:rgba(255,75,75,.08);border:1px solid rgba(255,75,75,.2);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:10px;color:#FF4B4B;font-weight:700;margin-bottom:4px">CPF — PAGA</div>
+          <div style="font-family:'Bebas Neue';font-size:24px;color:#FF4B4B" id="val-cpf">-</div>
+          <div style="font-size:10px;color:#888;margin-top:2px">Liquido: <span id="liq-cpf">-</span></div>
+        </div>
+        <div style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:10px;color:#00E5A0;font-weight:700;margin-bottom:4px">CNPJ — PAGA</div>
+          <div style="font-family:'Bebas Neue';font-size:24px;color:#00E5A0" id="val-cnpj">-</div>
+          <div style="font-size:10px;color:#888;margin-top:2px">Liquido: <span id="liq-cnpj">-</span></div>
+        </div>
+      </div>
+      <div style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-family:'Bebas Neue';font-size:16px;color:#F0C040">💡 Abrindo CNPJ você economiza <span id="economia">-</span>/mês!</div>
+        <div style="font-size:11px;color:#888;margin-top:4px">O AurumSci PRO calcula isso automaticamente para você</div>
+      <div style="margin-top:10px;font-size:10px;color:#555;line-height:1.8;text-align:left;background:#0A0A0F;padding:10px;border-radius:8px">No DAS (~6%) estao inclusos: IRPJ · CSLL · PIS · COFINS · ISS · CPP (INSS patronal) — tudo numa guia so</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);border-radius:12px;padding:14px;font-size:12px;color:#888;line-height:1.7">
+    <strong style="color:#C9A84C">⚠️ Atenção:</strong> Personal trainer <strong style="color:#fff">NÃO pode ser MEI</strong> — a atividade é regulamentada pelo CREF. 
+    A alternativa é abrir como <strong style="color:#fff">ME ou SLU</strong> no Simples Nacional. 
+    Um contador pode reduzir sua carga de ~35% para ~6%!<br>
+    <span style="font-size:10px;color:#555">Valores estimados. Consulte um contador.</span>
+  </div>
+</section>
+
+<script>
+function calcFiscal(){
+  var v = parseFloat(document.getElementById('fat-input').value)||0;
+  if(v <= 0){ document.getElementById('fat-resultado').style.display='none'; return; }
+  var cpf = v*0.40, cnpj = v*0.06, eco = cpf-cnpj;
+  var fmt = function(n){ return 'R$ '+n.toFixed(2).replace('.',','); };
+  document.getElementById('val-cpf').textContent = fmt(cpf);
+  document.getElementById('liq-cpf').textContent = fmt(v-cpf);
+  document.getElementById('val-cnpj').textContent = fmt(cnpj);
+  document.getElementById('liq-cnpj').textContent = fmt(v-cnpj);
+  document.getElementById('economia').textContent = fmt(eco);
+  document.getElementById('fat-resultado').style.display = 'block';
+}
+</script>
+
+
+
+
+<div class="divisor"></div>
+
+
+<div class="divisor"></div>
 
 <!-- DEPOIMENTO -->
 <section>
@@ -356,6 +433,15 @@ footer a{color:#444;text-decoration:none}
     </p>
     <div style="font-size:13px;font-weight:600;color:var(--ouro)">Lucas Ferreira</div>
     <div style="font-size:11px;color:var(--cinza)">Personal Trainer · São Paulo · Beta Tester</div>
+  </div>
+
+  <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:24px;margin-bottom:16px">
+    <div style="font-size:20px;color:#F0C040;margin-bottom:12px">⭐⭐⭐⭐⭐</div>
+    <p style="font-size:14px;color:var(--texto);line-height:1.8;font-style:italic;margin-bottom:16px">
+      "O simulador de imposto me abriu os olhos. Eu pagava quase 40% no CPF sem saber. Já estou abrindo meu CNPJ. O AurumSci me economizou mais do que imaginava."
+    </p>
+    <div style="font-size:13px;font-weight:600;color:var(--ouro)">Ricardo Mendes</div>
+    <div style="font-size:11px;color:var(--cinza)">Personal Trainer · Rio de Janeiro · Beta Tester</div>
   </div>
 
   <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:24px;margin-bottom:16px">

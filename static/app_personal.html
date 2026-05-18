@@ -3674,19 +3674,7 @@ function renderAnamnese(){
     '<div class="opcoes" id="anam-dias-opcoes" style="display:flex;flex-wrap:wrap;gap:6px"></div>' +
     '</div>' +
     '</div>' +
-    '<div style="margin-top:8px">' +
-    '<div style="font-size:10px;color:var(--cinza);margin-bottom:3px">TEMPO DISPONÍVEL POR SESSÃO</div>' +
-    '<select id="an-tempo" style="width:100%;padding:8px;border-radius:8px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px">' +
-    '<option value="30">30 minutos</option><option value="45">45 minutos</option>' +
-    '<option value="60">60 minutos</option><option value="90">90 minutos</option><option value="120">120 minutos</option></select>' +
     '</div>' +
-    '<div style="margin-top:8px">' +
-    '<div style="font-size:10px;color:var(--cinza);margin-bottom:3px">EQUIPAMENTOS DISPONÍVEIS</div>' +
-    '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
-    ['Academia completa','Halteres','Barra e anilhas','Kettlebell','Elásticos','Peso corporal','Cardio (esteira/bike)'].map(function(e){
-      return '<label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--cinza);cursor:pointer"><input type="checkbox" value="' + e + '"> ' + e + '</label>';
-    }).join('') +
-    '</div></div></div>' +
 
     // SAÚDE
     '<div style="background:rgba(255,75,75,.04);border:1px solid rgba(255,75,75,.15);border-radius:12px;padding:14px;margin-bottom:12px">' +
@@ -3789,7 +3777,6 @@ function salvarAnamnese(){
       nivel: obterAnamSelecionado('anam-nivel-opcoes'),
       objetivo: obterAnamSelecionado('anam-objetivo-opcoes'),
       dias_semana: obterAnamSelecionado('anam-dias-opcoes'),
-      tempo_sessao: get('an-tempo'),
       patologias: pats.join(', '),
       dores: get('an-dores'),
       cirurgias: get('an-cirurgias'),

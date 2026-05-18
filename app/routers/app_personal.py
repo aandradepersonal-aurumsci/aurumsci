@@ -474,6 +474,10 @@ def get_anamnese_aluno(aluno_id: int, personal: Personal = Depends(get_personal_
     from app.routers.avaliacao import AvaliacaoFisica
     av = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno_id).order_by(AvaliacaoFisica.id.desc()).first()
     
+    # FIX 18/05/2026 padronizar: busca plano ativo pra retornar dias_semana
+    from app.routers.treino import PlanoTreino
+    plano_ativo = db.query(PlanoTreino).filter(PlanoTreino.aluno_id == aluno_id, PlanoTreino.ativo == True).first()
+    
     return {
         "nome": aluno.nome,
         "peso": av.peso if av else None,
@@ -481,6 +485,8 @@ def get_anamnese_aluno(aluno_id: int, personal: Personal = Depends(get_personal_
         "sexo": aluno.sexo.value if aluno.sexo else None,
         "nivel": aluno.nivel_experiencia.value if aluno.nivel_experiencia else None,
         "objetivo": aluno.objetivo.value if aluno.objetivo else None,
+        # FIX 18/05/2026 padronizar: dias_semana vem do plano ativo (Aluno nao tem esse campo)
+        "dias_semana": plano_ativo.dias_semana if plano_ativo else None,
         "data_nascimento": str(aluno.data_nascimento) if aluno.data_nascimento else None,
         # Dados da Anamnese
         "patologias": anam.doencas_cronicas if anam else None,

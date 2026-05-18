@@ -109,6 +109,8 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 .status-inativo{background:var(--cinza)}
 .btn-novo-aluno{width:100%;padding:16px;background:rgba(201,168,76,.08);border:1px dashed rgba(201,168,76,.3);border-radius:14px;color:var(--ouro);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;transition:all .2s;font-family:'DM Sans'}
 .btn-novo-aluno:active{transform:scale(.98)}
+.opcao{padding:12px 18px;border-radius:12px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:14px;cursor:pointer;transition:all .2s}
+.opcao.selected{background:rgba(201,168,76,.12);border-color:var(--ouro);color:var(--ouro)}
 .busca-input{width:100%;padding:12px 16px;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;color:var(--texto);font-size:14px;font-family:'DM Sans';outline:none;margin-bottom:14px}
 .busca-input:focus{border-color:rgba(201,168,76,.4)}
 
@@ -2468,8 +2470,42 @@ function avalAba(aba){
       if(d.peso){ var e=document.getElementById('an-peso'); if(e) e.value=d.peso; }
       if(d.altura){ var e=document.getElementById('an-altura'); if(e) e.value=d.altura; }
       if(d.sexo){ var e=document.getElementById('an-sexo'); if(e){ var s=String(d.sexo).toUpperCase(); e.value = (s==='MASCULINO'||s==='M') ? 'M' : ((s==='FEMININO'||s==='F') ? 'F' : ''); } }
-      if(d.nivel){ var e=document.getElementById('an-nivel'); if(e) e.value=d.nivel.toLowerCase(); }
-      if(d.objetivo){ var e=document.getElementById('an-objetivo'); if(e) e.value=d.objetivo.toLowerCase(); }
+      // FIX 18/05/2026 padronizar: renderiza botoes (igual app aluno) puxando do banco
+      var nivelSalvo = d.nivel ? String(d.nivel).toLowerCase() : '';
+      var objSalvo = d.objetivo ? String(d.objetivo).toLowerCase() : '';
+      var diasSalvo = d.dias_semana ? String(d.dias_semana) : '';
+      // NIVEL
+      var elNiv = document.getElementById('anam-nivel-opcoes');
+      if(elNiv){
+        var niveis = [['iniciante','Iniciante'],['intermediario','Intermediário'],['avancado','Avançado']];
+        var htmlN = '';
+        niveis.forEach(function(n){
+          var sel = (n[0] === nivelSalvo) ? ' selected' : '';
+          htmlN += '<div class="opcao'+sel+'" onclick="selecionarAnamOpcaoPRO(this,\'nivel\',\''+n[0]+'\')">'+n[1]+'</div>';
+        });
+        elNiv.innerHTML = htmlN;
+      }
+      // OBJETIVO
+      var elObj = document.getElementById('anam-objetivo-opcoes');
+      if(elObj){
+        var objMap = {hipertrofia:'Hipertrofia',emagrecimento:'Emagrecimento',forca:'Força',condicionamento:'Condicionamento',saude:'Saúde e Qualidade de Vida',flexibilidade:'Flexibilidade'};
+        var htmlO = '';
+        Object.keys(objMap).forEach(function(k){
+          var sel = (k === objSalvo) ? ' selected' : '';
+          htmlO += '<div class="opcao'+sel+'" onclick="selecionarAnamOpcaoPRO(this,\'objetivo\',\''+k+'\')">'+objMap[k]+'</div>';
+        });
+        elObj.innerHTML = htmlO;
+      }
+      // DIAS
+      var elDias = document.getElementById('anam-dias-opcoes');
+      if(elDias){
+        var htmlD = '';
+        [2,3,4,5,6].forEach(function(dd){
+          var sel = (String(dd) === diasSalvo) ? ' selected' : '';
+          htmlD += '<div class="opcao'+sel+'" onclick="selecionarAnamOpcaoPRO(this,\'dias\',\''+dd+'\')">'+dd+'x</div>';
+        });
+        elDias.innerHTML = htmlD;
+      }
       if(d.data_nascimento){
         var nasc = new Date(d.data_nascimento);
         var hoje = new Date();
@@ -3627,18 +3663,16 @@ function renderAnamnese(){
     '<select id="an-sexo" style="width:100%;padding:8px;border-radius:8px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px">' +
     '<option value="M">Masculino</option><option value="F">Feminino</option></select></div>' +
     '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">NÍVEL</div>' +
-    '<select id="an-nivel" style="width:100%;padding:8px;border-radius:8px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px">' +
-    '<option value="iniciante">Iniciante</option><option value="intermediario">Intermediário</option><option value="avancado">Avançado</option></select></div>' +
+    '<div class="opcoes" id="anam-nivel-opcoes" style="display:flex;flex-wrap:wrap;gap:6px"></div>' +
+    '</div>' +
     '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
     '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">OBJETIVO</div>' +
-    '<select id="an-objetivo" style="width:100%;padding:8px;border-radius:8px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px">' +
-    '<option value="hipertrofia">Hipertrofia</option><option value="emagrecimento">Emagrecimento</option>' +
-    '<option value="forca">Força</option><option value="condicionamento">Condicionamento</option>' +
-    '<option value="saude">Saúde e Qualidade de Vida</option><option value="flexibilidade">Flexibilidade</option></select></div>' +
+    '<div class="opcoes" id="anam-objetivo-opcoes" style="display:flex;flex-wrap:wrap;gap:6px"></div>' +
+    '</div>' +
     '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">DIAS/SEMANA</div>' +
-    '<select id="an-dias" style="width:100%;padding:8px;border-radius:8px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px">' +
-    '<option value="2">2x</option><option value="3">3x</option><option value="4">4x</option><option value="5">5x</option><option value="6">6x</option></select></div>' +
+    '<div class="opcoes" id="anam-dias-opcoes" style="display:flex;flex-wrap:wrap;gap:6px"></div>' +
+    '</div>' +
     '</div>' +
     '<div style="margin-top:8px">' +
     '<div style="font-size:10px;color:var(--cinza);margin-bottom:3px">TEMPO DISPONÍVEL POR SESSÃO</div>' +
@@ -3708,6 +3742,33 @@ function renderCircunferencias(){
     '</div>';
 }
 
+// FIX 18/05/2026 padronizar: helpers dos botoes (igual app aluno)
+function selecionarAnamOpcaoPRO(el, campo, valor){
+  // Remove .selected dos irmaos
+  var parent = el.parentElement;
+  if(parent){
+    parent.querySelectorAll('.opcao').forEach(function(o){ o.classList.remove('selected'); });
+  }
+  el.classList.add('selected');
+  // Guarda em data-attribute do container
+  if(parent) parent.setAttribute('data-valor', valor);
+}
+function obterAnamSelecionado(idContainer){
+  var el = document.getElementById(idContainer);
+  if(!el) return '';
+  // Primeiro tenta pelo data-valor (clicou agora)
+  var v = el.getAttribute('data-valor');
+  if(v) return v;
+  // Senao, busca o .selected (veio pre-marcado do banco)
+  var sel = el.querySelector('.opcao.selected');
+  if(sel){
+    // Pega o valor do onclick (selecionarAnamOpcaoPRO(this,'campo','VALOR'))
+    var oc = sel.getAttribute('onclick') || '';
+    var m = oc.match(/,\s*'([^']+)'\)$/);
+    if(m) return m[1];
+  }
+  return '';
+}
 function salvarAnamnese(){
   // FIX 18/05/2026: envia TODOS os campos estruturados pro backend
   var get = function(id){ return (document.getElementById(id)||{}).value || ''; };
@@ -3725,9 +3786,9 @@ function salvarAnamnese(){
       peso: parseFloat(get('an-peso')) || null,
       altura: parseFloat(get('an-altura')) || null,
       sexo: get('an-sexo'),
-      nivel: get('an-nivel'),
-      objetivo: get('an-objetivo'),
-      dias_semana: get('an-dias'),
+      nivel: obterAnamSelecionado('anam-nivel-opcoes'),
+      objetivo: obterAnamSelecionado('anam-objetivo-opcoes'),
+      dias_semana: obterAnamSelecionado('anam-dias-opcoes'),
       tempo_sessao: get('an-tempo'),
       patologias: pats.join(', '),
       dores: get('an-dores'),

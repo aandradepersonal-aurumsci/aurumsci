@@ -3659,8 +3659,8 @@ function renderAnamnese(){
     '<div style="font-size:11px;color:#FF6B6B;font-weight:700;letter-spacing:1px;margin-bottom:12px">🏥 HISTÓRICO DE SAÚDE</div>' +
     '<div style="font-size:10px;color:var(--cinza);margin-bottom:6px">PATOLOGIAS / DOENÇAS</div>' +
     '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">' +
-    ['Hipertensão','Diabetes','Colesterol alto','Cardiopatia','Asma/DPOC','Artrite/Osteoartrite','Osteoporose','Hérnia de disco','Obesidade','Nenhuma'].map(function(p){
-      return '<label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--cinza);cursor:pointer"><input type="checkbox" value="' + p + '"> ' + p + '</label>';
+    [['Hipertensão','hipertensao'],['Diabetes','diabetes'],['Colesterol alto','colesterol_alto'],['Cardiopatia','cardiopatia'],['Asma/DPOC','asma'],['Artrite/Osteoartrite','artrite'],['Osteoporose','osteoporose'],['Hérnia de disco','hernia'],['Obesidade','obesidade'],['Nenhuma','nenhuma']].map(function(par){
+      return '<label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--cinza);cursor:pointer"><input type="checkbox" value="' + par[1] + '"> ' + par[0] + '</label>';
     }).join('') +
     '</div>' +
     '<div style="font-size:10px;color:var(--cinza);margin-bottom:3px">DORES ARTICULARES (onde?)</div>' +

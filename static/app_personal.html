@@ -2586,6 +2586,14 @@ function avalAba(aba){
     el.innerHTML = renderMMIIPersonal();
   } else if(aba==='vo2'){
     el.innerHTML = renderVO2Personal();
+    // FIX 19/05/2026: puxa idade/sexo do aluno pra calcular faixa etaria ACSM
+    fetch('/app-personal/aluno/' + avalAlunoId + '/perfil-vo2', {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.ok ? r.json() : {}; })
+    .then(function(d){
+      if(d && d.idade) window._alunoIdade = parseInt(d.idade);
+      if(d && d.sexo) window._alunoSexo = (d.sexo==='feminino'||d.sexo==='F')?'F':'M';
+    })
+    .catch(function(err){ console.warn('Erro ao carregar perfil VO2:', err); });
   } else if(aba==='forca'){
     el.innerHTML = renderForcaPersonal();
 
@@ -2889,6 +2897,21 @@ function renderVO2Personal(){
     '</div>';
 }
 
+// FIX 19/05/2026: faixa etaria ACSM (tabelas + funcao replicadas do app aluno)
+window._alunoIdade = 30;   // sera populado pelo fetch /perfil-vo2 ao abrir aba VO2
+window._alunoSexo  = 'M';  // M ou F
+function classificarVO2(vo2, idade, sexo){
+  // Tabelas ACSM Guidelines 2022 - thresholds por faixa etaria
+  var tM={'20-29':[{l:31.5,t:'Muito Fraco',c:'var(--vermelho)'},{l:37.1,t:'Fraco',c:'#FF6B6B'},{l:44.2,t:'Regular',c:'var(--ouro)'},{l:50.9,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'30-39':[{l:30.2,t:'Muito Fraco',c:'var(--vermelho)'},{l:35.7,t:'Fraco',c:'#FF6B6B'},{l:42.4,t:'Regular',c:'var(--ouro)'},{l:49.4,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'40-49':[{l:26.1,t:'Muito Fraco',c:'var(--vermelho)'},{l:31.5,t:'Fraco',c:'#FF6B6B'},{l:38.4,t:'Regular',c:'var(--ouro)'},{l:45.0,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'50-59':[{l:22.8,t:'Muito Fraco',c:'var(--vermelho)'},{l:27.1,t:'Fraco',c:'#FF6B6B'},{l:33.9,t:'Regular',c:'var(--ouro)'},{l:40.3,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'60+':[{l:20.5,t:'Muito Fraco',c:'var(--vermelho)'},{l:24.5,t:'Fraco',c:'#FF6B6B'},{l:30.9,t:'Regular',c:'var(--ouro)'},{l:37.4,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}]};
+  var tF={'20-29':[{l:23.6,t:'Muito Fraco',c:'var(--vermelho)'},{l:28.9,t:'Fraco',c:'#FF6B6B'},{l:35.6,t:'Regular',c:'var(--ouro)'},{l:41.0,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'30-39':[{l:22.8,t:'Muito Fraco',c:'var(--vermelho)'},{l:27.2,t:'Fraco',c:'#FF6B6B'},{l:33.7,t:'Regular',c:'var(--ouro)'},{l:38.9,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'40-49':[{l:21.0,t:'Muito Fraco',c:'var(--vermelho)'},{l:24.5,t:'Fraco',c:'#FF6B6B'},{l:30.1,t:'Regular',c:'var(--ouro)'},{l:35.7,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'50-59':[{l:20.2,t:'Muito Fraco',c:'var(--vermelho)'},{l:22.7,t:'Fraco',c:'#FF6B6B'},{l:27.4,t:'Regular',c:'var(--ouro)'},{l:32.2,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}],'60+':[{l:17.5,t:'Muito Fraco',c:'var(--vermelho)'},{l:20.1,t:'Fraco',c:'#FF6B6B'},{l:24.4,t:'Regular',c:'var(--ouro)'},{l:29.9,t:'Bom',c:'var(--azul)'},{l:999,t:'Excelente',c:'var(--verde)'}]};
+  var faixa = idade<30?'20-29':idade<40?'30-39':idade<50?'40-49':idade<60?'50-59':'60+';
+  var tabela = (sexo==='F'||sexo==='feminino')?tF:tM;
+  var linha = tabela[faixa];
+  for(var i=0;i<linha.length;i++){
+    if(vo2 < linha[i].l) return {txt:linha[i].t, cor:linha[i].c, faixa:faixa};
+  }
+  return {txt:'Excelente', cor:'var(--verde)', faixa:faixa};
+}
 function calcVO2P(tipo){
   var vo2, res;
   if(tipo==='cooper'){
@@ -2913,11 +2936,14 @@ function calcVO2P(tipo){
     res = document.getElementById('p-step-res');
   }
   vo2 = Math.max(10, vo2);
-  var cor = vo2>=50?'var(--azul)':vo2>=40?'var(--verde)':vo2>=30?'var(--ouro)':'#FF6B6B';
-  var classif = vo2>=50?'Excelente':vo2>=40?'Bom':vo2>=30?'Regular':'Abaixo do esperado';
-  window._vo2Resultado = {tipo:tipo, vo2:vo2};
-  // FIX 19/05/2026: botao SALVAR removido daqui. Agora soh aparece UM botao no fim do HRR (igual aluno)
-  res.innerHTML = resultBox('VO2 MÁX',cor,[{label:'VO2 Máximo',val:vo2+' ml/kg/min',cor:cor},{label:'Classificação',val:classif,cor:cor}],'ACSM 2022');
+  // FIX 19/05/2026: classificacao por faixa etaria ACSM (igual app aluno)
+  var classif = classificarVO2(vo2, window._alunoIdade, window._alunoSexo);
+  var sexoLabel = (window._alunoSexo==='F'||window._alunoSexo==='feminino')?'Feminino':'Masculino';
+  window._vo2Resultado = {tipo:tipo, vo2:vo2, classif:classif.txt, faixa:classif.faixa, sexoLabel:sexoLabel};
+  res.innerHTML = resultBox('VO2 MÁX',classif.cor,[
+    {label:'VO2 Máximo',val:vo2+' ml/kg/min',cor:classif.cor},
+    {label:'Classificação',val:classif.txt+' · Faixa '+classif.faixa+' anos · '+sexoLabel,cor:classif.cor}
+  ],'ACSM Guidelines (2022)');
 }
 
 function salvarVO2(){

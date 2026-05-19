@@ -439,14 +439,19 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
     elif secao == "vo2_hrr" and dados.vo2_hrr:
         vh = dados.vo2_hrr
         vo2 = None
+        # FIX 19/05/2026: idade/peso/sexo puxados do banco (eram hardcoded 30/70/1)
+        from app.routers.avaliacao import calcular_idade
+        idade_real = calcular_idade(aluno.data_nascimento)  # 26 (real) ou 30 (fallback)
+        sexo_str = aluno.sexo.value if aluno.sexo else "masculino"
+        sexo_num = 1 if sexo_str == "masculino" else 0
+        peso_real = av.peso if av.peso else 70  # peso da avaliacao ou fallback
         if vh.cooper_dist:
             vo2 = max((vh.cooper_dist - 504.9) / 44.73, 0)
             av.teste_cooper_metros = vh.cooper_dist
         elif vh.step_fc:
-            sexo = aluno.sexo.value if aluno.sexo else "masculino"
-            vo2 = (65.81 - 0.1847*vh.step_fc) if sexo == "feminino" else (111.33 - 0.42*vh.step_fc)
+            vo2 = (65.81 - 0.1847*vh.step_fc) if sexo_str == "feminino" else (111.33 - 0.42*vh.step_fc)
         elif vh.milha_tempo and vh.milha_fc:
-            vo2 = 132.853 - (0.0769*70) - (0.3877*30) + (6.315*1) - (3.2649*vh.milha_tempo) - (0.1565*vh.milha_fc)
+            vo2 = 132.853 - (0.0769*peso_real) - (0.3877*idade_real) + (6.315*sexo_num) - (3.2649*vh.milha_tempo) - (0.1565*vh.milha_fc)
         if vo2:
             av.vo2max = round(max(vo2, 10), 2)
             av.classificacao_vo2 = "Superior" if av.vo2max >= 56 else "Excelente" if av.vo2max >= 51 else "Bom" if av.vo2max >= 43 else "Regular" if av.vo2max >= 34 else "Fraco"

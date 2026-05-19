@@ -550,6 +550,13 @@ async def postural_aluno(
     av.postura_quadril  = resultado.quadril
     av.postura_joelhos  = resultado.joelhos
     av.postura_pes      = resultado.pes
+    # FIX 18/05/2026 postural-PRO->aluno: salva observacoes+recomendacoes em JSON
+    # Mesmo formato do /app-aluno/postural/salvar pra /treino-hoje injetar corretivos no treino
+    import json
+    av.postura_observacoes = json.dumps({
+        "texto":         resultado.observacoes or "",
+        "recomendacoes": resultado.recomendacoes or [],
+    }, ensure_ascii=False)
     db.commit()
 
     return {

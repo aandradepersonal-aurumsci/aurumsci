@@ -2586,9 +2586,6 @@ function avalAba(aba){
     el.innerHTML = renderMMIIPersonal();
   } else if(aba==='vo2'){
     el.innerHTML = renderVO2Personal();
-  } else if(aba==='hrr'){
-    el.innerHTML = renderHRRPersonal();
-
   } else if(aba==='forca'){
     el.innerHTML = renderForcaPersonal();
 
@@ -2919,21 +2916,49 @@ function calcVO2P(tipo){
   var cor = vo2>=50?'var(--azul)':vo2>=40?'var(--verde)':vo2>=30?'var(--ouro)':'#FF6B6B';
   var classif = vo2>=50?'Excelente':vo2>=40?'Bom':vo2>=30?'Regular':'Abaixo do esperado';
   window._vo2Resultado = {tipo:tipo, vo2:vo2};
-  res.innerHTML = resultBox('VO2 MÁX',cor,[{label:'VO2 Máximo',val:vo2+' ml/kg/min',cor:cor},{label:'Classificação',val:classif,cor:cor}],'ACSM 2022') +
-  '<button onclick="salvarVO2()" style="width:100%;margin-top:10px;padding:10px;background:linear-gradient(135deg,var(--verde),#00B37E);border:none;border-radius:10px;color:#fff;font-family:Bebas Neue;font-size:15px;cursor:pointer">💾 SALVAR VO2</button>';
+  // FIX 19/05/2026: botao SALVAR removido daqui. Agora soh aparece UM botao no fim do HRR (igual aluno)
+  res.innerHTML = resultBox('VO2 MÁX',cor,[{label:'VO2 Máximo',val:vo2+' ml/kg/min',cor:cor},{label:'Classificação',val:classif,cor:cor}],'ACSM 2022');
 }
 
 function salvarVO2(){
+  // FIX 19/05/2026: funcao unificada VO2+HRR+PA usando novo endpoint /vo2-salvar (replica padrao do aluno)
   var d = window._vo2Resultado;
-  if(!d){ mostrarToast('Calcule primeiro!'); return; }
-  var payload = {secao:'vo2_hrr', vo2_hrr:{}};
-  if(d.tipo==='cooper') payload.vo2_hrr.cooper_dist = parseFloat(document.getElementById('p-cooper-dist').value)||0;
-  else if(d.tipo==='milha'){ payload.vo2_hrr.milha_tempo=parseFloat(document.getElementById('p-milha-tempo').value)||0; payload.vo2_hrr.milha_fc=parseFloat(document.getElementById('p-milha-fc').value)||0; }
-  else if(d.tipo==='step') payload.vo2_hrr.step_fc = parseFloat(document.getElementById('p-step-fc').value)||0;
-  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+  if(!d){ mostrarToast('Calcule um teste de VO2 primeiro!'); return; }
+  // Monta payload base do VO2 (dados do teste calculado)
+  var valor_teste = 0;
+  if(d.tipo==='cooper') valor_teste = parseFloat(document.getElementById('p-cooper-dist').value)||0;
+  else if(d.tipo==='milha') valor_teste = parseFloat(document.getElementById('p-milha-tempo').value)||0;
+  else if(d.tipo==='step') valor_teste = parseFloat(document.getElementById('p-step-fc').value)||0;
+  var payload = {
+    protocolo: d.tipo,
+    valor_teste: valor_teste,
+    vo2_calculado: d.vo2,
+    classificacao: d.classif || null
+  };
+  // Adiciona HRR/PA se foram calculados (opcional, complementa VO2)
+  var hrr = window._hrrResultado;
+  if(hrr){
+    if(hrr.pico) payload.fc_pico = parseInt(hrr.pico);
+    if(hrr.min1) payload.fc_1min = parseInt(hrr.min1);
+    if(hrr.pas) payload.pa_repouso_sis = parseInt(hrr.pas);
+    if(hrr.pad) payload.pa_repouso_dia = parseInt(hrr.pad);
+    if(hrr.poss) payload.pa_pos_sis = parseInt(hrr.poss);
+    if(hrr.posd) payload.pa_pos_dia = parseInt(hrr.posd);
+  }
+  fetch('/app-personal/aluno/' + avalAlunoId + '/vo2-salvar', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify(payload)
-  }).then(function(){ mostrarToast('✅ VO2 salvo!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
+  })
+  .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+  .then(function(resp){
+    if(resp && resp.ok){
+      var msg = '✅ Salvo! VO2 ' + resp.vo2max + ' ml/kg/min - ' + (resp.classificacao_vo2||'');
+      mostrarToast(msg);
+      var statusEl = document.getElementById('p-vo2-status');
+      if(statusEl) statusEl.innerHTML = '<div style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.3);border-radius:8px;padding:10px;font-size:13px;color:var(--verde);text-align:center">' + msg + '</div>';
+    } else { mostrarToast('Erro ao salvar (resposta invalida)'); }
+  })
+  .catch(function(e){ mostrarToast('Erro ao salvar: ' + e.message); });
 }
 
 function calcHRRP(){
@@ -2951,18 +2976,13 @@ function calcHRRP(){
   if(pas) linhas.push({label:'PA repouso',val:pas+'/'+pad+' mmHg'});
   if(poss) linhas.push({label:'PA pós esforço',val:poss+'/'+posd+' mmHg'});
   window._hrrResultado = {pico:pico, min1:min1, pas:pas, pad:pad, poss:poss, posd:posd};
+  // FIX 19/05/2026: botao unificado SALVAR AVALIACAO COMPLETA (igual aluno) - envia VO2 + HRR + PA juntos
   document.getElementById('p-hrr-res').innerHTML = resultBox('HRR — FC DE RECUPERAÇÃO',cor,linhas,'Cole et al. (1999) NEJM') +
-  '<button onclick="salvarHRR()" style="width:100%;margin-top:10px;padding:10px;background:linear-gradient(135deg,#FF4B4B,#FF8C00);border:none;border-radius:10px;color:#fff;font-family:Bebas Neue;font-size:15px;cursor:pointer">💾 SALVAR HRR</button>';
+  '<button onclick="salvarVO2()" style="width:100%;margin-top:14px;padding:14px;background:linear-gradient(135deg,var(--verde),#00B37E);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer;letter-spacing:1px">💾 SALVAR AVALIAÇÃO COMPLETA</button>' +
+  '<div id="p-vo2-status" style="margin-top:8px"></div>';
 }
 
-function salvarHRR(){
-  var d = window._hrrResultado;
-  if(!d){ mostrarToast('Calcule primeiro!'); return; }
-  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
-    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body: JSON.stringify({secao:'vo2_hrr', vo2_hrr:{hrr_fc_pico:d.pico, hrr_fc_1min:d.min1, pa_rep_s:d.pas, pa_rep_d:d.pad, pa_pos_s:d.poss, pa_pos_d:d.posd}})
-  }).then(function(){ mostrarToast('✅ HRR salvo!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
-}
+// FIX 19/05/2026: salvarHRR() removida (substituida por salvarVO2 unificada)
 
 function calcWells(){
   var dist = parseFloat(document.getElementById('p-wells').value);
@@ -3917,53 +3937,7 @@ function salvarMMII(){
     body: JSON.stringify({secao:'mmii', mmii:{repeticoes:d.repeticoes, sexo:d.sexo, idade:d.idade}})
   }).then(function(){ mostrarToast('✅ MMII salvo!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
 }
-function renderHRRPersonal(){
-  return '<div style="background:rgba(255,75,75,.04);border:1px solid rgba(255,75,75,.2);border-radius:12px;padding:14px">' +
-    '<div style="font-size:11px;color:#FF6B6B;font-weight:700;letter-spacing:1px;margin-bottom:8px">❤️ FC DE RECUPERAÇÃO (HRR)</div>' +
-    '<div style="font-size:11px;color:var(--cinza);margin-bottom:12px;line-height:1.6">Faça logo após o teste de VO2. Pare, meça a FC imediatamente e após 1 e 2 minutos. Avalia a saúde do músculo cardíaco. Cole et al. (1999) NEJM.</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-    field('p-hrr2-pico','FC PICO (fim)','bpm','165') + field('p-hrr2-1min','FC APÓS 1 MIN','bpm','140') +
-    field('p-hrr2-2min','FC APÓS 2 MIN','bpm','120') +
-    field('p-hrr2-pa-rs','PA REPOS. SIST. (valor maior)','mmHg','120') + field('p-hrr2-pa-rd','PA REPOS. DIAST. (valor menor)','mmHg','80') +
-    field('p-hrr2-pa-ps','PA PÓS SIST. (valor maior)','mmHg','160') + field('p-hrr2-pa-pd','PA PÓS DIAST. (valor menor)','mmHg','90') +
-    '</div>' +
-    '<button onclick="calcHRRP2()" style="width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,#FF4B4B,#FF8C00);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">CALCULAR HRR ❤️</button>' +
-    '<div id="p-hrr2-res" style="margin-top:10px"></div>' +
-    '</div>';
-}
-function calcHRRP2(){
-  var pico = parseFloat(document.getElementById('p-hrr2-pico').value)||0;
-  var min1 = parseFloat(document.getElementById('p-hrr2-1min').value)||0;
-  var min2 = parseFloat(document.getElementById('p-hrr2-2min').value)||0;
-  var pas = parseFloat(document.getElementById('p-hrr2-pa-rs').value)||0;
-  var pad = parseFloat(document.getElementById('p-hrr2-pa-rd').value)||0;
-  var poss = parseFloat(document.getElementById('p-hrr2-pa-ps').value)||0;
-  var posd = parseFloat(document.getElementById('p-hrr2-pa-pd').value)||0;
-  if(!pico||!min1){ mostrarToast('Informe FC pico e após 1 min!'); return; }
-  var hrr1 = pico-min1;
-  var hrr2 = min2 ? pico-min2 : null;
-  var cor = hrr1>=20?'var(--verde)':hrr1>=12?'var(--ouro)':'var(--vermelho)';
-  var classif = hrr1>=20?'Boa recuperação ✅':hrr1>=12?'Regular ⚠️':'Lenta 🔴 — avaliar cardiologista';
-  var linhas = [
-    {label:'HRR 1 minuto',val:hrr1+' bpm',cor:cor},
-    {label:'Classificação',val:classif,cor:cor}
-  ];
-  if(hrr2) linhas.push({label:'HRR 2 minutos',val:hrr2+' bpm'});
-  if(pas) linhas.push({label:'PA repouso',val:pas+'/'+pad+' mmHg'});
-  if(poss) linhas.push({label:'PA pós esforço',val:poss+'/'+posd+' mmHg'});
-  window._hrr2Resultado = {pico:pico, min1:min1, min2:min2, pas:pas, pad:pad, poss:poss, posd:posd};
-  document.getElementById('p-hrr2-res').innerHTML = resultBox('HRR — FC DE RECUPERAÇÃO',cor,linhas,'Cole et al. (1999) NEJM') +
-  '<button onclick="salvarHRR2()" style="width:100%;margin-top:10px;padding:12px;background:linear-gradient(135deg,#FF4B4B,#FF8C00);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">💾 SALVAR HRR</button>';
-}
-
-function salvarHRR2(){
-  var d = window._hrr2Resultado;
-  if(!d){ mostrarToast('Calcule primeiro!'); return; }
-  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
-    method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body: JSON.stringify({secao:'vo2_hrr', vo2_hrr:{hrr_fc_pico:d.pico, hrr_fc_1min:d.min1, pa_rep_s:d.pas, pa_rep_d:d.pad, pa_pos_s:d.poss, pa_pos_d:d.posd}})
-  }).then(function(){ mostrarToast('✅ HRR salvo!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
-}
+// FIX 19/05/2026: renderHRRPersonal + calcHRRP2 + salvarHRR2 deletados (aba HRR antiga descontinuada, HRR agora dentro da aba VO2)
 
 function mostrarRoteiro(){
   var h = '<div style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;padding:20px;overflow-y:auto" onclick="this.remove()">';

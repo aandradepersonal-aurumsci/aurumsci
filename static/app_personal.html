@@ -3725,7 +3725,6 @@ function renderCircunferencias(){
     '<div style="font-size:11px;color:var(--cinza);margin-bottom:12px;line-height:1.5">Meça com fita métrica antropométrica. Sempre no mesmo horário e condições.</div>' +
     '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin-bottom:8px">TRONCO</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">' +
-    aField('circ-pescoco','PESCOÇO','number','38') + aField('circ-ombro','OMBRO','number','110') +
     aField('circ-torax','TÓRAX','number','95') + aField('circ-cintura','CINTURA','number','80') +
     aField('circ-abdom','ABDÔMEN','number','85') + aField('circ-quadril','QUADRIL','number','95') +
     '</div>' +
@@ -3820,11 +3819,25 @@ function salvarAnamnese(){
 }
 
 function salvarCircunferencias(){
-  var fields = ['cintura','quadril','torax','abdomen','braco_d','braco_e','antebraco_d','antebraco_e','coxa_d','coxa_e','panturrilha_d','panturrilha_e'];
+  // FIX 19/05/2026: mapa HTML id -> Pydantic field (HTML usa hifen abreviado, backend usa underscore completo)
+  var mapa = [
+    ['circ-torax',    'torax'],
+    ['circ-cintura',  'cintura'],
+    ['circ-abdom',    'abdomen'],
+    ['circ-quadril',  'quadril'],
+    ['circ-braco-d',  'braco_d'],
+    ['circ-braco-e',  'braco_e'],
+    ['circ-antbr-d',  'antebraco_d'],
+    ['circ-antbr-e',  'antebraco_e'],
+    ['circ-coxa-d',   'coxa_d'],
+    ['circ-coxa-e',   'coxa_e'],
+    ['circ-pant-d',   'panturrilha_d'],
+    ['circ-pant-e',   'panturrilha_e']
+  ];
   var circ = {};
-  fields.forEach(function(f){
-    var el = document.getElementById('circ-'+f);
-    if(el && el.value) circ[f] = parseFloat(el.value);
+  mapa.forEach(function(par){
+    var el = document.getElementById(par[0]);
+    if(el && el.value) circ[par[1]] = parseFloat(el.value);
   });
   fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},

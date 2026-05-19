@@ -572,6 +572,84 @@ async def postural_aluno(
         "recomendacoes": resultado.recomendacoes or []
     }
 
+class Vo2SalvarPROSchema(BaseModel):
+    """Schema replicado do aluno (Vo2SalvarSchema). FIX 19/05/2026."""
+    protocolo: str  # "cooper" | "milha" | "step"
+    valor_teste: float
+    vo2_calculado: float
+    classificacao: Optional[str] = None
+    fc_pico: Optional[int] = None
+    fc_1min: Optional[int] = None
+    pa_repouso_sis: Optional[int] = None
+    pa_repouso_dia: Optional[int] = None
+    pa_pos_sis: Optional[int] = None
+    pa_pos_dia: Optional[int] = None
+@router.post("/aluno/{aluno_id}/vo2-salvar")
+def salvar_vo2_pro(
+    aluno_id: int,
+    dados: Vo2SalvarPROSchema,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """PRO salva resultado VO2 (Cooper/Milha/Step) + HRR + PA.
+    FIX 19/05/2026: replicado do /app-aluno/vo2-salvar pra padronizar.
+    Diferenca: valida trainer + puxa idade/peso reais do banco."""
+    import json
+    from app.models import Aluno
+    from app.routers.avaliacao import AvaliacaoFisica
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal.id).first()
+    if not aluno:
+        raise HTTPException(status_code=404, detail="Aluno nao encontrado")
+    hoje = date.today()
+    aval = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno_id,
+        AvaliacaoFisica.data_avaliacao == hoje
+    ).first()
+    if not aval:
+        aval = AvaliacaoFisica(aluno_id=aluno_id, data_avaliacao=hoje)
+        db.add(aval)
+    # Campos reais em AvaliacaoFisica
+    aval.vo2max = dados.vo2_calculado
+    if dados.classificacao:
+        aval.classificacao_vo2 = dados.classificacao
+    if dados.protocolo == "cooper":
+        aval.teste_cooper_metros = dados.valor_teste
+    # Extras em JSON observacoes (preserva o que ja tem)
+    extras = {
+        "vo2_protocolo": dados.protocolo,
+        "vo2_valor_teste": dados.valor_teste,
+        "vo2_data": str(hoje),
+    }
+    if dados.fc_pico is not None:
+        extras["hrr_fc_pico"] = dados.fc_pico
+    if dados.fc_1min is not None:
+        extras["hrr_fc_1min"] = dados.fc_1min
+        if dados.fc_pico is not None:
+            extras["hrr_queda_1min"] = dados.fc_pico - dados.fc_1min
+    if dados.pa_repouso_sis is not None:
+        extras["pa_repouso_sis"] = dados.pa_repouso_sis
+    if dados.pa_repouso_dia is not None:
+        extras["pa_repouso_dia"] = dados.pa_repouso_dia
+    if dados.pa_pos_sis is not None:
+        extras["pa_pos_sis"] = dados.pa_pos_sis
+    if dados.pa_pos_dia is not None:
+        extras["pa_pos_dia"] = dados.pa_pos_dia
+    # Merge com observacoes existentes (preserva overtraining etc)
+    try:
+        existing = json.loads(aval.observacoes or "{}")
+        existing.update(extras)
+        aval.observacoes = json.dumps(existing, ensure_ascii=False)
+    except Exception:
+        aval.observacoes = json.dumps(extras, ensure_ascii=False)
+    db.commit()
+    db.refresh(aval)
+    return {
+        "ok": True,
+        "avaliacao_id": aval.id,
+        "vo2max": aval.vo2max,
+        "classificacao_vo2": aval.classificacao_vo2,
+        "data": str(aval.data_avaliacao)
+    }
 @router.get("/aluno/{aluno_id}/medidas")
 def get_medidas_aluno(aluno_id: int, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
     """Retorna circunferencias mais recentes do aluno (mesma logica do app aluno /medidas).

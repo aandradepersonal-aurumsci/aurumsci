@@ -2542,6 +2542,33 @@ function avalAba(aba){
 
   } else if(aba==='circunf'){
     el.innerHTML = renderCircunferencias();
+    // FIX 19/05/2026: pre-popula campos com ultima avaliacao (trainer ve historico pra adaptar treino)
+    fetch('/app-personal/aluno/' + avalAlunoId + '/medidas', {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.ok ? r.json() : {}; })
+    .then(function(d){
+      if(!d) return;
+      var mapa = [
+        ['torax',         'circ-torax'],
+        ['cintura',       'circ-cintura'],
+        ['abdomen',       'circ-abdom'],
+        ['quadril',       'circ-quadril'],
+        ['braco_d',       'circ-braco-d'],
+        ['braco_e',       'circ-braco-e'],
+        ['antebraco_d',   'circ-antbr-d'],
+        ['antebraco_e',   'circ-antbr-e'],
+        ['coxa_d',        'circ-coxa-d'],
+        ['coxa_e',        'circ-coxa-e'],
+        ['panturrilha_d', 'circ-pant-d'],
+        ['panturrilha_e', 'circ-pant-e']
+      ];
+      mapa.forEach(function(par){
+        if(d[par[0]] !== undefined && d[par[0]] !== null){
+          var el = document.getElementById(par[1]);
+          if(el) el.value = d[par[0]];
+        }
+      });
+    })
+    .catch(function(err){ console.warn('Erro ao carregar circunferencias:', err); });
 
   } else if(aba==='composicao'){
     el.innerHTML =

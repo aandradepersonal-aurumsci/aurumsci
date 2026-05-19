@@ -567,6 +567,35 @@ async def postural_aluno(
         "recomendacoes": resultado.recomendacoes or []
     }
 
+@router.get("/aluno/{aluno_id}/medidas")
+def get_medidas_aluno(aluno_id: int, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    """Retorna circunferencias mais recentes do aluno (mesma logica do app aluno /medidas).
+    FIX 19/05/2026: criado pra trainer ver historico na reavaliacao (adaptar treino baseado em fatos)."""
+    from app.models import Aluno
+    from app.routers.avaliacao import AvaliacaoFisica
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal.id).first()
+    if not aluno:
+        raise HTTPException(status_code=404, detail="Aluno nao encontrado")
+    aval = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno_id
+    ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+    if not aval:
+        return {}
+    mapa = {
+        'torax':       'circ_torax',
+        'cintura':     'circ_cintura',
+        'abdomen':     'circ_abdomen',
+        'quadril':     'circ_quadril',
+        'braco_d':     'circ_braco_d_contraido',
+        'braco_e':     'circ_braco_e_contraido',
+        'antebraco_d': 'circ_antebraco_d',
+        'antebraco_e': 'circ_antebraco_e',
+        'coxa_d':      'circ_coxa_d',
+        'coxa_e':      'circ_coxa_e',
+        'panturrilha_d': 'circ_panturrilha_d',
+        'panturrilha_e': 'circ_panturrilha_e',
+    }
+    return {k: float(getattr(aval, v)) for k, v in mapa.items() if getattr(aval, v, None)}
 @router.post("/white-label")
 async def salvar_white_label(
     nome: str = Form(None),

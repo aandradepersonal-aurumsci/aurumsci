@@ -584,6 +584,19 @@ class Vo2SalvarPROSchema(BaseModel):
     pa_repouso_dia: Optional[int] = None
     pa_pos_sis: Optional[int] = None
     pa_pos_dia: Optional[int] = None
+@router.get("/aluno/{aluno_id}/perfil-vo2")
+def get_perfil_vo2_aluno(aluno_id: int, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    """Retorna idade e sexo do aluno pro frontend calcular faixa etaria ACSM.
+    FIX 19/05/2026: criado pra PRO mostrar 'Faixa 20-29 anos · Masculino' (igual aluno)."""
+    from app.models import Aluno
+    from app.routers.avaliacao import calcular_idade
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal.id).first()
+    if not aluno:
+        raise HTTPException(status_code=404, detail="Aluno nao encontrado")
+    return {
+        "idade": calcular_idade(aluno.data_nascimento),
+        "sexo": aluno.sexo.value if aluno.sexo else "masculino"
+    }
 @router.post("/aluno/{aluno_id}/vo2-salvar")
 def salvar_vo2_pro(
     aluno_id: int,

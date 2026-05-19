@@ -397,8 +397,9 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
         av.circ_cintura = c.cintura or av.circ_cintura
         av.circ_abdomen = c.abdomen or av.circ_abdomen
         av.circ_quadril = c.quadril or av.circ_quadril
-        av.circ_braco_d_relaxado = c.braco_d or av.circ_braco_d_relaxado
-        av.circ_braco_e_relaxado = c.braco_e or av.circ_braco_e_relaxado
+        # FIX 19/05/2026: PRO mede bíceps contraído (label "BRAÇO DIR. (flex)") + aluno lê _contraido
+        av.circ_braco_d_contraido = c.braco_d or av.circ_braco_d_contraido
+        av.circ_braco_e_contraido = c.braco_e or av.circ_braco_e_contraido
         av.circ_antebraco_d = c.antebraco_d or av.circ_antebraco_d
         av.circ_antebraco_e = c.antebraco_e or av.circ_antebraco_e
         av.circ_coxa_d = c.coxa_d or av.circ_coxa_d

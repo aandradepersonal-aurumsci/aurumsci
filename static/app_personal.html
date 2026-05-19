@@ -111,6 +111,11 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 .btn-novo-aluno:active{transform:scale(.98)}
 .opcao{padding:12px 18px;border-radius:12px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:14px;cursor:pointer;transition:all .2s}
 .opcao.selected{background:rgba(201,168,76,.12);border-color:var(--ouro);color:var(--ouro)}
+.check-item{display:flex;align-items:center;gap:12px;background:var(--bg2);border-radius:12px;border:1px solid var(--borda);padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .2s}
+.check-item.checked{border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.05)}
+.check-box{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--borda);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:14px}
+.check-item.checked .check-box{background:var(--ouro);border-color:var(--ouro);color:#0A0A0F}
+.check-label{font-size:14px;color:var(--texto)}
 .busca-input{width:100%;padding:12px 16px;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;color:var(--texto);font-size:14px;font-family:'DM Sans';outline:none;margin-bottom:14px}
 .busca-input:focus{border-color:rgba(201,168,76,.4)}
 
@@ -2516,8 +2521,14 @@ function avalAba(aba){
       }
       if(d.patologias){
         var pats = d.patologias.split(',').map(function(p){ return p.trim(); });
-        document.querySelectorAll('input[type="checkbox"]').forEach(function(cb){
-          if(pats.indexOf(cb.value) >= 0) cb.checked = true;
+        // FIX 18/05/2026: pre-marca .check-item ao inves de input checkbox
+        document.querySelectorAll('#an-patologias-container .check-item').forEach(function(ci){
+          var key = ci.getAttribute('data-key');
+          if(pats.indexOf(key) >= 0){
+            ci.classList.add('checked');
+            var box = ci.querySelector('.check-box');
+            if(box) box.textContent = '\u2713';
+          }
         });
       }
       if(d.dores){ var e=document.getElementById('an-dores'); if(e) e.value=d.dores; }
@@ -3680,9 +3691,9 @@ function renderAnamnese(){
     '<div style="background:rgba(255,75,75,.04);border:1px solid rgba(255,75,75,.15);border-radius:12px;padding:14px;margin-bottom:12px">' +
     '<div style="font-size:11px;color:#FF6B6B;font-weight:700;letter-spacing:1px;margin-bottom:12px">🏥 HISTÓRICO DE SAÚDE</div>' +
     '<div style="font-size:10px;color:var(--cinza);margin-bottom:6px">PATOLOGIAS / DOENÇAS</div>' +
-    '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">' +
-    [['Hipertensão','hipertensao'],['Diabetes','diabetes'],['Colesterol alto','colesterol_alto'],['Cardiopatia','cardiopatia'],['Asma/DPOC','asma'],['Artrite/Osteoartrite','artrite'],['Osteoporose','osteoporose'],['Hérnia de disco','hernia'],['Obesidade','obesidade'],['Nenhuma','nenhuma']].map(function(par){
-      return '<label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--cinza);cursor:pointer"><input type="checkbox" value="' + par[1] + '"> ' + par[0] + '</label>';
+    '<div id="an-patologias-container" style="margin-bottom:10px">' +
+    [['Hipertensão','hipertensao'],['Diabetes','diabetes'],['Colesterol alto','colesterol_alto'],['Doença cardíaca','cardiopatia'],['Artrite / Artrose','artrite'],['Hérnia de disco','hernia'],['Osteoporose','osteoporose'],['Asma / DPOC','asma']].map(function(par){
+      return '<div class="check-item" onclick="toggleCheckPRO(this,\''+par[1]+'\')" data-key="'+par[1]+'"><div class="check-box"></div><div class="check-label">'+par[0]+'</div></div>';
     }).join('') +
     '</div>' +
     '<div style="font-size:10px;color:var(--cinza);margin-bottom:3px">DORES ARTICULARES (onde?)</div>' +
@@ -3741,6 +3752,18 @@ function selecionarAnamOpcaoPRO(el, campo, valor){
   // Guarda em data-attribute do container
   if(parent) parent.setAttribute('data-valor', valor);
 }
+function toggleCheckPRO(el, key){
+  // Toggle visual do check-item (igual app aluno mas escopo PRO)
+  if(el.classList.contains('checked')){
+    el.classList.remove('checked');
+    var box = el.querySelector('.check-box');
+    if(box) box.textContent = '';
+  } else {
+    el.classList.add('checked');
+    var box = el.querySelector('.check-box');
+    if(box) box.textContent = '\u2713';
+  }
+}
 function obterAnamSelecionado(idContainer){
   var el = document.getElementById(idContainer);
   if(!el) return '';
@@ -3763,8 +3786,10 @@ function salvarAnamnese(){
   
   // Patologias (checkboxes marcados)
   var pats = [];
-  document.querySelectorAll('input[type="checkbox"]:checked').forEach(function(cb){
-    if(cb.value) pats.push(cb.value);
+  // FIX 18/05/2026: le .check-item.checked ao inves de input checkbox
+  document.querySelectorAll('#an-patologias-container .check-item.checked').forEach(function(ci){
+    var key = ci.getAttribute('data-key');
+    if(key) pats.push(key);
   });
   
   var payload = {

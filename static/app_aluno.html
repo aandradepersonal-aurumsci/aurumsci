@@ -2601,9 +2601,21 @@ function renderEvolucao(){
         html += '</div>';
       }
       if(d.abdominal_reps){
-        html += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">';
         html += '<span style="font-size:13px">Abdominal remador</span>';
         html += '<span style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2)">' + d.abdominal_reps + ' <span style="font-size:11px;color:var(--cinza)">reps</span></span>';
+        html += '</div>';
+      }
+      if(d.preensao_dom_kgf){
+        html += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">';
+        html += '<span style="font-size:13px">Preensão manual (dominante)</span>';
+        html += '<span style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2)">' + d.preensao_dom_kgf + ' <span style="font-size:11px;color:var(--cinza)">kgf</span></span>';
+        html += '</div>';
+      }
+      if(d.preensao_ndom_kgf){
+        html += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0">';
+        html += '<span style="font-size:13px">Preensão manual (não dominante)</span>';
+        html += '<span style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2)">' + d.preensao_ndom_kgf + ' <span style="font-size:11px;color:var(--cinza)">kgf</span></span>';
         html += '</div>';
       }
       html += '</div>';

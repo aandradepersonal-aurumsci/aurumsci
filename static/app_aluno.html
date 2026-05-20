@@ -2559,13 +2559,7 @@ function renderEvolucao(){
       html += '</div>';
     }
     
-    // ─── FLEXIBILIDADE ────────────────────────────────
-    if(d.flexibilidade_cm){
-      html += '<div class="metric-big"><div class="metric-label">' + T('flexibilidadeLabel') + '</div><div class="metric-val">' + d.flexibilidade_cm + '<span class="metric-unit"> cm</span></div>';
-      if(d.classificacao_flexibilidade) html += '<div style="font-size:11px;color:var(--azul);margin-top:4px;font-weight:700">' + d.classificacao_flexibilidade + '</div>';
-      html += renderDelta(d.variacao_flexibilidade, 'cm', false);
-      html += '</div>';
-    }
+    // FIX 20/05/2026: Flexibilidade movida pra dentro da secao FORCA (decisao Andre)
     
     // ─── CARDIO ───────────────────────────────────────
     if(d.vo2max){
@@ -2582,7 +2576,7 @@ function renderEvolucao(){
     }
     
     // ─── FORCA ────────────────────────────────────────
-    if(d.flexao_reps || d.barra_reps || d.abdominal_reps){
+    if(d.flexao_reps || d.barra_reps || d.abdominal_reps || d.flexibilidade_cm){
       html += '<div class="metric-big"><div class="metric-label">💪 FORÇA</div>';
       if(d.flexao_reps){
         html += '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">';
@@ -2605,6 +2599,15 @@ function renderEvolucao(){
         html += '<span style="font-size:13px">Abdominal remador</span>';
         html += '<span style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2)">' + d.abdominal_reps + ' <span style="font-size:11px;color:var(--cinza)">reps</span></span>';
         html += '</div>';
+      }
+      if(d.flexibilidade_cm){
+        html += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">';
+        html += '<span style="font-size:13px">🧘 Flexibilidade (Wells)</span>';
+        html += '<span style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2)">' + d.flexibilidade_cm + ' <span style="font-size:11px;color:var(--cinza)">cm</span></span>';
+        html += '</div>';
+        if(d.classificacao_flexibilidade){
+          html += '<div style="font-size:11px;color:var(--azul);font-weight:700;padding:0 0 8px 0;border-bottom:1px solid rgba(255,255,255,.05)">' + d.classificacao_flexibilidade + '</div>';
+        }
       }
       if(d.preensao_dom_kgf){
         html += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">';

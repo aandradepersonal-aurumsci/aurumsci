@@ -3054,11 +3054,14 @@ function renderForcaPersonal(){
 }
 
 function calcForcaP(){
+  // FIX 20/05/2026 noite: captura preensao_ndom + wells (estavam ignorados, banco salvava NULL)
   var fl = parseInt(document.getElementById('p-flexao').value)||0;
   var ba = parseInt(document.getElementById('p-barra').value)||0;
   var ab = parseInt(document.getElementById('p-abdom').value)||0;
   var mm = parseInt((document.getElementById('p-mmii-reps')||{}).value)||0;
   var pd = parseFloat(document.getElementById('p-pren-dom').value)||0;
+  var pn = parseFloat((document.getElementById('p-pren-ndom')||{}).value)||0;
+  var wl = parseFloat((document.getElementById('p-wells')||{}).value)||0;
   var sexo = document.getElementById('p-forca-sexo').value;
   var idade = parseInt(document.getElementById('p-forca-idade').value)||30;
   var linhas = [];
@@ -3067,18 +3070,38 @@ function calcForcaP(){
   if(ab) linhas.push({label:'🧘 Abdominal',val:ab+' reps'});
   if(mm) linhas.push({label:'🦵 Sentar/levantar',val:mm+' reps/30s'});
   if(pd) linhas.push({label:'🤝 Preensão dom.',val:pd+' kgf'});
-  window._forcaResultado = {flexao:fl, barra:ba, abdominal:ab, preensao_dom:pd, sexo:sexo, idade:idade};
+  if(pn) linhas.push({label:'🤝 Preensão n-dom.',val:pn+' kgf'});
+  if(wl) linhas.push({label:'🧘 Flexibilidade (Wells)',val:wl+' cm'});
+  window._forcaResultado = {flexao:fl, barra:ba, abdominal:ab, preensao_dom:pd, preensao_ndom:pn, wells:wl, sexo:sexo, idade:idade};
   document.getElementById('p-forca-res').innerHTML = resultBox('TESTES DE FORÇA — RESULTADO','var(--ouro)',linhas,'ACSM 2022 · Jones et al. (1999) · Bohannon (2019)') +
   '<button onclick="salvarForca()" style="width:100%;margin-top:10px;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer">💾 SALVAR TESTES DE FORÇA</button>';
 }
 
 function salvarForca(){
+  // FIX 20/05/2026 noite: payload completo + feedback persistente (igual VO2)
   var d = window._forcaResultado;
   if(!d){ mostrarToast('Calcule primeiro!'); return; }
   fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body: JSON.stringify({secao:'testes_fisicos', testes_fisicos:{flexao:d.flexao, barra:d.barra, abdominal:d.abdominal, preensao_dom:d.preensao_dom, sexo:d.sexo, idade:d.idade}})
-  }).then(function(){ mostrarToast('✅ Testes de força salvos!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
+    body: JSON.stringify({secao:'testes_fisicos', testes_fisicos:{flexao:d.flexao, barra:d.barra, abdominal:d.abdominal, preensao_dom:d.preensao_dom, preensao_ndom:d.preensao_ndom, wells:d.wells, sexo:d.sexo, idade:d.idade}})
+  })
+  .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json().catch(function(){return {ok:true};}); })
+  .then(function(resp){
+    var partes = [];
+    if(d.flexao) partes.push(d.flexao+' flex');
+    if(d.barra) partes.push(d.barra+' barra');
+    if(d.abdominal) partes.push(d.abdominal+' abd');
+    if(d.preensao_dom) partes.push(d.preensao_dom+'kgf dom');
+    if(d.preensao_ndom) partes.push(d.preensao_ndom+'kgf ndom');
+    if(d.wells) partes.push(d.wells+'cm wells');
+    var msg = '✅ Salvo! ' + partes.join(' · ');
+    mostrarToast(msg);
+    var statusEl = document.getElementById('p-forca-res');
+    if(statusEl){
+      statusEl.innerHTML += '<div style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.3);border-radius:8px;padding:10px;margin-top:8px;font-size:13px;color:var(--verde);text-align:center">' + msg + '</div>';
+    }
+  })
+  .catch(function(e){ mostrarToast('Erro ao salvar: ' + e.message); });
 }
 
 

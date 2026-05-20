@@ -2782,10 +2782,12 @@ function renderGraficoRadar(atual){
   // 
   // Radar agora: 3 dimensoes fisicas puras (Forca + Cardio + MMII).
   // Voltara para 4 quando implementarmos Flexibilidade (sit-and-reach).
+  // FIX 20/05/2026: 4o eixo adicionado conforme planejado em 15/05 (sit-and-reach pronto)
   var dados = [
     norm(atual.flexao_reps, 50),         // Forca (50 reps = excelente)
     norm(atual.vo2max, 55),               // Cardio (55 ml/kg/min = excelente)
-    norm(atual.mmii_reps, 30)             // MMII (30 reps = excelente)
+    norm(atual.mmii_reps, 30),            // MMII (30 reps = excelente)
+    norm(atual.flexibilidade_cm, 35)      // Flexibilidade (35cm = excelente ACSM)
   ];
   
   var canvas = document.getElementById('chartRadarPerfil');
@@ -2796,7 +2798,7 @@ function renderGraficoRadar(atual){
   window._chartRadar = new Chart(canvas, {
     type: 'radar',
     data: {
-      labels: ['Forca', 'Cardio', 'MMII'],
+      labels: ['Forca', 'Cardio', 'MMII', 'Flexibilidade'],
       datasets: [{
         data: dados,
         borderColor: '#C9A84C',

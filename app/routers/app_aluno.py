@@ -318,11 +318,13 @@ def meus_resultados(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depe
             "classificacao_flexao": av.classificacao_flexao or extras.get("forca_classificacao_flexao"),
             "faixa_etaria_flexao": extras.get("forca_faixa_etaria"),
             "barra_reps": av.teste_barra_num or extras.get("forca_barra_reps"),
-            "abdominal_reps": extras.get("forca_abdom_reps"),
+            "abdominal_reps": av.teste_abdominal_num or extras.get("forca_abdom_reps"),
+            "preensao_dom_kgf": av.preensao_dom_kgf,
+            "preensao_ndom_kgf": av.preensao_ndom_kgf,
         },
         
         "potencia_mmii": {
-            "reps_30s": extras.get("mmii_reps"),
+            "reps_30s": av.teste_mmii_reps or extras.get("mmii_reps"),
             "classificacao": extras.get("mmii_classificacao"),
             "faixa_etaria": extras.get("mmii_faixa_etaria"),
         },
@@ -652,8 +654,10 @@ def resultado(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(ge
     
     flexao_atual = atual.teste_flexao_num if atual.teste_flexao_num is not None else extras_atual.get("forca_flexao_reps")
     barra_atual = atual.teste_barra_num if atual.teste_barra_num is not None else extras_atual.get("forca_barra_reps")
-    abdom_atual = extras_atual.get("forca_abdom_reps")
-    mmii_atual = extras_atual.get("mmii_reps")
+    abdom_atual = atual.teste_abdominal_num if atual.teste_abdominal_num is not None else extras_atual.get("forca_abdom_reps")
+    mmii_atual = atual.teste_mmii_reps if atual.teste_mmii_reps is not None else extras_atual.get("mmii_reps")
+    preensao_dom_atual = atual.preensao_dom_kgf
+    preensao_ndom_atual = atual.preensao_ndom_kgf
     hrr_atual = extras_atual.get("hrr_recuperacao") or extras_atual.get("hrr_1min")
     flexi_atual = atual.teste_flexibilidade_cm
     

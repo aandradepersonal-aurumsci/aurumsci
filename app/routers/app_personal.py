@@ -432,6 +432,12 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
         av.teste_flexao_num = tf.flexao or av.teste_flexao_num
         av.teste_barra_num = tf.barra or av.teste_barra_num
         av.teste_flexibilidade_cm = tf.wells or av.teste_flexibilidade_cm
+        # FIX 20/05/2026: campos faltantes (abdominal, preensao dom/ndom, mmii reps)
+        av.teste_abdominal_num = tf.abdominal or av.teste_abdominal_num
+        av.preensao_dom_kgf = tf.preensao_dom or av.preensao_dom_kgf
+        av.preensao_ndom_kgf = tf.preensao_ndom or av.preensao_ndom_kgf
+        if tf.mmii_30s:
+            av.teste_mmii_reps = tf.mmii_30s
 
     elif secao == "mmii" and dados.mmii:
         av.observacoes = (av.observacoes or "") + f" | MMII 30s: {dados.mmii.repeticoes} reps"

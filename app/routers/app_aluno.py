@@ -627,6 +627,18 @@ def resultado(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(ge
     atual = avals[0]
     anterior = avals[1] if len(avals) > 1 else None
     
+    # FIX 21/05/2026: helper pega ultimo valor NAO-NULO de cada campo entre todas as avals.
+    # Resolve bug "edicao parcial zera dados" - aluno mostra ultima medida real
+    # de cada dimensao, nao apenas da ultima avaliacao inteira.
+    # Decisao produto Andre: reavaliacao parcial (ex: so circunferencias) nao apaga
+    # postural/anamnese/peso anteriores da tela do aluno.
+    def ultimo(campo):
+        for av in avals:
+            valor = getattr(av, campo, None)
+            if valor is not None:
+                return valor
+        return None
+    
     extras_atual = {}
     extras_anterior = {}
     try:
@@ -648,18 +660,28 @@ def resultado(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(ge
         except Exception:
             return None
     
-    massa_magra = atual.massa_magra_kg
-    if not massa_magra and atual.peso and atual.percentual_gordura:
-        massa_magra = round(float(atual.peso) * (1 - float(atual.percentual_gordura) / 100), 1)
+    # FIX 21/05/2026: usa helper ultimo() em todos campos (resolve bug "edicao parcial zera dados")
+    # Cada campo pega o ultimo valor NAO-NULO entre todas as avaliacoes ordenadas desc.
+    # Decisao Andre: "fazer funcionar; se ficar ruim, mudamos."
+    peso_show = ultimo("peso")
+    gordura_show = ultimo("percentual_gordura")
+    massa_magra = ultimo("massa_magra_kg")
+    if not massa_magra and peso_show and gordura_show:
+        massa_magra = round(float(peso_show) * (1 - float(gordura_show) / 100), 1)
     
-    flexao_atual = atual.teste_flexao_num if atual.teste_flexao_num is not None else extras_atual.get("forca_flexao_reps")
-    barra_atual = atual.teste_barra_num if atual.teste_barra_num is not None else extras_atual.get("forca_barra_reps")
-    abdom_atual = atual.teste_abdominal_num if atual.teste_abdominal_num is not None else extras_atual.get("forca_abdom_reps")
-    mmii_atual = atual.teste_mmii_reps if atual.teste_mmii_reps is not None else extras_atual.get("mmii_reps")
-    preensao_dom_atual = atual.preensao_dom_kgf
-    preensao_ndom_atual = atual.preensao_ndom_kgf
+    flexao_atual = ultimo("teste_flexao_num") or extras_atual.get("forca_flexao_reps")
+    barra_atual = ultimo("teste_barra_num") or extras_atual.get("forca_barra_reps")
+    abdom_atual = ultimo("teste_abdominal_num") or extras_atual.get("forca_abdom_reps")
+    mmii_atual = ultimo("teste_mmii_reps") or extras_atual.get("mmii_reps")
+    preensao_dom_atual = ultimo("preensao_dom_kgf")
+    preensao_ndom_atual = ultimo("preensao_ndom_kgf")
     hrr_atual = extras_atual.get("hrr_recuperacao") or extras_atual.get("hrr_1min")
-    flexi_atual = atual.teste_flexibilidade_cm
+    flexi_atual = ultimo("teste_flexibilidade_cm")
+    vo2_show = ultimo("vo2max")
+    classif_vo2_show = ultimo("classificacao_vo2")
+    classif_gordura_show = ultimo("classificacao_gordura")
+    classif_flexao_show = ultimo("classificacao_flexao")
+    classif_flexi_show = ultimo("classificacao_flexibilidade")
     
     flexao_anterior = None
     flexi_anterior = None
@@ -669,23 +691,23 @@ def resultado(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(ge
         flexi_anterior = anterior.teste_flexibilidade_cm
     
     return {
-        "peso_atual": float(atual.peso) if atual.peso else None,
-        "percentual_gordura": float(atual.percentual_gordura) if atual.percentual_gordura else None,
+        "peso_atual": float(peso_show) if peso_show else None,
+        "percentual_gordura": float(gordura_show) if gordura_show else None,
         "massa_magra": float(massa_magra) if massa_magra else None,
         "variacao_peso": delta(atual.peso, anterior.peso if anterior else None, 1),
         "data": str(atual.data_avaliacao),
-        "classificacao_gordura": atual.classificacao_gordura,
+        "classificacao_gordura": classif_gordura_show,
         "variacao_gordura": delta(atual.percentual_gordura, anterior.percentual_gordura if anterior else None, 1),
         "variacao_massa_magra": delta(massa_magra, anterior.massa_magra_kg if anterior else None, 1),
         "flexibilidade_cm": flexi_atual,
-        "classificacao_flexibilidade": atual.classificacao_flexibilidade,
+        "classificacao_flexibilidade": classif_flexi_show,
         "variacao_flexibilidade": delta(flexi_atual, flexi_anterior, 1),
-        "vo2max": float(atual.vo2max) if atual.vo2max else None,
-        "classificacao_vo2": atual.classificacao_vo2,
+        "vo2max": float(vo2_show) if vo2_show else None,
+        "classificacao_vo2": classif_vo2_show,
         "variacao_vo2": delta(atual.vo2max, anterior.vo2max if anterior else None, 1),
         "hrr_bpm": hrr_atual,
         "flexao_reps": flexao_atual,
-        "classificacao_flexao": atual.classificacao_flexao or extras_atual.get("forca_classificacao_flexao"),
+        "classificacao_flexao": classif_flexao_show or extras_atual.get("forca_classificacao_flexao"),
         "faixa_etaria_flexao": extras_atual.get("forca_faixa_etaria"),
         "variacao_flexao": delta(flexao_atual, flexao_anterior, 0),
         "barra_reps": barra_atual,

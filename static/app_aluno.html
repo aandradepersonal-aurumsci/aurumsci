@@ -2694,7 +2694,7 @@ function renderDashboardEvolucao(){
     // Renderiza graficos (Chart.js carregado no head)
     setTimeout(function(){
       renderGraficoLinha('peso');
-      renderGraficoRadar(atual);
+      renderGraficoRadar(atual, avals);
     }, 100);
   })
   .catch(function(){
@@ -2769,7 +2769,7 @@ function renderGraficoLinha(metrica){
   if(exp) exp.innerHTML = explicacoes[metrica] || '';
 }
 
-function renderGraficoRadar(atual){
+function renderGraficoRadar(atual, avals){
   if(typeof Chart === 'undefined') return;
   if(!atual) return;
   

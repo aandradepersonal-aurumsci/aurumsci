@@ -180,6 +180,53 @@ def listar_exercicios(personal: Personal = Depends(get_personal_atual), db: Sess
     exercicios = db.query(Exercicio).order_by(Exercicio.grupo_muscular, Exercicio.nome).all()
     return {"exercicios": [{"id": e.id, "nome": e.nome, "grupo_muscular": e.grupo_muscular, "equipamento": e.equipamento, "descricao": e.descricao, "video_url": e.video_url} for e in exercicios]}
 
+# FIX 21/05/2026: trainer pode criar exercicios personalizados (decisao Andre).
+# Razao: catalogo de 103 exercicios eh engessado. Personal real precisa de
+# variacoes (pegada, barra, equipamento) que catalogo nao tem.
+# Banco pessoal cresce organico com uso, vira diferencial competitivo.
+class ExercicioCustomSchema(BaseModel):
+    nome: str
+    grupo_muscular: str
+    equipamento: str = ""
+    descricao: str = ""
+
+@router.post("/exercicios-banco/criar")
+def criar_exercicio_personalizado(
+    dados: ExercicioCustomSchema,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Cria exercicio personalizado no banco do trainer (personal_id = trainer.id)."""
+    from app.routers.treino import Exercicio
+    nome_limpo = (dados.nome or "").strip()
+    if not nome_limpo:
+        raise HTTPException(status_code=400, detail="Nome do exercicio obrigatorio")
+    grupo_limpo = (dados.grupo_muscular or "").strip()
+    if not grupo_limpo:
+        raise HTTPException(status_code=400, detail="Grupo muscular obrigatorio")
+    # Evita duplicata exata do mesmo trainer
+    ja_existe = db.query(Exercicio).filter(
+        Exercicio.personal_id == personal.id,
+        Exercicio.nome == nome_limpo
+    ).first()
+    if ja_existe:
+        return {"ok": True, "exercicio": {"id": ja_existe.id, "nome": ja_existe.nome,
+                "grupo_muscular": ja_existe.grupo_muscular, "equipamento": ja_existe.equipamento,
+                "descricao": ja_existe.descricao}, "ja_existia": True}
+    novo = Exercicio(
+        nome=nome_limpo,
+        grupo_muscular=grupo_limpo,
+        equipamento=(dados.equipamento or "").strip() or None,
+        descricao=(dados.descricao or "").strip() or None,
+        personal_id=personal.id
+    )
+    db.add(novo)
+    db.commit()
+    db.refresh(novo)
+    return {"ok": True, "exercicio": {"id": novo.id, "nome": novo.nome,
+            "grupo_muscular": novo.grupo_muscular, "equipamento": novo.equipamento,
+            "descricao": novo.descricao}, "ja_existia": False}
+
 
 class SessaoSchema(BaseModel):
     nome: str

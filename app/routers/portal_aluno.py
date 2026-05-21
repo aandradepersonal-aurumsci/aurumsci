@@ -250,7 +250,7 @@ def avaliacoes(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(g
         "classificacao_flexao": a.classificacao_flexao or parse_extras(a.observacoes).get("forca_classificacao_flexao"),
         "barra_reps": a.teste_barra_num if a.teste_barra_num is not None else parse_extras(a.observacoes).get("forca_barra_reps"),
         "abdominal_reps": parse_extras(a.observacoes).get("forca_abdom_reps"),
-        "mmii_reps": parse_extras(a.observacoes).get("mmii_reps"),
+        "mmii_reps": a.teste_mmii_reps if a.teste_mmii_reps is not None else parse_extras(a.observacoes).get("mmii_reps"),
         "mmii_classificacao": parse_extras(a.observacoes).get("mmii_classificacao"),
         "hrr_bpm": parse_extras(a.observacoes).get("hrr_recuperacao") or parse_extras(a.observacoes).get("hrr_1min"),
     } for a in avals]

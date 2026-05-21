@@ -2786,11 +2786,23 @@ function renderGraficoRadar(atual){
   // Radar agora: 3 dimensoes fisicas puras (Forca + Cardio + MMII).
   // Voltara para 4 quando implementarmos Flexibilidade (sit-and-reach).
   // FIX 20/05/2026: 4o eixo adicionado conforme planejado em 15/05 (sit-and-reach pronto)
+  // FIX 21/05/2026: helper local pra pegar ultimo valor NAO-NULO de cada campo.
+  // Resolve bug "edicao parcial zera radar" - se ultima avaliacao so tem anamnese,
+  // atual.mmii_reps fica undefined e radar zerado mesmo tendo dados anteriores.
+  // Mesmo bug arquitetural cravado no endpoint /meus-resultados (commit 31bfa5d).
+  function ultimoNaoNulo(campo){
+    for(var i = 0; i < avals.length; i++){
+      if(avals[i][campo] !== null && avals[i][campo] !== undefined && avals[i][campo] !== ''){
+        return avals[i][campo];
+      }
+    }
+    return null;
+  }
   var dados = [
-    norm(atual.flexao_reps, 50),         // Forca (50 reps = excelente)
-    norm(atual.vo2max, 55),               // Cardio (55 ml/kg/min = excelente)
-    norm(atual.mmii_reps, 30),            // MMII (30 reps = excelente)
-    norm(atual.flexibilidade_cm, 35)      // Flexibilidade (35cm = excelente ACSM)
+    norm(ultimoNaoNulo('flexao_reps'), 50),         // Forca (50 reps = excelente)
+    norm(ultimoNaoNulo('vo2max'), 55),               // Cardio (55 ml/kg/min = excelente)
+    norm(ultimoNaoNulo('mmii_reps'), 30),            // MMII (30 reps = excelente)
+    norm(ultimoNaoNulo('flexibilidade_cm'), 35)      // Flexibilidade (35cm = excelente ACSM)
   ];
   
   var canvas = document.getElementById('chartRadarPerfil');

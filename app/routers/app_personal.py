@@ -548,14 +548,18 @@ async def postural_aluno(
         raise HTTPException(status_code=500, detail=resultado.erro)
 
     # Salva na avaliação
+    # FIX 21/05/2026: postural salva na avaliacao DO DIA (igual /salvar-avaliacao)
+    # Bug antigo: postural pegava ULTIMA avaliacao (qualquer dia), enquanto outras
+    # secoes criavam/atualizavam por DATA. Resultado: postural ficava em avaliacao
+    # diferente, "sumindo" da tela do aluno apos anamnese/composicao salvar.
+    from datetime import date
     av = db.query(AvaliacaoFisica).filter(
-        AvaliacaoFisica.aluno_id == aluno_id
-    ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
-
+        AvaliacaoFisica.aluno_id == aluno_id,
+        AvaliacaoFisica.data_avaliacao == date.today()
+    ).first()
     if not av:
-        av = AvaliacaoFisica(aluno_id=aluno_id)
+        av = AvaliacaoFisica(aluno_id=aluno_id, data_avaliacao=date.today())
         db.add(av)
-
     av.postura_cabeca   = resultado.cabeca
     av.postura_ombros   = resultado.ombros
     av.postura_coluna   = resultado.coluna

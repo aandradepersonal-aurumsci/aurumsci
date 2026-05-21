@@ -2659,14 +2659,14 @@ function renderDashboardEvolucao(){
     
     // ====== CARD NARRATIVA MOTIVACIONAL (topo) ======
     var html = '<div style="background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.04));border:1px solid rgba(201,168,76,.4);border-radius:16px;padding:18px;margin-bottom:16px">' +
-      '<div style="font-family:Bebas Neue;font-size:18px;letter-spacing:2px;color:var(--ouro);margin-bottom:6px">📈 SUA EVOLUCAO</div>' +
-      '<div style="font-size:12px;color:var(--cinza);line-height:1.6">Acompanhe sua jornada de transformacao. ' + avals.length + ' avaliacao(oes) registrada(s).</div>' +
+      '<div style="font-family:Bebas Neue;font-size:18px;letter-spacing:2px;color:var(--ouro);margin-bottom:6px">📈 SUA EVOLUÇÃO</div>' +
+      '<div style="font-size:12px;color:var(--cinza);line-height:1.6">Acompanhe sua jornada de transformação. ' + avals.length + ' avaliação(ões) registrada(s).</div>' +
       '</div>';
     
     // ====== GRAFICO LINHA TEMPORAL + SELETOR ======
     html += '<div style="background:var(--bg2);border:1px solid var(--borda);border-radius:14px;padding:14px;margin-bottom:14px">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
-        '<div style="font-size:11px;letter-spacing:2px;color:var(--ouro);font-weight:700">EVOLUCAO TEMPORAL</div>' +
+        '<div style="font-size:11px;letter-spacing:2px;color:var(--ouro);font-weight:700">EVOLUÇÃO TEMPORAL</div>' +
         '<select id="metrica-selector" onchange="trocarMetricaGrafico()" style="background:var(--bg3);color:var(--texto);border:1px solid var(--borda);border-radius:8px;padding:4px 8px;font-size:11px">' +
           '<option value="peso">PESO</option>' +
           '<option value="percentual_gordura">% GORDURA</option>' +
@@ -2721,7 +2721,7 @@ function renderGraficoLinha(metrica){
   };
   
   var explicacoes = {
-    'peso':'Acompanhe a evolucao do seu peso ao longo do tempo. Tendencia descendente em fase de cutting; ascendente em bulking.',
+    'peso':'Acompanhe a evolução do seu peso ao longo do tempo. Tendência descendente em fase de cutting; ascendente em bulking.',
     'percentual_gordura':'% Gordura mostra sua composicao corporal. Valor menor = mais massa magra proporcionalmente.',
     'vo2max':'VO2 Max mede sua capacidade cardiorrespiratoria. Quanto maior, melhor seu condicionamento aerobico.',
     'flexao_reps':'Flexao de braco indica forca de membros superiores. Aumento = ganho de forca.'

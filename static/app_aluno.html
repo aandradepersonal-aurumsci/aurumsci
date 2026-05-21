@@ -2770,26 +2770,20 @@ function renderGraficoLinha(metrica){
 }
 
 function renderGraficoRadar(atual, avals){
-  if(typeof Chart === 'undefined') return;
+  // FIX 21/05/2026 TARDE: Andre cravou principio Tufte/Excel Avancado:
+  // 'Bom grafico explica o conteudo SEM TEXTO. Auto-explicativo.'
+  // Radar Chart.js abstrato (poligono dourado) NAO mostrava numeros,
+  // exigia legenda 'Quanto mais para fora, melhor'. = falhou auto-explicacao.
+  //
+  // SUBSTITUIDO por 4 BLOCOS visuais (grid 2x2 responsivo):
+  // - Numero grande + meta + barra visual + classificacao
+  // - Cores distintas por dimensao (memoria visual)
+  // - Sem necessidade de legenda
+  // - Aluno entende NA HORA (Tufte aprovaria)
   if(!atual) return;
   
-  // Normaliza valores para escala 0-100 (radar precisa de escala consistente)
-  // Usa estimativas de excelencia por metrica
-  function norm(val, max){ if(val == null) return 0; return Math.min(100, (val/max)*100); }
-  
-  // FIX 15/05/2026 TARDE v2: removida Composicao do radar (sacada Andre).
-  // Razao filosofica: radar mostra CAPACIDADE FISICA (o que corpo FAZ),
-  // nao COMPOSICAO CORPORAL (o que corpo E). Misturar naturezas confunde
-  // aluno: 3 metricas "aumentar = melhor" + 1 invertida (gordura) gerava
-  // confusao mental. % Gordura aparece com classificacao no Card RESULTADOS.
-  // 
-  // Radar agora: 3 dimensoes fisicas puras (Forca + Cardio + MMII).
-  // Voltara para 4 quando implementarmos Flexibilidade (sit-and-reach).
-  // FIX 20/05/2026: 4o eixo adicionado conforme planejado em 15/05 (sit-and-reach pronto)
-  // FIX 21/05/2026: helper local pra pegar ultimo valor NAO-NULO de cada campo.
-  // Resolve bug "edicao parcial zera radar" - se ultima avaliacao so tem anamnese,
-  // atual.mmii_reps fica undefined e radar zerado mesmo tendo dados anteriores.
-  // Mesmo bug arquitetural cravado no endpoint /meus-resultados (commit 31bfa5d).
+  // Helper local: pega ultimo valor NAO-NULO de cada campo entre todas avals.
+  // Resolve bug "edicao parcial zera dados" (mesmo do commit 31bfa5d).
   function ultimoNaoNulo(campo){
     for(var i = 0; i < avals.length; i++){
       if(avals[i][campo] !== null && avals[i][campo] !== undefined && avals[i][campo] !== ''){
@@ -2798,46 +2792,71 @@ function renderGraficoRadar(atual, avals){
     }
     return null;
   }
-  var dados = [
-    norm(ultimoNaoNulo('flexao_reps'), 50),         // Forca (50 reps = excelente)
-    norm(ultimoNaoNulo('vo2max'), 55),               // Cardio (55 ml/kg/min = excelente)
-    norm(ultimoNaoNulo('mmii_reps'), 30),            // MMII (30 reps = excelente)
-    norm(ultimoNaoNulo('flexibilidade_cm'), 35)      // Flexibilidade (35cm = excelente ACSM)
+  
+  // Classificacao baseada em % da meta de excelencia
+  function classif(pct){
+    if(pct >= 90) return {txt:'EXCELENTE', cor:'#0FB682'};
+    if(pct >= 75) return {txt:'BOM', cor:'#4B9FFF'};
+    if(pct >= 50) return {txt:'REGULAR', cor:'#F0C040'};
+    if(pct > 0)   return {txt:'INICIANTE', cor:'#FF7B47'};
+    return {txt:'SEM DADO', cor:'#666'};
+  }
+  
+  // 4 dimensoes com metas de excelencia + cores tematicas
+  var dims = [
+    {icone:'💪', nome:'FORÇA',         campo:'flexao_reps',     unidade:'reps',       meta:50, cor:'#C9A84C'},
+    {icone:'❤️', nome:'CARDIO',        campo:'vo2max',          unidade:'ml/kg/min',  meta:55, cor:'#4B9FFF'},
+    {icone:'🦵', nome:'MMII',          campo:'mmii_reps',       unidade:'reps/30s',   meta:30, cor:'#0FB682'},
+    {icone:'🧘', nome:'FLEXIBILIDADE', campo:'flexibilidade_cm',unidade:'cm',         meta:35, cor:'#9B59B6'}
   ];
   
-  var canvas = document.getElementById('chartRadarPerfil');
-  if(!canvas) return;
+  var container = document.getElementById('chartRadarPerfil');
+  if(!container) return;
   
-  if(window._chartRadar) window._chartRadar.destroy();
+  // Se ainda for canvas (radar antigo), troca por div
+  if(container.tagName === 'CANVAS'){
+    var pai = container.parentNode;
+    var div = document.createElement('div');
+    div.id = 'chartRadarPerfil';
+    pai.replaceChild(div, container);
+    container = div;
+  }
   
-  window._chartRadar = new Chart(canvas, {
-    type: 'radar',
-    data: {
-      labels: ['Forca', 'Cardio', 'MMII', 'Flexibilidade'],
-      datasets: [{
-        data: dados,
-        borderColor: '#C9A84C',
-        backgroundColor: 'rgba(201,168,76,0.2)',
-        pointBackgroundColor: '#C9A84C',
-        pointRadius: 4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        r: {
-          min: 0,
-          max: 100,
-          ticks: { display: false },
-          grid: { color: 'rgba(255,255,255,0.08)' },
-          angleLines: { color: 'rgba(255,255,255,0.08)' },
-          pointLabels: { color: 'rgba(255,255,255,0.7)', font: { size: 11 } }
-        }
-      }
-    }
+  // Forca container a nao ser preso a 'height' antigo do radar
+  container.style.height = 'auto';
+  container.style.minHeight = '0';
+  
+  // Monta HTML dos 4 blocos
+  var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:4px 0">';
+  dims.forEach(function(d){
+    var val = ultimoNaoNulo(d.campo);
+    var pct = val == null ? 0 : Math.min(100, (val/d.meta)*100);
+    var c = classif(pct);
+    var valDisplay = val == null ? '—' : (Number.isInteger(val) ? val : Math.round(val*10)/10);
+    html += '<div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 12px;display:flex;flex-direction:column;gap:8px">';
+    // Header: icone + nome + %
+    html += '<div style="display:flex;justify-content:space-between;align-items:center">';
+    html += '<div style="font-size:10px;letter-spacing:1.5px;color:'+d.cor+';font-weight:700">'+d.icone+' '+d.nome+'</div>';
+    html += '<div style="font-size:11px;color:'+d.cor+';font-weight:700;opacity:.9">'+Math.round(pct)+'%</div>';
+    html += '</div>';
+    // Valor grande
+    html += '<div style="display:flex;align-items:baseline;gap:4px">';
+    html += '<div style="font-family:Bebas Neue;font-size:30px;line-height:1;color:'+d.cor+'">'+valDisplay+'</div>';
+    html += '<div style="font-size:10px;color:rgba(255,255,255,.5)">'+d.unidade+'</div>';
+    html += '</div>';
+    // Meta de referencia
+    html += '<div style="font-size:10px;color:rgba(255,255,255,.4)">Meta: '+d.meta+' '+d.unidade+'</div>';
+    // Barra preenchida
+    html += '<div style="background:rgba(255,255,255,.06);border-radius:6px;height:6px;overflow:hidden">';
+    html += '<div style="background:'+d.cor+';height:100%;width:'+pct+'%;transition:width .6s ease;border-radius:6px"></div>';
+    html += '</div>';
+    // Classificacao
+    html += '<div style="font-size:10px;font-weight:700;color:'+c.cor+';letter-spacing:.5px">'+c.txt+'</div>';
+    html += '</div>';
   });
+  html += '</div>';
+  
+  container.innerHTML = html;
 }
 
 function trocarMetricaGrafico(){

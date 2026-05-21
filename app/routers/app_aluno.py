@@ -690,6 +690,8 @@ def resultado(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(ge
         "variacao_flexao": delta(flexao_atual, flexao_anterior, 0),
         "barra_reps": barra_atual,
         "abdominal_reps": abdom_atual,
+        "preensao_dom_kgf": preensao_dom_atual,
+        "preensao_ndom_kgf": preensao_ndom_atual,
         "mmii_reps": mmii_atual,
         "mmii_classificacao": extras_atual.get("mmii_classificacao"),
         "mmii_faixa_etaria": extras_atual.get("mmii_faixa_etaria"),

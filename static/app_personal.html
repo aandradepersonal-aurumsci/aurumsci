@@ -3305,7 +3305,19 @@ function filtrarGrupo(g){
 function renderListaExercicios(lista){
   var el = document.getElementById('lista-exercicios-busca');
   if(!el) return;
-  if(lista.length === 0){ el.innerHTML = '<div style="text-align:center;color:var(--cinza);padding:20px">Nenhum exercício encontrado</div>'; return; }
+  if(lista.length === 0){
+    var buscaAtual = (document.getElementById('busca-input')||{}).value||'';
+    var nomeSugerido = buscaAtual.trim();
+    var msgHtml = '<div style="text-align:center;color:var(--cinza);padding:20px 10px">Nenhum exercício encontrado';
+    if(nomeSugerido){
+      msgHtml += '<br><br><button onclick="abrirCriarExercicio()" style="margin-top:8px;padding:10px 16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:14px;letter-spacing:1px;cursor:pointer">+ Criar "' + nomeSugerido.replace(/"/g,'&quot;') + '" no seu banco</button>';
+    } else {
+      msgHtml += '<br><br><button onclick="abrirCriarExercicio()" style="margin-top:8px;padding:10px 16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:14px;letter-spacing:1px;cursor:pointer">+ Criar exercício personalizado</button>';
+    }
+    msgHtml += '</div>';
+    el.innerHTML = msgHtml;
+    return;
+  }
   var html = '';
   lista.forEach(function(e){
     html += '<div onclick="adicionarExercicioById(this)" data-id="' + e.id + '" data-nome="' + e.nome.replace(/"/g, '&quot;') + '" style="padding:12px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;border-radius:8px">';
@@ -3326,6 +3338,69 @@ function adicionarExercicio(id, nome){
   treinoSessoes[sessaoAtual].exercicios.push({id:id, nome:nome, series:3, repeticoes:'10-12', descanso:90});
   fecharBusca();
   renderMontadorTreino();
+}
+
+// FEATURE 21/05/2026: criar exercicio personalizado (decisao Andre).
+// Trainer digita nome no campo de busca, nao encontra, ve botao "+ Criar".
+// Modal pequeno: nome + grupo + equipamento (opcional) + descricao (opcional).
+// Salva com personal_id = trainer.id. Aparece NA HORA na lista e no treino.
+function abrirCriarExercicio(){
+  var nomeSugerido = (document.getElementById('busca-input')||{}).value||'';
+  nomeSugerido = nomeSugerido.trim();
+  var html = '<div id="criar-exerc-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;padding:20px;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center">';
+  html += '<div style="background:#12121A;border-radius:16px;padding:20px;max-width:430px;width:100%;margin-top:40px">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">';
+  html += '<div style="font-family:Bebas Neue;font-size:20px;color:var(--ouro2);letter-spacing:1px">+ CRIAR EXERCÍCIO</div>';
+  html += '<button onclick="fecharCriarExercicio()" style="background:none;border:none;color:var(--cinza);font-size:22px;cursor:pointer">✕</button>';
+  html += '</div>';
+  html += '<div style="font-size:12px;color:var(--cinza);margin-bottom:14px;line-height:1.5">Adiciona ao seu banco pessoal. Aparece em futuros treinos.</div>';
+  html += '<label style="display:block;font-size:11px;color:var(--ouro);letter-spacing:1px;margin-bottom:4px">NOME *</label>';
+  html += '<input id="criar-exerc-nome" type="text" value="' + nomeSugerido.replace(/"/g,'&quot;') + '" placeholder="Ex: Rosca Bíceps Halter Neutra" style="width:100%;padding:10px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:14px;box-sizing:border-box;margin-bottom:12px">';
+  html += '<label style="display:block;font-size:11px;color:var(--ouro);letter-spacing:1px;margin-bottom:4px">GRUPO MUSCULAR *</label>';
+  html += '<select id="criar-exerc-grupo" style="width:100%;padding:10px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:14px;box-sizing:border-box;margin-bottom:12px">';
+  var grupos = ['Peito','Costas','Ombros','Bíceps','Tríceps','Pernas','Glúteos','Abdômen','Cardio','Corretivo','Funcional','Pliometria','Mobilidade'];
+  grupos.forEach(function(g){ html += '<option value="' + g + '">' + g + '</option>'; });
+  html += '</select>';
+  html += '<label style="display:block;font-size:11px;color:var(--ouro);letter-spacing:1px;margin-bottom:4px">EQUIPAMENTO (opcional)</label>';
+  html += '<input id="criar-exerc-equip" type="text" placeholder="Ex: Halter, Polia alta, Smith, Corda" style="width:100%;padding:10px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:14px;box-sizing:border-box;margin-bottom:12px">';
+  html += '<label style="display:block;font-size:11px;color:var(--ouro);letter-spacing:1px;margin-bottom:4px">DESCRIÇÃO / EXECUÇÃO (opcional)</label>';
+  html += '<textarea id="criar-exerc-desc" placeholder="Ex: pegada supinada com halter, contração no topo, descida controlada 2s" style="width:100%;padding:10px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:14px;box-sizing:border-box;margin-bottom:14px;min-height:60px;resize:vertical;font-family:DM Sans"></textarea>';
+  html += '<button onclick="salvarCriarExercicio()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;letter-spacing:1px;cursor:pointer">💾 SALVAR E ADICIONAR AO TREINO</button>';
+  html += '</div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+function fecharCriarExercicio(){
+  var el = document.getElementById('criar-exerc-modal');
+  if(el) el.remove();
+}
+function salvarCriarExercicio(){
+  var nome = (document.getElementById('criar-exerc-nome')||{}).value||'';
+  var grupo = (document.getElementById('criar-exerc-grupo')||{}).value||'';
+  var equip = (document.getElementById('criar-exerc-equip')||{}).value||'';
+  var desc = (document.getElementById('criar-exerc-desc')||{}).value||'';
+  nome = nome.trim();
+  if(!nome){ mostrarToast('⚠️ Nome obrigatório'); return; }
+  if(!grupo){ mostrarToast('⚠️ Grupo muscular obrigatório'); return; }
+  fetch('/app-personal/exercicios-banco/criar', {
+    method:'POST',
+    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({nome:nome, grupo_muscular:grupo, equipamento:equip.trim(), descricao:desc.trim()})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d && d.ok && d.exercicio){
+      // Atualiza banco local
+      exerciciosBanco.push(d.exercicio);
+      var msg = d.ja_existia ? '✅ Já existia! Adicionado.' : '✅ Criado! Adicionado ao treino.';
+      mostrarToast(msg);
+      fecharCriarExercicio();
+      // Adiciona NA HORA ao treino atual
+      adicionarExercicio(d.exercicio.id, d.exercicio.nome);
+    } else {
+      mostrarToast('Erro ao criar exercício');
+    }
+  })
+  .catch(function(){ mostrarToast('Erro de conexão'); });
 }
 
 function salvarTreino(){

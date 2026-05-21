@@ -514,7 +514,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       <div class="aval-card" onclick="abrirModalNutri()" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.04));border-color:rgba(201,168,76,.3);position:relative">
         <div style="position:absolute;top:8px;left:8px;background:var(--ouro);color:#000;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px">6️⃣</div>
         <div class="aval-icon">🥗</div>
-        <div class="aval-titulo" data-i18n="nutricao">NUTRIÇÃO</div>
+        <div class="aval-titulo" data-i18n="nutrição">NUTRIÇÃO</div>
         <div class="aval-sub">Sugestão baseada em evidências</div>
       </div>
     </div>
@@ -908,7 +908,7 @@ var TX = {
     avaliacaoTitulo:'AVALIAÇÃO', comoUsar:'COMO USAR',
     documentos:'DOCUMENTOS', anamnese:'ANAMNESE',
     postural:'POSTURAL', medidas:'MEDIDAS', composicao:'COMPOSIÇÃO',
-    testes:'TESTES', nutricao:'NUTRIÇÃO',
+    testes:'TESTES', nutrição:'NUTRIÇÃO',
     parqDesc:'PAR-Q · Consentimento · Termo',
     anamneseDesc:'Objetivo · Nível · Saúde',
     posturalDesc:'Análise com IA', medidasDesc:'Circunferências',
@@ -983,7 +983,7 @@ var TX = {
     avaliacaoTitulo:'ASSESSMENT', comoUsar:'HOW TO USE',
     documentos:'DOCUMENTS', anamnese:'HEALTH HISTORY',
     postural:'POSTURAL', medidas:'MEASUREMENTS', composicao:'COMPOSITION',
-    testes:'TESTS', nutricao:'NUTRITION',
+    testes:'TESTS', nutrição:'NUTRITION',
     parqDesc:'PAR-Q · Consent · Agreement',
     anamneseDesc:'Goal · Level · Health',
     posturalDesc:'AI Analysis', medidasDesc:'Circumferences',
@@ -1058,7 +1058,7 @@ var TX = {
     avaliacaoTitulo:'EVALUACIÓN', comoUsar:'CÓMO USAR',
     documentos:'DOCUMENTOS', anamnese:'ANAMNESIS',
     postural:'POSTURAL', medidas:'MEDIDAS', composicao:'COMPOSICIÓN',
-    testes:'PRUEBAS', nutricao:'NUTRICIÓN',
+    testes:'PRUEBAS', nutrição:'NUTRICIÓN',
     parqDesc:'PAR-Q · Consentimiento · Término',
     anamneseDesc:'Objetivo · Nivel · Salud',
     posturalDesc:'Análisis con IA', medidasDesc:'Circunferencias',
@@ -1142,7 +1142,7 @@ function setLang(l, el){
   lang = l; localStorage.setItem('aurum_lang', l);
   document.querySelectorAll('.lang-row .lang-btn').forEach(function(b){ b.classList.remove('active'); });
   el.classList.add('active');
-  atualizarTextos();  // FIX: traduz tela login tambem
+  atualizarTextos();  // FIX: traduz tela login também
   if(typeof atualizarData === 'function') atualizarData();
 }
 function setLangApp(l, el){
@@ -1514,7 +1514,7 @@ function renderOnbStep(){
     var hoje = new Date().toLocaleDateString('pt-BR');
     var itensT = [
       'Concordo em seguir as orientacoes do meu personal trainer.',
-      'Informei corretamente meu historico de saude e limitacoes.',
+      'Informei corretamente meu historico de saúde e limitacoes.',
       'Estou ciente que resultados dependem da minha dedicacao.',
       'Sei que acompanhamento medico e complementar ao treino.',
       'Autorizo uso dos meus dados para personalizacao (LGPD).'
@@ -1537,7 +1537,7 @@ function renderOnbStep(){
       '<div class="opcoes">';
     objs.forEach(function(o){
       var val = o.replace('obj','');
-      var map = {1:'hipertrofia',2:'emagrecimento',3:'condicionamento',4:'saude',5:'forca',6:'flexibilidade'};
+      var map = {1:'hipertrofia',2:'emagrecimento',3:'condicionamento',4:'saúde',5:'forca',6:'flexibilidade'};
       content += '<div class="opcao" onclick="selecionarOpcao(this,\'objetivo\',\'' + map[val] + '\')">' + T(o) + '</div>';
     });
     content += '</div>';
@@ -2024,8 +2024,8 @@ function renderFinanceiro(){
 '</div></div>' +
 '<div style="font-size:12px;color:var(--cinza);text-align:center;line-height:1.7">Suporte AurumSci: <a href="mailto:andrepersonal395@gmail.com" style="color:var(--ouro);text-decoration:none">andrepersonal395@gmail.com</a></div>' +
 '</div>'; return; }
-    var statusCor = d.status === 'pago' ? 'var(--verde)' : d.status === 'atrasado' ? '#FF6B6B' : 'var(--ouro)';
-    var statusLabel = d.status === 'pago' ? '✅ PAGO' : d.status === 'atrasado' ? '⚠️ ATRASADO' : '🕐 PENDENTE';
+    var statusCor = d.status === 'pago' ? 'var(--verde)' : d.status === 'atrásado' ? '#FF6B6B' : 'var(--ouro)';
+    var statusLabel = d.status === 'pago' ? '✅ PAGO' : d.status === 'atrásado' ? '⚠️ ATRASADO' : '🕐 PENDENTE';
     var html = '<div class="card" style="margin-bottom:12px"><div class="card-line ouro"></div>';
     html += '<div style="font-size:10px;color:var(--cinza);letter-spacing:1px;margin-bottom:6px">PLANO ATIVO</div>';
     html += '<div style="font-family:Bebas Neue;font-size:24px;margin-bottom:4px">' + (d.plano||'Plano Personal') + '</div>';
@@ -3076,7 +3076,7 @@ function assinarContratoServico(){
     '<div style="font-size:13px;color:var(--cinza);line-height:2;margin-bottom:16px">' +
     '<strong style="color:var(--texto)">1. CANCELAMENTO</strong> — Aviso minimo de 12 horas.<br>' +
     '<strong style="color:var(--texto)">2. REPOSICAO</strong> — Dentro do mes corrente.<br>' +
-    '<strong style="color:var(--texto)">3. PAGAMENTO</strong> — Juros de 1% ao mes em atraso.<br>' +
+    '<strong style="color:var(--texto)">3. PAGAMENTO</strong> — Juros de 1% ao mes em atráso.<br>' +
     '<strong style="color:var(--texto)">4. RESCISAO</strong> — 15 dias de aviso, sem multa.<br>' +
     '<strong style="color:var(--texto)">5. RESPONSABILIDADE</strong> — Declaro estar apto para atividade fisica.</div>' +
     '<div style="font-size:10px;color:#444;margin-bottom:16px">Resolucao CONFEF 307/2015 - LGPD Lei 13.709/2018</div>' +
@@ -3882,7 +3882,7 @@ function abrirModalNutri(){
 // ── ANAMNESE ──────────────────────────────────────────
 function renderAnamnese(){
   var pats = [
-    {key:'hipertensao',label:'Hipertensão'},
+    {key:'hipertensão',label:'Hipertensão'},
     {key:'diabetes',label:'Diabetes'},
     {key:'colesterol_alto',label:'Colesterol alto'},
     {key:'cardiopatia',label:'Doença cardíaca'},
@@ -3892,7 +3892,7 @@ function renderAnamnese(){
     {key:'asma',label:'Asma / DPOC'}
   ];
   // Carrega dados do onboarding (do localStorage)
-  var objMap = {hipertrofia:'Hipertrofia',emagrecimento:'Emagrecimento',condicionamento:'Condicionamento',reabilitacao:'Reabilitação',qualidade_de_vida:'Qualidade de Vida'};
+  var objMap = {hipertrofia:'Hipertrofia',emagrecimento:'Emagrecimento',condicionamento:'Condicionamento',reabilitação:'Reabilitação',qualidade_de_vida:'Qualidade de Vida'};
   var objSalvo = localStorage.getItem('aurum_objetivo') || '';
   var nivelSalvo = localStorage.getItem('aurum_nivel') || '';
   var diasSalvo = localStorage.getItem('aurum_dias') || '';

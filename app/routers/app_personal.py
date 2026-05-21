@@ -487,7 +487,15 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
             av.teste_mmii_reps = tf.mmii_30s
 
     elif secao == "mmii" and dados.mmii:
-        av.observacoes = (av.observacoes or "") + f" | MMII 30s: {dados.mmii.repeticoes} reps"
+        # FIX 21/05/2026: salva NA COLUNA + REPLACE limpo em observacoes.
+        # Bug antigo: APPEND acumulava lixo cada clique (trainer clicava 8x
+        # porque botao nao dava feedback). Banco corrompido.
+        av.teste_mmii_reps = dados.mmii.repeticoes
+        obs_atual = av.observacoes or ""
+        # Remove qualquer MMII anterior (regex global)
+        import re as _re
+        obs_limpa = _re.sub(r'\s*\|\s*MMII 30s:\s*\d+\s*reps', '', obs_atual)
+        av.observacoes = (obs_limpa + f" | MMII 30s: {dados.mmii.repeticoes} reps").strip(" |")
 
     elif secao == "vo2_hrr" and dados.vo2_hrr:
         vh = dados.vo2_hrr

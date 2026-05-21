@@ -1389,6 +1389,12 @@ def salvar_potencia(
         aval = AvaliacaoFisica(aluno_id=aluno.id, data_avaliacao=hoje)
         db.add(aval)
     
+    # FIX 21/05/2026: salva NA COLUNA dedicada teste_mmii_reps (integer)
+    # ALEM do JSON observacoes (historico + classificacoes).
+    # Bug descoberto: aluno endpoint /meus-resultados usa helper ultimo()
+    # que le da coluna. Sem isso, MMII fica invisivel pro aluno.
+    aval.teste_mmii_reps = dados.mmii_reps
+    
     extras = {
         "mmii_data": str(hoje),
         "mmii_reps": dados.mmii_reps,

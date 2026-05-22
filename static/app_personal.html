@@ -3190,8 +3190,40 @@ function carregarTreinoAlunos(){
 var treinoAlunoId = null, treinoAlunoNome = '', treinoSessoes = [], exerciciosBanco = [];
 
 function selecionarTreinoAluno(id, nome){
+  // FIX 22/05/2026: CARREGA plano existente em vez de ZERAR.
+  // Bug antigo: trainer abria "Montar Treino" -> frontend zerava treinoSessoes -> 
+  // se trainer salvasse algo, sobrescrevia plano inteiro do aluno (perdia 8+ exercicios).
   treinoAlunoId = id; treinoAlunoNome = nome; treinoSessoes = [];
-  renderMontadorTreino();
+  fetch('/treino/plano/aluno/' + id, {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(planos){
+    if(!planos || planos.length === 0){ renderMontadorTreino(); return; }
+    // Pega plano ativo (mais recente)
+    var planoAtivo = planos[0];
+    return fetch('/treino/plano/' + planoAtivo.id, {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.json(); })
+    .then(function(plano){
+      if(plano && plano.sessoes){
+        treinoSessoes = plano.sessoes.map(function(s){
+          return {
+            nome: s.nome,
+            exercicios: (s.exercicios||[]).map(function(e){
+              return {
+                id: e.exercicio_id,
+                ex_sessao_id: e.id,
+                nome: e.nome_exercicio,
+                series: e.series,
+                repeticoes: e.repeticoes,
+                descanso: e.tempo_descanso_seg
+              };
+            })
+          };
+        });
+      }
+      renderMontadorTreino();
+    });
+  })
+  .catch(function(){ renderMontadorTreino(); });
 }
 
 function renderMontadorTreino(){

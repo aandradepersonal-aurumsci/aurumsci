@@ -25,7 +25,8 @@ class ChatPersonalSchema(BaseModel):
 async def chat_personal(dados: ChatPersonalSchema, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
     # FIX 21/05/2026: AURI PRO ganhou autonomia — sabe tutorial do sistema + stats + aluno aberto
     from app.motor.ia_chatbot import responder_chatbot, montar_contexto_personal
-    from app.models import Aluno, Anamnese
+    from app.models import Aluno
+    from app.routers.anamnese import Anamnese
     from app.routers.avaliacao import AvaliacaoFisica
     from app.routers.treino import PresencaTreino
     from app.routers.financeiro import Pagamento, cs as calc_status

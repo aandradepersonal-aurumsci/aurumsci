@@ -1129,7 +1129,22 @@ def listar_fechamentos_pendentes(
     
     fechamentos = []
     
+    # FIX 22/05/2026: filtra alunos que JA TEM cobranca paga este mes.
+    # Bug antigo: lista mostrava todos alunos ativos como "pendentes",
+    # mesmo os que ja tinham pago. Trainer podia cobrar duplicado.
+    from sqlalchemy import text as _text
+    sql_pagos = _text("""
+        SELECT DISTINCT aluno_id FROM cobrancas
+        WHERE status = 'pago'
+          AND EXTRACT(MONTH FROM data_pagamento) = :mes
+          AND EXTRACT(YEAR FROM data_pagamento) = :ano
+    """)
+    ids_pagos_mes = {row[0] for row in db.execute(sql_pagos, {"mes": hoje.month, "ano": hoje.year}).fetchall()}
+    
     for aluno in alunos:
+        # Se ja pagou este mes, nao aparece como pendente
+        if aluno.id in ids_pagos_mes:
+            continue
         ciclo = aluno.ciclo_cobranca or "mensal"
         dia_fechamento = aluno.dia_fechamento or 30
         dias_vencimento = aluno.dias_vencimento or 5

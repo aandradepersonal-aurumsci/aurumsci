@@ -2728,8 +2728,7 @@ function calcBio(){
 }
 
 function salvarComposicao(){
-  // FIX 21/05/2026: feedback visual + correcao irmao gemeo (r.ok check).
-  // Bug antigo: botao mostrava 'salvo' mesmo em erro 500 (r.json() resolve em erro).
+  // FIX 21/05/2026 v2: padrao card-abaixo (igual VO2), botao mantem original.
   var d = window._bioResultado;
   if(!d){ mostrarToast('Calcule primeiro!'); return; }
   var btn = event && event.target ? event.target : null;
@@ -2744,8 +2743,14 @@ function salvarComposicao(){
     if(!r.ok) throw new Error('HTTP ' + r.status);
     return r.json().catch(function(){ return {}; });
   }).then(function(){
-    mostrarToast('✅ Salvo! Peso ' + d.peso + 'kg · % gordura ' + d.gordura + '%');
-    if(btn){ btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '✅ SALVO — pode editar e salvar novamente'; btn.style.background = 'linear-gradient(135deg,#0FB682,#0A8060)'; }
+    if(btn){ btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '💾 SALVAR COMPOSIÇÃO CORPORAL'; }
+    var slot = document.getElementById('bio-resultado');
+    if(slot){
+      var existente = document.getElementById('bio-salvo-card');
+      if(existente) existente.remove();
+      var msg = '<div id="bio-salvo-card" style="margin-top:10px;padding:12px;background:rgba(0,230,128,.12);border:1px solid rgba(0,230,128,.4);border-radius:10px;color:#0FB682;font-size:13px;text-align:center;font-weight:600">✅ Salvo! Peso ' + d.peso + 'kg · % gordura ' + d.gordura + '% — ' + new Date().toLocaleTimeString().slice(0,5) + '</div>';
+      slot.insertAdjacentHTML('beforeend', msg);
+    }
   }).catch(function(e){
     mostrarToast('Erro ao salvar: ' + (e.message||''));
     if(btn){ btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '💾 SALVAR COMPOSIÇÃO CORPORAL'; }

@@ -1484,7 +1484,10 @@ function analisarPosturalP(){
   if(fotosPosturalP.lado) fd.append('foto_lado', fotosPosturalP.lado);
   if(fotosPosturalP.costas) fd.append('foto_costas', fotosPosturalP.costas);
   fetch('/app-personal/aluno/' + alunoSelecionadoId + '/postural', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
-  .then(function(r){ return r.json(); })
+  .then(function(r){
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
   .then(function(d){
     loading.style.display = 'none'; btn.disabled = false; btn.style.opacity = '1';
     if(d.detail){ resultado.innerHTML = '<div style="color:#FF6B6B;padding:16px;text-align:center">Erro: ' + d.detail + '</div>'; return; }
@@ -1500,8 +1503,11 @@ function analisarPosturalP(){
       html += '</div>';
     }
     html += '</div>';
+    // FIX 21/05/2026: card-abaixo igual outros botoes (trainer ve que salvou mesmo com fotos sumindo)
+    var nDesvios = campos.filter(function(c){ return c[2]; }).length;
+    var nCorretivos = (d.recomendacoes||[]).length;
+    html += '<div id="postural-salvo-card" style="margin-top:10px;padding:12px;background:rgba(0,230,128,.12);border:1px solid rgba(0,230,128,.4);border-radius:10px;color:#0FB682;font-size:13px;text-align:center;font-weight:600">✅ Postural de ' + (d.aluno||'aluno') + ' salva · ' + nDesvios + ' desvios · ' + nCorretivos + ' corretivos — ' + new Date().toLocaleTimeString().slice(0,5) + '</div>';
     resultado.innerHTML = html;
-    mostrarToast('✅ Análise salva no perfil do aluno!');
   })
   .catch(function(e){ loading.style.display='none'; btn.disabled=false; btn.style.opacity='1'; resultado.innerHTML='<div style="color:#FF6B6B;padding:16px">Erro: '+e.message+'</div>'; });
 }

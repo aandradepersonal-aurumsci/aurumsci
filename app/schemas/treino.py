@@ -29,6 +29,17 @@ class ExercicioSessaoResposta(ExercicioSessaoCriar):
     nome_exercicio: Optional[str] = None
     model_config = {"from_attributes": True}
 
+class ExercicioSessaoEditar(BaseModel):
+    """FIX 22/05/2026: schema pra editar exercicio na sessao (tudo opcional, so atualiza o que vier)."""
+    exercicio_id: Optional[int] = None
+    ordem: Optional[int] = None
+    series: Optional[int] = None
+    repeticoes: Optional[str] = None
+    carga_kg: Optional[float] = None
+    tempo_descanso_seg: Optional[int] = None
+    tecnica_especial: Optional[str] = None
+    observacoes: Optional[str] = None
+
 class SessaoCriar(BaseModel):
     nome: str
     dia_semana: Optional[int] = None

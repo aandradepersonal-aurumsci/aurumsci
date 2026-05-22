@@ -25,7 +25,7 @@ from app.schemas.treino import (
     ExercicioCriar, ExercicioResposta,
     PlanoTreinoCriar,  # noqa: F401
     PresencaCriar, PresencaResposta,
-    ExercicioSessaoCriar,
+    ExercicioSessaoCriar, ExercicioSessaoEditar,
 )
 
 # 🧠 Motor AurumSci v1
@@ -301,6 +301,49 @@ def adicionar_exercicio_sessao(
     db.commit()
     db.refresh(ex_sessao)
     return ex_sessao
+
+# ── Editar exercicio na sessao ────────────────────────────────────────────────
+# FIX 22/05/2026: trainer precisa adequar treino do aluno (trocar exercicio,
+# ajustar serie/rep/descanso/tecnica). Sem isso, nao tem autonomia profissional.
+@router.put("/sessao/{sessao_id}/exercicio/{ex_id}")
+def editar_exercicio_sessao(
+    sessao_id: int,
+    ex_id: int,
+    dados: ExercicioSessaoEditar,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    ex_sessao = db.query(ExercicioSessao).filter(
+        ExercicioSessao.id == ex_id,
+        ExercicioSessao.sessao_id == sessao_id
+    ).first()
+    if not ex_sessao:
+        raise HTTPException(status_code=404, detail="Exercicio nao encontrado nesta sessao")
+    # So atualiza campos que vieram preenchidos (igual fix anamnese)
+    atualizacoes = dados.model_dump(exclude_unset=True)
+    for campo, valor in atualizacoes.items():
+        setattr(ex_sessao, campo, valor)
+    db.commit()
+    db.refresh(ex_sessao)
+    return {"status": "ok", "id": ex_sessao.id, "campos_atualizados": list(atualizacoes.keys())}
+
+# ── Remover exercicio da sessao ───────────────────────────────────────────────
+@router.delete("/sessao/{sessao_id}/exercicio/{ex_id}")
+def remover_exercicio_sessao(
+    sessao_id: int,
+    ex_id: int,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    ex_sessao = db.query(ExercicioSessao).filter(
+        ExercicioSessao.id == ex_id,
+        ExercicioSessao.sessao_id == sessao_id
+    ).first()
+    if not ex_sessao:
+        raise HTTPException(status_code=404, detail="Exercicio nao encontrado nesta sessao")
+    db.delete(ex_sessao)
+    db.commit()
+    return {"status": "ok", "removido": ex_id}
 
 
 # ── Presença ──────────────────────────────────────────────────────────────────

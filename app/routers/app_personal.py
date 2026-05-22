@@ -18,23 +18,87 @@ class ChatPersonalSchema(BaseModel):
     mensagem: str
     historico: Optional[List[dict]] = []
     idioma: Optional[str] = "pt"
+    aluno_id_aberto: Optional[int] = None  # FIX 21/05/2026: AURI sabe qual aluno trainer ta olhando
 
 
 @router.post("/chat")
 async def chat_personal(dados: ChatPersonalSchema, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
-    from app.motor.ia_chatbot import responder_chatbot
+    # FIX 21/05/2026: AURI PRO ganhou autonomia — sabe tutorial do sistema + stats + aluno aberto
+    from app.motor.ia_chatbot import responder_chatbot, montar_contexto_personal
+    from app.models import Aluno, Anamnese
+    from app.routers.avaliacao import AvaliacaoFisica
+    from app.routers.treino import PresencaTreino
+    from app.routers.financeiro import Pagamento, cs as calc_status
     idiomas = {
         "pt": "Responda SEMPRE em Português do Brasil.",
         "en": "Always respond in English.",
         "es": "Responde SIEMPRE en Español."
     }
     instrucao = idiomas.get(dados.idioma or "pt", idiomas["pt"])
-    contexto = f"""{instrucao}
-Personal Trainer: {personal.nome}
-CREF: {personal.cref or 'não informado'}
-Você está conversando com um personal trainer profissional.
-Ajude com gestão de alunos, protocolos de treino, periodização, nutrição esportiva e ciência do exercício.
-Seja técnico, direto e baseado em evidências científicas."""
+    # ── STATS OPERACIONAIS ────────────────────────────────────
+    alunos_q = db.query(Aluno).filter(Aluno.personal_id == personal.id, Aluno.ativo == True).all()
+    alunos_ativos = len(alunos_q)
+    aluno_ids = [a.id for a in alunos_q]
+    inadimplentes = 0
+    receita_mes = 0.0
+    if aluno_ids:
+        pags = db.query(Pagamento).filter(Pagamento.aluno_id.in_(aluno_ids)).all()
+        for p in pags:
+            s = calc_status(p)
+            if s in ('pendente', 'atrasado'): inadimplentes += 1
+            if s == 'pago' and p.data_pagamento and p.data_pagamento.month == date.today().month and p.data_pagamento.year == date.today().year:
+                receita_mes += p.valor
+    precisam_reavaliar = 0
+    if aluno_ids:
+        for aid in aluno_ids:
+            ult = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aid).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+            if not ult or (date.today() - ult.data_avaliacao).days >= 56:
+                precisam_reavaliar += 1
+    freq_media = 0
+    if aluno_ids:
+        from datetime import timedelta
+        total_presencas = db.query(PresencaTreino).filter(
+            PresencaTreino.aluno_id.in_(aluno_ids),
+            PresencaTreino.data >= date.today() - timedelta(days=30),
+            PresencaTreino.presente == True
+        ).count()
+        freq_media = round((total_presencas / (alunos_ativos * 30)) * 100, 1) if alunos_ativos else 0
+    stats = {
+        "alunos_ativos": alunos_ativos,
+        "inadimplentes": inadimplentes,
+        "precisam_reavaliar": precisam_reavaliar,
+        "receita_mes": receita_mes,
+        "frequencia_media": freq_media
+    }
+    # ── ALUNO SELECIONADO (se trainer abriu um) ───────────────
+    aluno_selecionado_dict = {}
+    if dados.aluno_id_aberto:
+        a = db.query(Aluno).filter(Aluno.id == dados.aluno_id_aberto, Aluno.personal_id == personal.id).first()
+        if a:
+            anam = db.query(Anamnese).filter(Anamnese.aluno_id == a.id).first()
+            ult_av = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == a.id).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+            ult_str = "sem avaliacao"
+            if ult_av:
+                partes = []
+                if ult_av.peso: partes.append(f"peso {ult_av.peso}kg")
+                if ult_av.percentual_gordura: partes.append(f"gordura {ult_av.percentual_gordura}%")
+                if ult_av.vo2max: partes.append(f"VO2 {ult_av.vo2max}")
+                ult_str = f"{ult_av.data_avaliacao} — " + (" · ".join(partes) if partes else "sem medidas")
+            aluno_selecionado_dict = {
+                "nome": a.nome,
+                "objetivo": a.objetivo.value if a.objetivo else "-",
+                "nivel": a.nivel_experiencia.value if a.nivel_experiencia else "-",
+                "patologias": (anam.doencas_cronicas if anam and anam.doencas_cronicas else "nenhuma"),
+                "medicamentos": (anam.medicamentos_uso if anam and anam.medicamentos_uso else "nenhum"),
+                "ultima_avaliacao": ult_str
+            }
+    # ── MONTA CONTEXTO RICO ───────────────────────────────────
+    contexto_base = montar_contexto_personal(
+        personal={"nome": personal.nome, "cref": personal.cref or "nao informado"},
+        stats=stats,
+        aluno_selecionado=aluno_selecionado_dict
+    )
+    contexto = f"{instrucao}\n\n{contexto_base}"
     resposta = await responder_chatbot(
         mensagem=dados.mensagem,
         historico=dados.historico or [],

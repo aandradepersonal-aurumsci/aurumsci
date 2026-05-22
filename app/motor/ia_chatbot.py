@@ -89,3 +89,115 @@ Seja conciso (máximo 3 parágrafos), use linguagem acessível e sempre encoraje
         return response.content[0].text
     except Exception as e:
         return f"Desculpe, tive um problema técnico. Tente novamente! ({str(e)[:50]})"
+
+
+# ═══════════════════════════════════════════════════════════
+# AURI PRO — contexto pro personal trainer (adicionado 21/05/2026)
+# ═══════════════════════════════════════════════════════════
+def montar_contexto_personal(personal: dict, stats: dict = {}, aluno_selecionado: dict = {}) -> str:
+    """
+    Monta contexto rico pro AURI do PRO:
+    - Tutorial das avaliacoes (como usar a plataforma)
+    - Stats operacionais (alunos, inadimplencia, reavaliacoes)
+    - Aluno selecionado (se houver) com anamnese + ultima avaliacao
+    """
+    ctx = f"""Personal Trainer: {personal.get('nome', 'Trainer')}
+CREF: {personal.get('cref', 'nao informado')}
+
+═══ COMO USAR A PLATAFORMA AURUMSCI PRO ═══
+
+ANAMNESE: menu Alunos → abrir aluno → aba 📋 AVAL → aba 📝 ANAMNESE
+- Preencha perfil (idade, peso, altura, sexo, nivel, objetivo, dias/semana)
+- Marque patologias (hipertensao, diabetes, etc) — campo crucial
+- Anote dores, cirurgias, medicamentos
+- Clique 💾 SALVAR ANAMNESE
+
+POSTURAL: aba 📸 POSTURAL dentro de Avaliacao
+- Aluno em pe, roupa minima, olhar no horizonte
+- Sobe 3 fotos: frente, lateral, costas
+- Clique 🤖 ANALISAR COM IA — gera laudo + exercicios corretivos
+- Exercicios corretivos aparecem automaticamente no treino do aluno
+
+CIRCUNFERENCIAS: aba 📏 CIRCUNF.
+- Fita metrica antropometrica
+- Tronco: torax, cintura, abdomen, quadril
+- Membros: braco D/E, antebraco D/E, coxa D/E, panturrilha D/E
+- 💾 SALVAR CIRCUNFERENCIAS
+
+COMPOSICAO CORPORAL (% Gordura): aba ⚖️ GORDURA
+- 4 metodos: Bioimpedancia / 3 Dobras / 7 Dobras / Ultrassom 9 pontos
+- Bioimpedancia: dados da balanca
+- 3 Dobras (Jackson&Pollock): peitoral, abdomen, coxa (♂) | triceps, supra-iliaca, coxa (♀)
+- 7 Dobras: protocolo completo Jackson&Pollock 1978
+- Ultrassom: 9 pontos BodyMetrix
+- Cada um tem botao CALCULAR + SALVAR
+
+TESTES FISICOS: aba 💪 TESTES
+- Flexao, barra fixa, abdominal, preensao manual, flexibilidade (Wells)
+- Salva por teste
+
+POTENCIA MMII: aba 🦵 MMII
+- Sentar e levantar 30 segundos, joelho 90°, sem apoio das maos
+- Conta repeticoes — Jones et al. 1999
+
+VO2 MAX: aba 🫁 VO2 — SEMPRE POR ULTIMO!
+- 3 protocolos: Cooper (12min), Milha de Kline, Step Up McArdle
+- Cooper: distancia em 12 minutos
+- Milha: tempo + FC final
+- Step: 16.25 cm 22 steps/min por 3 minutos → FC apos 1 min
+- VO2 contamina outros testes — sempre por ultimo
+
+HRR (FC RECUPERACAO): dentro da aba VO2, abaixo do calculo
+- FC pico + FC apos 1 min + PA repouso + PA pos
+- Cole et al. 1999 NEJM
+- HRR ≥20bpm = boa | 12-19 = regular | <12 = lenta (encaminhar cardiologista)
+
+═══ ORDEM CRAVADA DA AVALIACAO ═══
+1. Anamnese → 2. Postural → 3. Circunferencias → 4. % Gordura
+5. Testes Fisicos → 6. MMII → 7. VO2 (por ultimo) → 8. HRR
+
+═══ CLASSIFICACOES CIENTIFICAS ═══
+
+% GORDURA (ACSM 2022):
+- Homens 20-29a: <11 muito magro | <16 excelente | <20 bom | <24 regular | <28 acima | ≥28 alto
+- Mulheres 20-29a: <16 muito magra | <21 excelente | <25 bom | <29 regular | <33 acima | ≥33 alto
+- Idade aumenta os limites — usar tabela por faixa etaria
+
+VO2 MAX (ACSM):
+- ≥56 superior | ≥51 excelente | ≥43 bom | ≥34 regular | <34 fraco
+
+HRR (Cole 1999):
+- ≥20bpm boa recuperacao | 12-19 regular | <12 lenta (risco cardiovascular)
+
+MMII (Jones 1999): tabelas por idade/sexo no proprio app
+
+═══ CUIDADOS POPULACOES ESPECIAIS ═══
+- HIPERTENSO: evitar Valsalva, isometricos pesados; controlar PA antes/durante
+- DIABETICO: monitorar glicemia antes/depois; horario apos refeicao
+- CARDIOPATA: HRR obrigatoria; intensidade conforme reserva FC; encaminhar para teste ergometrico
+- IDOSO: MMII como triagem de sarcopenia (<8 reps risco alto)
+- GESTANTE: evitar decubito dorsal apos 16sem; FC alvo conservadora
+- ARTROSE/HERNIA: evitar impacto; trabalhar core e estabilidade primeiro
+"""
+    if stats:
+        ctx += f"""
+
+═══ DADOS OPERACIONAIS DO TRAINER ═══
+- Alunos ativos: {stats.get('alunos_ativos', 0)}
+- Inadimplencia: {stats.get('inadimplentes', 0)} alunos
+- Precisam reavaliar (>56 dias): {stats.get('precisam_reavaliar', 0)}
+- Receita do mes: R$ {stats.get('receita_mes', 0):.2f}
+- Frequencia media (30d): {stats.get('frequencia_media', 0):.0f}%
+"""
+    if aluno_selecionado:
+        ctx += f"""
+
+═══ ALUNO ATUALMENTE ABERTO ═══
+Nome: {aluno_selecionado.get('nome', '-')}
+Objetivo: {aluno_selecionado.get('objetivo', '-')}
+Nivel: {aluno_selecionado.get('nivel', '-')}
+Patologias: {aluno_selecionado.get('patologias', 'nenhuma')}
+Medicamentos: {aluno_selecionado.get('medicamentos', 'nenhum')}
+Ultima avaliacao: {aluno_selecionado.get('ultima_avaliacao', 'sem dados')}
+"""
+    return ctx

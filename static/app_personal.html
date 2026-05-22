@@ -1918,7 +1918,9 @@ function renderFinanceiro(){
     document.getElementById('card-soma').innerHTML = cardSoma;
   }
 
-  var html = '<button onclick="abrirModalPagamento()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer;margin-bottom:14px">➕ REGISTRAR PAGAMENTO</button>';
+  // FIX 22/05/2026: botao de exportar CSV pro contador (relatorio mensal de pagamentos pagos)
+  var html = '<button onclick="baixarRelatorioContador()" style="width:100%;padding:12px;background:linear-gradient(135deg,#4B9FFF,#2A7FE0);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer;margin-bottom:10px">📋 RELATÓRIO PRO CONTADOR (CSV)</button>';
+  html += '<button onclick="abrirModalPagamento()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer;margin-bottom:14px">➕ REGISTRAR PAGAMENTO</button>';
 
   if(pagamentosDB.length === 0){
     html += '<div style="color:var(--cinza);text-align:center;padding:30px">Nenhum pagamento registrado ainda.</div>';
@@ -5177,6 +5179,31 @@ function enviarReciboEmail(){
   });
 }
 
+
+// FIX 22/05/2026: baixa CSV do mes atual pro contador emitir NF
+function baixarRelatorioContador(){
+  mostrarToast('📋 Gerando relatório...');
+  fetch('/app-personal/financeiro/relatorio-contador', {
+    headers: {'Authorization':'Bearer '+token}
+  })
+  .then(function(r){ 
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return r.blob(); 
+  })
+  .then(function(blob){
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    var hoje = new Date();
+    a.href = url;
+    a.download = 'aurumsci_relatorio_' + hoje.getFullYear() + '_' + String(hoje.getMonth()+1).padStart(2,'0') + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    mostrarToast('✅ Relatório baixado! Envie pro seu contador.');
+  })
+  .catch(function(e){ mostrarToast('Erro: ' + e.message); });
+}
 </script>
 </body>
 </html>

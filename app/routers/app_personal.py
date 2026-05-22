@@ -1042,6 +1042,75 @@ def aulas_do_mes(
 # FECHAMENTOS — Lista de cobrancas pendentes
 # ──────────────────────────────────────────────────────────────────────────────
 
+@router.get("/financeiro/relatorio-contador")
+def relatorio_contador(
+    mes: int = None,
+    ano: int = None,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """FIX 22/05/2026: relatorio de pagamentos PAGOS do mes em CSV pro contador emitir NF.
+    Default: mes/ano atual."""
+    from datetime import date as date_cls
+    from sqlalchemy import text
+    import io, csv
+    from fastapi.responses import StreamingResponse
+    
+    hoje = date_cls.today()
+    mes = mes or hoje.month
+    ano = ano or hoje.year
+    
+    sql = text("""
+        SELECT 
+            c.id AS cobranca_id,
+            a.nome AS aluno_nome,
+            a.cpf AS aluno_cpf,
+            a.email AS aluno_email,
+            c.valor,
+            c.descricao,
+            c.data_pagamento,
+            c.metodo_pagamento
+        FROM cobrancas c
+        JOIN alunos a ON a.id = c.aluno_id
+        WHERE a.personal_id = :personal_id
+          AND c.status = 'pago'
+          AND EXTRACT(MONTH FROM c.data_pagamento) = :mes
+          AND EXTRACT(YEAR FROM c.data_pagamento) = :ano
+        ORDER BY c.data_pagamento ASC
+    """)
+    rows = db.execute(sql, {"personal_id": personal.id, "mes": mes, "ano": ano}).fetchall()
+    
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter=';')
+    writer.writerow(['ID', 'Aluno', 'CPF', 'Email', 'Valor (R$)', 'Descricao', 'Data Pagamento', 'Metodo'])
+    
+    total = 0.0
+    for r in rows:
+        valor = float(r[4]) if r[4] else 0
+        total += valor
+        writer.writerow([
+            r[0],
+            r[1] or '',
+            r[2] or '',
+            r[3] or '',
+            f"{valor:.2f}".replace('.', ','),
+            r[5] or '',
+            r[6].strftime('%d/%m/%Y') if r[6] else '',
+            r[7] or 'cartao'
+        ])
+    writer.writerow([])
+    writer.writerow(['', '', '', 'TOTAL', f"{total:.2f}".replace('.', ','), '', '', ''])
+    writer.writerow(['', '', '', 'DAS estimado 6%', f"{total*0.06:.2f}".replace('.', ','), '', '', ''])
+    writer.writerow(['', '', '', 'Liquido', f"{total*0.94:.2f}".replace('.', ','), '', '', ''])
+    
+    output.seek(0)
+    filename = f"aurumsci_relatorio_{ano}_{mes:02d}.csv"
+    return StreamingResponse(
+        iter([output.getvalue().encode('utf-8-sig')]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )
+
 @router.get("/financeiro/fechamentos-pendentes")
 def listar_fechamentos_pendentes(
     personal: Personal = Depends(get_personal_atual),

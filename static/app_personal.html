@@ -4797,7 +4797,10 @@ async function abrirCobrancaAluno(alunoId){
     console.error('Erro ao buscar checkins:', e);
   }
   
-  var modeloCobr = aluno.modelo_cobranca || 'mensal';
+  // FIX 22/05/2026: usa ciclo_cobranca (campo real do banco). Bug antigo: campo fantasma modelo_cobranca em memoria so.
+  // Backend espera 'por_aula_mensal' ou 'mensal'. Frontend mostra 'aula' ou 'mensal' (traducao na hora).
+  var cicloBanco = aluno.ciclo_cobranca || 'mensal';
+  var modeloCobr = cicloBanco === 'por_aula_mensal' ? 'aula' : 'mensal';
   var valorAula = parseFloat(aluno.valor_aula) || 150;
   var qtdCombinada = parseInt(aluno.qtd_aulas_mes) || 12;
   var valorMensal = parseFloat(aluno.valor_mensal) || (valorAula * qtdCombinada);
@@ -4908,12 +4911,18 @@ async function abrirCobrancaAluno(alunoId){
 }
 
 function alterarModelo(modelo, alunoId){
-  // Atualiza modelo no objeto local (memória)
+  // FIX 22/05/2026: persiste ciclo_cobranca no banco (bug antigo: so memoria, perdia ao recarregar).
   var aluno = todosAlunos.find(function(a){ return a.id === alunoId; });
+  var cicloBanco = modelo === 'aula' ? 'por_aula_mensal' : 'mensal';
   if(aluno) {
-    aluno.modelo_cobranca = modelo;
-    console.log('Modelo alterado para:', modelo, 'aluno:', alunoId);
+    aluno.ciclo_cobranca = cicloBanco;
+    aluno.modelo_cobranca = modelo; // mantido pra compat antiga
   }
+  fetch('/app-personal/aluno/' + alunoId + '/dados', {
+    method: 'PUT',
+    headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({ciclo_cobranca: cicloBanco})
+  }).catch(function(){ /* falha silenciosa, ainda tem em memoria */ });
   // Reabrir modal atualizado com novo modelo
   setTimeout(function(){
     var modals = document.querySelectorAll('div[style*="position:fixed"]');
@@ -4963,8 +4972,9 @@ async function gerarCobrancaAluno(alunoId){
   var aluno = todosAlunos.find(function(a){ return a.id === alunoId; });
   if(!aluno) return;
   
-  // Calcular valores
-  var modeloCobr = aluno.modelo_cobranca || 'mensal';
+  // FIX 22/05/2026: usa ciclo_cobranca (campo real do banco).
+  var cicloBanco = aluno.ciclo_cobranca || 'mensal';
+  var modeloCobr = cicloBanco === 'por_aula_mensal' ? 'aula' : 'mensal';
   var valorAula = parseFloat(aluno.valor_aula) || 150;
   var qtdCombinada = parseInt(aluno.qtd_aulas_mes) || 12;
   var valorMensal = parseFloat(aluno.valor_mensal) || (valorAula * qtdCombinada);

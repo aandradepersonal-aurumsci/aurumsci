@@ -4112,10 +4112,8 @@ function salvarCircunferencias(){
     if(btn){ btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '💾 SALVAR CIRCUNFERÊNCIAS'; }
     var slot = document.getElementById('circ-resultado');
     if(slot){
-      var resumo = '';
-      if(circ.cintura) resumo += 'cintura ' + circ.cintura + 'cm';
-      if(circ.quadril) resumo += (resumo?' · ':'') + 'quadril ' + circ.quadril + 'cm';
-      if(!resumo) resumo = Object.keys(circ).length + ' medidas';
+      var n = Object.keys(circ).length;
+      var resumo = n + (n===1?' medida':' medidas');
       slot.innerHTML = '<div id="circ-salvo-card" style="margin-top:10px;padding:12px;background:rgba(0,230,128,.12);border:1px solid rgba(0,230,128,.4);border-radius:10px;color:#0FB682;font-size:13px;text-align:center;font-weight:600">✅ Circunferências salvas · ' + resumo + ' — ' + new Date().toLocaleTimeString().slice(0,5) + '</div>';
     }
   }).catch(function(e){

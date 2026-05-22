@@ -2841,12 +2841,30 @@ function calc7Dobras(){
 }
 
 function salvarDobras7(){
+  // FIX 21/05/2026: padrao card-abaixo + r.ok check.
   var d = window._7dobrasResultado;
   if(!d){ mostrarToast('Calcule primeiro!'); return; }
+  var btn = event && event.target ? event.target : null;
+  if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '💾 Salvando...'; }
   fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({secao:'composicao', composicao:{gordura_pct: d.gordura_pct}})
-  }).then(function(){ mostrarToast('✅ 7 Dobras salvo!'); }).catch(function(){ mostrarToast('Erro ao salvar!'); });
+  }).then(function(r){
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json().catch(function(){ return {}; });
+  }).then(function(){
+    if(btn){ btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '💾 SALVAR 7 DOBRAS'; }
+    var slot = document.getElementById('d7-resultado');
+    if(slot){
+      var existente = document.getElementById('d7-salvo-card');
+      if(existente) existente.remove();
+      var msg = '<div id="d7-salvo-card" style="margin-top:10px;padding:12px;background:rgba(0,230,128,.12);border:1px solid rgba(0,230,128,.4);border-radius:10px;color:#0FB682;font-size:13px;text-align:center;font-weight:600">✅ Salvo! % gordura ' + d.gordura_pct + '% (7 dobras) — ' + new Date().toLocaleTimeString().slice(0,5) + '</div>';
+      slot.insertAdjacentHTML('beforeend', msg);
+    }
+  }).catch(function(e){
+    mostrarToast('Erro ao salvar: ' + (e.message||''));
+    if(btn){ btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '💾 SALVAR 7 DOBRAS'; }
+  });
 }
 
 function calcUltrassom(){

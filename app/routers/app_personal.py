@@ -390,13 +390,16 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
         # FIX 18/05/2026: salva nos campos estruturados do model (nao mais em obs concatenada)
         existente = db.query(Anamnese).filter(Anamnese.aluno_id == aluno_id).first()
         if existente:
-            existente.objetivo_detalhado = an.objetivo
-            existente.lesoes_anteriores = an.cirurgias
-            existente.cirurgias = an.cirurgias
-            existente.medicamentos_uso = an.medicamentos
-            existente.doencas_cronicas = an.patologias  # patologias estruturadas
-            existente.descricao_dores = an.dores  # dores como texto livre
-            existente.observacoes = an.observacoes  # observacoes APENAS observacoes do personal
+            # FIX 21/05/2026: so atualiza campos que vieram preenchidos.
+            # Bug antigo: campos None sobrescreviam dados antigos do banco (apagava cadastro).
+            if an.objetivo is not None: existente.objetivo_detalhado = an.objetivo
+            if an.cirurgias is not None:
+                existente.lesoes_anteriores = an.cirurgias
+                existente.cirurgias = an.cirurgias
+            if an.medicamentos is not None: existente.medicamentos_uso = an.medicamentos
+            if an.patologias is not None: existente.doencas_cronicas = an.patologias
+            if an.dores is not None: existente.descricao_dores = an.dores
+            if an.observacoes is not None: existente.observacoes = an.observacoes
         else:
             db.add(Anamnese(
                 aluno_id=aluno_id,

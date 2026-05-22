@@ -4050,13 +4050,26 @@ function salvarAnamnese(){
     }
   };
   
+  // FIX 21/05/2026: padrao card-abaixo + r.ok check + remove texto "prossiga" (UX inadequado).
+  var btn = event && event.target ? event.target : null;
+  if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '💾 Salvando...'; }
   fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify(payload)
-  }).then(function(r){ return r.json(); }).then(function(d){
-    mostrarToast('✅ Anamnese salva!');
-    document.getElementById('anamnese-resultado').innerHTML = '<div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:12px;font-size:13px;color:var(--verde)">✅ Anamnese registrada! Prossiga para a análise postural.</div>';
-  }).catch(function(){ mostrarToast('Erro ao salvar!'); });
+  }).then(function(r){
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json().catch(function(){ return {}; });
+  }).then(function(){
+    if(btn){ btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '💾 SALVAR ANAMNESE'; }
+    var slot = document.getElementById('anamnese-resultado');
+    if(slot){
+      var nome = payload.anamnese.nome || 'aluno';
+      slot.innerHTML = '<div id="anamnese-salvo-card" style="margin-top:10px;padding:12px;background:rgba(0,230,128,.12);border:1px solid rgba(0,230,128,.4);border-radius:10px;color:#0FB682;font-size:13px;text-align:center;font-weight:600">✅ Anamnese de ' + nome + ' salva — ' + new Date().toLocaleTimeString().slice(0,5) + '</div>';
+    }
+  }).catch(function(e){
+    mostrarToast('Erro ao salvar: ' + (e.message||''));
+    if(btn){ btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '💾 SALVAR ANAMNESE'; }
+  });
 }
 
 function salvarCircunferencias(){

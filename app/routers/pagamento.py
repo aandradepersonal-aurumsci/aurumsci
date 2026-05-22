@@ -652,6 +652,16 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
         except Exception as e:
             print(f"[WEBHOOK STRIPE] Erro cobranca avulsa: {e}")
         
+        # FIX 22/05/2026: se foi cobranca avulsa (sem subscription), PARA AQUI.
+        # Bug antigo: codigo continuava e disparava "Bem-vindo a familia" pro aluno
+        # que so pagou uma cobranca avulsa. "Bem-vindo" e SO pro aluno autonomo
+        # que assina trial 7 dias + R$49,90/mes (tem subscription Stripe).
+        try:
+            if session.get("id") and not session.get("subscription"):
+                return {"status": "ok", "tipo": "cobranca_avulsa"}
+        except Exception:
+            pass
+        
         aluno_id = None
         try:
             aluno_id = session["metadata"]["aluno_id"]

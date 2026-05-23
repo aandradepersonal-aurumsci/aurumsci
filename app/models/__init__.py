@@ -122,3 +122,49 @@ class OnboardingLink(Base):
     criado_em = Column(DateTime, default=datetime.utcnow)
     personal = relationship("Personal")
 
+class AssinaturaIAP(Base):
+    """Apple In-App Purchase — assinaturas via App Store iOS.
+    
+    Paralela ao Stripe: trainer pode assinar pelo iOS (IAP) ou Web (Stripe).
+    Apple cobra 30% (15% após 1 ano). Stripe ~3.9%. Por isso preferimos Web.
+    
+    Cravado 23/05/2026 — Etapa 2 IAP.
+    """
+    __tablename__ = "assinaturas_iap"
+    id = Column(Integer, primary_key=True)
+    
+    # Quem assinou (trainer OU aluno, nunca os dois)
+    personal_id = Column(Integer, ForeignKey("personals.id"), nullable=True, index=True)
+    aluno_id = Column(Integer, ForeignKey("alunos.id"), nullable=True, index=True)
+    
+    # Produto Apple (ex: com.aurumsc.pro.bronze, com.aurumsc.aluno.mensal)
+    product_id = Column(String(100), nullable=False, index=True)
+    
+    # IDs Apple (transaction = compra individual, original = assinatura recorrente)
+    apple_transaction_id = Column(String(100), unique=True, nullable=False)
+    apple_original_transaction_id = Column(String(100), nullable=False, index=True)
+    
+    # Status: trialing / active / expired / cancelled / refunded / in_grace_period
+    status = Column(String(30), default="trialing", index=True)
+    
+    # Datas (em UTC)
+    data_compra = Column(DateTime, nullable=False)
+    data_expiracao = Column(DateTime)
+    data_cancelamento = Column(DateTime)
+    
+    # Ambiente: 'sandbox' (testes) ou 'production' (real)
+    ambiente = Column(String(20), default="sandbox", index=True)
+    
+    # Recibo bruto da Apple (pra re-validar se precisar)
+    receipt_data = Column(Text)
+    
+    # Auto-renovação ativa?
+    auto_renew = Column(Boolean, default=True)
+    
+    # Audit
+    criado_em = Column(DateTime, default=datetime.utcnow)
+    atualizado_em = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    personal = relationship("Personal")
+    aluno = relationship("Aluno")

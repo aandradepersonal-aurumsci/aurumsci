@@ -1225,10 +1225,26 @@ function uploadLogoWL(input){
 }
 
 function usarAurumSci(){
-  localStorage.removeItem('aurum_wl_nome');
-  localStorage.removeItem('aurum_wl_logo');
-  document.getElementById('modal-whitelabel').style.display = 'none';
-  location.reload();
+  // FIX 23/05/2026: chama DELETE no banco antes de limpar localStorage.
+  // Bug antigo: limpava SO localStorage. No Cmd+Shift+R o banco devolvia
+  // o logo personalizado e a cara do trainer voltava no lugar do AurumSci.
+  fetch('/app-personal/white-label/logo', {
+    method: 'DELETE',
+    headers: {'Authorization':'Bearer '+token}
+  })
+  .then(function(){
+    localStorage.removeItem('aurum_wl_nome');
+    localStorage.removeItem('aurum_wl_logo');
+    document.getElementById('modal-whitelabel').style.display = 'none';
+    location.reload();
+  })
+  .catch(function(){
+    // fallback: limpa local mesmo se backend falhar
+    localStorage.removeItem('aurum_wl_nome');
+    localStorage.removeItem('aurum_wl_logo');
+    document.getElementById('modal-whitelabel').style.display = 'none';
+    location.reload();
+  });
 }
 
 function salvarLogoWL(){
@@ -1257,6 +1273,11 @@ function salvarLogoWL(){
 }
 
 function removerLogoWL(){
+  // FIX 23/05/2026: apaga do banco tambem (nao so localStorage).
+  fetch('/app-personal/white-label/logo', {
+    method: 'DELETE',
+    headers: {'Authorization':'Bearer '+token}
+  }).catch(function(){});
   localStorage.removeItem('aurum_wl_logo');
   aplicarLogoSalvo();
   document.getElementById('preview-logo-wl').innerHTML = '<span style="color:var(--cinza);font-size:13px">Nenhum logo personalizado</span>';

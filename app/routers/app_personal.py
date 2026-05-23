@@ -850,6 +850,17 @@ async def salvar_white_label(
         personal.slogan = slogan
     db.commit()
     return {"status": "ok", "logo_url": personal.logo_url if logo else None}
+@router.delete("/white-label/logo")
+def remover_white_label_logo(
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """FIX 23/05/2026: apaga logo personalizado do banco.
+    Bug antigo: usarAurumSci()/removerLogoWL() limpavam SO localStorage,
+    mas no Cmd+Shift+R o banco devolvia logo_url e cara voltava."""
+    personal.logo_url = None
+    db.commit()
+    return {"status": "ok", "mensagem": "Logo removido"}
 
 
 # ──────────────────────────────────────────────────────────────────────────────

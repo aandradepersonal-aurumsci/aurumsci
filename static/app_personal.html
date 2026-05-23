@@ -3445,10 +3445,18 @@ function adicionarExercicioById(el){
   adicionarExercicio(id, nome);
 }
 function adicionarExercicio(id, nome){
+  // FIX 23/05/2026: NAO fecha modal nem volta pra tela de musculo.
+  // Bug antigo: trainer adicionava 1 ex -> sistema fechava modal ->
+  // trainer tinha que clicar Peito de novo pra adicionar outro de peito.
+  // Agora: modal fica aberto, mostra toast '✓ Adicionado', trainer fecha
+  // quando terminar de adicionar todos da mesma sessao.
   if(sessaoAtual === null) return;
   treinoSessoes[sessaoAtual].exercicios.push({id:id, nome:nome, series:3, repeticoes:'10-12', descanso:90});
-  fecharBusca();
-  renderMontadorTreino();
+  mostrarToast('✓ ' + nome + ' adicionado!');
+  // Atualiza contador no titulo do modal
+  var totalEx = treinoSessoes[sessaoAtual].exercicios.length;
+  var titulo = document.getElementById('busca-titulo-contador');
+  if(titulo) titulo.textContent = totalEx + ' adicionado' + (totalEx > 1 ? 's' : '');
 }
 
 // FEATURE 21/05/2026: criar exercicio personalizado (decisao Andre).

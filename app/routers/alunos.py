@@ -97,7 +97,22 @@ def excluir_permanente(aluno_id: int, personal: Personal = Depends(get_personal_
         db.execute(text("DELETE FROM contratos_servico WHERE aluno_id = :aid"), {"aid": aluno_id})
         db.execute(text("DELETE FROM aluno_credenciais WHERE aluno_id = :aid"), {"aid": aluno_id})
         
-        # 3. Por ultimo, o aluno
+        # FIX 23/05/2026: tabelas novas faltantes no cascade.
+        # Defensivo: cada DELETE em savepoint proprio. Se tabela nao existir
+        # (deploy ainda nao rodou create_all), ignora silenciosamente.
+        for tabela in ("cobrancas", "assinaturas_iap"):
+            try:
+                sp = db.begin_nested()
+                db.execute(text(f"DELETE FROM {tabela} WHERE aluno_id = :aid"), {"aid": aluno_id})
+                sp.commit()
+            except Exception as ex_tab:
+                try:
+                    sp.rollback()
+                except Exception:
+                    pass
+                print(f"[DELETE CASCADE] tabela {tabela} ignorada: {ex_tab}")
+        
+        # 4. Por ultimo, o aluno
         db.execute(text("DELETE FROM alunos WHERE id = :aid"), {"aid": aluno_id})
         
         db.commit()

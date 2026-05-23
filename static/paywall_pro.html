@@ -122,26 +122,161 @@ h1{font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--ouro);
   </p>
 </div>
 
-<script>
+<script type="module">
+// PAYWALL PRO — integracao real com Apple IAP via capacitor-subscriptions
+// Cravado 23/05/2026 - Etapa 3D
+
+var Subscriptions = null;
+var isCapacitor = false;
+
+// Detecta se ta rodando dentro do app Capacitor iOS
+try {
+  if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+    isCapacitor = true;
+    // Importa plugin dinamicamente (so no app iOS)
+    import('@squareetlabs/capacitor-subscriptions').then(function(mod){
+      Subscriptions = mod.Subscriptions;
+      console.log('[paywall] capacitor-subscriptions carregado');
+    }).catch(function(e){
+      console.error('[paywall] erro ao carregar plugin:', e);
+    });
+  } else {
+    console.log('[paywall] rodando no navegador (nao iOS app)');
+  }
+} catch(e){
+  console.log('[paywall] Capacitor nao detectado:', e);
+}
+
 function showStatus(msg, isError){
   var el = document.getElementById('status');
   el.textContent = msg;
   el.style.borderColor = isError ? '#FF4B4B' : '#C9A84C';
   el.style.display = 'block';
-  setTimeout(function(){ el.style.display = 'none'; }, 3000);
+  setTimeout(function(){ el.style.display = 'none'; }, 4000);
 }
 
-function assinar(productId){
-  showStatus('Iniciando assinatura ' + productId + '...');
-  // TODO: integrar com capacitor-subscriptions (próximo passo)
+// Pega token JWT do localStorage (gravado no login do PRO)
+function getToken(){
+  return localStorage.getItem('token_personal') || localStorage.getItem('token') || '';
+}
+
+window.assinar = async function(productId){
   console.log('[paywall] assinar:', productId);
-}
+  
+  if (!isCapacitor){
+    showStatus('iOS App Store: assinatura disponivel no app iOS', true);
+    return;
+  }
+  
+  if (!Subscriptions){
+    showStatus('Plugin ainda carregando, tente em 2s', true);
+    return;
+  }
+  
+  try {
+    showStatus('Abrindo StoreKit Apple...');
+    
+    // Apple StoreKit nativo - popup oficial Apple aparece
+    var resp = await Subscriptions.purchaseProduct({ productIdentifier: productId });
+    console.log('[paywall] purchase response:', resp);
+    
+    if (resp.responseCode !== 0){
+      showStatus('Compra cancelada ou falhou', true);
+      return;
+    }
+    
+    showStatus('Pagamento aprovado! Validando...');
+    
+    // Pega recibo da transacao mais recente
+    var tx = await Subscriptions.getLatestTransaction({ productIdentifier: productId });
+    var receipt = (tx && tx.data && tx.data.receipt) || '';
+    
+    if (!receipt){
+      showStatus('Erro: recibo Apple vazio', true);
+      return;
+    }
+    
+    // Envia recibo pro backend validar com Apple
+    var token = getToken();
+    var validResp = await fetch('/iap/validar-recibo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ receipt_data: receipt })
+    });
+    
+    var validData = await validResp.json();
+    console.log('[paywall] validacao backend:', validData);
+    
+    if (validData.status === 'ok'){
+      showStatus('✓ Assinatura ativada! Liberando acesso...');
+      setTimeout(function(){
+        window.location.href = '/personal';
+      }, 2000);
+    } else {
+      showStatus('Erro ao validar: ' + (validData.detail || 'desconhecido'), true);
+    }
+    
+  } catch(e){
+    console.error('[paywall] erro:', e);
+    showStatus('Erro: ' + (e.message || e), true);
+  }
+};
 
-function restaurar(){
-  showStatus('Restaurando compras...');
-  // TODO: integrar com capacitor-subscriptions
+window.restaurar = async function(){
   console.log('[paywall] restore purchases');
-}
+  
+  if (!isCapacitor){
+    showStatus('Restaurar disponivel apenas no app iOS', true);
+    return;
+  }
+  
+  if (!Subscriptions){
+    showStatus('Plugin ainda carregando, tente em 2s', true);
+    return;
+  }
+  
+  try {
+    showStatus('Buscando assinaturas ativas...');
+    
+    var ents = await Subscriptions.getCurrentEntitlements();
+    console.log('[paywall] entitlements:', ents);
+    
+    if (ents.responseCode === 0 && ents.data && ents.data.length > 0){
+      // Tem assinatura ativa - envia primeira pro backend revalidar
+      var transaction = ents.data[0];
+      showStatus('✓ Assinatura encontrada! Restaurando...');
+      
+      // Pega recibo
+      var tx = await Subscriptions.getLatestTransaction({ 
+        productIdentifier: transaction.productIdentifier 
+      });
+      var receipt = (tx && tx.data && tx.data.receipt) || '';
+      
+      var token = getToken();
+      await fetch('/iap/validar-recibo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ receipt_data: receipt })
+      });
+      
+      setTimeout(function(){
+        window.location.href = '/personal';
+      }, 2000);
+    } else {
+      showStatus('Nenhuma assinatura ativa encontrada', true);
+    }
+    
+  } catch(e){
+    console.error('[paywall] erro restore:', e);
+    showStatus('Erro: ' + (e.message || e), true);
+  }
+};
 </script>
 
 </body>

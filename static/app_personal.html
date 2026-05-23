@@ -1126,6 +1126,30 @@ function fazerLogin(){
 
 // ── CARREGAR APP ──────────────────────────────────────────────
 function carregarApp(){
+  // FIX 23/05/2026 — Etapa 3E IAP:
+  // Se iOS app sem assinatura ativa → redireciona pro paywall.
+  // Web continua normal (Stripe).
+  try {
+    if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+      fetch('/iap/status', {headers:{'Authorization':'Bearer '+token}})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.tem_assinatura === false) {
+          console.log('[carregarApp] iOS sem assinatura IAP, redirecionando paywall');
+          window.location.href = '/paywall-pro';
+          return;
+        }
+        console.log('[carregarApp] iOS com assinatura ativa:', d && d.status);
+      })
+      .catch(function(e){
+        // Erro de rede - libera app (não trava trainer)
+        console.warn('[carregarApp] erro check IAP, liberando app:', e);
+      });
+    }
+  } catch(e) {
+    console.log('[carregarApp] Capacitor nao detectado, modo web');
+  }
+  
   document.getElementById('screen-login').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   document.getElementById('tabs').style.display = 'flex';

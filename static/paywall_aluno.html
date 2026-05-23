@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AurumSci Aluno — Assine seu treino</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ouro:#C9A84C;--ouro2:#F0C040;--verde:#00E5A0;--vermelho:#FF4B4B;
+  --azul:#4B9FFF;--bg:#0A0A0F;--card:#1A1A26;--borda:#2A2A36;--cinza:#888
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:#fff;min-height:100vh;padding:20px 16px;padding-top:env(safe-area-inset-top,40px);display:flex;flex-direction:column}
+.header{text-align:center;margin-bottom:24px}
+.logo{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px}
+.logo svg{width:28px;height:28px}
+.logo-text{font-family:Georgia,serif;font-size:22px;letter-spacing:2px;color:var(--ouro2)}
+.logo-sci{font-family:Georgia,serif;font-size:11px;font-style:italic;color:#fff}
+h1{font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--ouro);margin-bottom:8px;line-height:1.1}
+.sub{font-size:14px;color:var(--cinza);margin-bottom:8px;padding:0 12px}
+.trial-badge{display:inline-block;background:rgba(0,229,160,.12);border:1px solid var(--verde);color:var(--verde);padding:6px 14px;border-radius:20px;font-size:11px;letter-spacing:2px;font-weight:700;margin-top:8px}
+.plan-wrap{flex:1;display:flex;align-items:center;justify-content:center;max-width:480px;margin:0 auto;width:100%}
+.plan{background:var(--card);border:2px solid var(--ouro);border-radius:20px;padding:28px 24px;width:100%;box-shadow:0 0 32px rgba(201,168,76,.25)}
+.plan-name{font-family:'Bebas Neue';font-size:30px;letter-spacing:3px;color:var(--ouro);margin-bottom:6px;text-align:center}
+.plan-tier{font-size:11px;color:var(--cinza);letter-spacing:2px;text-align:center;margin-bottom:20px;text-transform:uppercase}
+.plan-price{font-size:42px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px}
+.plan-price .currency{font-size:18px;color:var(--cinza);font-weight:400}
+.plan-price .period{font-size:14px;color:var(--cinza);font-weight:400}
+.plan-features{list-style:none;margin:20px 0;padding:0}
+.plan-features li{padding:8px 0;font-size:14px;color:#ddd;display:flex;align-items:center;gap:10px}
+.plan-features li::before{content:'✓';color:var(--verde);font-weight:700;font-size:16px}
+.btn-subscribe{width:100%;padding:16px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:14px;color:#0A0A0F;font-family:'Bebas Neue';font-size:20px;letter-spacing:3px;cursor:pointer;margin-top:12px}
+.actions{text-align:center;margin-top:24px;padding-bottom:env(safe-area-inset-bottom,20px)}
+.btn-restore{background:transparent;border:1px solid var(--borda);color:var(--cinza);padding:10px 24px;border-radius:8px;font-size:13px;cursor:pointer;margin-bottom:16px}
+.legal{font-size:10px;color:#666;line-height:1.6;max-width:420px;margin:0 auto;padding:0 8px}
+.legal a{color:var(--ouro);text-decoration:none}
+#status{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--ouro);padding:10px 20px;border-radius:8px;font-size:13px;display:none;z-index:100}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <svg viewBox="0 0 44 44"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg>
+    <span class="logo-text">AURUM</span>
+    <span class="logo-sci">sci.</span>
+  </div>
+  <h1>ASSINE SEU TREINO</h1>
+  <p class="sub">Treinos com ciência, do seu personal direto no seu bolso</p>
+  <div class="trial-badge">🎁 7 DIAS GRÁTIS</div>
+</div>
+
+<div id="status"></div>
+
+<div class="plan-wrap">
+  <div class="plan" onclick="assinar('com.aurumsc.aluno.mensal')">
+    <div class="plan-name">AURUMSCI ALUNO</div>
+    <div class="plan-tier">Plano Mensal</div>
+    <div class="plan-price"><span class="currency">R$</span> 49,90 <span class="period">/mês</span></div>
+    <ul class="plan-features">
+      <li>Treinos personalizados do seu personal</li>
+      <li>Check-in diário com streak</li>
+      <li>Acompanhamento de evolução</li>
+      <li>Análise postural com IA</li>
+      <li>Chatbot AURI 24/7</li>
+      <li>Histórico completo de avaliações</li>
+    </ul>
+    <button class="btn-subscribe">ASSINAR AGORA</button>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="btn-restore" onclick="restaurar()">↻ Restaurar compras</button>
+  <p class="legal">
+    Pagamento processado pela Apple. Assinatura renovada automaticamente.
+    Cancele a qualquer momento em Ajustes &gt; Apple ID &gt; Assinaturas.<br>
+    <a href="https://www.aurumsc.com.br/termos">Termos</a> · 
+    <a href="https://www.aurumsc.com.br/privacidade">Privacidade</a>
+  </p>
+</div>
+
+<script>
+function showStatus(msg, isError){
+  var el = document.getElementById('status');
+  el.textContent = msg;
+  el.style.borderColor = isError ? '#FF4B4B' : '#C9A84C';
+  el.style.display = 'block';
+  setTimeout(function(){ el.style.display = 'none'; }, 3000);
+}
+
+function assinar(productId){
+  showStatus('Iniciando assinatura...');
+  console.log('[paywall-aluno] assinar:', productId);
+  // TODO: capacitor-subscriptions
+}
+
+function restaurar(){
+  showStatus('Restaurando compras...');
+  console.log('[paywall-aluno] restore');
+  // TODO: capacitor-subscriptions
+}
+</script>
+
+</body>
+</html>

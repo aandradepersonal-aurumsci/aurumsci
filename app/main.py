@@ -241,6 +241,14 @@ def paywall_pro_page():
         return f.read()
 
 
+@app.get("/paywall-aluno", response_class=HTMLResponse, include_in_schema=False)
+def paywall_aluno_page():
+    """Paywall iOS para alunos (App Store Apple obriga IAP).
+    Cravado 23/05/2026 - Etapa 3C IAP."""
+    with open("static/paywall_aluno.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
 @app.get("/personal", response_class=HTMLResponse, include_in_schema=False)
 def app_personal():
     with open("static/app_personal.html", "r", encoding="utf-8") as f:

@@ -3383,8 +3383,20 @@ function removerExercicio(si, ei){
 }
 
 function abrirBuscaExercicio(si){
+  // FIX 23/05/2026: se trainer ja adicionou ex desta sessao, abre filtrado
+  // pelo grupo muscular do ultimo exercicio adicionado (continuidade).
   sessaoAtual = si;
   document.getElementById('busca-modal').style.display = 'block';
+  var sessao = treinoSessoes[si];
+  if(sessao && sessao.exercicios && sessao.exercicios.length > 0){
+    // Pega o grupo do ultimo exercicio adicionado
+    var ultimoId = sessao.exercicios[sessao.exercicios.length-1].id;
+    var ultimoEx = exerciciosBanco.find(function(e){ return e.id === ultimoId; });
+    if(ultimoEx && ultimoEx.grupo_muscular){
+      setTimeout(function(){ filtrarGrupo(ultimoEx.grupo_muscular); }, 50);
+      return;
+    }
+  }
   filtrarExercicios();
 }
 
@@ -3445,18 +3457,15 @@ function adicionarExercicioById(el){
   adicionarExercicio(id, nome);
 }
 function adicionarExercicio(id, nome){
-  // FIX 23/05/2026: NAO fecha modal nem volta pra tela de musculo.
-  // Bug antigo: trainer adicionava 1 ex -> sistema fechava modal ->
-  // trainer tinha que clicar Peito de novo pra adicionar outro de peito.
-  // Agora: modal fica aberto, mostra toast '✓ Adicionado', trainer fecha
-  // quando terminar de adicionar todos da mesma sessao.
+  // FIX 23/05/2026 v2 (corrigido pelo andre): fecha modal (feedback claro),
+  // mas SALVA o ultimo grupo muscular usado. Quando trainer clicar '+
+  // adicionar exercicio' de novo, modal reabre JA NO MESMO GRUPO.
+  // Resultado: feedback + nao precisa reescolher musculo a cada exercicio.
   if(sessaoAtual === null) return;
   treinoSessoes[sessaoAtual].exercicios.push({id:id, nome:nome, series:3, repeticoes:'10-12', descanso:90});
   mostrarToast('✓ ' + nome + ' adicionado!');
-  // Atualiza contador no titulo do modal
-  var totalEx = treinoSessoes[sessaoAtual].exercicios.length;
-  var titulo = document.getElementById('busca-titulo-contador');
-  if(titulo) titulo.textContent = totalEx + ' adicionado' + (totalEx > 1 ? 's' : '');
+  fecharBusca();
+  renderMontadorTreino();
 }
 
 // FEATURE 21/05/2026: criar exercicio personalizado (decisao Andre).

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AurumSci PRO — Escolha seu plano</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ouro:#C9A84C;--ouro2:#F0C040;--verde:#00E5A0;--vermelho:#FF4B4B;
+  --azul:#4B9FFF;--bg:#0A0A0F;--card:#1A1A26;--borda:#2A2A36;--cinza:#888
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:#fff;min-height:100vh;padding:20px 16px;padding-top:env(safe-area-inset-top,40px)}
+.header{text-align:center;margin-bottom:24px}
+.logo{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px}
+.logo svg{width:28px;height:28px}
+.logo-text{font-family:Georgia,serif;font-size:22px;letter-spacing:2px;color:var(--ouro2)}
+.logo-sci{font-family:Georgia,serif;font-size:11px;font-style:italic;color:#fff}
+.logo-pro{font-family:Arial,sans-serif;font-size:10px;font-weight:700;color:var(--azul);margin-left:2px}
+h1{font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--ouro);margin-bottom:8px;line-height:1.1}
+.sub{font-size:14px;color:var(--cinza);margin-bottom:8px}
+.trial-badge{display:inline-block;background:rgba(0,229,160,.12);border:1px solid var(--verde);color:var(--verde);padding:6px 14px;border-radius:20px;font-size:11px;letter-spacing:2px;font-weight:700;margin-top:8px}
+.plans{display:flex;flex-direction:column;gap:14px;max-width:480px;margin:24px auto}
+.plan{background:var(--card);border:2px solid var(--borda);border-radius:16px;padding:20px;cursor:pointer;transition:all .2s;position:relative}
+.plan:active{transform:scale(.98)}
+.plan.featured{border-color:var(--ouro);box-shadow:0 0 24px rgba(201,168,76,.2)}
+.plan.featured::before{content:'MAIS POPULAR';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:11px;letter-spacing:2px;padding:4px 12px;border-radius:12px}
+.plan-name{font-family:'Bebas Neue';font-size:24px;letter-spacing:3px;color:var(--ouro);margin-bottom:4px}
+.plan-tier{font-size:11px;color:var(--cinza);letter-spacing:2px;margin-bottom:14px;text-transform:uppercase}
+.plan-price{font-size:32px;font-weight:700;color:#fff;margin-bottom:2px}
+.plan-price .currency{font-size:16px;color:var(--cinza);font-weight:400}
+.plan-price .period{font-size:13px;color:var(--cinza);font-weight:400}
+.plan-features{list-style:none;margin:14px 0;padding:0}
+.plan-features li{padding:6px 0;font-size:13px;color:#ddd;display:flex;align-items:center;gap:8px}
+.plan-features li::before{content:'✓';color:var(--verde);font-weight:700}
+.btn-subscribe{width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:3px;cursor:pointer;margin-top:8px}
+.actions{text-align:center;margin-top:24px;padding-bottom:env(safe-area-inset-bottom,20px)}
+.btn-restore{background:transparent;border:1px solid var(--borda);color:var(--cinza);padding:10px 24px;border-radius:8px;font-size:13px;cursor:pointer;margin-bottom:16px}
+.legal{font-size:10px;color:#666;line-height:1.6;max-width:420px;margin:0 auto;padding:0 8px}
+.legal a{color:var(--ouro);text-decoration:none}
+#status{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--ouro);padding:10px 20px;border-radius:8px;font-size:13px;display:none;z-index:100}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <svg viewBox="0 0 44 44"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg>
+    <span class="logo-text">AURUM</span>
+    <span class="logo-sci">sci.</span>
+    <span class="logo-pro">PRO</span>
+  </div>
+  <h1>ESCOLHA SEU PLANO</h1>
+  <p class="sub">Para personal trainers profissionais</p>
+  <div class="trial-badge">🎁 7 DIAS GRÁTIS</div>
+</div>
+
+<div id="status"></div>
+
+<div class="plans">
+  
+  <div class="plan" onclick="assinar('com.aurumsc.pro.bronze')">
+    <div class="plan-name">BRONZE</div>
+    <div class="plan-tier">Iniciante</div>
+    <div class="plan-price"><span class="currency">R$</span> 49,90 <span class="period">/mês</span></div>
+    <ul class="plan-features">
+      <li>Até 10 alunos</li>
+      <li>Anamnese + Avaliação</li>
+      <li>Periodização básica</li>
+    </ul>
+    <button class="btn-subscribe">ASSINAR BRONZE</button>
+  </div>
+  
+  <div class="plan featured" onclick="assinar('com.aurumsc.pro.prata')">
+    <div class="plan-name">PRATA</div>
+    <div class="plan-tier">Profissional</div>
+    <div class="plan-price"><span class="currency">R$</span> 89,90 <span class="period">/mês</span></div>
+    <ul class="plan-features">
+      <li>Até 30 alunos</li>
+      <li>White label (logo)</li>
+      <li>Análise postural com IA</li>
+      <li>Tudo do Bronze</li>
+    </ul>
+    <button class="btn-subscribe">ASSINAR PRATA</button>
+  </div>
+  
+  <div class="plan" onclick="assinar('com.aurumsc.pro.ouro')">
+    <div class="plan-name">OURO</div>
+    <div class="plan-tier">Avançado</div>
+    <div class="plan-price"><span class="currency">R$</span> 149,90 <span class="period">/mês</span></div>
+    <ul class="plan-features">
+      <li>Até 50 alunos</li>
+      <li>AURI chatbot IA</li>
+      <li>Cobrança automática Stripe</li>
+      <li>Tudo do Prata</li>
+    </ul>
+    <button class="btn-subscribe">ASSINAR OURO</button>
+  </div>
+  
+  <div class="plan" onclick="assinar('com.aurumsc.pro.diamante')">
+    <div class="plan-name">DIAMANTE</div>
+    <div class="plan-tier">Ilimitado</div>
+    <div class="plan-price"><span class="currency">R$</span> 249,90 <span class="period">/mês</span></div>
+    <ul class="plan-features">
+      <li>Alunos ilimitados</li>
+      <li>Suporte prioritário</li>
+      <li>Tudo do Ouro</li>
+    </ul>
+    <button class="btn-subscribe">ASSINAR DIAMANTE</button>
+  </div>
+  
+</div>
+
+<div class="actions">
+  <button class="btn-restore" onclick="restaurar()">↻ Restaurar compras</button>
+  <p class="legal">
+    Pagamento processado pela Apple. Assinatura renovada automaticamente.
+    Cancele a qualquer momento em Ajustes &gt; Apple ID &gt; Assinaturas.<br>
+    <a href="https://www.aurumsc.com.br/termos">Termos</a> · 
+    <a href="https://www.aurumsc.com.br/privacidade">Privacidade</a>
+  </p>
+</div>
+
+<script>
+function showStatus(msg, isError){
+  var el = document.getElementById('status');
+  el.textContent = msg;
+  el.style.borderColor = isError ? '#FF4B4B' : '#C9A84C';
+  el.style.display = 'block';
+  setTimeout(function(){ el.style.display = 'none'; }, 3000);
+}
+
+function assinar(productId){
+  showStatus('Iniciando assinatura ' + productId + '...');
+  // TODO: integrar com capacitor-subscriptions (próximo passo)
+  console.log('[paywall] assinar:', productId);
+}
+
+function restaurar(){
+  showStatus('Restaurando compras...');
+  // TODO: integrar com capacitor-subscriptions
+  console.log('[paywall] restore purchases');
+}
+</script>
+
+</body>
+</html>

@@ -233,6 +233,14 @@ def landing_pro():
     with open("static/landing_pro.html", "r", encoding="utf-8") as f:
         return f.read()
 
+@app.get("/paywall-pro", response_class=HTMLResponse, include_in_schema=False)
+def paywall_pro_page():
+    """Paywall iOS para trainers (App Store Apple obriga IAP).
+    Cravado 23/05/2026 - Etapa 3C IAP."""
+    with open("static/paywall_pro.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
 @app.get("/personal", response_class=HTMLResponse, include_in_schema=False)
 def app_personal():
     with open("static/app_personal.html", "r", encoding="utf-8") as f:

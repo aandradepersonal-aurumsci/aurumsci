@@ -90,17 +90,19 @@ var isCapacitor = false;
 try {
   if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
     isCapacitor = true;
-    import('@squareetlabs/capacitor-subscriptions').then(function(mod){
-      Subscriptions = mod.Subscriptions;
-      console.log('[paywall-aluno] plugin carregado');
-    }).catch(function(e){
-      console.error('[paywall-aluno] erro plugin:', e);
-    });
+    // FIX 24/05/2026: plugin Capacitor iOS acessado via window.Capacitor.Plugins,
+    // NAO via import() ESM (que falha com "Module name does not resolve to a valid URL")
+    Subscriptions = window.Capacitor.Plugins.Subscriptions;
+    if (Subscriptions) {
+      console.log('[paywall-aluno] plugin Subscriptions carregado via Capacitor.Plugins');
+    } else {
+      console.error('[paywall-aluno] Capacitor.Plugins.Subscriptions undefined');
+    }
   } else {
     console.log('[paywall-aluno] navegador (nao iOS app)');
   }
 } catch(e){
-  console.log('[paywall-aluno] Capacitor nao detectado');
+  console.error('[paywall-aluno] erro detectando plugin:', e);
 }
 
 function showStatus(msg, isError){

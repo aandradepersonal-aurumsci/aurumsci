@@ -204,19 +204,32 @@ def status_iap(
 ):
     """Retorna se trainer tem assinatura IAP ativa (trialing ou active)."""
     
-    assinatura = db.query(AssinaturaIAP).filter(
+    # FIX 24/05/2026: aceita Stripe + IAP (canais paralelos)
+    # 1. Checa IAP Apple
+    assinatura_iap = db.query(AssinaturaIAP).filter(
         AssinaturaIAP.personal_id == personal.id,
         AssinaturaIAP.status.in_(["trialing", "active"])
     ).order_by(AssinaturaIAP.data_expiracao.desc().nullslast()).first()
     
-    if not assinatura:
-        return {"tem_assinatura": False}
+    if assinatura_iap:
+        return {
+            "tem_assinatura": True,
+            "fonte": "apple_iap",
+            "status": assinatura_iap.status,
+            "product_id": assinatura_iap.product_id,
+            "data_expiracao": assinatura_iap.data_expiracao.isoformat() if assinatura_iap.data_expiracao else None,
+            "auto_renew": assinatura_iap.auto_renew,
+            "ambiente": assinatura_iap.ambiente
+        }
     
-    return {
-        "tem_assinatura": True,
-        "status": assinatura.status,
-        "product_id": assinatura.product_id,
-        "data_expiracao": assinatura.data_expiracao.isoformat() if assinatura.data_expiracao else None,
-        "auto_renew": assinatura.auto_renew,
-        "ambiente": assinatura.ambiente
-    }
+    # 2. Checa Stripe Web (assinatura_status na tabela personals)
+    if personal.assinatura_status in ("ativa", "trial"):
+        return {
+            "tem_assinatura": True,
+            "fonte": "stripe_web",
+            "status": personal.assinatura_status,
+            "plano": personal.plano
+        }
+    
+    # 3. Sem nada -> paywall
+    return {"tem_assinatura": False}

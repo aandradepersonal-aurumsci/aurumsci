@@ -233,3 +233,44 @@ def status_iap(
     
     # 3. Sem nada -> paywall
     return {"tem_assinatura": False}
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# GET /iap/status-aluno — Aluno autônomo consulta se tem assinatura ativa
+# Cravado 24/05/2026 — suporte a aluno autônomo (espelho do /iap/status)
+# ──────────────────────────────────────────────────────────────────────────────
+from app.routers.portal_aluno import get_aluno_logado
+
+@router.get("/status-aluno")
+def status_iap_aluno(
+    aluno: Aluno = Depends(get_aluno_logado),
+    db: Session = Depends(get_db)
+):
+    """Retorna se aluno autonomo tem assinatura IAP ativa (trialing ou active)."""
+    # 1. Checa IAP Apple
+    assinatura_iap = db.query(AssinaturaIAP).filter(
+        AssinaturaIAP.aluno_id == aluno.id,
+        AssinaturaIAP.status.in_(["trialing", "active"])
+    ).order_by(AssinaturaIAP.data_expiracao.desc().nullslast()).first()
+
+    if assinatura_iap:
+        return {
+            "tem_assinatura": True,
+            "fonte": "apple_iap",
+            "status": assinatura_iap.status,
+            "product_id": assinatura_iap.product_id,
+            "data_expiracao": assinatura_iap.data_expiracao.isoformat() if assinatura_iap.data_expiracao else None,
+            "auto_renew": assinatura_iap.auto_renew,
+            "ambiente": assinatura_iap.ambiente
+        }
+
+    # 2. Checa Stripe Web (aluno tem stripe_subscription_id?)
+    if aluno.stripe_subscription_id:
+        return {
+            "tem_assinatura": True,
+            "fonte": "stripe_web",
+            "stripe_subscription_id": aluno.stripe_subscription_id
+        }
+
+    # 3. Sem nada -> paywall
+    return {"tem_assinatura": False}

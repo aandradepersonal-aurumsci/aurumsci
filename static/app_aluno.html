@@ -1883,30 +1883,37 @@ function toggleModoMedidas(){
 
 // ── APP PRINCIPAL ─────────────────────────────────────
 function mostrarApp(){
-  // FIX 23/05/2026 — Etapa 3E IAP:
-  // Se iOS app sem assinatura ativa → redireciona pro paywall.
-  // Web continua normal (Stripe).
-  try {
-    if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
-      fetch('/iap/status', {headers:{'Authorization':'Bearer '+token}})
-      .then(function(r){ return r.json(); })
-      .then(function(d){
-        if (d && d.tem_assinatura === false) {
-          console.log('[mostrarApp] iOS sem assinatura IAP, redirecionando paywall');
-          window.location.href = '/paywall-aluno';
-          return;
-        }
-        console.log('[mostrarApp] iOS com assinatura ativa:', d && d.status);
-      })
-      .catch(function(e){
-        // Erro de rede - libera app (nao trava aluno)
-        console.warn('[mostrarApp] erro check IAP, liberando app:', e);
-      });
-    }
-  } catch(e) {
-    console.log('[mostrarApp] Capacitor nao detectado, modo web');
+  // FIX 24/05/2026 — Etapa 3H IAP Aluno:
+  // - Endpoint /iap/status-aluno (token aluno, nao trainer)
+  // - BLOQUEANTE: app so libera APOS fetch resolver
+  // - Fail-closed: erro de rede vai pro paywall (Apple-safe)
+  var ehIOS = window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
+  
+  if (ehIOS) {
+    fetch('/iap/status-aluno', {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.tem_assinatura === false) {
+        console.log('[mostrarApp] iOS sem assinatura, paywall');
+        window.location.href = '/paywall-aluno';
+        return;
+      }
+      console.log('[mostrarApp] iOS com assinatura:', d && d.status);
+      liberarTelaApp();
+    })
+    .catch(function(e){
+      // Apple-safe: erro de rede vai pro paywall, nao libera app
+      console.warn('[mostrarApp] erro check IAP, indo paywall:', e);
+      window.location.href = '/paywall-aluno';
+    });
+    return; // CRITICO: nao executa liberarTelaApp() ate fetch resolver
   }
   
+  // Web (Stripe) - libera normal
+  liberarTelaApp();
+}
+
+function liberarTelaApp(){
   document.getElementById('screen-login').style.display = 'none';
   document.getElementById('screen-onboarding').style.display = 'none';
   document.getElementById('app').style.display = 'block';

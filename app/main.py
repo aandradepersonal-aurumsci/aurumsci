@@ -82,6 +82,23 @@ def auto_migrate():
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS data_proxima_cobranca TIMESTAMP",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS valor_assinatura INTEGER DEFAULT 4990",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS data_cancelamento TIMESTAMP",
+        # IAP Apple In-App Purchase (24/05/2026)
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS personal_id INTEGER REFERENCES personals(id)",
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS aluno_id INTEGER REFERENCES alunos(id)",
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS product_id VARCHAR(100)",
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS apple_transaction_id VARCHAR(100)",
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS apple_original_transaction_id VARCHAR(100)",
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS status VARCHAR(20)",
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS data_compra TIMESTAMP",
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS data_expiracao TIMESTAMP",
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS data_cancelamento TIMESTAMP",
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS ambiente VARCHAR(20)",
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS receipt_data TEXT",
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS auto_renew BOOLEAN DEFAULT TRUE",
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS criado_em TIMESTAMP DEFAULT NOW()",
+        "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS atualizado_em TIMESTAMP DEFAULT NOW()",
+        "CREATE INDEX IF NOT EXISTS idx_assinaturas_iap_aluno_id ON assinaturas_iap(aluno_id)",
+        "CREATE INDEX IF NOT EXISTS idx_assinaturas_iap_personal_id ON assinaturas_iap(personal_id)",
     ]
     
     with engine.connect() as conn:

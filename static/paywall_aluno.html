@@ -106,6 +106,20 @@ function getToken(){
   return localStorage.getItem('token_aluno') || localStorage.getItem('token') || '';
 }
 
+function getAlunoIdFromToken(){
+  // Decodifica JWT (payload base64) pra extrair aluno_id (campo 'sub')
+  try {
+    var token = getToken();
+    if (!token) return null;
+    var payload = token.split('.')[1];
+    var decoded = JSON.parse(atob(payload));
+    return decoded.sub || decoded.id || decoded.aluno_id || null;
+  } catch(e){
+    console.error('[paywall-aluno] erro decodificar JWT:', e);
+    return null;
+  }
+}
+
 async function initRevenueCat(){
   try {
     if (!window.Capacitor || !window.Capacitor.isNativePlatform || !window.Capacitor.isNativePlatform()){
@@ -114,7 +128,12 @@ async function initRevenueCat(){
     }
     isCapacitor = true;
     await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
-    await Purchases.configure({ apiKey: API_KEY_ALUNO });
+    
+    var alunoId = getAlunoIdFromToken();
+    var appUserID = alunoId ? 'aluno_' + alunoId : undefined;
+    console.log('[paywall-aluno] appUserID:', appUserID);
+    
+    await Purchases.configure({ apiKey: API_KEY_ALUNO, appUserID: appUserID });
     console.log('[paywall-aluno] RevenueCat configurado');
     var off = await Purchases.getOfferings();
     if (off && off.current){

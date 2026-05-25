@@ -274,3 +274,113 @@ def status_iap_aluno(
 
     # 3. Sem nada -> paywall
     return {"tem_assinatura": False}
+
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# POST /iap/webhook-revenuecat — Server-to-Server notifications via RevenueCat
+# Cravado 25/05/2026 — Migracao Squareetlabs morto → RevenueCat SDK v13
+# ──────────────────────────────────────────────────────────────────────────────
+
+@router.post("/webhook-revenuecat")
+async def webhook_revenuecat(request: Request, db: Session = Depends(get_db)):
+    """Recebe eventos do RevenueCat (compra inicial, renovacao, cancelamento, etc).
+    
+    RevenueCat ja valida tudo com Apple. So precisamos atualizar nosso banco.
+    
+    app_user_id chega como 'aluno_<id>' ou 'personal_<id>' (setado no SDK).
+    Anonimos ('$RCAnonymousID:xxx') sao ignorados - usuario nao logou ainda.
+    """
+    try:
+        payload = await request.json()
+    except Exception as e:
+        log.error(f"[RC-webhook] payload invalido: {e}")
+        raise HTTPException(status_code=400, detail="JSON invalido")
+    
+    event = payload.get("event", {})
+    event_type = event.get("type", "")
+    app_user_id = event.get("app_user_id", "")
+    product_id = event.get("product_id", "")
+    transaction_id = event.get("transaction_id", "")
+    original_transaction_id = event.get("original_transaction_id", "")
+    environment = event.get("environment", "SANDBOX").lower()
+    
+    log.info(f"[RC-webhook] tipo={event_type} user={app_user_id} produto={product_id}")
+    
+    # Ignora anonimos (usuario nao logou)
+    if not app_user_id or app_user_id.startswith("$RCAnonymousID"):
+        log.warning(f"[RC-webhook] app_user_id anonimo, ignorando: {app_user_id}")
+        return {"status": "ignored", "reason": "anonymous_user"}
+    
+    # Parse app_user_id: 'aluno_4' ou 'personal_2'
+    personal_id = None
+    aluno_id = None
+    if app_user_id.startswith("aluno_"):
+        try:
+            aluno_id = int(app_user_id.replace("aluno_", ""))
+        except ValueError:
+            log.error(f"[RC-webhook] aluno_id invalido: {app_user_id}")
+            return {"status": "error", "reason": "invalid_user_id"}
+    elif app_user_id.startswith("personal_"):
+        try:
+            personal_id = int(app_user_id.replace("personal_", ""))
+        except ValueError:
+            log.error(f"[RC-webhook] personal_id invalido: {app_user_id}")
+            return {"status": "error", "reason": "invalid_user_id"}
+    else:
+        log.warning(f"[RC-webhook] formato app_user_id desconhecido: {app_user_id}")
+        return {"status": "ignored", "reason": "unknown_user_format"}
+    
+    # Mapa de eventos RevenueCat → status nosso
+    status_map = {
+        "INITIAL_PURCHASE": "active",
+        "RENEWAL": "active",
+        "PRODUCT_CHANGE": "active",
+        "CANCELLATION": "cancelled",
+        "UNCANCELLATION": "active",
+        "EXPIRATION": "expired",
+        "BILLING_ISSUE": "in_grace_period",
+        "SUBSCRIBER_ALIAS": "active",
+        "NON_RENEWING_PURCHASE": "active",
+    }
+    novo_status = status_map.get(event_type, "unknown")
+    
+    # Datas
+    purchased_at_ms = event.get("purchased_at_ms")
+    expiration_at_ms = event.get("expiration_at_ms")
+    data_compra = datetime.utcfromtimestamp(purchased_at_ms / 1000) if purchased_at_ms else datetime.utcnow()
+    data_expiracao = datetime.utcfromtimestamp(expiration_at_ms / 1000) if expiration_at_ms else None
+    
+    # Procura registro existente
+    existente = db.query(AssinaturaIAP).filter(
+        AssinaturaIAP.apple_original_transaction_id == original_transaction_id
+    ).first()
+    
+    if existente:
+        # Atualiza
+        existente.status = novo_status
+        existente.data_expiracao = data_expiracao
+        existente.atualizado_em = datetime.utcnow()
+        if event_type == "CANCELLATION":
+            existente.data_cancelamento = datetime.utcnow()
+            existente.auto_renew = False
+        log.info(f"[RC-webhook] AssinaturaIAP {existente.id} atualizada para {novo_status}")
+    else:
+        # Cria novo
+        nova = AssinaturaIAP(
+            personal_id=personal_id,
+            aluno_id=aluno_id,
+            product_id=product_id,
+            apple_transaction_id=transaction_id or original_transaction_id,
+            apple_original_transaction_id=original_transaction_id,
+            status=novo_status,
+            data_compra=data_compra,
+            data_expiracao=data_expiracao,
+            ambiente=environment,
+            auto_renew=(event_type != "CANCELLATION"),
+        )
+        db.add(nova)
+        log.info(f"[RC-webhook] AssinaturaIAP nova criada user={app_user_id} produto={product_id}")
+    
+    db.commit()
+    return {"status": "ok", "event_type": event_type, "novo_status": novo_status}

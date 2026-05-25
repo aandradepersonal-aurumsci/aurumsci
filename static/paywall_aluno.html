@@ -81,29 +81,18 @@ h1{font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--ouro);
 </div>
 
 <script type="module">
-// PAYWALL ALUNO — integracao real Apple IAP via capacitor-subscriptions
-// Cravado 23/05/2026 - Etapa 3D
+// PAYWALL ALUNO - RevenueCat SDK v13
+// Migrado 25/05/2026 de @squareetlabs (morto) para @revenuecat/purchases-capacitor
+import { Purchases, LOG_LEVEL } from '@revenuecat/purchases-capacitor';
 
-var Subscriptions = null;
+const API_KEY_ALUNO = 'appl_xswiqnagKhidthwOaHSBNhoQWHD
+';
+const ENTITLEMENT_ID = 'premium_aluno';
+const OFFERING_ID = 'aluno_default';
+
 var isCapacitor = false;
-
-try {
-  if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
-    isCapacitor = true;
-    // FIX 24/05/2026: plugin Capacitor iOS acessado via window.Capacitor.Plugins,
-    // NAO via import() ESM (que falha com "Module name does not resolve to a valid URL")
-    Subscriptions = window.Capacitor.Plugins.Subscriptions;
-    if (Subscriptions) {
-      console.log('[paywall-aluno] plugin Subscriptions carregado via Capacitor.Plugins');
-    } else {
-      console.error('[paywall-aluno] Capacitor.Plugins.Subscriptions undefined');
-    }
-  } else {
-    console.log('[paywall-aluno] navegador (nao iOS app)');
-  }
-} catch(e){
-  console.error('[paywall-aluno] erro detectando plugin:', e);
-}
+var rcReady = false;
+var offerings = null;
 
 function showStatus(msg, isError){
   var el = document.getElementById('status');
@@ -117,114 +106,86 @@ function getToken(){
   return localStorage.getItem('token_aluno') || localStorage.getItem('token') || '';
 }
 
-window.assinar = async function(productId){
-  console.log('[paywall-aluno] assinar:', productId);
-  
+async function initRevenueCat(){
+  try {
+    if (!window.Capacitor || !window.Capacitor.isNativePlatform || !window.Capacitor.isNativePlatform()){
+      console.log('[paywall-aluno] navegador (nao iOS app)');
+      return;
+    }
+    isCapacitor = true;
+    await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
+    await Purchases.configure({ apiKey: API_KEY_ALUNO });
+    console.log('[paywall-aluno] RevenueCat configurado');
+    var off = await Purchases.getOfferings();
+    if (off && off.current){
+      offerings = off.current;
+      console.log('[paywall-aluno] offering carregado:', offerings.identifier);
+      rcReady = true;
+    } else {
+      console.error('[paywall-aluno] offering current nulo');
+    }
+  } catch(e){
+    console.error('[paywall-aluno] erro init RC:', e);
+  }
+}
+
+initRevenueCat();
+
+window.assinar = async function(){
+  console.log('[paywall-aluno] assinar clicado');
   if (!isCapacitor){
-    showStatus('iOS App Store: assinatura disponivel no app iOS', true);
+    showStatus('Assinatura disponivel apenas no app iOS', true);
     return;
   }
-  
-  if (!Subscriptions){
-    showStatus('Plugin carregando, aguarde 2s', true);
+  if (!rcReady || !offerings){
+    showStatus('Carregando produtos, aguarde 3s', true);
     return;
   }
-  
   try {
     showStatus('Abrindo StoreKit Apple...');
-    
-    var resp = await Subscriptions.purchaseProduct({ productIdentifier: productId });
-    console.log('[paywall-aluno] purchase:', resp);
-    
-    if (resp.responseCode !== 0){
-      showStatus('Compra cancelada', true);
+    var aPackage = offerings.availablePackages[0];
+    if (!aPackage){
+      showStatus('Nenhum plano disponivel', true);
       return;
     }
-    
-    showStatus('Pagamento aprovado! Validando...');
-    
-    var tx = await Subscriptions.getLatestTransaction({ productIdentifier: productId });
-    var receipt = (tx && tx.data && tx.data.receipt) || '';
-    
-    if (!receipt){
-      showStatus('Erro: recibo vazio', true);
-      return;
-    }
-    
-    var token = getToken();
-    // aluno_id vem do token JWT - backend extrai
-    var validResp = await fetch('/iap/validar-recibo', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      body: JSON.stringify({ receipt_data: receipt })
-    });
-    
-    var validData = await validResp.json();
-    console.log('[paywall-aluno] validacao:', validData);
-    
-    if (validData.status === 'ok'){
-      showStatus('✓ Assinatura ativada!');
-      setTimeout(function(){
-        window.location.href = '/aluno';
-      }, 2000);
+    var result = await Purchases.purchasePackage({ aPackage: aPackage });
+    console.log('[paywall-aluno] compra resultado:', result);
+    if (result.customerInfo && result.customerInfo.entitlements.active[ENTITLEMENT_ID]){
+      showStatus('Assinatura ativada!');
+      setTimeout(function(){ window.location.href = '/aluno'; }, 2000);
     } else {
-      showStatus('Erro: ' + (validData.detail || 'desconhecido'), true);
+      showStatus('Compra processada mas entitlement nao ativo', true);
     }
-    
   } catch(e){
-    console.error('[paywall-aluno] erro:', e);
-    showStatus('Erro: ' + (e.message || e), true);
+    console.error('[paywall-aluno] erro compra:', e);
+    if (e.userCancelled){
+      showStatus('Compra cancelada', true);
+    } else {
+      showStatus('Erro: ' + (e.message || e), true);
+    }
   }
 };
 
 window.restaurar = async function(){
-  console.log('[paywall-aluno] restore');
-  
+  console.log('[paywall-aluno] restaurar');
   if (!isCapacitor){
     showStatus('Restaurar disponivel apenas no app iOS', true);
     return;
   }
-  
-  if (!Subscriptions){
-    showStatus('Plugin carregando, aguarde 2s', true);
+  if (!rcReady){
+    showStatus('Carregando, aguarde 3s', true);
     return;
   }
-  
   try {
     showStatus('Buscando assinaturas ativas...');
-    
-    var ents = await Subscriptions.getCurrentEntitlements();
-    console.log('[paywall-aluno] entitlements:', ents);
-    
-    if (ents.responseCode === 0 && ents.data && ents.data.length > 0){
-      var transaction = ents.data[0];
-      showStatus('✓ Assinatura encontrada! Restaurando...');
-      
-      var tx = await Subscriptions.getLatestTransaction({ 
-        productIdentifier: transaction.productIdentifier 
-      });
-      var receipt = (tx && tx.data && tx.data.receipt) || '';
-      
-      var token = getToken();
-      await fetch('/iap/validar-recibo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ receipt_data: receipt })
-      });
-      
-      setTimeout(function(){
-        window.location.href = '/aluno';
-      }, 2000);
+    var customerInfo = await Purchases.restorePurchases();
+    console.log('[paywall-aluno] restore:', customerInfo);
+    if (customerInfo.customerInfo && customerInfo.customerInfo.entitlements.active[ENTITLEMENT_ID]){
+      showStatus('Assinatura restaurada!');
+      setTimeout(function(){ window.location.href = '/aluno'; }, 2000);
     } else {
       showStatus('Nenhuma assinatura ativa encontrada', true);
     }
-    
   } catch(e){
     console.error('[paywall-aluno] erro restore:', e);
     showStatus('Erro: ' + (e.message || e), true);

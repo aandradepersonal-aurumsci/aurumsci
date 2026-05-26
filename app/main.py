@@ -145,6 +145,9 @@ ORIGINS_DEV = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "http://127.0.0.1:3000",
+    "capacitor://localhost",
+    "ionic://localhost",
+    "http://localhost",
 ]
 
 ORIGINS_PROD = [
@@ -169,7 +172,7 @@ app.add_middleware(
 if IS_PRODUCTION:
     app.add_middleware(
         TrustedHostMiddleware,
-        allowed_hosts=["aurumsc.com.br", "www.aurumsc.com.br", "app.aurumsc.com.br", "*.up.railway.app", "*"]  # FIX 26/05/2026
+        allowed_hosts=["aurumsc.com.br", "www.aurumsc.com.br", "app.aurumsc.com.br", "*.up.railway.app", "*"]
     )
 
 # ── Security Headers ──────────────────────────────────────────

@@ -85,7 +85,9 @@ h1{font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--ouro);
 // Migrado 25/05/2026 de @squareetlabs (morto) para @revenuecat/purchases-capacitor
 // FIX 25/05/2026: Capacitor iOS nao aceita import() ESM
 // Plugin acessado via window.Capacitor.Plugins.Purchases
-const Purchases = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.PurchasesPlugin;
+// FIX 26/05/2026: usar registerPlugin do Capacitor (recomendacao oficial RevenueCat)
+const { registerPlugin } = window.Capacitor || {};
+const Purchases = registerPlugin ? registerPlugin('Purchases') : null;
 const LOG_LEVEL = { DEBUG: 'debug', INFO: 'info', WARN: 'warn', ERROR: 'error', VERBOSE: 'verbose' };
 if (!Purchases) {
   console.error('[paywall-aluno] Purchases plugin nao encontrado em Capacitor.Plugins');

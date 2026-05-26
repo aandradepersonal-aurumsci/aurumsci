@@ -1891,18 +1891,24 @@ function mostrarApp(){
   
   if (ehIOS) {
     fetch('/iap/status-aluno', {headers:{'Authorization':'Bearer '+token}})
-    .then(function(r){ return r.json(); })
+    .then(function(r){ 
+      if (!r.ok) {
+        console.warn('[mostrarApp] HTTP ' + r.status + ', indo paywall');
+        window.location.href = '/paywall-aluno';
+        throw new Error('HTTP ' + r.status);
+      }
+      return r.json(); 
+    })
     .then(function(d){
-      if (d && d.tem_assinatura === false) {
-        console.log('[mostrarApp] iOS sem assinatura, paywall');
+      if (!d || d.tem_assinatura !== true) {
+        console.log('[mostrarApp] sem assinatura ativa, paywall');
         window.location.href = '/paywall-aluno';
         return;
       }
-      console.log('[mostrarApp] iOS com assinatura:', d && d.status);
+      console.log('[mostrarApp] iOS com assinatura:', d.status);
       liberarTelaApp();
     })
     .catch(function(e){
-      // Apple-safe: erro de rede vai pro paywall, nao libera app
       console.warn('[mostrarApp] erro check IAP, indo paywall:', e);
       window.location.href = '/paywall-aluno';
     });

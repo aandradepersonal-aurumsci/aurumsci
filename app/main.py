@@ -148,9 +148,13 @@ ORIGINS_DEV = [
 ]
 
 ORIGINS_PROD = [
-    "https://aurumsci.com",
-    "https://www.aurumsci.com",
-    "https://app.aurumsci.com",
+    "https://aurumsc.com.br",
+    "https://www.aurumsc.com.br",
+    "https://app.aurumsc.com.br",
+    # iOS Capacitor (app nativo) - FIX 26/05/2026
+    "capacitor://localhost",
+    "ionic://localhost",
+    "http://localhost",
 ]
 
 app.add_middleware(

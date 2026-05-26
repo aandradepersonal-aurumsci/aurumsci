@@ -853,6 +853,14 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <div id="toast"></div>
 
 <script>
+  // FIX 26/05/2026: API_BASE para arquitetura local iOS + Web
+  // Web: API_BASE = '' (URLs relativas funcionam)
+  // iOS Capacitor: API_BASE = 'https://www.aurumsc.com.br' (absoluto)
+  window.API_BASE = (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) 
+    ? 'https://www.aurumsc.com.br' 
+    : '';
+  console.log('[app-aluno] API_BASE =', window.API_BASE || '(relativo)');
+  
 // ── ESTADO ────────────────────────────────────────────
 var token = '', nomeAluno = '', lang = localStorage.getItem('aurum_lang') || 'pt';
 window._alunoId = parseInt(localStorage.getItem('aurum_aluno_id') || '0');
@@ -1118,7 +1126,7 @@ window.onload = function(){
         mostrarApp();
       } else {
         // Verifica se já tem plano ativo no backend (caso senha salva / nova aba)
-        fetch('/app-aluno/treino-hoje', {headers:{'Authorization':'Bearer '+token}})
+        fetch(window.API_BASE + '/app-aluno/treino-hoje', {headers:{'Authorization':'Bearer '+token}})
         .then(function(r){
           if(r.status === 401){ token=''; localStorage.removeItem('aurum_token'); return null; }
           return r.json();
@@ -1268,7 +1276,7 @@ function toggleTheme(){
 // ── LOGIN ─────────────────────────────────────────────
 
 function carregarWhiteLabel(){
-  fetch('/app-aluno/white-label', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-aluno/white-label', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(d.logo_url){
@@ -1289,7 +1297,7 @@ function carregarWhiteLabel(){
 }
 
 function verificarPagamentosAluno(){
-  fetch('/financeiro/pagamento/aluno-view', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/financeiro/pagamento/aluno-view', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.ok ? r.json() : null; })
   .then(function(d){
     if(!d || !d.pagamentos || d.pagamentos.length === 0) return;
@@ -1319,7 +1327,7 @@ function fazerLogin(){
   var email = document.getElementById('login-email').value.trim();
   var senha = document.getElementById('login-senha').value;
   if(!email || !senha){ mostrarToast('Preencha email e senha'); return; }
-  fetch('/aluno-portal/login', {method:'POST', headers:{'Content-Type':'application/json'},
+  fetch(window.API_BASE + '/aluno-portal/login', {method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({email:email, senha:senha})})
   .then(function(r){ return r.json(); })
   .then(function(d){
@@ -1340,7 +1348,7 @@ function fazerLogin(){
         mostrarApp();
         verificarPagamentosAluno();
       } else {
-        fetch('/app-aluno/treino-hoje', {headers:{'Authorization':'Bearer '+token}})
+        fetch(window.API_BASE + '/app-aluno/treino-hoje', {headers:{'Authorization':'Bearer '+token}})
         .then(function(r){ return r.json(); })
         .then(function(t){
           if(t && (t.sessao || t.mensagem)){
@@ -1757,7 +1765,7 @@ function finalizarOnboarding(){
   if(onbData.objetivo && onbData.nivel && onbData.dias){
     var btnComecar = document.querySelector('.btn-next');
     if(btnComecar){ btnComecar.disabled = true; btnComecar.textContent = 'Criando seu treino...'; }
-    fetch('/app-aluno/onboarding', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    fetch(window.API_BASE + '/app-aluno/onboarding', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
       body: JSON.stringify({objetivo:onbData.objetivo, nivel_experiencia:onbData.nivel, dias_disponiveis:parseInt(onbData.dias), tipo_periodizacao:onbData.tipo_periodizacao||'ondulatoria'})})
     .then(function(r){ return r.json(); })
     .then(function(){
@@ -1771,7 +1779,7 @@ function finalizarOnboarding(){
 
 function finalizarAppAposOnboarding(){
   if(onbData.peso){
-    fetch('/app-aluno/bioimpedancia', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    fetch(window.API_BASE + '/app-aluno/bioimpedancia', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
       body: JSON.stringify({peso:onbData.peso, percentual_gordura:onbData.gordura||null})}).catch(function(){});
   }
   if(fotosOnb.frente || fotosOnb.lado || fotosOnb.costas){
@@ -1779,10 +1787,10 @@ function finalizarAppAposOnboarding(){
     if(fotosOnb.frente) fd.append('foto_frente', fotosOnb.frente.file, 'frente.jpg');
     if(fotosOnb.lado) fd.append('foto_lado', fotosOnb.lado.file, 'lado.jpg');
     if(fotosOnb.costas) fd.append('foto_costas', fotosOnb.costas.file, 'costas.jpg');
-    fetch('/app-aluno/postural', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd}).catch(function(){});
+    fetch(window.API_BASE + '/app-aluno/postural', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd}).catch(function(){});
   }
   if(onbData.patologias && onbData.patologias.length > 0){
-    fetch('/app-aluno/anamnese', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    fetch(window.API_BASE + '/app-aluno/anamnese', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
       body: JSON.stringify({patologias: onbData.patologias, outras_condicoes: onbData.outras_condicoes||'', medicacoes: onbData.medicacoes||''})
     }).catch(function(){});
   }
@@ -1798,7 +1806,7 @@ function finalizarAppAposOnboarding(){
 function _dummy(){
   // Envia bioimpedância
   if(onbData.peso){
-    fetch('/app-aluno/bioimpedancia', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    fetch(window.API_BASE + '/app-aluno/bioimpedancia', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
       body: JSON.stringify({peso:onbData.peso, percentual_gordura:onbData.gordura||null})})
     .then(function(r){ return r.json(); }).catch(function(){});
   }
@@ -1808,7 +1816,7 @@ function _dummy(){
     if(fotosOnb.frente) fd.append('foto_frente', fotosOnb.frente.file, 'frente.jpg');
     if(fotosOnb.lado) fd.append('foto_lado', fotosOnb.lado.file, 'lado.jpg');
     if(fotosOnb.costas) fd.append('foto_costas', fotosOnb.costas.file, 'costas.jpg');
-    fetch('/app-aluno/postural', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd}).catch(function(){});
+    fetch(window.API_BASE + '/app-aluno/postural', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd}).catch(function(){});
   }
   localStorage.setItem('aurum_onb_done', '1');
   document.getElementById('screen-onboarding').style.display = 'none';
@@ -1870,7 +1878,7 @@ function toggleModoMedidas(){
   var area = document.getElementById('medidas-rows');
   area.innerHTML = renderMedidasRows();
   // Recarregar valores salvos
-  fetch('/app-aluno/medidas', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-aluno/medidas', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(!d || d.detail) return;
@@ -1890,7 +1898,7 @@ function mostrarApp(){
   var ehIOS = window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
   
   if (ehIOS) {
-    fetch('/iap/status-aluno', {headers:{'Authorization':'Bearer '+token}})
+    fetch(window.API_BASE + '/iap/status-aluno', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ 
       if (!r.ok) {
         console.warn('[mostrarApp] HTTP ' + r.status + ', indo paywall');
@@ -2046,7 +2054,7 @@ function mudarTab(tab, el){
 function renderFinanceiro(){
   var el = document.getElementById('fin-content');
   el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--cinza)">Carregando...</div>';
-  fetch('/app-aluno/financeiro', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-aluno/financeiro', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(d.detail){ el.innerHTML = '<div style="padding:20px">' +
@@ -2131,7 +2139,7 @@ function renderTreino(){
   }
 
   // Treino do dia
-  fetch('/app-aluno/treino-hoje', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-aluno/treino-hoje', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     var treinoHtml = '';
@@ -2231,7 +2239,7 @@ function renderTreino(){
       var posturalFeita = localStorage.getItem('aurum_postural_feita');
       var hrrFeito = localStorage.getItem('aurum_hrr_feito');
       // Sync rapido com banco: atualiza flags via fetch sem bloquear render
-      fetch('/aluno-portal/avaliacoes', {headers:{'Authorization':'Bearer '+token}})
+      fetch(window.API_BASE + '/aluno-portal/avaliacoes', {headers:{'Authorization':'Bearer '+token}})
         .then(function(r){ return r.ok ? r.json() : []; })
         .then(function(avals){
           if(Array.isArray(avals) && avals.length > 0){
@@ -2337,7 +2345,7 @@ function verificarReavaliacao(){
   // Backend retorna precisa_reavaliar E overtraining_pendente (ambos bimestrais - 56 dias)
   // Se algum estiver pendente, mostra banner unico (acionado no PATCH 3 do frontend)
   if(typeof token === 'undefined' || !token) return;
-  fetch('/app-aluno/reavaliacao', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-aluno/reavaliacao', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.ok ? r.json() : null; })
     .then(function(d){
       if(!d) return;
@@ -2431,7 +2439,7 @@ function calcularOvertraining(){
   var risco = total <= 4 ? 'baixo' : total <= 8 ? 'medio' : 'alto';
   localStorage.setItem(OVERTRAINING_KEY, Date.now().toString());
   // Salva no backend
-  fetch('/app-aluno/overtraining', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+  fetch(window.API_BASE + '/app-aluno/overtraining', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({score: total, risco: risco})}).catch(function(){});
   // Mostra resultado
   var res = document.getElementById('over-resultado');
@@ -2497,7 +2505,7 @@ function renderMsgSemPlano(){
 
 function fazerCheckin(){
   var hojeStr = new Date().toISOString().slice(0,10);
-  fetch('/app-aluno/checkin', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+  fetch(window.API_BASE + '/app-aluno/checkin', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({data: hojeStr})})
   .then(function(){ }).catch(function(){});
   localStorage.setItem('checkin_' + hojeStr, '1');
@@ -2512,7 +2520,7 @@ function concluirTreino(idx){
   localStorage.setItem('treino_' + hojeStr, '1');
   var seq = parseInt(localStorage.getItem('sequencia')||'0') + 1;
   localStorage.setItem('sequencia', seq);
-  fetch('/app-aluno/treino-concluir', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+  fetch(window.API_BASE + '/app-aluno/treino-concluir', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({sessao_idx: idx})}).catch(function(){});
   document.getElementById('treino-content').innerHTML =
     '<div class="card"><div class="card-line verde"></div>' +
@@ -2546,7 +2554,7 @@ function renderEvolucao(){
   // Renderiza TODOS os dados que existem + deltas (variacoes) quando ha
   // avaliacao anterior. Backend /resultado retorna estrutura expandida
   // (commit bbf8559). Renderizacao inteligente: campo null = nao renderiza.
-  fetch('/app-aluno/resultado', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-aluno/resultado', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(!d || d.detail){ document.getElementById('evolucao-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">' + T('completeAval') + '</div>'; return; }
@@ -2682,7 +2690,7 @@ function renderDashboardEvolucao(){
   var slot = document.getElementById('dashboard-evolucao');
   if(!slot) return; // Sem container, nada a fazer
   
-  fetch('/aluno-portal/avaliacoes', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/aluno-portal/avaliacoes', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.ok ? r.json() : []; })
   .then(function(avals){
     if(!avals || avals.length === 0){
@@ -2908,7 +2916,7 @@ function getCorSemana(mc){
   return {bg:'rgba(75,159,255,.1)',borda:'rgba(75,159,255,.3)',txt:'var(--azul)',label:'📈 NORMAL'};
 }
 function renderPeriodo(){
-  fetch('/app-aluno/periodizacao', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-aluno/periodizacao', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(!d || d.detail || !d.ciclos){ document.getElementById('periodo-content').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:40px">Faca o onboarding primeiro!</div>'; return; }
@@ -3013,7 +3021,7 @@ function renderLoja(){
 function carregarDadosPersonalAval(){
   var el = document.getElementById('avaliacao-personal-dados');
   if(!el) return;
-  fetch('/app-aluno/meus-resultados', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-aluno/meus-resultados', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(!d || (!d.peso && !d.percentual_gordura && !d.vo2max)) {
@@ -3101,7 +3109,7 @@ function abrirModalDocumentos(){
 
   // Carrega contrato de servicos
   var csEl = document.getElementById('contrato-servico-status');
-  fetch('/aluno-portal/contrato', {headers:{Authorization:'Bearer '+token}})
+  fetch(window.API_BASE + '/aluno-portal/contrato', {headers:{Authorization:'Bearer '+token}})
   .then(function(r){ return r.ok ? r.json() : {}; })
   .then(function(d){
     if(!csEl) return;
@@ -3155,7 +3163,7 @@ function assinarContratoServico(){
 }
 
 function confirmarAssinaturaContrato(modal){
-  fetch('/aluno-portal/contrato/assinar', {
+  fetch(window.API_BASE + '/aluno-portal/contrato/assinar', {
     method:'POST',
     headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({})
@@ -3199,7 +3207,7 @@ function renderModalMedidas(){
     '<div style="font-size:11px;color:var(--verde);text-align:center;margin:8px 0">✅ Salva automaticamente quando você sai do campo</div>' +
     '<br><button class="btn-gold" onclick="salvarMedidas()">SALVAR TUDO ✓</button>';
   // Carregar medidas salvas
-  fetch('/app-aluno/medidas', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-aluno/medidas', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(!d || d.detail) return;
@@ -3214,7 +3222,7 @@ function autoSaveMedida(input, id){
   if(!val || val <= 0) return;
   var dados = {};
   dados[id] = val;
-  fetch('/app-aluno/medidas', {
+  fetch(window.API_BASE + '/app-aluno/medidas', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
     body: JSON.stringify(dados)
@@ -3237,7 +3245,7 @@ function salvarMedidas(){
     if(el && el.value) dados[id] = parseFloat(el.value);
   });
   if(Object.keys(dados).length === 0){ mostrarToast('Informe pelo menos uma medida!'); return; }
-  fetch('/app-aluno/medidas', {
+  fetch(window.API_BASE + '/app-aluno/medidas', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
     body: JSON.stringify(dados)
@@ -3281,7 +3289,7 @@ function renderModalComposicao(){
   var gord_salvo = localStorage.getItem('aurum_gord') || '';
   var mm_salvo = localStorage.getItem('aurum_mm') || '';
   // Sprint 4: busca dados do banco (mais confiavel que localStorage)
-  fetch('/app-aluno/meus-resultados', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-aluno/meus-resultados', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(d && (d.peso || d.percentual_gordura || d.massa_magra_kg)){
@@ -3333,7 +3341,7 @@ function salvarComposicao(){
   if(mm) localStorage.setItem('aurum_mm', mm);
   // Mostra resultado classificado
   mostrarResultadoComposicao();
-  fetch('/app-aluno/bioimpedancia', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+  fetch(window.API_BASE + '/app-aluno/bioimpedancia', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({peso:parseFloat(peso), percentual_gordura:gord?parseFloat(gord):null})})
   .then(function(){ mostrarToast('✅ Composição salva!'); renderEvolucao(); })
   .catch(function(){ mostrarToast('Erro ao salvar'); });
@@ -3392,7 +3400,7 @@ function analisarPostura(){
   if(fotosPostural.frente) fd.append('foto_frente', fotosPostural.frente);
   if(fotosPostural.lado) fd.append('foto_lado', fotosPostural.lado);
   if(fotosPostural.costas) fd.append('foto_costas', fotosPostural.costas);
-  fetch('/app-aluno/postural', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
+  fetch(window.API_BASE + '/app-aluno/postural', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
   .then(function(r){ return r.json(); })
   .then(function(d){
     loading.style.display = 'none'; btn.disabled = false; btn.style.opacity = '1';
@@ -3665,7 +3673,7 @@ function salvarVo2Completo(){
   if(!isNaN(pa_pos_s)) payload.pa_pos_sis = pa_pos_s;
   if(!isNaN(pa_pos_d)) payload.pa_pos_dia = pa_pos_d;
 
-  fetch('/app-aluno/vo2-salvar', {
+  fetch(window.API_BASE + '/app-aluno/vo2-salvar', {
     method: 'POST',
     headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
     body: JSON.stringify(payload)
@@ -3752,7 +3760,7 @@ function salvarForca(){
     payload_forca.classificacao_flexao = cf.txt;
     payload_forca.faixa_etaria = cf.faixa;
   }
-  fetch('/app-aluno/forca-salvar', {
+  fetch(window.API_BASE + '/app-aluno/forca-salvar', {
     method: 'POST',
     headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
     body: JSON.stringify(payload_forca)
@@ -3793,7 +3801,7 @@ function calcularMMII(){
     payload_mmii.classificacao = cm.txt;
     payload_mmii.faixa_etaria = cm.faixa;
   }
-  fetch('/app-aluno/potencia-salvar', {
+  fetch(window.API_BASE + '/app-aluno/potencia-salvar', {
     method: 'POST',
     headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
     body: JSON.stringify(payload_mmii)
@@ -3937,7 +3945,7 @@ function calcularNutri(){
 function abrirModalNutri(){
   abrirModal('modal-nutri');
   // tenta pegar peso da composição
-  fetch('/app-aluno/resultado', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-aluno/resultado', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(d && d.peso_atual){
@@ -4000,7 +4008,7 @@ function renderAnamnese(){
   }
 
   // Carrega dados de saúde do banco
-  fetch('/app-aluno/anamnese', {headers:{Authorization:'Bearer '+token}})
+  fetch(window.API_BASE + '/app-aluno/anamnese', {headers:{Authorization:'Bearer '+token}})
   .then(function(r){ return r.ok ? r.json() : {}; })
   .then(function(d){
     var salvos = d.patologias_marcadas || d.patologias || [];
@@ -4074,14 +4082,14 @@ function salvarAnamnese(){
   mostrarToast(planoMudou ? '⏳ Atualizando plano...' : '⏳ Salvando...');
 
   // Chamada 1: salva dados de saúde
-  var p1 = fetch('/app-aluno/anamnese', {
+  var p1 = fetch(window.API_BASE + '/app-aluno/anamnese', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
     body: JSON.stringify({patologias: pats, outras_condicoes: outras, medicacoes: med})
   }).then(function(r){ return r.ok ? r.json() : Promise.reject('anamnese'); });
 
   // Chamada 2: atualiza objetivo/nivel/dias (regera plano de treino no backend)
-  var p2 = fetch('/app-aluno/onboarding', {
+  var p2 = fetch(window.API_BASE + '/app-aluno/onboarding', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
     body: JSON.stringify({
@@ -4117,7 +4125,7 @@ function salvarPostural(){
     return;
   }
   mostrarToast('⏳ Salvando análise...');
-  fetch('/app-aluno/postural/salvar', {
+  fetch(window.API_BASE + '/app-aluno/postural/salvar', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
     body: JSON.stringify({
@@ -4292,7 +4300,7 @@ function enviarMsg(){
   msgs.scrollTop = msgs.scrollHeight;
   var idiomaInstrucao = {'pt':'Responda SEMPRE em português brasileiro.','en':'Always respond in English.','es':'Responde SIEMPRE en español.'};
   var msgComIdioma = msg + '\n\n[' + (idiomaInstrucao[lang] || idiomaInstrucao['pt']) + ']';
-  fetch('/app-aluno/chat', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+  fetch(window.API_BASE + '/app-aluno/chat', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({mensagem:msgComIdioma, historico:chatHist.slice(-10)})})
   .then(function(r){ return r.json(); })
   .then(function(d){
@@ -4430,7 +4438,7 @@ function abrirEsqueciSenha(){
     alert("Email invalido. Tente novamente.");
     return;
   }
-  fetch("/recuperar-senha/solicitar", {
+  fetch(window.API_BASE + "/recuperar-senha/solicitar", {
     method: "POST",
     headers: {"Content-Type":"application/json"},
     body: JSON.stringify({email: email})
@@ -4474,7 +4482,7 @@ async function excluirMinhaContaAluno(){
   // Chama backend
   try {
     var t = localStorage.getItem('aurum_aluno_token') || token;
-    var r = await fetch('/aluno-portal/excluir-conta', {
+    var r = await fetch(window.API_BASE + '/aluno-portal/excluir-conta', {
       method: 'DELETE',
       headers: {
         'Authorization': 'Bearer ' + t,
@@ -4498,7 +4506,7 @@ async function excluirMinhaContaAluno(){
 
 // Banner Complete Cadastro (na aba AVALIACAO - Sprint 1)
 function carregarBannerAvaliacao(){
-  fetch('/app-aluno/meu-link-onboarding', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-aluno/meu-link-onboarding', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.ok ? r.json() : null; })
   .then(function(d){
     var slot = document.getElementById('banner-onboarding-avaliacao');

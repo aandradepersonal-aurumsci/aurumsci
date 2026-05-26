@@ -169,7 +169,7 @@ app.add_middleware(
 if IS_PRODUCTION:
     app.add_middleware(
         TrustedHostMiddleware,
-        allowed_hosts=["aurumsci.com", "www.aurumsci.com", "app.aurumsci.com"]
+        allowed_hosts=["aurumsc.com.br", "www.aurumsc.com.br", "app.aurumsc.com.br", "*.up.railway.app", "*"]  # FIX 26/05/2026
     )
 
 # ── Security Headers ──────────────────────────────────────────

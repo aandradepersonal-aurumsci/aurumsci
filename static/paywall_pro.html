@@ -145,7 +145,7 @@ function showStatus(msg, isError){
 }
 
 function getToken(){
-  return localStorage.getItem('token_personal') || localStorage.getItem('token') || '';
+  return localStorage.getItem('aurum_personal_token') || '';
 }
 
 function getPersonalIdFromToken(){
@@ -175,8 +175,9 @@ async function initRevenueCat(){
     await Purchases.configure({ apiKey: API_KEY_PRO, appUserID: appUserID });
     console.log('[paywall-pro] RevenueCat configurado');
     var off = await Purchases.getOfferings();
-    if (off && off.current){
-      offerings = off.current;
+    var proOffering = (off && off.all) ? off.all["pro_default"] : null;
+    if (proOffering){
+      offerings = proOffering;
       console.log('[paywall-pro] offering carregado:', offerings.identifier, 'packages:', offerings.availablePackages.length);
       rcReady = true;
     } else {
@@ -222,7 +223,7 @@ window.assinar = async function(productId){
     console.log('[paywall-pro] compra resultado:', result);
     if (result.customerInfo && result.customerInfo.entitlements.active[ENTITLEMENT_ID]){
       showStatus('Assinatura ativada!');
-      setTimeout(function(){ window.location.href = '/personal'; }, 2000);
+      setTimeout(function(){ window.location.href = 'app_personal.html'; }, 2000);
     } else {
       showStatus('Compra processada mas entitlement nao ativo', true);
     }
@@ -252,7 +253,7 @@ window.restaurar = async function(){
     console.log('[paywall-pro] restore:', customerInfo);
     if (customerInfo.customerInfo && customerInfo.customerInfo.entitlements.active[ENTITLEMENT_ID]){
       showStatus('Assinatura restaurada!');
-      setTimeout(function(){ window.location.href = '/personal'; }, 2000);
+      setTimeout(function(){ window.location.href = 'app_personal.html'; }, 2000);
     } else {
       showStatus('Nenhuma assinatura ativa encontrada', true);
     }

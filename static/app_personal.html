@@ -726,6 +726,14 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <script>
 // ── ESTADO ────────────────────────────────────────────────────
 var lang = localStorage.getItem('aurum_personal_lang') || 'pt';
+// FIX 27/05/2026: API_BASE para arquitetura local iOS + Web
+// Web: API_BASE = '' (URLs relativas funcionam)
+// iOS Capacitor: API_BASE = 'https://www.aurumsc.com.br' (absoluto)
+window.API_BASE = (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) 
+  ? 'https://www.aurumsc.com.br' 
+  : '';
+console.log('[app-personal] API_BASE =', window.API_BASE || '(relativo)');
+
 var token = localStorage.getItem('aurum_personal_token') || '';
 var nomePersonal = localStorage.getItem('aurum_personal_nome') || '';
 var chatHist = [];
@@ -1000,6 +1008,22 @@ window.onload = function(){
   setTimeout(function(){
     document.getElementById('splash').classList.add('hide');
     if(token) {
+      // Valida se token nao expirou (JWT exp em segundos)
+      try {
+        var payload = JSON.parse(atob(token.split('.')[1]));
+        var agora = Math.floor(Date.now() / 1000);
+        if (payload.exp && payload.exp < agora) {
+          console.log('[splash] token expirado, indo pro login');
+          localStorage.removeItem('aurum_personal_token');
+          token = '';
+          return;
+        }
+      } catch(e) {
+        console.warn('[splash] token invalido, limpando:', e);
+        localStorage.removeItem('aurum_personal_token');
+        token = '';
+        return;
+      }
       carregarApp();
     }
   }, 2200);
@@ -1105,7 +1129,7 @@ function fazerLogin(){
   var senha = document.getElementById('login-senha').value;
   if(!email || !senha){ mostrarToast('Preencha email e senha'); return; }
 
-  fetch('/auth/login', {method:'POST', headers:{'Content-Type':'application/json'},
+  fetch(window.API_BASE + '/auth/login', {method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({email: email, senha: senha})})
   .then(function(r){ return r.json(); })
   .then(function(d){
@@ -1131,19 +1155,27 @@ function carregarApp(){
   // Web continua normal (Stripe).
   try {
     if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
-      fetch('/iap/status', {headers:{'Authorization':'Bearer '+token}})
-      .then(function(r){ return r.json(); })
+      // FIX 27/05/2026: API_BASE absoluto + paywall_pro.html + fail-CLOSED (Apple-safe)
+      fetch(window.API_BASE + '/iap/status', {headers:{'Authorization':'Bearer '+token}})
+      .then(function(r){
+        if (!r.ok) {
+          console.warn('[carregarApp] HTTP ' + r.status + ', indo paywall');
+          window.location.href = 'paywall_pro.html';
+          throw new Error('HTTP ' + r.status);
+        }
+        return r.json();
+      })
       .then(function(d){
-        if (d && d.tem_assinatura === false) {
-          console.log('[carregarApp] iOS sem assinatura IAP, redirecionando paywall');
-          window.location.href = '/paywall-pro';
+        if (!d || d.tem_assinatura !== true) {
+          console.log('[carregarApp] iOS sem assinatura, paywall');
+          window.location.href = 'paywall_pro.html';
           return;
         }
-        console.log('[carregarApp] iOS com assinatura ativa:', d && d.status);
+        console.log('[carregarApp] iOS com assinatura ativa:', d.status);
       })
       .catch(function(e){
-        // Erro de rede - libera app (não trava trainer)
-        console.warn('[carregarApp] erro check IAP, liberando app:', e);
+        console.warn('[carregarApp] erro check IAP, indo paywall:', e);
+        window.location.href = 'paywall_pro.html';
       });
     }
   } catch(e) {
@@ -1166,7 +1198,7 @@ function carregarApp(){
 
   atualizarTextos();
   // ── Verifica se contrato AurumSci ja foi aceito ──
-  fetch('/app-personal/contrato/status', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-personal/contrato/status', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(d && d.contrato_aceito === false){
@@ -1252,7 +1284,7 @@ function usarAurumSci(){
   // FIX 23/05/2026: chama DELETE no banco antes de limpar localStorage.
   // Bug antigo: limpava SO localStorage. No Cmd+Shift+R o banco devolvia
   // o logo personalizado e a cara do trainer voltava no lugar do AurumSci.
-  fetch('/app-personal/white-label/logo', {
+  fetch(window.API_BASE + '/app-personal/white-label/logo', {
     method: 'DELETE',
     headers: {'Authorization':'Bearer '+token}
   })
@@ -1284,7 +1316,7 @@ function salvarLogoWL(){
     while(n--){ u8arr[n] = bstr.charCodeAt(n); }
     fd.append('logo', new Blob([u8arr], {type:mime}), 'logo.png');
   }
-  fetch('/app-personal/white-label', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
+  fetch(window.API_BASE + '/app-personal/white-label', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
   .then(function(){
     aplicarLogoSalvo();
     document.getElementById('modal-whitelabel').style.display = 'none';
@@ -1298,7 +1330,7 @@ function salvarLogoWL(){
 
 function removerLogoWL(){
   // FIX 23/05/2026: apaga do banco tambem (nao so localStorage).
-  fetch('/app-personal/white-label/logo', {
+  fetch(window.API_BASE + '/app-personal/white-label/logo', {
     method: 'DELETE',
     headers: {'Authorization':'Bearer '+token}
   }).catch(function(){});
@@ -1321,7 +1353,7 @@ function aplicarLogoSalvo(){
 
 // ── DASHBOARD ─────────────────────────────────────────────────
 function carregarDashboard(){
-  fetch('/app-personal/dashboard', {headers: {'Authorization': 'Bearer ' + token}})
+  fetch(window.API_BASE + '/app-personal/dashboard', {headers: {'Authorization': 'Bearer ' + token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     document.getElementById('stat-alunos').textContent = d.total_alunos || 0;
@@ -1352,7 +1384,7 @@ function carregarDashboard(){
     document.getElementById('alunos-recentes').innerHTML = html || '<div style="color:var(--cinza);font-size:13px">Nenhum aluno ainda</div>';
   }).catch(function(){
     // fallback: carrega alunos diretamente
-    fetch('/alunos', {headers: {'Authorization': 'Bearer ' + token}})
+    fetch(window.API_BASE + '/alunos', {headers: {'Authorization': 'Bearer ' + token}})
     .then(function(r){ return r.json(); })
     .then(function(resp){
       todosAlunos = resp.alunos || resp;
@@ -1370,7 +1402,7 @@ function carregarAlunos(){
     document.getElementById('lista-alunos').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px;font-size:14px">Aguardando login...</div>';
     return;
   }
-  fetch('/alunos', {headers: {'Authorization': 'Bearer ' + token}})
+  fetch(window.API_BASE + '/alunos', {headers: {'Authorization': 'Bearer ' + token}})
   .then(function(r){ 
     console.log('[carregarAlunos] Status HTTP:', r.status);
     if(!r.ok) throw new Error('HTTP ' + r.status);
@@ -1391,7 +1423,7 @@ function marcarAulaHoje(alunoId, alunoNome) {
   var hoje = new Date().toISOString().split('T')[0];
   if(!confirm('Confirmar aula de ' + alunoNome + ' hoje?')) return;
   
-  fetch('/app-personal/aulas/checkin', {
+  fetch(window.API_BASE + '/app-personal/aulas/checkin', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({aluno_id: alunoId, data: hoje, observacoes: ''})
@@ -1431,7 +1463,7 @@ function abrirPerfilAluno(id){
   alunoSelecionadoId = id;
   document.getElementById('perfil-aluno-content').innerHTML = '<div style="text-align:center;padding:30px;color:var(--cinza)">Carregando...</div>';
   document.getElementById('modal-perfil-aluno').classList.add('show');
-  fetch('/app-personal/aluno/' + id + '/resumo', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-personal/aluno/' + id + '/resumo', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     var a = d.aluno || {};
@@ -1529,7 +1561,7 @@ function analisarPosturalP(){
   if(fotosPosturalP.frente) fd.append('foto_frente', fotosPosturalP.frente);
   if(fotosPosturalP.lado) fd.append('foto_lado', fotosPosturalP.lado);
   if(fotosPosturalP.costas) fd.append('foto_costas', fotosPosturalP.costas);
-  fetch('/app-personal/aluno/' + alunoSelecionadoId + '/postural', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
+  fetch(window.API_BASE + '/app-personal/aluno/' + alunoSelecionadoId + '/postural', {method:'POST', headers:{'Authorization':'Bearer '+token}, body:fd})
   .then(function(r){
     if(!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
@@ -1638,7 +1670,7 @@ function aulasAtualizar() {
 function aulasCarregarLista() {
   var dataAPI = aulasFormatarDataAPI(aulasDataAtual);
   
-  fetch('/app-personal/aulas/dia?data=' + dataAPI, {
+  fetch(window.API_BASE + '/app-personal/aulas/dia?data=' + dataAPI, {
     headers: {'Authorization':'Bearer '+token}
   })
   .then(function(r){ return r.json(); })
@@ -1703,7 +1735,7 @@ function aulasBuscar(termo) {
 function aulasMarcar(alunoId, alunoNome) {
   var dataAPI = aulasFormatarDataAPI(aulasDataAtual);
   
-  fetch('/app-personal/aulas/checkin', {
+  fetch(window.API_BASE + '/app-personal/aulas/checkin', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({aluno_id: alunoId, data: dataAPI, observacoes: ''})
@@ -1725,7 +1757,7 @@ function aulasMarcar(alunoId, alunoNome) {
 function aulasRemover(presencaId, alunoNome) {
   if(!confirm('Remover check-in de ' + alunoNome + '?')) return;
   
-  fetch('/app-personal/aulas/checkin/' + presencaId, {
+  fetch(window.API_BASE + '/app-personal/aulas/checkin/' + presencaId, {
     method: 'DELETE',
     headers: {'Authorization':'Bearer '+token}
   })
@@ -1742,7 +1774,7 @@ function aulasRemover(presencaId, alunoNome) {
 }
 
 function carregarFechamentos() {
-  fetch('/app-personal/financeiro/fechamentos-pendentes', {
+  fetch(window.API_BASE + '/app-personal/financeiro/fechamentos-pendentes', {
     headers: {'Authorization':'Bearer '+token}
   })
   .then(function(r){ return r.json(); })
@@ -1812,7 +1844,7 @@ function fecharMesAluno(alunoId, alunoNome, valor) {
   if(!confirm(msg)) return;
   
   // PASSO 1: Cria cobranca
-  fetch('/app-personal/financeiro/fechar-mes-aluno/' + alunoId, {
+  fetch(window.API_BASE + '/app-personal/financeiro/fechar-mes-aluno/' + alunoId, {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'}
   })
@@ -1820,7 +1852,7 @@ function fecharMesAluno(alunoId, alunoNome, valor) {
   .then(function(d){
     if(d.ok) {
       // PASSO 2: Gera link Stripe
-      return fetch('/app-personal/financeiro/gerar-link-pagamento/' + d.cobranca_id, {
+      return fetch(window.API_BASE + '/app-personal/financeiro/gerar-link-pagamento/' + d.cobranca_id, {
         method: 'POST',
         headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'}
       }).then(function(r){ return r.json(); }).then(function(stripe){
@@ -1861,7 +1893,7 @@ function carregarFinanceiro(){
   carregarFechamentos();
   // Busca todos os pagamentos de todos os alunos do personal
   var promises = todosAlunos.map(function(a){
-    return fetch('/financeiro/pagamento/aluno/' + a.id, {headers:{'Authorization':'Bearer '+token}})
+    return fetch(window.API_BASE + '/financeiro/pagamento/aluno/' + a.id, {headers:{'Authorization':'Bearer '+token}})
       .then(function(r){ return r.ok ? r.json() : []; })
       .then(function(d){
         var pags = d.pagamentos || d || [];
@@ -1993,7 +2025,7 @@ function renderFinanceiro(){
 }
 
 function marcarPagoDB(pid){
-  fetch('/financeiro/pagamento/' + pid + '/pagar', {method:'PUT', headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/financeiro/pagamento/' + pid + '/pagar', {method:'PUT', headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(){ mostrarToast('✅ Marcado como pago!'); carregarFinanceiro(); })
   .catch(function(){ mostrarToast('Erro ao atualizar'); });
@@ -2183,7 +2215,7 @@ function salvarPagamento(){
     desc = (document.getElementById('pag-desc-serv')||{}).value || 'Serviço';
   }
 
-  fetch('/financeiro/pagamento', {
+  fetch(window.API_BASE + '/financeiro/pagamento', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
     body: JSON.stringify({aluno_id: aluno.id, valor: total, descricao: desc, data_vencimento: venc})
@@ -2192,7 +2224,7 @@ function salvarPagamento(){
   .then(function(d){
     if(d.id){
       // Marca como pago automaticamente
-      fetch('/financeiro/pagamento/' + d.id + '/pagar', {
+      fetch(window.API_BASE + '/financeiro/pagamento/' + d.id + '/pagar', {
         method:'PUT', headers:{'Authorization':'Bearer '+token}
       }).then(function(){
         document.querySelector('[style*="position:fixed"]').remove();
@@ -2315,12 +2347,12 @@ function criarAluno(){
   // Senha = primeiros 6 dígitos do CPF
   var senha = cpf.substring(0, 6);
 
-  fetch('/alunos', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+  fetch(window.API_BASE + '/alunos', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({nome:nome, email:email, telefone:telefone, objetivo:objetivo, nivel_experiencia:nivel, sexo:sexo, cpf:cpf, ciclo_cobranca:ciclo, dia_fechamento:diaFechamento, dias_vencimento:diasVencimento, valor_mensal:valorMensal, valor_aula:valorAula})})
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(d.id){
-      fetch('/aluno-portal/criar-acesso', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      fetch(window.API_BASE + '/aluno-portal/criar-acesso', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
         body: JSON.stringify({aluno_id:d.id, email:email, senha:senha})})
       .then(function(){
         fecharModal('modal-novo-aluno');
@@ -2417,7 +2449,7 @@ function enviarMsg(){
   var idiomaInstrucao = {'pt':'Responda SEMPRE em português brasileiro.','en':'Always respond in English.','es':'Responde SIEMPRE en español.'};
   var msgComIdioma = msg + '\n\n[' + (idiomaInstrucao[lang] || idiomaInstrucao['pt']) + ']';
 
-  fetch('/app-personal/chat', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+  fetch(window.API_BASE + '/app-personal/chat', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({mensagem:msgComIdioma, historico:chatHist.slice(-10), idioma:lang})})
   .then(function(r){ return r.json(); })
   .then(function(d){ 
@@ -2521,7 +2553,7 @@ function avalAba(aba){
   if(aba==='anamnese'){
     el.innerHTML = renderAnamnese();
     // FIX 18/05/2026: usa endpoint /anamnese estruturado + pre-popula TODOS campos
-    fetch('/app-personal/aluno/' + avalAlunoId + '/anamnese', {headers:{'Authorization':'Bearer '+token}})
+    fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/anamnese', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.json(); })
     .then(function(d){
       if(!d) return;
@@ -2597,7 +2629,7 @@ function avalAba(aba){
   } else if(aba==='circunf'){
     el.innerHTML = renderCircunferencias();
     // FIX 19/05/2026: pre-popula campos com ultima avaliacao (trainer ve historico pra adaptar treino)
-    fetch('/app-personal/aluno/' + avalAlunoId + '/medidas', {headers:{'Authorization':'Bearer '+token}})
+    fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/medidas', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.ok ? r.json() : {}; })
     .then(function(d){
       if(!d) return;
@@ -2641,7 +2673,7 @@ function avalAba(aba){
   } else if(aba==='vo2'){
     el.innerHTML = renderVO2Personal();
     // FIX 19/05/2026: puxa idade/sexo do aluno pra calcular faixa etaria ACSM
-    fetch('/app-personal/aluno/' + avalAlunoId + '/perfil-vo2', {headers:{'Authorization':'Bearer '+token}})
+    fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/perfil-vo2', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.ok ? r.json() : {}; })
     .then(function(d){
       if(d && d.idade) window._alunoIdade = parseInt(d.idade);
@@ -2653,7 +2685,7 @@ function avalAba(aba){
 
   } else if(aba==='resultados'){
     el.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:20px">Carregando...</div>';
-    fetch('/app-personal/aluno/' + avalAlunoId + '/resumo', {headers:{'Authorization':'Bearer '+token}})
+    fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/resumo', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.json(); })
     .then(function(d){
       var av = d.avaliacao || {};
@@ -2787,7 +2819,7 @@ function salvarComposicao(){
   if(!d){ mostrarToast('Calcule primeiro!'); return; }
   var btn = event && event.target ? event.target : null;
   if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '💾 Salvando...'; }
-  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+  fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({
       secao: 'composicao',
@@ -2843,7 +2875,7 @@ function salvarDobras3(){
   if(!d){ mostrarToast('Calcule primeiro!'); return; }
   var btn = event && event.target ? event.target : null;
   if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '💾 Salvando...'; }
-  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+  fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({secao:'composicao', composicao:{gordura_pct: d.gordura_pct}})
   }).then(function(r){
@@ -2900,7 +2932,7 @@ function salvarDobras7(){
   if(!d){ mostrarToast('Calcule primeiro!'); return; }
   var btn = event && event.target ? event.target : null;
   if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '💾 Salvando...'; }
-  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+  fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({secao:'composicao', composicao:{gordura_pct: d.gordura_pct}})
   }).then(function(r){
@@ -2957,7 +2989,7 @@ function salvarUltrassom(){
   if(!d){ mostrarToast('Calcule primeiro!'); return; }
   var btn = event && event.target ? event.target : null;
   if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '💾 Salvando...'; }
-  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+  fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({secao:'composicao', composicao:{peso:d.peso, gordura_pct:d.gordura_pct, massa_magra:d.massa_magra}})
   }).then(function(r){
@@ -3095,7 +3127,7 @@ function salvarVO2(){
     if(hrr.poss) payload.pa_pos_sis = parseInt(hrr.poss);
     if(hrr.posd) payload.pa_pos_dia = parseInt(hrr.posd);
   }
-  fetch('/app-personal/aluno/' + avalAlunoId + '/vo2-salvar', {
+  fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/vo2-salvar', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify(payload)
   })
@@ -3205,7 +3237,7 @@ function salvarForca(){
   // FIX 20/05/2026 noite: payload completo + feedback persistente (igual VO2)
   var d = window._forcaResultado;
   if(!d){ mostrarToast('Calcule primeiro!'); return; }
-  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+  fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({secao:'testes_fisicos', testes_fisicos:{flexao:d.flexao, barra:d.barra, abdominal:d.abdominal, preensao_dom:d.preensao_dom, preensao_ndom:d.preensao_ndom, wells:d.wells, sexo:d.sexo, idade:d.idade}})
   })
@@ -3242,13 +3274,13 @@ function selecionarTreinoAluno(id, nome){
   // Bug antigo: trainer abria "Montar Treino" -> frontend zerava treinoSessoes -> 
   // se trainer salvasse algo, sobrescrevia plano inteiro do aluno (perdia 8+ exercicios).
   treinoAlunoId = id; treinoAlunoNome = nome; treinoSessoes = [];
-  fetch('/treino/plano/aluno/' + id, {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/treino/plano/aluno/' + id, {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(planos){
     if(!planos || planos.length === 0){ renderMontadorTreino(); return; }
     // Pega plano ativo (mais recente)
     var planoAtivo = planos[0];
-    return fetch('/treino/plano/' + planoAtivo.id, {headers:{'Authorization':'Bearer '+token}})
+    return fetch(window.API_BASE + '/treino/plano/' + planoAtivo.id, {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.json(); })
     .then(function(plano){
       if(plano && plano.sessoes){
@@ -3451,7 +3483,7 @@ function fecharBusca(){
 
 function carregarExercicios(){
   if(exerciciosBanco.length > 0) return;
-  fetch('/app-personal/exercicios-banco', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-personal/exercicios-banco', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){ exerciciosBanco = d.exercicios || []; filtrarExercicios(); })
   .catch(function(){});
@@ -3554,7 +3586,7 @@ function salvarCriarExercicio(){
   nome = nome.trim();
   if(!nome){ mostrarToast('⚠️ Nome obrigatório'); return; }
   if(!grupo){ mostrarToast('⚠️ Grupo muscular obrigatório'); return; }
-  fetch('/app-personal/exercicios-banco/criar', {
+  fetch(window.API_BASE + '/app-personal/exercicios-banco/criar', {
     method:'POST',
     headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({nome:nome, grupo_muscular:grupo, equipamento:equip.trim(), descricao:desc.trim()})
@@ -3581,7 +3613,7 @@ function salvarTreino(){
   var dias = parseInt(document.getElementById('treino-dias').value);
   if(treinoSessoes.length === 0){ mostrarToast('Adicione pelo menos uma sessão!'); return; }
   var dados = {objetivo:obj, nivel:'intermediario', dias_disponiveis:dias, sessoes: treinoSessoes.map(function(s){ return {nome:s.nome, exercicios:s.exercicios.map(function(e){ return {exercicio_id:e.id, series:e.series, repeticoes:e.repeticoes, tempo_descanso_seg:e.descanso}; })}; })};
-  fetch('/app-personal/aluno/' + treinoAlunoId + '/salvar-treino', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify(dados)})
+  fetch(window.API_BASE + '/app-personal/aluno/' + treinoAlunoId + '/salvar-treino', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify(dados)})
   .then(function(r){ return r.json(); })
   .then(function(d){ mostrarToast('Treino salvo! 💪'); })
   .catch(function(){ mostrarToast('Erro ao salvar'); });
@@ -3606,7 +3638,7 @@ function carregarResultAlunos(){
   document.getElementById('result-lista-alunos').innerHTML = html;
 }
 function selecionarResultAluno(id, nome){
-  fetch('/app-personal/aluno/' + id + '/resumo', {headers:{'Authorization':'Bearer '+token}})
+  fetch(window.API_BASE + '/app-personal/aluno/' + id + '/resumo', {headers:{'Authorization':'Bearer '+token}})
   .then(function(r){ return r.json(); })
   .then(function(d){
     var html = '<div class="card"><div class="card-line verde"></div>';
@@ -3712,7 +3744,7 @@ function salvarDadosAluno(id){
     dia_fechamento: parseInt(document.getElementById('dad-dia-fech').value) || 30,
     dias_vencimento: parseInt(document.getElementById('dad-dias-venc').value) || 5
   };
-  fetch('/app-personal/aluno/' + id + '/dados', {
+  fetch(window.API_BASE + '/app-personal/aluno/' + id + '/dados', {
     method: 'PUT',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
     body: JSON.stringify(dados)
@@ -3740,7 +3772,7 @@ function subAba(id, aba){
     else { btn.style.background='var(--bg)'; btn.style.color='var(--texto)'; btn.style.border='1px solid var(--borda)'; }
   });
   if(aba === 'dados'){
-    fetch('/app-personal/aluno/' + id + '/dados', {headers:{'Authorization':'Bearer '+token}})
+    fetch(window.API_BASE + '/app-personal/aluno/' + id + '/dados', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.json(); })
     .then(function(d){
       el.innerHTML = renderAbaDados(id, d);
@@ -3764,7 +3796,7 @@ function subAba(id, aba){
   } else if(aba === 'period'){
     el.innerHTML = renderPeriodizacaoPersonal(id);
   } else if(aba === 'result'){
-    fetch('/app-personal/aluno/' + id + '/resumo-completo', {headers:{'Authorization':'Bearer '+token}})
+    fetch(window.API_BASE + '/app-personal/aluno/' + id + '/resumo-completo', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.json(); })
     .then(function(d){
       var av = d.avaliacao || {};
@@ -4181,7 +4213,7 @@ function salvarAnamnese(){
   // FIX 21/05/2026: padrao card-abaixo + r.ok check + remove texto "prossiga" (UX inadequado).
   var btn = event && event.target ? event.target : null;
   if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '💾 Salvando...'; }
-  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+  fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify(payload)
   }).then(function(r){
@@ -4224,7 +4256,7 @@ function salvarCircunferencias(){
   // FIX 21/05/2026: padrao card-abaixo + r.ok check.
   var btn = event && event.target ? event.target : null;
   if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '💾 Salvando...'; }
-  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+  fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({secao:'circunferencias', circunferencias: circ})
   }).then(function(r){
@@ -4285,7 +4317,7 @@ function salvarMMII(){
   if(!d){ mostrarToast('Calcule primeiro!'); return; }
   var btn = event && event.target ? event.target : null;
   if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '💾 Salvando...'; }
-  fetch('/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
+  fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/salvar-avaliacao', {
     method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({secao:'mmii', mmii:{repeticoes:d.repeticoes, sexo:d.sexo, idade:d.idade}})
   }).then(function(r){
@@ -4336,7 +4368,7 @@ function mostrarRoteiro(){
 
 function baixarMeuContrato() {
   document.getElementById('menu-perfil').style.display = 'none';
-  fetch('/app-personal/contrato/pdf', {
+  fetch(window.API_BASE + '/app-personal/contrato/pdf', {
     headers: {'Authorization': 'Bearer ' + localStorage.getItem('aurum_personal_token')}
   })
   .then(r => {
@@ -4590,7 +4622,7 @@ function aceitarContratoAurumSci(){
   if(!chk2){ alert('⚠️ Voce precisa declarar veracidade das informacoes'); return; }
   if(!chk3){ alert('⚠️ Voce precisa aceitar os termos do contrato'); return; }
   
-  fetch('/app-personal/contrato/aceitar', {
+  fetch(window.API_BASE + '/app-personal/contrato/aceitar', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
     body: JSON.stringify({
@@ -4638,7 +4670,7 @@ function abrirEsqueciSenha(){
     alert("Email invalido. Tente novamente.");
     return;
   }
-  fetch("/recuperar-senha/solicitar", {
+  fetch(window.API_BASE + "/recuperar-senha/solicitar", {
     method: "POST",
     headers: {"Content-Type":"application/json"},
     body: JSON.stringify({email: email})
@@ -4672,7 +4704,7 @@ async function excluirAluno(alunoId){
   // Chama backend
   try {
     var token = localStorage.getItem('aurum_personal_token');
-    var r = await fetch('/alunos/' + alunoId + '/permanente', {
+    var r = await fetch(window.API_BASE + '/alunos/' + alunoId + '/permanente', {
       method: 'DELETE',
       headers: {'Authorization': 'Bearer ' + token}
     });
@@ -4719,7 +4751,7 @@ async function excluirMinhaConta(){
   // Chama backend
   try {
     var t = localStorage.getItem('aurum_personal_token');
-    var r = await fetch('/auth/excluir-conta', {
+    var r = await fetch(window.API_BASE + '/auth/excluir-conta', {
       method: 'DELETE',
       headers: {
         'Authorization': 'Bearer ' + t,
@@ -4754,7 +4786,7 @@ async function abrirMeuPlano() {
   document.getElementById('meu-plano-loading').style.display = 'block';
   document.getElementById('meu-plano-conteudo').style.display = 'none';
   try {
-    var resp = await fetch('/pagamento/meu-plano', {
+    var resp = await fetch(window.API_BASE + '/pagamento/meu-plano', {
       headers: {'Authorization': 'Bearer ' + token}
     });
     if (!resp.ok) {
@@ -4803,7 +4835,7 @@ async function mudarPlano(novoPlano) {
   if (!confirm('Mudar para o plano ' + planoLabel + '? A cobranca proporcional sera aplicada na proxima fatura.')) return;
   var token = localStorage.getItem('aurum_personal_token');
   try {
-    var resp = await fetch('/pagamento/mudar-plano', {
+    var resp = await fetch(window.API_BASE + '/pagamento/mudar-plano', {
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
       body: JSON.stringify({novo_plano: novoPlano})
@@ -4824,7 +4856,7 @@ async function cancelarAssinaturaModal() {
   if (!confirm('Tem certeza que quer cancelar sua assinatura?\n\nVoce mantem acesso ate o final do periodo atual.')) return;
   var token = localStorage.getItem('aurum_personal_token');
   try {
-    var resp = await fetch('/pagamento/cancelar-assinatura', {
+    var resp = await fetch(window.API_BASE + '/pagamento/cancelar-assinatura', {
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token}
     });
@@ -4844,7 +4876,7 @@ async function reativarAssinatura() {
   if (!confirm('Reativar sua assinatura? Ela continuara ativa normalmente.')) return;
   var token = localStorage.getItem('aurum_personal_token');
   try {
-    var resp = await fetch('/pagamento/reativar-assinatura', {
+    var resp = await fetch(window.API_BASE + '/pagamento/reativar-assinatura', {
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token}
     });
@@ -4876,7 +4908,7 @@ async function abrirCobrancaAluno(alunoId){
   var checkins = 0;
   
   try {
-    var resp = await fetch('/app-personal/aulas/aluno/' + alunoId + '/mes?ano=' + anoAtual + '&mes=' + (mesAtual+1), {
+    var resp = await fetch(window.API_BASE + '/app-personal/aulas/aluno/' + alunoId + '/mes?ano=' + anoAtual + '&mes=' + (mesAtual+1), {
       headers: {'Authorization': 'Bearer ' + token}
     });
     if(resp.ok) {
@@ -5008,7 +5040,7 @@ function alterarModelo(modelo, alunoId){
     aluno.ciclo_cobranca = cicloBanco;
     aluno.modelo_cobranca = modelo; // mantido pra compat antiga
   }
-  fetch('/app-personal/aluno/' + alunoId + '/dados', {
+  fetch(window.API_BASE + '/app-personal/aluno/' + alunoId + '/dados', {
     method: 'PUT',
     headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({ciclo_cobranca: cicloBanco})
@@ -5076,7 +5108,7 @@ async function gerarCobrancaAluno(alunoId){
   var checkins = 0;
   
   try {
-    var resp = await fetch('/app-personal/aulas/aluno/' + alunoId + '/mes?ano=' + anoAtual + '&mes=' + (mesAtual+1), {
+    var resp = await fetch(window.API_BASE + '/app-personal/aulas/aluno/' + alunoId + '/mes?ano=' + anoAtual + '&mes=' + (mesAtual+1), {
       headers: {'Authorization': 'Bearer ' + token}
     });
     if(resp.ok) {
@@ -5097,14 +5129,14 @@ async function gerarCobrancaAluno(alunoId){
   
   mostrarToast('💳 Gerando cobrança...');
   
-  fetch('/app-personal/financeiro/fechar-mes-aluno/' + alunoId, {
+  fetch(window.API_BASE + '/app-personal/financeiro/fechar-mes-aluno/' + alunoId, {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'}
   })
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(d.ok) {
-      return fetch('/app-personal/financeiro/gerar-link-pagamento/' + d.cobranca_id, {
+      return fetch(window.API_BASE + '/app-personal/financeiro/gerar-link-pagamento/' + d.cobranca_id, {
         method: 'POST',
         headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'}
       }).then(function(r){ return r.json(); }).then(function(stripe){
@@ -5141,7 +5173,7 @@ async function gerarCobrancaAluno(alunoId){
 function enviarQuestionarioOnboarding(){
   mostrarToast('Gerando link...');
   
-  fetch('/app-personal/onboarding/gerar-link', {
+  fetch(window.API_BASE + '/app-personal/onboarding/gerar-link', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'}
   })
@@ -5241,7 +5273,7 @@ function enviarReciboEmail(){
   
   mostrarToast('Enviando email...');
   
-  fetch('/app-personal/financeiro/enviar-recibo-email', {
+  fetch(window.API_BASE + '/app-personal/financeiro/enviar-recibo-email', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
     body: JSON.stringify({
@@ -5271,7 +5303,7 @@ function enviarReciboEmail(){
 // FIX 22/05/2026: baixa CSV do mes atual pro contador emitir NF
 function baixarRelatorioContador(){
   mostrarToast('📋 Gerando relatório...');
-  fetch('/app-personal/financeiro/relatorio-contador', {
+  fetch(window.API_BASE + '/app-personal/financeiro/relatorio-contador', {
     headers: {'Authorization':'Bearer '+token}
   })
   .then(function(r){ 

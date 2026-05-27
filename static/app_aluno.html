@@ -1119,6 +1119,21 @@ window.onload = function(){
     document.getElementById('splash').classList.add('hide');
     var saved = localStorage.getItem('aurum_token');
     if(saved){
+      // Valida se token nao expirou (JWT exp em segundos)
+      try {
+        var payload = JSON.parse(atob(saved.split('.')[1]));
+        var agora = Math.floor(Date.now() / 1000);
+        if (payload.exp && payload.exp < agora) {
+          console.log('[splash] token expirado, indo pro login');
+          localStorage.removeItem('aurum_token');
+          localStorage.removeItem('aurum_onb_done');
+          return; // fica na tela de login
+        }
+      } catch(e) {
+        console.warn('[splash] token invalido, limpando:', e);
+        localStorage.removeItem('aurum_token');
+        return;
+      }
       token = saved;
       nomeAluno = localStorage.getItem('aurum_nome') || '';
       var onbDone = localStorage.getItem('aurum_onb_done');
@@ -1902,7 +1917,7 @@ function mostrarApp(){
     .then(function(r){ 
       if (!r.ok) {
         console.warn('[mostrarApp] HTTP ' + r.status + ', indo paywall');
-        window.location.href = '/paywall-aluno';
+        window.location.href = 'paywall_aluno.html';
         throw new Error('HTTP ' + r.status);
       }
       return r.json(); 
@@ -1910,7 +1925,7 @@ function mostrarApp(){
     .then(function(d){
       if (!d || d.tem_assinatura !== true) {
         console.log('[mostrarApp] sem assinatura ativa, paywall');
-        window.location.href = '/paywall-aluno';
+        window.location.href = 'paywall_aluno.html';
         return;
       }
       console.log('[mostrarApp] iOS com assinatura:', d.status);
@@ -1918,7 +1933,7 @@ function mostrarApp(){
     })
     .catch(function(e){
       console.warn('[mostrarApp] erro check IAP, indo paywall:', e);
-      window.location.href = '/paywall-aluno';
+      window.location.href = 'paywall_aluno.html';
     });
     return; // CRITICO: nao executa liberarTelaApp() ate fetch resolver
   }
@@ -4494,7 +4509,7 @@ async function excluirMinhaContaAluno(){
     if(r.ok){
       alert(d.mensagem || 'Conta removida com sucesso. Ate mais!');
       localStorage.clear();
-      window.location.href = '/aluno';
+      window.location.href = 'index.html';
     } else {
       alert('Erro: ' + (d.detail || 'tente novamente'));
     }

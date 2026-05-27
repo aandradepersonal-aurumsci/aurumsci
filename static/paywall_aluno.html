@@ -86,8 +86,8 @@ h1{font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--ouro);
 // FIX 25/05/2026: Capacitor iOS nao aceita import() ESM
 // Plugin acessado via window.Capacitor.Plugins.Purchases
 // FIX 26/05/2026: usar registerPlugin do Capacitor (recomendacao oficial RevenueCat)
-const { registerPlugin } = window.Capacitor || {};
-const Purchases = registerPlugin ? registerPlugin('Purchases') : null;
+// FIX 26/05/2026: Capacitor 8 nao expoe registerPlugin, usar Plugins direto
+const Purchases = (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Purchases) || null;
 const LOG_LEVEL = { DEBUG: 'debug', INFO: 'info', WARN: 'warn', ERROR: 'error', VERBOSE: 'verbose' };
 if (!Purchases) {
   console.error('[paywall-aluno] Purchases plugin nao encontrado em Capacitor.Plugins');
@@ -110,7 +110,7 @@ function showStatus(msg, isError){
 }
 
 function getToken(){
-  return localStorage.getItem('token_aluno') || localStorage.getItem('token') || '';
+  return localStorage.getItem('aurum_token') || '';
 }
 
 function getAlunoIdFromToken(){
@@ -143,8 +143,9 @@ async function initRevenueCat(){
     await Purchases.configure({ apiKey: API_KEY_ALUNO, appUserID: appUserID });
     console.log('[paywall-aluno] RevenueCat configurado');
     var off = await Purchases.getOfferings();
-    if (off && off.current){
-      offerings = off.current;
+    var alunoOffering = (off && off.all) ? off.all["aluno_default"] : null;
+    if (alunoOffering){
+      offerings = alunoOffering;
       console.log('[paywall-aluno] offering carregado:', offerings.identifier);
       rcReady = true;
     } else {
@@ -178,7 +179,7 @@ window.assinar = async function(){
     console.log('[paywall-aluno] compra resultado:', result);
     if (result.customerInfo && result.customerInfo.entitlements.active[ENTITLEMENT_ID]){
       showStatus('Assinatura ativada!');
-      setTimeout(function(){ window.location.href = '/aluno'; }, 2000);
+      setTimeout(function(){ window.location.href = 'app_aluno.html'; }, 2000);
     } else {
       showStatus('Compra processada mas entitlement nao ativo', true);
     }
@@ -208,7 +209,7 @@ window.restaurar = async function(){
     console.log('[paywall-aluno] restore:', customerInfo);
     if (customerInfo.customerInfo && customerInfo.customerInfo.entitlements.active[ENTITLEMENT_ID]){
       showStatus('Assinatura restaurada!');
-      setTimeout(function(){ window.location.href = '/aluno'; }, 2000);
+      setTimeout(function(){ window.location.href = 'app_aluno.html'; }, 2000);
     } else {
       showStatus('Nenhuma assinatura ativa encontrada', true);
     }

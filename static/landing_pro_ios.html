@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AurumSci PRO — Para Personal Trainers</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ouro:#C9A84C;--ouro2:#F0C040;--azul:#4B9FFF;--verde:#00E5A0;--bg:#0A0A0F;--bg2:#12121A;--bg3:#1A1A26;--texto:#F0EDE8;--cinza:#888;--borda:rgba(201,168,76,0.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px 40px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.08),transparent 70%);pointer-events:none}
+
+/* LOGO */
+.logo{display:flex;align-items:baseline;gap:4px;justify-content:center;margin-bottom:8px}
+.logo-hex{width:44px;height:44px;margin-right:6px}
+.logo-aurum{font-family:Georgia,serif;font-size:36px;font-weight:400;letter-spacing:4px;color:var(--ouro)}
+.logo-sci{font-family:Georgia,serif;font-size:14px;font-style:italic;color:#fff;margin-left:2px}
+.logo-pro{font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:var(--azul);margin-left:2px}
+
+.badge{display:inline-block;background:rgba(75,159,255,0.1);border:1px solid rgba(75,159,255,0.3);color:var(--azul);font-size:11px;letter-spacing:3px;padding:6px 16px;border-radius:20px;margin-bottom:24px}
+.hero-titulo{font-family:'Bebas Neue';font-size:52px;letter-spacing:2px;line-height:1.1;margin-bottom:16px;color:#fff}
+.hero-titulo span{color:var(--ouro)}
+.hero-sub{font-size:16px;color:var(--cinza);line-height:1.7;max-width:480px;margin:0 auto 32px}
+
+/* BOTÕES */
+.btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px;margin:0 auto 40px}
+.btn-principal{display:block;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:20px;letter-spacing:3px;padding:18px;border-radius:14px;text-decoration:none;text-align:center;transition:transform .2s}
+.btn-principal:active{transform:scale(.98)}
+.btn-secundario{display:block;border:1px solid var(--borda);color:var(--cinza);font-size:14px;padding:14px;border-radius:14px;text-decoration:none;text-align:center}
+
+/* STATS */
+.stats{display:flex;gap:24px;justify-content:center;margin-bottom:0}
+.stat{text-align:center}
+.stat-num{font-family:'Bebas Neue';font-size:32px;color:var(--ouro)}
+.stat-label{font-size:11px;color:var(--cinza);letter-spacing:2px}
+
+/* SEÇÕES */
+section{padding:60px 24px;max-width:640px;margin:0 auto}
+.section-tag{font-size:11px;letter-spacing:3px;color:var(--ouro);margin-bottom:8px}
+.section-titulo{font-family:'Bebas Neue';font-size:36px;letter-spacing:1px;margin-bottom:8px}
+.section-sub{font-size:14px;color:var(--cinza);line-height:1.7;margin-bottom:32px}
+
+/* FEATURES */
+.features{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.feature-card{background:var(--bg2);border:1px solid var(--borda);border-radius:16px;padding:20px}
+.feature-icon{font-size:28px;margin-bottom:10px}
+.feature-titulo{font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--ouro);margin-bottom:6px}
+.feature-desc{font-size:12px;color:var(--cinza);line-height:1.6}
+
+/* PLANOS */
+.planos{display:flex;flex-direction:column;gap:16px}
+.plano{background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:24px;position:relative;transition:border-color .2s}
+.plano.destaque{border-color:var(--ouro);background:linear-gradient(135deg,rgba(201,168,76,0.05),var(--bg2))}
+.plano-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#0A0A0F;font-family:'Bebas Neue';font-size:12px;letter-spacing:2px;padding:4px 16px;border-radius:20px}
+.plano-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.plano-icon{font-size:28px}
+.plano-nome{font-family:'Bebas Neue';font-size:24px;letter-spacing:1px}
+.plano-alunos{font-size:12px;color:var(--cinza)}
+.plano-preco{margin-bottom:16px}
+.plano-valor{font-family:'Bebas Neue';font-size:42px;color:var(--ouro)}
+.plano-periodo{font-size:13px;color:var(--cinza)}
+.plano-items{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.plano-items li{font-size:13px;color:var(--cinza);display:flex;gap:8px;align-items:flex-start}
+.plano-items li::before{content:'✓';color:var(--verde);font-weight:700;flex-shrink:0}
+.btn-plano{display:block;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;padding:14px;border-radius:12px;text-decoration:none;text-align:center}
+.btn-plano.outline{background:none;border:1px solid var(--borda);color:var(--texto)}
+
+/* DIFERENCIAL */
+.diferenciais{display:flex;flex-direction:column;gap:16px}
+.diferencial{display:flex;gap:16px;align-items:flex-start;background:var(--bg2);border:1px solid var(--borda);border-radius:16px;padding:20px}
+.diferencial-icon{font-size:28px;flex-shrink:0}
+.diferencial-titulo{font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--ouro);margin-bottom:4px}
+.diferencial-desc{font-size:13px;color:var(--cinza);line-height:1.6}
+
+/* CTA FINAL */
+.cta{background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(75,159,255,0.04));border:1px solid var(--borda);border-radius:24px;padding:48px 24px;text-align:center;margin:0 24px 60px}
+.cta-titulo{font-family:'Bebas Neue';font-size:36px;letter-spacing:1px;margin-bottom:8px}
+.cta-sub{font-size:14px;color:var(--cinza);margin-bottom:24px}
+
+/* FOOTER */
+footer{text-align:center;padding:24px;font-size:12px;color:#333;border-top:1px solid var(--borda)}
+footer a{color:#444;text-decoration:none}
+
+/* DIVISOR */
+.divisor{height:1px;background:var(--borda);margin:0 24px}
+
+  .lang-row{display:flex;gap:8px;justify-content:center;padding:16px 20px 0;max-width:680px;margin:0 auto;}
+  .lang-btn-lp{flex:1;max-width:90px;padding:8px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#888;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:1px;transition:all .2s;}
+  .lang-btn-lp.active{border-color:#C9A84C;color:#C9A84C;background:rgba(201,168,76,.1);}
+  .lang-btn-lp:hover{border-color:#C9A84C;}
+</style>
+<link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="/static/apple-touch-icon-precomposed.png">
+    </head>
+<body>
+  <div class="lang-row">
+    <button class="lang-btn-lp active" onclick="setLangLP('pt',this)">🇧🇷 PT</button>
+    <button class="lang-btn-lp" onclick="setLangLP('en',this)">🇺🇸 EN</button>
+    <button class="lang-btn-lp" onclick="setLangLP('es',this)">🇪🇸 ES</button>
+  </div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="logo">
+    <svg class="logo-hex" viewBox="0 0 44 44"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#C9A84C" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#C9A84C">A</text></svg>
+    <span class="logo-aurum">AURUM</span><span class="logo-sci">sci.</span><span class="logo-pro">PRO</span>
+  </div>
+
+  <div class="badge" data-i18n="badge">PARA PERSONAL TRAINERS</div>
+
+  <h1 class="hero-titulo" data-i18n="heroTitulo">A plataforma que<br><span>transforma seu negócio</span></h1>
+  <p class="hero-sub" data-i18n="heroSub">Gerencie seus alunos com ciência, IA e tecnologia de ponta. Periodização automática, análise postural com IA e muito mais — em todos os planos.</p>
+
+  <div class="btns">
+    <a href="paywall_pro.html" class="btn-principal" data-i18n="btnComecar">COMEÇAR 7 DIAS GRÁTIS →</a>
+    <a href="app_personal.html" class="btn-secundario" data-i18n="btnLogin">Já tenho conta — fazer login</a>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num">IA</div><div class="stat-label" data-i18n="integrada">INTEGRADA</div></div>
+    <div class="stat"><div class="stat-num">24H</div><div class="stat-label" data-i18n="disponivel">DISPONÍVEL</div></div>
+    <div class="stat"><div class="stat-num">3x</div><div class="stat-label" data-i18n="maisAlunos">MAIS ALUNOS</div></div>
+  </div>
+</div>
+
+
+<div class="divisor"></div>
+
+
+<div class="divisor"></div>
+
+<section>
+  <div class="section-tag" data-i18n="quemEstaPorTras">QUEM ESTÁ POR TRÁS</div>
+  <h2 class="section-titulo" data-i18n="construidoPor">Construído por quem vive isso</h2>
+  <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:32px">
+    <div style="font-size:40px;text-align:center;margin-bottom:16px">👨‍💼</div>
+    <div style="font-family:Georgia,serif;font-size:17px;font-style:italic;color:var(--texto);line-height:1.8;margin-bottom:20px;text-align:center"><span data-i18n="depoimentoAndre">"Ao longo de mais de 20 anos como personal trainer, percebi que a tecnologia existente não foi feita por quem entende de treino. Então decidi construir a minha."</span></div>
+    <div style="font-size:14px;color:var(--cinza);line-height:1.8;margin-bottom:20px"><span data-i18n="curriculo">Bacharel e Licenciado em Educação Física, com 4 especializações nas principais areas do treinamento. Atuou 7 anos em avaliação física antes de se dedicar exclusivamente ao personal trainer, levando atletas a competições.</span></div>
+    <div style="text-align:center">
+      <div style="font-size:14px;color:var(--ouro);letter-spacing:2px;font-weight:600">André Andrade · CREF 62702-G/SP</div>
+      <div style="font-size:12px;color:var(--cinza);margin-top:4px"><span data-i18n="ptDevFundador">Personal Trainer · Desenvolvedor · Fundador AurumSci</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- FUNCIONALIDADES -->
+<section>
+  <div class="section-tag" data-i18n="funcionalidades">FUNCIONALIDADES</div>
+  <h2 class="section-titulo" data-i18n="tudoQuePrecisa">Tudo que você precisa</h2>
+  <p class="section-sub" data-i18n="semRestricoes">Em todos os planos — sem restrições por funcionalidade.</p>
+
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <div class="feature-titulo" data-i18n="featAuriT">AURI PRO</div>
+      <div class="feature-desc" data-i18n="featAuriD">Assistente IA que conhece cada aluno e responde 24h por dia</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📅</div>
+      <div class="feature-titulo" data-i18n="featPerT">PERIODIZAÇÃO</div>
+      <div class="feature-desc" data-i18n="featPerD">Blocos e ondulação científica — Rhea et al. (2002)</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧍</div>
+      <div class="feature-titulo" data-i18n="featPostT">POSTURAL IA</div>
+      <div class="feature-desc" data-i18n="featPostD">Claude Vision analisa postura e prescreve corretivos</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">❤️</div>
+      <div class="feature-titulo" data-i18n="featHrrT">TESTE HRR</div>
+      <div class="feature-desc" data-i18n="featHrrD">Risco cardiovascular baseado em Cole et al. NEJM 1999</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <div class="feature-titulo" data-i18n="featAvalT">AVALIAÇÃO</div>
+      <div class="feature-desc" data-i18n="featAvalD">VO2 máx, composição corporal e força — ACSM 2022</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏷️</div>
+      <div class="feature-titulo" data-i18n="featWhT">WHITE LABEL</div>
+      <div class="feature-desc" data-i18n="featWhD">Sua marca no app — disponível em todos os planos</div>
+    </div>
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- PLANOS -->
+<section>
+  <div class="section-tag" data-i18n="planos">PLANOS</div>
+  <h2 class="section-titulo" data-i18n="escolhaPlano">Escolha o seu plano</h2>
+  <p class="section-sub" data-i18n="diferencaAlunos">A diferença é só o número de alunos. Todos têm acesso completo a todas as funcionalidades.</p>
+
+  <div class="planos">
+
+    <div class="plano">
+      <div class="plano-header">
+        <div class="plano-icon">🥉</div>
+        <div>
+          <div class="plano-nome" data-i18n="bronzeNome">BRONZE</div>
+          <div class="plano-alunos" data-i18n="bronzeAlunos">Até 10 alunos</div>
+        </div>
+      </div>
+      <div class="plano-preco">
+        <span class="plano-valor">R$49</span><span class="plano-periodo">,90/mês</span>
+      </div>
+      <ul class="plano-items">
+        <li data-i18n="bronzeF1">Acesso completo a todas as funcionalidades</li>
+        <li data-i18n="bronzeF2">AURI PRO — assistente IA 24h</li>
+        <li data-i18n="bronzeF3">Periodização científica automática</li>
+        <li data-i18n="bronzeF4">Análise postural com IA</li>
+        <li data-i18n="bronzeF5">White label — sua marca</li>
+        <li data-i18n="seteDias">7 dias grátis para testar</li>
+      </ul>
+      <a href="paywall_pro.html?plano=bronze" class="btn-plano outline" data-i18n="btnComecarGratis">COMEÇAR GRÁTIS →</a>
+    </div>
+
+    <div class="plano destaque">
+      <div class="plano-badge" data-i18n="maisPopular">MAIS POPULAR</div>
+      <div class="plano-header">
+        <div class="plano-icon">🥈</div>
+        <div>
+          <div class="plano-nome" data-i18n="prataNome">PRATA</div>
+          <div class="plano-alunos" data-i18n="prataAlunos">Até 20 alunos</div>
+        </div>
+      </div>
+      <div class="plano-preco">
+        <span class="plano-valor">R$89</span><span class="plano-periodo">,90/mês</span>
+      </div>
+      <ul class="plano-items">
+        <li data-i18n="prataF1">Tudo do Bronze</li>
+        <li data-i18n="prataF2">Até 20 alunos simultâneos</li>
+        <li data-i18n="prataF3">Gestão financeira avançada</li>
+        <li data-i18n="prataF4">Alertas de reavaliação automáticos</li>
+        <li data-i18n="prataF5">Questionário overtraining mensal</li>
+        <li data-i18n="seteDias">7 dias grátis para testar</li>
+      </ul>
+      <a href="paywall_pro.html?plano=prata" class="btn-plano" data-i18n="btnComecarGratis">COMEÇAR GRÁTIS →</a>
+    </div>
+
+    <div class="plano">
+      <div class="plano-header">
+        <div class="plano-icon">🥇</div>
+        <div>
+          <div class="plano-nome" data-i18n="ouroNome">OURO</div>
+          <div class="plano-alunos" data-i18n="ouroAlunos">Até 50 alunos</div>
+        </div>
+      </div>
+      <div class="plano-preco">
+        <span class="plano-valor">R$149</span><span class="plano-periodo">,90/mês</span>
+      </div>
+      <ul class="plano-items">
+        <li data-i18n="ouroF1">Tudo do Prata</li>
+        <li data-i18n="ouroF2">Até 50 alunos simultâneos</li>
+        <li data-i18n="ouroF3">Suporte prioritário</li>
+        <li data-i18n="ouroF4">Relatórios avançados de evolução</li>
+        <li data-i18n="seteDias">7 dias grátis para testar</li>
+      </ul>
+      <a href="paywall_pro.html?plano=ouro" class="btn-plano outline" data-i18n="btnComecarGratis">COMEÇAR GRÁTIS →</a>
+    </div>
+
+    <div class="plano">
+      <div class="plano-header">
+        <div class="plano-icon">💎</div>
+        <div>
+          <div class="plano-nome" data-i18n="diamanteNome">DIAMANTE</div>
+          <div class="plano-alunos" data-i18n="diamanteAlunos">Alunos ilimitados</div>
+        </div>
+      </div>
+      <div class="plano-preco">
+        <span class="plano-valor">R$249</span><span class="plano-periodo">,90/mês</span>
+      </div>
+      <ul class="plano-items">
+        <li data-i18n="diamanteF1">Tudo do Ouro</li>
+        <li data-i18n="diamanteF2">Alunos ilimitados</li>
+        <li data-i18n="diamanteF3">Avaliação com ultrassom integrada</li>
+        <li data-i18n="diamanteF4">Suporte VIP direto com o desenvolvedor</li>
+        <li data-i18n="seteDias">7 dias grátis para testar</li>
+      </ul>
+      <a href="paywall_pro.html?plano=diamante" class="btn-plano outline" data-i18n="btnComecarGratis">COMEÇAR GRÁTIS →</a>
+    </div>
+
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- DIFERENCIAIS -->
+<section>
+  <div class="section-tag" data-i18n="porQue">POR QUE AURUMSCI PRO</div>
+  <h2 class="section-titulo" data-i18n="diferenteDosOutros">Diferente dos outros</h2>
+  <p class="section-sub" data-i18n="construidoPor20">Construído por um personal trainer com 20 anos de experiência.</p>
+
+  <div class="diferenciais">
+    <div class="diferencial">
+      <div class="diferencial-icon">🏷️</div>
+      <div>
+        <div class="diferencial-titulo" data-i18n="dif1T">WHITE LABEL EM TODOS OS PLANOS</div>
+        <div class="diferencial-desc"><span data-i18n="dif1D">Concorrentes cobram R$300+/mês pelo white label. Na AurumSci PRO está incluso desde o Bronze.</span></div>
+      </div>
+    </div>
+    <div class="diferencial">
+      <div class="diferencial-icon">📊</div>
+      <div>
+        <div class="diferencial-titulo" data-i18n="dif2T">PLANOS PARA A REALIDADE BRASILEIRA</div>
+        <div class="diferencial-desc"><span data-i18n="dif2D">Em época difícil, 10 a 16 alunos. Em época boa, acima de 20. Com equipe, acima de 50. Temos o plano certo pra cada momento.</span></div>
+      </div>
+    </div>
+    <div class="diferencial">
+      <div class="diferencial-icon">🧬</div>
+      <div>
+        <div class="diferencial-titulo" data-i18n="dif3T">BASE CIENTÍFICA REAL</div>
+        <div class="diferencial-desc"><span data-i18n="dif3D">Rhea et al. (2002), ACSM 2022, Cole NEJM 1999, Schoenfeld (2010). Cada funcionalidade tem embasamento científico citado.</span></div>
+      </div>
+    </div>
+    <div class="diferencial">
+      <div class="diferencial-icon">🤖</div>
+      <div>
+        <div class="diferencial-titulo" data-i18n="dif4T">IA DE VERDADE</div>
+        <div class="diferencial-desc"><span data-i18n="dif4D">AURI usa Claude da Anthropic — a mesma IA usada por empresas Fortune 500. Não é um chatbot genérico.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<div class="divisor"></div>
+
+
+
+<!-- DEPOIMENTO -->
+<section>
+  <div class="section-tag" data-i18n="quemJaUsa">QUEM JÁ USA</div>
+  <h2 class="section-titulo" data-i18n="oQueDizem">O que dizem nossos usuários</h2>
+
+  <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:24px;margin-bottom:16px">
+    <div style="font-size:20px;color:#F0C040;margin-bottom:12px">⭐⭐⭐⭐⭐</div>
+    <p style="font-size:14px;color:var(--texto);line-height:1.8;font-style:italic;margin-bottom:16px">
+      <span data-i18n="depMaru">"Tive uma experiência incrível com a navegabilidade da ferramenta. Como aluna obtive informações importantes que aliam prática com ciência reforçando minha performance e resultado."</span>
+    </p>
+    <div style="font-size:13px;font-weight:600;color:var(--ouro)">Maru Gomez</div>
+    <div style="font-size:11px;color:var(--cinza)"><span data-i18n="roleMaru">Aluna AurumSci · Beta Tester</span></div>
+  </div>
+
+  <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:24px;margin-bottom:16px">
+    <div style="font-size:20px;color:#F0C040;margin-bottom:12px">⭐⭐⭐⭐⭐</div>
+    <p style="font-size:14px;color:var(--texto);line-height:1.8;font-style:italic;margin-bottom:16px">
+      <span data-i18n="depLucas">"Antes eu controlava tudo no caderno e no WhatsApp. Agora o app organiza meus alunos, os pagamentos e ainda me avisa quando alguém está em overtraining. Profissionalizou meu negócio."</span>
+    </p>
+    <div style="font-size:13px;font-weight:600;color:var(--ouro)">Lucas Ferreira</div>
+    <div style="font-size:11px;color:var(--cinza)"><span data-i18n="roleLucas">Personal Trainer · São Paulo · Beta Tester</span></div>
+  </div>
+
+  <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:24px;margin-bottom:16px">
+    <div style="font-size:20px;color:#F0C040;margin-bottom:12px">⭐⭐⭐⭐⭐</div>
+    <p style="font-size:14px;color:var(--texto);line-height:1.8;font-style:italic;margin-bottom:16px">
+      <span data-i18n="depCamila">"A AURI é incrível — meus alunos mandam mensagem a qualquer hora e ela responde com base no treino deles. Parece que tenho uma assistente 24h sem custo extra."</span>
+    </p>
+    <div style="font-size:13px;font-weight:600;color:var(--ouro)">Camila Souza</div>
+    <div style="font-size:11px;color:var(--cinza)"><span data-i18n="roleCamila">Personal Trainer · Belo Horizonte · Beta Tester</span></div>
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- CONTATO -->
+<section>
+  <div class="section-tag" data-i18n="faleConosco">FALE CONOSCO</div>
+  <h2 class="section-titulo" data-i18n="duvidasSugestoes">Dúvidas ou sugestões?</h2>
+  <p class="section-sub"><span data-i18n="deixeSeuEmail">Deixe seu email — o desenvolvedor, um personal trainer como você, vai te responder pessoalmente.</span></p>
+
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <input id="contato-email" type="email" placeholder="Seu email" data-i18n-ph="phEmail" 
+      style="width:100%;padding:14px;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;color:var(--texto);font-size:14px">
+    <textarea id="contato-msg" placeholder="Sua dúvida ou sugestão..." data-i18n-ph="phMsg" rows="3"
+      style="width:100%;padding:14px;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;color:var(--texto);font-size:14px;resize:none"></textarea>
+    <button onclick="enviarContato()" 
+      style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;cursor:pointer">
+      ENVIAR →
+    </button>
+  </div>
+</section>
+
+<script>
+// ── TRILINGUAL PT/EN/ES (18/05/2026) ──────────────────────────
+var TX_LP_PRO = {
+  pt: {
+    badge:'PARA PERSONAL TRAINERS',
+    heroTitulo:'A plataforma que<br><span>transforma seu negócio</span>',
+    heroSub:'Gerencie seus alunos com ciência, IA e tecnologia de ponta. Periodização automática, análise postural com IA e muito mais — em todos os planos.',
+    btnComecar:'COMEÇAR 7 DIAS GRÁTIS →',
+    btnLogin:'Já tenho conta — fazer login',
+    integrada:'INTEGRADA', disponivel:'DISPONÍVEL', maisAlunos:'MAIS ALUNOS',
+    quemEstaPorTras:'QUEM ESTÁ POR TRÁS',
+    construidoPor:'Construído por quem vive isso',
+    depoimentoAndre:'"Ao longo de mais de 20 anos como personal trainer, percebi que a tecnologia existente não foi feita por quem entende de treino. Então decidi construir a minha."',
+    curriculo:'Bacharel e Licenciado em Educação Física, com 4 especializações nas principais areas do treinamento. Atuou 7 anos em avaliação física antes de se dedicar exclusivamente ao personal trainer, levando atletas a competições.',
+    ptDevFundador:'Personal Trainer · Desenvolvedor · Fundador AurumSci',
+    funcionalidades:'FUNCIONALIDADES',
+    tudoQuePrecisa:'Tudo que você precisa',
+    semRestricoes:'Em todos os planos — sem restrições por funcionalidade.',
+    featAuriT:'AURI PRO', featAuriD:'Assistente IA que conhece cada aluno e responde 24h por dia',
+    featPerT:'PERIODIZAÇÃO', featPerD:'Blocos e ondulação científica — Rhea et al. (2002)',
+    featPostT:'POSTURAL IA', featPostD:'Claude Vision analisa postura e prescreve corretivos',
+    featHrrT:'TESTE HRR', featHrrD:'Risco cardiovascular baseado em Cole et al. NEJM 1999',
+    featAvalT:'AVALIAÇÃO', featAvalD:'VO2 máx, composição corporal e força — ACSM 2022',
+    featWhT:'WHITE LABEL', featWhD:'Sua marca no app — disponível em todos os planos',
+    planos:'PLANOS', escolhaPlano:'Escolha o seu plano',
+    diferencaAlunos:'A diferença é só o número de alunos. Todos têm acesso completo a todas as funcionalidades.',
+    bronzeNome:'BRONZE', bronzeAlunos:'Até 10 alunos',
+    bronzeF1:'Acesso completo a todas as funcionalidades', bronzeF2:'AURI PRO — assistente IA 24h',
+    bronzeF3:'Periodização científica automática', bronzeF4:'Análise postural com IA',
+    bronzeF5:'White label — sua marca',
+    maisPopular:'MAIS POPULAR', prataNome:'PRATA', prataAlunos:'Até 20 alunos',
+    prataF1:'Tudo do Bronze', prataF2:'Até 20 alunos simultâneos',
+    prataF3:'Gestão financeira avançada', prataF4:'Alertas de reavaliação automáticos',
+    prataF5:'Questionário overtraining mensal',
+    ouroNome:'OURO', ouroAlunos:'Até 50 alunos',
+    ouroF1:'Tudo do Prata', ouroF2:'Até 50 alunos simultâneos',
+    ouroF3:'Suporte prioritário', ouroF4:'Relatórios avançados de evolução',
+    diamanteNome:'DIAMANTE', diamanteAlunos:'Alunos ilimitados',
+    diamanteF1:'Tudo do Ouro', diamanteF2:'Alunos ilimitados',
+    diamanteF3:'Avaliação com ultrassom integrada', diamanteF4:'Suporte VIP direto com o desenvolvedor',
+    seteDias:'7 dias grátis para testar', btnComecarGratis:'COMEÇAR GRÁTIS →',
+    porQue:'POR QUE AURUMSCI PRO', diferenteDosOutros:'Diferente dos outros',
+    construidoPor20:'Construído por um personal trainer com 20 anos de experiência.',
+    dif1T:'WHITE LABEL EM TODOS OS PLANOS', dif1D:'Concorrentes cobram R$300+/mês pelo white label. Na AurumSci PRO está incluso desde o Bronze.',
+    dif2T:'PLANOS PARA A REALIDADE BRASILEIRA', dif2D:'Em época difícil, 10 a 16 alunos. Em época boa, acima de 20. Com equipe, acima de 50. Temos o plano certo pra cada momento.',
+    dif3T:'BASE CIENTÍFICA REAL', dif3D:'Rhea et al. (2002), ACSM 2022, Cole NEJM 1999, Schoenfeld (2010). Cada funcionalidade tem embasamento científico citado.',
+    dif4T:'IA DE VERDADE', dif4D:'AURI usa Claude da Anthropic — a mesma IA usada por empresas Fortune 500. Não é um chatbot genérico.',
+    quemJaUsa:'QUEM JÁ USA', oQueDizem:'O que dizem nossos usuários',
+    depMaru:'"Tive uma experiência incrível com a navegabilidade da ferramenta. Como aluna obtive informações importantes que aliam prática com ciência reforçando minha performance e resultado."',
+    roleMaru:'Aluna AurumSci · Beta Tester',
+    depLucas:'"Antes eu controlava tudo no caderno e no WhatsApp. Agora o app organiza meus alunos, os pagamentos e ainda me avisa quando alguém está em overtraining. Profissionalizou meu negócio."',
+    roleLucas:'Personal Trainer · São Paulo · Beta Tester',
+    depCamila:'"A AURI é incrível — meus alunos mandam mensagem a qualquer hora e ela responde com base no treino deles. Parece que tenho uma assistente 24h sem custo extra."',
+    roleCamila:'Personal Trainer · Belo Horizonte · Beta Tester',
+    faleConosco:'FALE CONOSCO', duvidasSugestoes:'Dúvidas ou sugestões?',
+    deixeSeuEmail:'Deixe seu email — o desenvolvedor, um personal trainer como você, vai te responder pessoalmente.',
+    enviar:'ENVIAR →', areaDoAluno:'Área do Aluno', phEmail:'Seu email', phMsg:'Sua dúvida ou sugestão...',
+  },
+  en: {
+    badge:'FOR PERSONAL TRAINERS',
+    heroTitulo:'The platform that<br><span>transforms your business</span>',
+    heroSub:'Manage your students with science, AI and cutting-edge technology. Automated periodization, postural analysis with AI and much more — in all plans.',
+    btnComecar:'START 7-DAY FREE TRIAL →',
+    btnLogin:'I already have an account — log in',
+    integrada:'INTEGRATED', disponivel:'AVAILABLE', maisAlunos:'MORE STUDENTS',
+    quemEstaPorTras:'WHO IS BEHIND',
+    construidoPor:'Built by someone who lives this',
+    depoimentoAndre:'"Over more than 20 years as a personal trainer, I realized that existing technology was not made by people who understand training. So I decided to build my own."',
+    curriculo:'Bachelor and Licensed in Physical Education, with 4 specializations in the main training areas. Worked 7 years in physical assessment before dedicating exclusively to personal training, taking athletes to competitions.',
+    ptDevFundador:'Personal Trainer · Developer · AurumSci Founder',
+    funcionalidades:'FEATURES',
+    tudoQuePrecisa:'Everything you need',
+    semRestricoes:'In all plans — no feature restrictions.',
+    featAuriT:'AURI PRO', featAuriD:'AI assistant that knows each student and responds 24h a day',
+    featPerT:'PERIODIZATION', featPerD:'Scientific block and undulating — Rhea et al. (2002)',
+    featPostT:'POSTURAL AI', featPostD:'Claude Vision analyzes posture and prescribes corrections',
+    featHrrT:'HRR TEST', featHrrD:'Cardiovascular risk based on Cole et al. NEJM 1999',
+    featAvalT:'ASSESSMENT', featAvalD:'VO2 max, body composition and strength — ACSM 2022',
+    featWhT:'WHITE LABEL', featWhD:'Your brand on the app — available in all plans',
+    planos:'PLANS', escolhaPlano:'Choose your plan',
+    diferencaAlunos:'The difference is only the number of students. All have full access to all features.',
+    bronzeNome:'BRONZE', bronzeAlunos:'Up to 10 students',
+    bronzeF1:'Full access to all features', bronzeF2:'AURI PRO — 24h AI assistant',
+    bronzeF3:'Automatic scientific periodization', bronzeF4:'Postural analysis with AI',
+    bronzeF5:'White label — your brand',
+    maisPopular:'MOST POPULAR', prataNome:'SILVER', prataAlunos:'Up to 20 students',
+    prataF1:'Everything in Bronze', prataF2:'Up to 20 simultaneous students',
+    prataF3:'Advanced financial management', prataF4:'Automatic reassessment alerts',
+    prataF5:'Monthly overtraining questionnaire',
+    ouroNome:'GOLD', ouroAlunos:'Up to 50 students',
+    ouroF1:'Everything in Silver', ouroF2:'Up to 50 simultaneous students',
+    ouroF3:'Priority support', ouroF4:'Advanced evolution reports',
+    diamanteNome:'DIAMOND', diamanteAlunos:'Unlimited students',
+    diamanteF1:'Everything in Gold', diamanteF2:'Unlimited students',
+    diamanteF3:'Ultrasound assessment integrated', diamanteF4:'VIP support directly with the developer',
+    seteDias:'7-day free trial', btnComecarGratis:'START FREE →',
+    porQue:'WHY AURUMSCI PRO', diferenteDosOutros:'Different from the others',
+    construidoPor20:'Built by a personal trainer with 20 years of experience.',
+    dif1T:'WHITE LABEL IN ALL PLANS', dif1D:'Competitors charge $60+/month for white label. AurumSci PRO includes it from Bronze.',
+    dif2T:'PLANS FOR REAL LIFE', dif2D:'In tough times, 10 to 16 students. In good times, above 20. With a team, above 50. We have the right plan for every moment.',
+    dif3T:'REAL SCIENTIFIC BASIS', dif3D:'Rhea et al. (2002), ACSM 2022, Cole NEJM 1999, Schoenfeld (2010). Every feature has cited scientific basis.',
+    dif4T:'REAL AI', dif4D:'AURI uses Anthropic\'s Claude — the same AI used by Fortune 500 companies. Not a generic chatbot.',
+    quemJaUsa:'WHO USES IT', oQueDizem:'What our users say',
+    depMaru:'"I had an incredible experience with the tool\'s navigability. As a student I got important information that combines practice with science, enhancing my performance and results."',
+    roleMaru:'AurumSci Student · Beta Tester',
+    depLucas:'"Before I controlled everything in a notebook and on WhatsApp. Now the app organizes my students, payments and even warns me when someone is in overtraining. It professionalized my business."',
+    roleLucas:'Personal Trainer · São Paulo · Beta Tester',
+    depCamila:'"AURI is incredible — my students message anytime and it responds based on their training. It\'s like having a 24h assistant at no extra cost."',
+    roleCamila:'Personal Trainer · Belo Horizonte · Beta Tester',
+    faleConosco:'CONTACT US', duvidasSugestoes:'Questions or suggestions?',
+    deixeSeuEmail:'Leave your email — the developer, a personal trainer like you, will respond personally.',
+    enviar:'SEND →', areaDoAluno:'Student Area', phEmail:'Your email', phMsg:'Your question or suggestion...',
+  },
+  es: {
+    badge:'PARA PERSONAL TRAINERS',
+    heroTitulo:'La plataforma que<br><span>transforma tu negocio</span>',
+    heroSub:'Gestiona a tus alumnos con ciencia, IA y tecnología de punta. Periodización automática, análisis postural con IA y mucho más — en todos los planes.',
+    btnComecar:'COMENZAR 7 DÍAS GRATIS →',
+    btnLogin:'Ya tengo cuenta — iniciar sesión',
+    integrada:'INTEGRADA', disponivel:'DISPONIBLE', maisAlunos:'MÁS ALUMNOS',
+    quemEstaPorTras:'QUIÉN ESTÁ DETRÁS',
+    construidoPor:'Construido por quien lo vive',
+    depoimentoAndre:'"A lo largo de más de 20 años como personal trainer, percibí que la tecnología existente no fue hecha por quien entiende de entrenamiento. Entonces decidí construir la mía."',
+    curriculo:'Licenciado en Educación Física, con 4 especializaciones en las principales áreas del entrenamiento. Trabajó 7 años en evaluación física antes de dedicarse exclusivamente al personal trainer, llevando atletas a competiciones.',
+    ptDevFundador:'Personal Trainer · Desarrollador · Fundador AurumSci',
+    funcionalidades:'FUNCIONALIDADES',
+    tudoQuePrecisa:'Todo lo que necesitas',
+    semRestricoes:'En todos los planes — sin restricciones por funcionalidad.',
+    featAuriT:'AURI PRO', featAuriD:'Asistente IA que conoce a cada alumno y responde 24h al día',
+    featPerT:'PERIODIZACIÓN', featPerD:'Bloques y ondulación científica — Rhea et al. (2002)',
+    featPostT:'POSTURAL IA', featPostD:'Claude Vision analiza postura y prescribe correctivos',
+    featHrrT:'TEST HRR', featHrrD:'Riesgo cardiovascular basado en Cole et al. NEJM 1999',
+    featAvalT:'EVALUACIÓN', featAvalD:'VO2 máx, composición corporal y fuerza — ACSM 2022',
+    featWhT:'WHITE LABEL', featWhD:'Tu marca en la app — disponible en todos los planes',
+    planos:'PLANES', escolhaPlano:'Elige tu plan',
+    diferencaAlunos:'La diferencia es solo el número de alumnos. Todos tienen acceso completo a todas las funcionalidades.',
+    bronzeNome:'BRONCE', bronzeAlunos:'Hasta 10 alumnos',
+    bronzeF1:'Acceso completo a todas las funcionalidades', bronzeF2:'AURI PRO — asistente IA 24h',
+    bronzeF3:'Periodización científica automática', bronzeF4:'Análisis postural con IA',
+    bronzeF5:'White label — tu marca',
+    maisPopular:'MÁS POPULAR', prataNome:'PLATA', prataAlunos:'Hasta 20 alumnos',
+    prataF1:'Todo de Bronce', prataF2:'Hasta 20 alumnos simultáneos',
+    prataF3:'Gestión financiera avanzada', prataF4:'Alertas de reevaluación automáticas',
+    prataF5:'Cuestionario overtraining mensual',
+    ouroNome:'ORO', ouroAlunos:'Hasta 50 alumnos',
+    ouroF1:'Todo de Plata', ouroF2:'Hasta 50 alumnos simultáneos',
+    ouroF3:'Soporte prioritario', ouroF4:'Informes avanzados de evolución',
+    diamanteNome:'DIAMANTE', diamanteAlunos:'Alumnos ilimitados',
+    diamanteF1:'Todo de Oro', diamanteF2:'Alumnos ilimitados',
+    diamanteF3:'Evaluación con ultrasonido integrada', diamanteF4:'Soporte VIP directo con el desarrollador',
+    seteDias:'7 días gratis para probar', btnComecarGratis:'COMENZAR GRATIS →',
+    porQue:'POR QUÉ AURUMSCI PRO', diferenteDosOutros:'Diferente de los demás',
+    construidoPor20:'Construido por un personal trainer con 20 años de experiencia.',
+    dif1T:'WHITE LABEL EN TODOS LOS PLANES', dif1D:'Competidores cobran R$300+/mes por el white label. En AurumSci PRO está incluido desde Bronce.',
+    dif2T:'PLANES PARA LA REALIDAD', dif2D:'En época difícil, 10 a 16 alumnos. En época buena, arriba de 20. Con equipo, arriba de 50. Tenemos el plan correcto para cada momento.',
+    dif3T:'BASE CIENTÍFICA REAL', dif3D:'Rhea et al. (2002), ACSM 2022, Cole NEJM 1999, Schoenfeld (2010). Cada funcionalidad tiene base científica citada.',
+    dif4T:'IA DE VERDAD', dif4D:'AURI usa Claude de Anthropic — la misma IA usada por empresas Fortune 500. No es un chatbot genérico.',
+    quemJaUsa:'QUIÉN YA USA', oQueDizem:'Lo que dicen nuestros usuarios',
+    depMaru:'"Tuve una experiencia increíble con la navegabilidad de la herramienta. Como alumna obtuve informaciones importantes que combinan práctica con ciencia reforzando mi rendimiento y resultado."',
+    roleMaru:'Alumna AurumSci · Beta Tester',
+    depLucas:'"Antes controlaba todo en cuaderno y WhatsApp. Ahora la app organiza mis alumnos, los pagos y me avisa cuando alguien está en overtraining. Profesionalizó mi negocio."',
+    roleLucas:'Personal Trainer · São Paulo · Beta Tester',
+    depCamila:'"AURI es increíble — mis alumnos mandan mensaje a cualquier hora y responde basado en su entrenamiento. Parece que tengo una asistente 24h sin costo extra."',
+    roleCamila:'Personal Trainer · Belo Horizonte · Beta Tester',
+    faleConosco:'CONTÁCTANOS', duvidasSugestoes:'¿Dudas o sugerencias?',
+    deixeSeuEmail:'Deja tu email — el desarrollador, un personal trainer como tú, te responderá personalmente.',
+    enviar:'ENVIAR →', areaDoAluno:'Área del Alumno', phEmail:'Tu email', phMsg:'Tu duda o sugerencia...',
+  }
+};
+
+function setLangLP(lang, btn){
+  document.querySelectorAll('.lang-btn-lp').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (TX_LP_PRO[lang] && TX_LP_PRO[lang][key]) {
+      el.innerHTML = TX_LP_PRO[lang][key];
+    }
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.getAttribute('data-i18n-ph');
+    if (TX_LP_PRO[lang] && TX_LP_PRO[lang][key]) {
+      el.setAttribute('placeholder', TX_LP_PRO[lang][key]);
+    }
+  });
+  try{ localStorage.setItem('aurum_lang_lp', lang); }catch(e){}
+}
+
+// Aplica idioma salvo no carregamento
+window.addEventListener('DOMContentLoaded', function(){
+  try{
+    var saved = localStorage.getItem('aurum_lang_lp') || 'pt';
+    var btn = document.querySelector('.lang-btn-lp[onclick*="\'' + saved + '\'"]');
+    setLangLP(saved, btn);
+  }catch(e){}
+});
+
+function enviarContato(){
+  var email = document.getElementById('contato-email').value.trim();
+  var msg = document.getElementById('contato-msg').value.trim();
+  if(!email){ alert('Informe seu email'); return; }
+  fetch('/pagamento/contato', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({email:email, mensagem:msg})})
+  .then(function(){ 
+    document.getElementById('contato-email').value='';
+    document.getElementById('contato-msg').value='';
+    alert('Mensagem enviada! Responderemos em breve.');
+  }).catch(function(){ alert('Erro ao enviar. Tente novamente.'); });
+}
+</script>
+
+<footer>
+  André Andrade · CREF 62702-G/SP<br>
+  <a href="https://aurumsc.com.br">aurumsc.com.br</a> · <a href="/aluno" data-i18n="areaDoAluno">Área do Aluno</a>
+</footer>
+
+</body>
+</html>
+</body>
+</html>

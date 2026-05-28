@@ -92,7 +92,7 @@ h1{font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--ouro);
     <ul class="plan-features">
       <li>Até 50 alunos</li>
       <li>AURI chatbot IA</li>
-      <li>Cobrança automática Stripe</li>
+      <li>Renovação automática via Apple</li>
       <li>Tudo do Prata</li>
     </ul>
     <button class="btn-subscribe">ASSINAR OURO</button>
@@ -125,10 +125,14 @@ h1{font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--ouro);
 <script type="module">
 // PAYWALL PRO - RevenueCat SDK v13
 // Migrado 25/05/2026 de @squareetlabs (morto) para @revenuecat/purchases-capacitor
-import { Purchases, LOG_LEVEL } from '@revenuecat/purchases-capacitor';
+// FIX 27/05/2026: Capacitor iOS nao aceita import() ESM - usar window.Capacitor.Plugins
+const Purchases = (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Purchases) || null;
+const LOG_LEVEL = { DEBUG: 'debug', INFO: 'info', WARN: 'warn', ERROR: 'error', VERBOSE: 'verbose' };
+if (!Purchases) {
+  console.error('[paywall-pro] Purchases plugin nao encontrado em Capacitor.Plugins');
+}
 
-const API_KEY_PRO = 'appl_XJmxVaubfTbINpIvvADzZkUhNsa
-';
+const API_KEY_PRO = 'appl_XJmxVaubfTbINpIvvADzZkUhNsa';
 const ENTITLEMENT_ID = 'premium_pro';
 const OFFERING_ID = 'pro_default';
 

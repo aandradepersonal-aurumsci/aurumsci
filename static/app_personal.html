@@ -2686,6 +2686,18 @@ function avalAba(aba){
     setTimeout(preencherIdadeTestes, 30);
   } else if(aba==='vo2'){
     el.innerHTML = renderVO2Personal();
+    setTimeout(function(){
+      var seq = ['p-hrr-pico','p-hrr-1min','p-hrr-pa-rep-s','p-hrr-pa-rep-d','p-hrr-pa-pos-s','p-hrr-pa-pos-d'];
+      seq.forEach(function(id, i){
+        var el = document.getElementById(id);
+        if(el){ el.onkeydown = function(ev){
+          if(ev.key === 'Enter'){ ev.preventDefault();
+            if(i < seq.length-1){ var prox = document.getElementById(seq[i+1]); if(prox) prox.focus(); }
+            else { if(typeof calcHRRP === 'function') calcHRRP(); }
+          }
+        }; }
+      });
+    }, 60);
     // FIX 19/05/2026: puxa idade/sexo do aluno pra calcular faixa etaria ACSM
     fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/perfil-vo2', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.ok ? r.json() : {}; })

@@ -3624,11 +3624,20 @@ function salvarTreino(){
   var obj = document.getElementById('treino-obj').value;
   var dias = parseInt(document.getElementById('treino-dias').value);
   if(treinoSessoes.length === 0){ mostrarToast('Adicione pelo menos uma sessão!'); return; }
+  var btnSalvar = document.querySelector('button[onclick="salvarTreino()"]');
+  var txtOriginal = btnSalvar ? btnSalvar.innerHTML : '';
+  if(btnSalvar){ btnSalvar.disabled = true; btnSalvar.style.opacity = '0.7'; btnSalvar.innerHTML = '💾 Salvando...'; }
   var dados = {objetivo:obj, nivel:'intermediario', dias_disponiveis:dias, sessoes: treinoSessoes.map(function(s){ return {nome:s.nome, exercicios:s.exercicios.map(function(e){ return {exercicio_id:e.id, series:e.series, repeticoes:e.repeticoes, tempo_descanso_seg:e.descanso}; })}; })};
   fetch(window.API_BASE + '/app-personal/aluno/' + treinoAlunoId + '/salvar-treino', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify(dados)})
   .then(function(r){ return r.json(); })
-  .then(function(d){ mostrarToast('Treino salvo! 💪'); })
-  .catch(function(){ mostrarToast('Erro ao salvar'); });
+  .then(function(d){
+    mostrarToast('Treino salvo! 💪');
+    if(btnSalvar){ btnSalvar.style.background = 'linear-gradient(135deg,var(--verde),#00B37E)'; btnSalvar.style.color = '#fff'; btnSalvar.innerHTML = '✅ TREINO SALVO!'; setTimeout(function(){ btnSalvar.disabled = false; btnSalvar.style.opacity = '1'; btnSalvar.style.background = 'linear-gradient(135deg,var(--ouro),var(--ouro2))'; btnSalvar.style.color = '#0A0A0F'; btnSalvar.innerHTML = txtOriginal; }, 2500); }
+  })
+  .catch(function(){
+    mostrarToast('Erro ao salvar');
+    if(btnSalvar){ btnSalvar.disabled = false; btnSalvar.style.opacity = '1'; btnSalvar.innerHTML = txtOriginal; }
+  });
 }
 
 // ── PERIODIZAÇÃO ─────────────────────────────────────────────

@@ -2561,6 +2561,7 @@ function avalAba(aba){
   });
   var el = document.getElementById('aval-aba-content');
   if(!el) return;
+  setTimeout(preencherIdadeTestes, 60);
 
   if(aba==='anamnese'){
     el.innerHTML = renderAnamnese();
@@ -2682,6 +2683,7 @@ function avalAba(aba){
 
   } else if(aba==='mmii'){
     el.innerHTML = renderMMIIPersonal();
+    setTimeout(preencherIdadeTestes, 30);
   } else if(aba==='vo2'){
     el.innerHTML = renderVO2Personal();
     // FIX 19/05/2026: puxa idade/sexo do aluno pra calcular faixa etaria ACSM
@@ -2694,6 +2696,7 @@ function avalAba(aba){
     .catch(function(err){ console.warn('Erro ao carregar perfil VO2:', err); });
   } else if(aba==='forca'){
     el.innerHTML = renderForcaPersonal();
+    setTimeout(preencherIdadeTestes, 30);
     var idadeAuto = (window._avalDados && window._avalDados.idade) || window._alunoIdade;
     if(idadeAuto){ var ci = document.getElementById('pren-idade'); if(ci) ci.value = idadeAuto; }
 
@@ -3196,6 +3199,12 @@ function calcWells(){
   document.getElementById('p-wells-res').innerHTML = resultBox('FLEXIBILIDADE — RESULTADO','var(--azul)',[
     {label:'Distância alcançada',val:dist+' cm'},{label:'Classificação',val:classif,cor:cor}
   ],'Wells & Dillon (1952) · ACSM Guidelines 2022');
+}
+function preencherIdadeTestes(){
+  var idade = (window._avalDados && window._avalDados.idade) || window._alunoIdade;
+  if(!idade) return;
+  var campos = ['pren-idade','d3-idade','d7-idade','us-idade','p-milha-idade','p-wells-idade','p-forca-idade','p-mmii-idade'];
+  campos.forEach(function(id){ var el = document.getElementById(id); if(el && !el.value) el.value = idade; });
 }
 function renderForcaPersonal(){
   return '<div>' +

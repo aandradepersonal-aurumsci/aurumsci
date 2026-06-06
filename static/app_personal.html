@@ -3202,9 +3202,16 @@ function calcWells(){
 }
 function preencherIdadeTestes(){
   var idade = (window._avalDados && window._avalDados.idade) || window._alunoIdade;
-  if(!idade) return;
-  var campos = ['pren-idade','d3-idade','d7-idade','us-idade','p-milha-idade','p-wells-idade','p-forca-idade','p-mmii-idade'];
-  campos.forEach(function(id){ var el = document.getElementById(id); if(el && !el.value) el.value = idade; });
+  if(idade){
+    var campos = ['pren-idade','d3-idade','d7-idade','us-idade','p-milha-idade','p-wells-idade','p-forca-idade','p-mmii-idade'];
+    campos.forEach(function(id){ var el = document.getElementById(id); if(el && !el.value) el.value = idade; });
+  }
+  var pesoEl = document.getElementById('an-peso');
+  var peso = (pesoEl && pesoEl.value) ? pesoEl.value : ((window._avalDados && window._avalDados.peso) || '');
+  if(peso){
+    var camposPeso = ['us-peso','bio-peso','p-milha-peso'];
+    camposPeso.forEach(function(id){ var el = document.getElementById(id); if(el && !el.value) el.value = peso; });
+  }
 }
 function renderForcaPersonal(){
   return '<div>' +

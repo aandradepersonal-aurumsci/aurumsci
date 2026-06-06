@@ -2694,6 +2694,8 @@ function avalAba(aba){
     .catch(function(err){ console.warn('Erro ao carregar perfil VO2:', err); });
   } else if(aba==='forca'){
     el.innerHTML = renderForcaPersonal();
+    var idadeAuto = (window._avalDados && window._avalDados.idade) || window._alunoIdade;
+    if(idadeAuto){ var ci = document.getElementById('pren-idade'); if(ci) ci.value = idadeAuto; }
 
   } else if(aba==='resultados'){
     el.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:20px">Carregando...</div>';

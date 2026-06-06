@@ -178,7 +178,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 .modal{background:var(--bg2);border-radius:24px 24px 0 0;padding:24px;width:100%;max-height:80vh;overflow-y:auto}
 .modal-titulo{font-family:'Bebas Neue';font-size:28px;letter-spacing:1px;margin-bottom:4px}
 .modal-sub{font-size:13px;color:var(--cinza);margin-bottom:20px}
-.modal-close{float:right;font-size:24px;cursor:pointer;color:var(--cinza);margin-top:-4px}
+.modal-close{display:inline-flex;align-items:center;gap:6px;float:left;font-size:14px;font-weight:600;cursor:pointer;color:var(--ouro);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:8px 16px 8px 12px;margin-bottom:16px;font-family:DM Sans}
 .field-mini{margin-bottom:12px}
 .field-mini label{display:block;font-size:10px;color:var(--ouro);letter-spacing:2px;margin-bottom:6px;font-weight:600}
 .field-mini input, .field-mini select{width:100%;padding:12px 16px;background:var(--bg3);border:1px solid var(--borda);border-radius:12px;color:var(--texto);font-size:14px;font-family:'DM Sans';outline:none}
@@ -569,7 +569,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <!-- MODAL CONTRATO SERVICOS -->
 <div class="modal-overlay" id="modal-contrato-servico" style="display:none">
   <div class="modal-card" style="max-height:90vh;overflow-y:auto">
-    <span class="modal-close" onclick="fecharModal('modal-contrato-servico')">×</span>
+    <span class="modal-close" onclick="fecharModal('modal-contrato-servico')">‹ Voltar</span>
     <div class="modal-titulo">📄 CONTRATO DE SERVIÇOS</div>
     <div style="font-size:11px;color:var(--cinza);text-align:center;margin-bottom:16px;font-style:italic">(sugerido, com base em comum acordo entre as partes)</div>
 
@@ -602,7 +602,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 <!-- MODAL NOVO ALUNO -->
 <div class="modal-overlay" id="modal-novo-aluno">
   <div class="modal">
-    <span class="modal-close" onclick="fecharModal('modal-novo-aluno')">×</span>
+    <span class="modal-close" onclick="fecharModal('modal-novo-aluno')">‹ Voltar</span>
     <div class="modal-titulo" id="t-modal-titulo">NOVO ALUNO</div>
     <div class="modal-sub" id="t-modal-sub">Preencha os dados básicos</div>
 
@@ -2059,6 +2059,7 @@ function abrirModalPagamento(){
   var inp = 'width:100%;padding:8px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:13px;box-sizing:border-box';
   var html = '<div style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;padding:20px;overflow-y:auto" onclick="this.remove()">';
   html += '<div style="background:#12121A;border-radius:20px;padding:24px;max-width:400px;margin:40px auto;border:1px solid var(--borda)" onclick="event.stopPropagation()">';
+  html += '<div onclick="this.closest(&#39;div[style*=fixed]&#39;).remove()" style="display:inline-flex;align-items:center;gap:6px;color:var(--ouro);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:8px 16px 8px 12px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px;font-family:DM Sans">‹ Voltar</div>';
   html += '<div style="font-family:Bebas Neue;font-size:20px;color:var(--ouro2);margin-bottom:14px">➕ REGISTRAR COBRANÇA</div>';
 
   // Aluno
@@ -4341,6 +4342,7 @@ function salvarMMII(){
 function mostrarRoteiro(){
   var h = '<div style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;padding:20px;overflow-y:auto" onclick="this.remove()">';
   h += '<div style="background:#12121A;border-radius:20px;padding:24px;max-width:400px;margin:40px auto;border:1px solid rgba(201,168,76,.3)" onclick="event.stopPropagation()">';
+  h += '<div onclick="this.closest(&#39;div[style*=fixed]&#39;).remove()" style="display:inline-flex;align-items:center;gap:6px;color:var(--ouro);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:8px 16px 8px 12px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px;font-family:DM Sans">‹ Voltar</div>';
   h += '<div style="font-family:Bebas Neue;font-size:20px;color:var(--ouro2);margin-bottom:6px">📋 ROTEIRO DE AVALIAÇÃO</div>';
   h += '<div style="font-size:11px;color:var(--cinza);margin-bottom:14px;line-height:1.5">Siga esta ordem para não comprometer os resultados. VO2 sempre por último!</div>';
   var steps = [
@@ -4396,7 +4398,7 @@ function baixarMeuContrato() {
 <!-- MODAL PERFIL ALUNO -->
 <div class="modal-overlay" id="modal-perfil-aluno" style="align-items:center;padding:0">
   <div class="modal" style="border-radius:20px;max-height:90vh;margin:20px">
-    <span class="modal-close" onclick="fecharModal('modal-perfil-aluno')">×</span>
+    <span class="modal-close" onclick="fecharModal('modal-perfil-aluno')">‹ Voltar</span>
     <div id="perfil-aluno-content">
       <div style="text-align:center;padding:30px;color:var(--cinza)">Carregando...</div>
     </div>
@@ -4406,7 +4408,7 @@ function baixarMeuContrato() {
 <!-- MODAL POSTURAL DO ALUNO (pelo personal) -->
 <div class="modal-overlay" id="modal-postural-aluno" style="align-items:center;padding:0">
   <div class="modal" style="border-radius:20px;max-height:90vh;margin:20px">
-    <span class="modal-close" onclick="fecharModal('modal-postural-aluno');if(avalAlunoId){abrirPerfilAluno(avalAlunoId);mostrarToast('📋 Clique em AVAL. para continuar os testes');}">×</span>
+    <span class="modal-close" onclick="fecharModal('modal-postural-aluno');if(avalAlunoId){abrirPerfilAluno(avalAlunoId);mostrarToast('📋 Clique em AVAL. para continuar os testes');}">‹ Voltar</span>
     <div class="modal-titulo">ANÁLISE POSTURAL</div>
     <div class="modal-sub" id="postural-aluno-nome">Selecione o aluno</div>
     <div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--cinza);line-height:1.6">
@@ -4450,7 +4452,7 @@ function baixarMeuContrato() {
 <!-- MODAL UPGRADE - Aparece quando bate limite do plano -->
 <div id="modal-upgrade" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;padding:20px">
   <div style="background:linear-gradient(135deg,#12121A,#1A1A26);border:2px solid var(--ouro);border-radius:24px;padding:32px 24px;max-width:420px;width:100%;text-align:center;position:relative;box-shadow:0 20px 60px rgba(201,168,76,0.2)">
-    <span onclick="document.getElementById('modal-upgrade').style.display='none'" style="position:absolute;top:16px;right:20px;font-size:28px;cursor:pointer;color:var(--cinza)">×</span>
+    <span onclick="document.getElementById('modal-upgrade').style.display='none'" style="display:inline-flex;align-items:center;gap:6px;color:var(--ouro);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:8px 16px 8px 12px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans">‹ Voltar</span>
     
     <div style="font-size:48px;margin-bottom:16px">🚀</div>
     
@@ -4479,7 +4481,7 @@ function baixarMeuContrato() {
 <!-- MODAL MEU PLANO -->
 <div id="modal-meu-plano" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;padding:20px;overflow-y:auto">
   <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:24px;padding:32px;max-width:520px;width:100%;position:relative;max-height:90vh;overflow-y:auto;margin:auto">
-    <span onclick="document.getElementById('modal-meu-plano').style.display='none'" style="position:absolute;top:16px;right:20px;font-size:28px;cursor:pointer;color:var(--cinza);z-index:10">×</span>
+    <span onclick="document.getElementById('modal-meu-plano').style.display='none'" style="display:inline-flex;align-items:center;gap:6px;color:var(--ouro);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:8px 16px 8px 12px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans;z-index:10">‹ Voltar</span>
     <div style="text-align:center;margin-bottom:24px">
       <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;color:var(--ouro)">💎 MEU PLANO</div>
       <div style="font-size:12px;color:var(--cinza);margin-top:4px">Gerencie sua assinatura</div>

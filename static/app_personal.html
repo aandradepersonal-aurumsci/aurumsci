@@ -3399,7 +3399,7 @@ function renderMontadorTreino(){
   html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="filtros-grupo">';
   var grupos = ['Peito','Costas','Ombros','Bíceps','Tríceps','Pernas','Glúteos','Abdômen','Corretivo','Funcional'];
   grupos.forEach(function(g){
-    html += '<button onclick="filtrarGrupo(\'' + g + '\')" style="padding:4px 10px;border-radius:20px;background:var(--bg);border:1px solid var(--borda);color:var(--cinza);font-size:11px;cursor:pointer">' + g + '</button>';
+    html += '<button class="grupo-btn" data-grupo="' + g + '" onclick="filtrarGrupo(\'' + g + '\')" style="padding:4px 10px;border-radius:20px;background:var(--bg);border:1px solid var(--borda);color:var(--cinza);font-size:11px;cursor:pointer">' + g + '</button>';
   });
   html += '</div>';
   html += '<div id="lista-exercicios-busca" style="max-height:400px;overflow-y:auto"></div>';
@@ -3512,6 +3512,19 @@ function filtrarExercicios(){
 function filtrarGrupo(g){
   var lista = exerciciosBanco.filter(function(e){ return (e.grupo_muscular||'').toLowerCase() === g.toLowerCase(); });
   renderListaExercicios(lista);
+  document.querySelectorAll('.grupo-btn').forEach(function(b){
+    if(b.getAttribute('data-grupo') === g){
+      b.style.background = 'rgba(201,168,76,.15)';
+      b.style.border = '1.5px solid var(--ouro)';
+      b.style.color = 'var(--ouro)';
+      b.style.fontWeight = '700';
+    } else {
+      b.style.background = 'var(--bg)';
+      b.style.border = '1px solid var(--borda)';
+      b.style.color = 'var(--cinza)';
+      b.style.fontWeight = 'normal';
+    }
+  });
 }
 
 function renderListaExercicios(lista){

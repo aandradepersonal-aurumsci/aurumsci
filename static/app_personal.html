@@ -3201,7 +3201,8 @@ function calcWells(){
   ],'Wells & Dillon (1952) · ACSM Guidelines 2022');
 }
 function preencherIdadeTestes(){
-  var idade = (window._avalDados && window._avalDados.idade) || window._alunoIdade;
+  var idadeEl = document.getElementById('an-idade');
+  var idade = (idadeEl && idadeEl.value) ? idadeEl.value : ((window._avalDados && window._avalDados.idade) || window._alunoIdade);
   if(idade){
     var campos = ['pren-idade','d3-idade','d7-idade','us-idade','p-milha-idade','p-wells-idade','p-forca-idade','p-mmii-idade'];
     campos.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = idade; });

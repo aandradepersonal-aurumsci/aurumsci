@@ -4931,6 +4931,7 @@ async function abrirCobrancaAluno(alunoId){
   modal += '<div style="background:#12121A;border:2px solid var(--ouro);border-radius:20px;padding:24px;max-width:600px;margin:40px auto" onclick="event.stopPropagation()">';
   
   // Título
+  modal += '<div onclick="this.closest(&#39;div[style*=fixed]&#39;).remove()" style="display:inline-flex;align-items:center;gap:6px;color:var(--ouro);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:8px 16px 8px 12px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px;font-family:DM Sans">‹ Voltar</div>';
   modal += '<div style="font-family:Bebas Neue;font-size:24px;color:var(--ouro);margin-bottom:20px;text-align:center">💰 COBRANÇA DO ALUNO</div>';
   modal += '<div style="font-size:16px;color:#fff;text-align:center;margin-bottom:24px">' + aluno.nome + '</div>';
   

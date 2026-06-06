@@ -417,6 +417,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
   
   <!-- LOJA PRO -->
   <div class="screen" id="screen-loja">
+    <div onclick="voltarInicio()" style="display:inline-flex;align-items:center;gap:6px;color:var(--ouro);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:7px 14px 7px 11px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:14px;font-family:DM Sans">‹ Voltar</div>
     <div class="section-title">LOJA PRO</div>
     <div class="section-sub">Equipamentos profissionais de avaliação e treino</div>
     <div style="font-size:11px;color:var(--cinza);margin-bottom:12px;line-height:1.6">🛒 Links de referência — em breve com descontos exclusivos para assinantes AurumSci PRO</div>
@@ -425,6 +426,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 
   <!-- FINANCEIRO -->
   <div class="screen" id="screen-fin">
+    <div onclick="voltarInicio()" style="display:inline-flex;align-items:center;gap:6px;color:var(--ouro);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:7px 14px 7px 11px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:14px;font-family:DM Sans">‹ Voltar</div>
     <div class="section-title" id="t-titulo-fin">FINANCEIRO</div>
     <div class="section-sub" id="t-sub-fin" data-i18n="controlePagamentos">Controle de pagamentos</div>
 
@@ -463,6 +465,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 
   <!-- AURI PERSONAL -->
   <div class="screen" id="screen-chat">
+    <div onclick="voltarInicio()" style="display:inline-flex;align-items:center;gap:6px;color:var(--ouro);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:7px 14px 7px 11px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:14px;font-family:DM Sans">‹ Voltar</div>
     <div class="chat-header">
       <div class="chat-titulo">AURI</div>
       <div class="chat-status">
@@ -2474,6 +2477,14 @@ function mudarTab(tab, el){
   }
 }
 
+function voltarInicio(){
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById('screen-dash').classList.add('active');
+  var tabInicio = document.querySelector('.tab');
+  if(tabInicio) tabInicio.classList.add('active');
+  window.scrollTo(0,0);
+}
 // ── BUBBLE ────────────────────────────────────────────────────
 function toggleBubble(){
   var b = document.getElementById('auri-bubble');

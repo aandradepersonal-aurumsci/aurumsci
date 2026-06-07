@@ -2728,6 +2728,17 @@ function avalAba(aba){
   }
 }
 
+function ativarEnter(ids, fnFinal){
+  ids.forEach(function(id, i){
+    var el = document.getElementById(id);
+    if(el){ el.onkeydown = function(ev){
+      if(ev.key === 'Enter'){ ev.preventDefault();
+        if(i < ids.length-1){ var p = document.getElementById(ids[i+1]); if(p) p.focus(); }
+        else if(typeof fnFinal === 'function'){ fnFinal(); }
+      }
+    }; }
+  });
+}
 function compAba(tipo){
   var btns = ['bio','3d','7d','us'];
   var cores = {bio:'var(--azul)',  '3d':'var(--verde)', '7d':'var(--ouro)', us:'#9B59B6'};
@@ -2797,6 +2808,13 @@ function compAba(tipo){
       '<button onclick="calcUltrassom()" style="width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,#9B59B6,#6C3483);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">CALCULAR — ULTRASSOM</button>' +
       '<div id="us-resultado" style="margin-top:12px"></div>';
   }
+  var mapaEnterComp = {
+    bio: [['bio-peso','bio-gord','bio-agua','bio-osseo'], calcBio],
+    '3d': [['d3-idade','d3-d1','d3-d2','d3-d3'], calc3Dobras],
+    '7d': [['d7-idade','d7-peit','d7-axil','d7-tric','d7-sube','d7-abdo','d7-supr','d7-coxa'], calc7Dobras],
+    us: [['us-idade','us-peso','us-altura','us-peit','us-axil','us-tric','us-sube','us-abdo','us-supr','us-coxa','us-pant','us-bice'], calcUltrassom]
+  };
+  if(mapaEnterComp[tipo]){ setTimeout(function(){ ativarEnter(mapaEnterComp[tipo][0], mapaEnterComp[tipo][1]); }, 90); }
 }
 
 function field(id, label, unit, ph){

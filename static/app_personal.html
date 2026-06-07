@@ -2561,7 +2561,6 @@ function avalAba(aba){
   });
   var el = document.getElementById('aval-aba-content');
   if(!el) return;
-  setTimeout(preencherIdadeTestes, 60);
 
   if(aba==='anamnese'){
     el.innerHTML = renderAnamnese();
@@ -2685,7 +2684,6 @@ function avalAba(aba){
   } else if(aba==='mmii'){
     el.innerHTML = renderMMIIPersonal();
     setTimeout(function(){ ativarEnter(['p-mmii-reps','p-mmii-idade'], calcMMIIP); }, 80);
-    setTimeout(preencherIdadeTestes, 30);
   } else if(aba==='vo2'){
     el.innerHTML = renderVO2Personal();
     setTimeout(function(){
@@ -2717,7 +2715,6 @@ function avalAba(aba){
       ativarEnter(['p-wells','p-wells-idade'], calcWells);
       ativarEnter(['p-flexao','p-barra','p-abdom','p-pren-dom','p-pren-ndom','p-forca-idade'], calcForcaP);
     }, 80);
-    setTimeout(preencherIdadeTestes, 30);
     var idadeAuto = (window._avalDados && window._avalDados.idade) || window._alunoIdade;
     if(idadeAuto){ var ci = document.getElementById('pren-idade'); if(ci) ci.value = idadeAuto; }
 

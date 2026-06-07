@@ -2641,6 +2641,7 @@ function avalAba(aba){
 
   } else if(aba==='circunf'){
     el.innerHTML = renderCircunferencias();
+    setTimeout(function(){ ativarEnter(['circ-torax','circ-cintura','circ-abdom','circ-quadril','circ-braco-d','circ-braco-e','circ-antbr-d','circ-antbr-e','circ-coxa-d','circ-coxa-e','circ-pant-d','circ-pant-e'], salvarCircunferencias); }, 80);
     // FIX 19/05/2026: pre-popula campos com ultima avaliacao (trainer ve historico pra adaptar treino)
     fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/medidas', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.ok ? r.json() : {}; })

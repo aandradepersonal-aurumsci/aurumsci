@@ -2684,6 +2684,7 @@ function avalAba(aba){
 
   } else if(aba==='mmii'){
     el.innerHTML = renderMMIIPersonal();
+    setTimeout(function(){ ativarEnter(['p-mmii-reps','p-mmii-idade'], calcMMIIP); }, 80);
     setTimeout(preencherIdadeTestes, 30);
   } else if(aba==='vo2'){
     el.innerHTML = renderVO2Personal();
@@ -2698,6 +2699,9 @@ function avalAba(aba){
           }
         }; }
       });
+      ativarEnter(['p-cooper-dist','p-cooper-fc'], function(){ calcVO2P('cooper'); });
+      ativarEnter(['p-milha-tempo','p-milha-fc','p-milha-peso','p-milha-idade'], function(){ calcVO2P('milha'); });
+      ativarEnter(['p-step-fc'], function(){ calcVO2P('step'); });
     }, 60);
     // FIX 19/05/2026: puxa idade/sexo do aluno pra calcular faixa etaria ACSM
     fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/perfil-vo2', {headers:{'Authorization':'Bearer '+token}})
@@ -2709,6 +2713,10 @@ function avalAba(aba){
     .catch(function(err){ console.warn('Erro ao carregar perfil VO2:', err); });
   } else if(aba==='forca'){
     el.innerHTML = renderForcaPersonal();
+    setTimeout(function(){
+      ativarEnter(['p-wells','p-wells-idade'], calcWells);
+      ativarEnter(['p-flexao','p-barra','p-abdom','p-pren-dom','p-pren-ndom','p-forca-idade'], calcForcaP);
+    }, 80);
     setTimeout(preencherIdadeTestes, 30);
     var idadeAuto = (window._avalDados && window._avalDados.idade) || window._alunoIdade;
     if(idadeAuto){ var ci = document.getElementById('pren-idade'); if(ci) ci.value = idadeAuto; }

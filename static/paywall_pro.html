@@ -212,7 +212,7 @@ window.assinar = async function(productId){
     return;
   }
   if (!rcReady || !offerings){
-    showStatus('Carregando produtos, aguarde 3s', true);
+    showStatus('Carregando produtos, aguarde...', false);
     return;
   }
   try {
@@ -248,7 +248,7 @@ window.restaurar = async function(){
     return;
   }
   if (!rcReady){
-    showStatus('Carregando, aguarde 3s', true);
+    showStatus('Carregando, aguarde...', false);
     return;
   }
   try {

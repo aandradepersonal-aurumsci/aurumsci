@@ -2272,12 +2272,18 @@ function renderTreino(){
         .then(function(r){ return r.ok ? r.json() : []; })
         .then(function(avals){
           if(Array.isArray(avals) && avals.length > 0){
-            var ultimaAval = avals[0];
-            if(ultimaAval.postura_cabeca || ultimaAval.postura_ombros || ultimaAval.postura_coluna){
-              localStorage.setItem('aurum_postural_feita', '1');
+            // FIX 11/06/2026: varre TODAS as avaliacoes (padrao ultimoNaoNulo),
+            // nao so avals[0] - VO2 feito em aval antiga vale para sempre.
+            var temPostural = false, temHrr = false;
+            for(var ai = 0; ai < avals.length; ai++){
+              if(avals[ai].postura_cabeca || avals[ai].postura_ombros || avals[ai].postura_coluna) temPostural = true;
+              if(avals[ai].vo2max || avals[ai].cooper_metros) temHrr = true;
             }
-            if(ultimaAval.vo2max || ultimaAval.cooper_metros){
+            if(temPostural) localStorage.setItem('aurum_postural_feita', '1');
+            if(temHrr){
               localStorage.setItem('aurum_hrr_feito', '1');
+              // Esconde o banner HRR JA NESTA visita (fetch chegou depois do render)
+              document.querySelectorAll('.dica-hrr').forEach(function(el){ el.style.display = 'none'; });
             }
           }
         })
@@ -2353,7 +2359,8 @@ function renderDicaAvaliacao(posturalFeita, hrrFeito){
   }
   var html = '<div style="margin-top:20px">';
   msgs.forEach(function(m){
-    html += '<div style="display:flex;gap:12px;align-items:flex-start;background:' + m.cor + ';border:1px solid ' + m.borda + ';border-radius:16px;padding:14px;margin-bottom:10px">' +
+    var classeDica = (m.emoji === '\u2764\uFE0F' || m.titulo.indexOf('intensidade') > -1) ? 'dica-hrr' : 'dica-postural';
+    html += '<div class="' + classeDica + '" style="display:flex;gap:12px;align-items:flex-start;background:' + m.cor + ';border:1px solid ' + m.borda + ';border-radius:16px;padding:14px;margin-bottom:10px">' +
       '<div style="font-size:24px;flex-shrink:0">' + m.emoji + '</div>' +
       '<div style="flex:1">' +
         '<div style="font-size:13px;font-weight:700;color:var(--texto);margin-bottom:4px">' + m.titulo + '</div>' +

@@ -245,6 +245,15 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 
 <!-- APP -->
 <div id="app">
+    <!-- Banner contrato CREF — discreto, sem bloquear navegacao -->
+    <div id="banner-contrato-cref" style="display:none;background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.08));border:1px solid rgba(201,168,76,.35);border-radius:12px;padding:16px;margin-bottom:16px;flex-direction:row;gap:12px;align-items:center">
+      <div style="font-size:24px">✍️</div>
+      <div style="flex:1">
+        <div style="font-weight:700;color:var(--ouro);font-size:14px;margin-bottom:4px">Valide seu CREF</div>
+        <div style="font-size:12px;color:var(--texto);line-height:1.5">Complete o contrato de prestação de serviços e informe seu registro CREF. Leva 2 minutos!</div>
+      </div>
+      <button onclick="abrirContratoAurumSci()" style="padding:10px 20px;background:var(--ouro);color:#000;border:none;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap">Preencher →</button>
+    </div>
   <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-logo" id="topbar-logo" style="display:flex;align-items:center;gap:2px"><svg viewBox="0 0 44 44" width="22" height="22" style="margin-right:4px"><polygon points="22,4 38,13 38,31 22,40 6,31 6,13" fill="none" stroke="#F0C040" stroke-width="1.5"/><text x="22" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F0C040">A</text></svg><span style="font-family:Georgia,serif;font-size:20px;font-weight:400;letter-spacing:2px;color:#F0C040">AURUM</span><span style="font-family:Georgia,serif;font-size:10px;font-style:italic;color:#fff;margin-left:2px">sci.</span><span style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:#4B9FFF;margin-left:2px">PRO</span></div>
@@ -1205,8 +1214,8 @@ function carregarApp(){
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(d && d.contrato_aceito === false){
-      // Personal ainda nao aceitou contrato - abre modal obrigatoriamente
-      setTimeout(function(){ abrirContratoAurumSci(); }, 800);
+      // Personal nao aceitou contrato - mostra banner discreto em vez de modal bloqueante
+      document.getElementById('banner-contrato-cref').style.display = 'flex';
     }
   })
   .catch(function(e){ console.warn('[contrato/status] erro:', e); });

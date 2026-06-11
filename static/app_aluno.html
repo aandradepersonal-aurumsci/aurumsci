@@ -4560,12 +4560,23 @@ function carregarBannerAvaliacao(){
   .then(function(d){
     var slot = document.getElementById('banner-onboarding-avaliacao');
     if(!slot) return;
-    if(d && d.tem_link && d.url){
-      // FIX 15/05/2026 TARDE: troca cores hardcoded por CSS variables
-      // (banner ficava preto em modo dia, ilegivel). Agora respeita tema.
-      slot.innerHTML = '<div style="background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--ouro2);border-radius:12px;padding:16px;margin-bottom:16px;">' +
-        '<div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2);letter-spacing:1px;margin-bottom:6px">📋 SEU CADASTRO</div>' +
-        '<div style="font-size:13px;color:var(--cinza);margin-bottom:12px;line-height:1.4">Preencha o questionário em 3 minutos para receber seu treino personalizado</div>' +
+    // Renderiza banner de reavaliacao se necessario
+    if(d && d.precisa_reavaliar){
+      slot.innerHTML = '<div style="background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.06));border:1px solid rgba(201,168,76,.4);border-radius:16px;padding:18px;margin-bottom:14px;display:flex;flex-direction:column;gap:14px">' +
+        '<div style="display:flex;gap:12px;align-items:flex-start">' +
+        '<div style="font-size:28px;flex-shrink:0">🎯</div>' +
+        '<div style="flex:1">' +
+        '<div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:1.5px;color:var(--ouro);margin-bottom:6px">PRONTO PARA EVOLUIR?</div>' +
+        '<div style="font-size:12px;color:var(--texto);line-height:1.6;margin-bottom:10px">Você completou <strong style="color:var(--ouro)">8 semanas de treino</strong>. É hora da ciência decidir seu próximo passo.</div>' +
+        '<div style="background:rgba(0,0,0,.25);border-radius:10px;padding:10px 12px;margin-bottom:10px">' +
+        '<div style="font-size:11px;color:var(--cinza);line-height:1.7">' +
+        '<div style="margin-bottom:4px"><strong style="color:var(--ouro2)">✓ Overtraining</strong> — seu corpo pode receber MAIS estímulo?</div>' +
+        '<div><strong style="color:var(--ouro2)">✓ Reavaliação</strong> — suas medidas e força evoluíram?</div>' +
+        '</div></div>' +
+        '<div style="font-size:11px;color:var(--cinza);line-height:1.5;font-style:italic">Sem esses dados, seu treino fica preso na mesma fase. 5 minutos agora = próximas 8 semanas com progressão segura.</div>' +
+        '</div></div>' +
+        '<button onclick="iniciarReavaliacaoBimestral()" style="width:100%;padding:14px;background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#0A0A0F;border:none;border-radius:12px;font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;font-weight:900;cursor:pointer">COMEÇAR REAVALIAÇÃO BIMESTRAL →</button>' +
+        '<div style="font-size:9px;color:var(--cinza);opacity:.6;text-align:center;letter-spacing:.5px">📚 ACSM (2022) · Schoenfeld (2017) · Meeusen et al. (2013)</div>' +
         '</div>';
     } else {
       slot.innerHTML = '';

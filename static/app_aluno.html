@@ -1986,7 +1986,7 @@ var DICAS = {
       {e:'⏱️', t:'<strong>Timer automático</strong>: após cada série, um cronômetro de descanso abre sozinho. Espere ele terminar antes da próxima série.'},
       {e:'🎬', t:'<strong>Dúvida no exercício?</strong> Toque no 🎬 para ver um vídeo demonstrativo no YouTube.'},
       {e:'➕', t:'<strong>Quer adicionar um exercício?</strong> Role até o final e toque em "+ Adicionar exercício".'},
-      {e:'✅', t:'O botão <strong>CONCLUIR TREINO</strong> só aparece quando todas as séries de todos os exercícios forem marcadas.'},
+      {e:'✅', t:'Terminou? Toque em <strong>CONCLUIR TREINO</strong> para registrar seu check-in. Marcar as séries é opcional — ajuda você a se organizar durante o treino.'},
     ]
   },
   'avaliacao': {
@@ -2262,7 +2262,7 @@ function renderTreino(){
         '</div></div>' +
         '<button onclick="abrirExtraForm()" style="width:100%;padding:12px;background:none;border:1px dashed var(--borda);border-radius:12px;color:var(--cinza);font-size:13px;cursor:pointer">+ Adicionar exercício</button>' +
         '</div>';
-      treinoHtml += '<button class="btn-concluir" id="btn-concluir-treino" onclick="concluirTreino(0)" style="opacity:0.3;pointer-events:none">CONCLUIR TREINO ✓</button></div>';
+      treinoHtml += '<button class="btn-concluir" id="btn-concluir-treino" onclick="concluirTreino(0)">CONCLUIR TREINO ✓</button></div>';
 
       // Card de avaliação DEPOIS dos exercícios — checa banco antes (nao so localStorage)
       var posturalFeita = localStorage.getItem('aurum_postural_feita');

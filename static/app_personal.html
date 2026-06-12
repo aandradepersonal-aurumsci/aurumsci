@@ -3678,51 +3678,6 @@ function adicionarExercicioComPreset(id, nome, series, reps, descanso){
   renderMontadorTreino();
 }
 
-function abrirModalPresetTreino(id, nome){
-  // Escapa aspas simples no nome pra usar em onclick
-  nome = nome.replace(/'/g, "&apos;");
-  var html = '<div id="modal-preset" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;padding:20px;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center">';
-  html += '<div style="background:#12121A;border-radius:16px;padding:20px;max-width:500px;width:100%;margin-top:40px">';
-  html += '<div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2);letter-spacing:1px;margin-bottom:16px">QUAL TIPO DE TREINO?</div>';
-  
-  var presets = [
-    {nome:'Força Pura', reps:'1-6', descanso:180, emoji:'💪'},
-    {nome:'Hipertrofia', reps:'8-12', descanso:60, emoji:'🔥'},
-    {nome:'Resistência Metabólica', reps:'12-15', descanso:60, emoji:'⚡'},
-    {nome:'Multi-series / Drop / Bi', reps:'8-12', descanso:90, emoji:'🔄'},
-    {nome:'AMRAP', reps:'Máximo', descanso:-1, emoji:'🎯'},
-    {nome:'FOR TIME', reps:'Contra relógio', descanso:-2, emoji:'⏱️'}
-  ];
-  
-  presets.forEach(function(p){
-    var label = p.descanso === -1 ? '(intervalo livre)' : p.descanso === -2 ? '(intervalo livre)' : p.descanso + 's';
-    html += '<button data-preset-id="' + idx + '" data-exc-id="' + id + '" data-exc-nome="' + nome.replace(/"/g,'&quot;').replace(/'/g,"&apos;") + '" data-reps="' + p.reps + '" data-descanso="' + p.descanso + '" class="btn-preset" style="width:100%;padding:12px;margin-bottom:10px;background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.05));border:1px solid rgba(201,168,76,.3);border-radius:10px;color:var(--texto);font-size:13px;cursor:pointer;text-align:left">;
-    html += '<div style="font-weight:700">' + p.emoji + ' ' + p.nome + '</div>';
-    html += '<div style="font-size:11px;color:var(--cinza);margin-top:4px">' + p.reps + ' reps • ' + label + '</div>';
-    html += '</button>';
-  });
-  
-  html += '<button onclick="fecharModalPreset()" style="width:100%;padding:10px;margin-top:14px;background:none;border:1px solid var(--borda);border-radius:8px;color:var(--cinza);font-size:12px;cursor:pointer">Cancelar</button>';
-  html += '</div></div>';
-  
-  document.body.insertAdjacentHTML('beforeend', html);
-}
-
-function fecharModalPreset(){
-  var m = document.getElementById('modal-preset');
-  if(m) m.remove();
-}
-
-function adicionarExercicioComPreset(id, nome, series, reps, descanso){
-  if(sessaoAtual === null) return;
-  // Se descanso for -1 ou -2, deixa como livre (AMRAP/FOR TIME)
-  var descLib = descanso === -1 || descanso === -2 ? 60 : descanso; // padrão se não definir
-  treinoSessoes[sessaoAtual].exercicios.push({id:id, nome:nome, series:series, repeticoes:reps, descanso:descLib});
-  mostrarToast('✓ ' + nome + ' adicionado!');
-  fecharModalPreset();
-  fecharBusca();
-  renderMontadorTreino();
-}
 
 function adicionarExercicio(id, nome){
   // FIX 23/05/2026 v2 (corrigido pelo andre): fecha modal (feedback claro),

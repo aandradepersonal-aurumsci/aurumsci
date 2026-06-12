@@ -3430,7 +3430,7 @@ function renderMontadorTreino(){
       s.exercicios.forEach(function(e, ei){
         html += '<div style="background:var(--bg2);border-radius:10px;padding:10px;margin-bottom:8px">';
         html += '<div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--texto)">' + e.nome + '</div>';
-        html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:6px">';
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">';
         var label1 = (s.tipo==='funcional') ? 'ROUNDS' : 'SÉRIES';
         var label2 = (s.tipo==='funcional') ? 'TEMPO' : (s.tipo==='hit') ? 'TRAB/DESC' : 'REPS';
         var label3 = (s.tipo==='funcional') ? 'DESCANSO' : 'DESCANSO(s)';
@@ -3440,6 +3440,8 @@ function renderMontadorTreino(){
         html += '<input value="' + e.repeticoes + '" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].repeticoes=this.value" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
         html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">' + label3 + '</div>';
         html += '<input type="number" value="' + e.descanso + '" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].descanso=parseInt(this.value)" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
+        html += '</div>';
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
         html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">CARGA (kg)</div>';
         html += '<input type="number" value="' + (e.carga||'') + '" placeholder="kg" onchange="atualizarCargaRM(' + si + ',' + ei + ',this.value)" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
         html += '<div><div style="font-size:9px;color:var(--ouro2);margin-bottom:3px">1RM (kg)</div>';

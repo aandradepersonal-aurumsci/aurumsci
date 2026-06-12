@@ -3625,6 +3625,8 @@ function adicionarExercicioById(el){
 
 // Modal de seleção de preset de treino
 function abrirModalPresetTreino(id, nome){
+  // Escapa aspas simples no nome pra usar em onclick
+  nome = nome.replace(/'/g, "&apos;");
   var html = '<div id="modal-preset" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;padding:20px;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center">';
   html += '<div style="background:#12121A;border-radius:16px;padding:20px;max-width:500px;width:100%;margin-top:40px">';
   html += '<div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2);letter-spacing:1px;margin-bottom:16px">QUAL TIPO DE TREINO?</div>';

@@ -3430,7 +3430,7 @@ function renderMontadorTreino(){
       s.exercicios.forEach(function(e, ei){
         html += '<div style="background:var(--bg2);border-radius:10px;padding:10px;margin-bottom:8px">';
         html += '<div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--texto)">' + e.nome + '</div>';
-        html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">';
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:6px">';
         var label1 = (s.tipo==='funcional') ? 'ROUNDS' : 'SÉRIES';
         var label2 = (s.tipo==='funcional') ? 'TEMPO' : (s.tipo==='hit') ? 'TRAB/DESC' : 'REPS';
         var label3 = (s.tipo==='funcional') ? 'DESCANSO' : 'DESCANSO(s)';
@@ -3440,6 +3440,10 @@ function renderMontadorTreino(){
         html += '<input value="' + e.repeticoes + '" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].repeticoes=this.value" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
         html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">' + label3 + '</div>';
         html += '<input type="number" value="' + e.descanso + '" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].descanso=parseInt(this.value)" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
+        html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">CARGA</div>';
+        html += '<input value="' + (e.carga||'') + '" placeholder="kg" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].carga=this.value" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
+        html += '<div><div style="font-size:9px;color:var(--ouro2);margin-bottom:3px">MÁXIMO</div>';
+        html += '<input value="' + (e.rm||'') + '" placeholder="kg" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].rm=this.value" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid rgba(201,168,76,.4);color:var(--ouro2);font-size:13px;text-align:center;font-weight:700"></div>';
         html += '</div>';
         html += '<button onclick="removerExercicio(' + si + ',' + ei + ')" style="margin-top:6px;background:none;border:none;color:#FF6B6B;cursor:pointer;font-size:11px">✕ remover</button>';
         html += '</div>';
@@ -3671,7 +3675,7 @@ function fecharModalPreset(){
 function adicionarExercicioComPreset(id, nome, series, reps, descanso){
   if(sessaoAtual === null) return;
   var descLib = descanso === -1 || descanso === -2 ? 60 : descanso;
-  treinoSessoes[sessaoAtual].exercicios.push({id:id, nome:nome, series:series, repeticoes:reps, descanso:descLib});
+  treinoSessoes[sessaoAtual].exercicios.push({id:id, nome:nome, series:series, repeticoes:reps, descanso:descLib, carga:'', rm:''});
   mostrarToast('✓ ' + nome + ' adicionado!');
   fecharModalPreset();
   fecharBusca();
@@ -3685,7 +3689,7 @@ function adicionarExercicio(id, nome){
   // adicionar exercicio' de novo, modal reabre JA NO MESMO GRUPO.
   // Resultado: feedback + nao precisa reescolher musculo a cada exercicio.
   if(sessaoAtual === null) return;
-  treinoSessoes[sessaoAtual].exercicios.push({id:id, nome:nome, series:3, repeticoes:'10-12', descanso:90});
+  treinoSessoes[sessaoAtual].exercicios.push({id:id, nome:nome, series:3, repeticoes:'10-12', descanso:90, carga:'', rm:''});
   mostrarToast('✓ ' + nome + ' adicionado!');
   fecharBusca();
   renderMontadorTreino();

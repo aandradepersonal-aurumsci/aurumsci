@@ -3440,10 +3440,10 @@ function renderMontadorTreino(){
         html += '<input value="' + e.repeticoes + '" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].repeticoes=this.value" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
         html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">' + label3 + '</div>';
         html += '<input type="number" value="' + e.descanso + '" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].descanso=parseInt(this.value)" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
-        html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">CARGA</div>';
-        html += '<input value="' + (e.carga||'') + '" placeholder="kg" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].carga=this.value" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
-        html += '<div><div style="font-size:9px;color:var(--ouro2);margin-bottom:3px">MÁXIMO</div>';
-        html += '<input value="' + (e.rm||'') + '" placeholder="kg" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].rm=this.value" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid rgba(201,168,76,.4);color:var(--ouro2);font-size:13px;text-align:center;font-weight:700"></div>';
+        html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">CARGA (kg)</div>';
+        html += '<input type="number" value="' + (e.carga||'') + '" placeholder="kg" onchange="atualizarCargaRM(' + si + ',' + ei + ',this.value)" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
+        html += '<div><div style="font-size:9px;color:var(--ouro2);margin-bottom:3px">1RM (kg)</div>';
+        html += '<input value="' + (e.rm||'') + '" placeholder="—" readonly id="rm-' + si + '-' + ei + '" style="width:100%;padding:6px;border-radius:6px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.4);color:var(--ouro2);font-size:13px;text-align:center;font-weight:700"></div>';
         html += '</div>';
         html += '<button onclick="removerExercicio(' + si + ',' + ei + ')" style="margin-top:6px;background:none;border:none;color:#FF6B6B;cursor:pointer;font-size:11px">✕ remover</button>';
         html += '</div>';
@@ -3534,6 +3534,26 @@ function removerSessao(si){
   renderMontadorTreino();
 }
 
+// CALCULO 1RM (Epley) - Fase 2: estima 1RM da carga de trabalho.
+// Usa o MENOR numero da faixa de reps (conservador). PRO = estimativa
+// motivacional de treino; teste real de 1RM fica no LAB.
+function calcularRM(carga, reps){
+  var cargaN = parseFloat(carga);
+  if(!cargaN || cargaN <= 0) return '';
+  var match = String(reps).match(/\d+/);
+  var repsN = match ? parseInt(match[0]) : 0;
+  if(!repsN || repsN <= 0) return '';
+  var rm = cargaN * (1 + repsN/30);
+  return Math.round(rm);
+}
+function atualizarCargaRM(si, ei, valor){
+  treinoSessoes[si].exercicios[ei].carga = valor;
+  var ex = treinoSessoes[si].exercicios[ei];
+  var rm = calcularRM(valor, ex.repeticoes);
+  treinoSessoes[si].exercicios[ei].rm = rm;
+  var campoRM = document.getElementById('rm-' + si + '-' + ei);
+  if(campoRM) campoRM.value = rm;
+}
 function removerExercicio(si, ei){
   treinoSessoes[si].exercicios.splice(ei,1);
   renderMontadorTreino();

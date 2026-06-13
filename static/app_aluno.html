@@ -4266,9 +4266,35 @@ function ajustarCargaAluno(i, valor){
   }
 }
 function verVideoExercicio(nome){
+  // Abre o video DENTRO do app (modal com iframe) em vez de sair pro YouTube.
+  // Mais profissional e nativo (melhor pra review da Apple).
   var query = encodeURIComponent(nome + ' exercicio academia como fazer');
-  var url = 'https://www.youtube.com/results?search_query=' + query;
-  window.open(url, '_blank');
+  abrirModalVideo(query, nome);
+}
+function abrirModalVideo(query, titulo){
+  var overlay = document.getElementById('video-modal-overlay');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.id = 'video-modal-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+    overlay.onclick = function(e){ if(e.target === overlay) fecharModalVideo(); };
+    document.body.appendChild(overlay);
+  }
+  overlay.innerHTML = '<div style="background:var(--bg2,#15151f);border-radius:14px;max-width:560px;width:100%;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.5)">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--borda,#2a2a35)">' +
+      '<div style="font-size:14px;font-weight:700;color:var(--ouro2,#E8C76A)">🎬 ' + titulo + '</div>' +
+      '<button onclick="fecharModalVideo()" style="background:none;border:none;color:var(--cinza,#999);font-size:22px;cursor:pointer;line-height:1;padding:0 4px">×</button>' +
+    '</div>' +
+    '<div style="position:relative;width:100%;padding-bottom:56.25%;height:0">' +
+      '<iframe src="https://www.youtube.com/embed?listType=search&list=' + query + '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>' +
+    '</div>' +
+    '<div style="padding:10px 16px;font-size:11px;color:var(--cinza,#999);text-align:center">Toque fora do vídeo ou no × para voltar ao treino</div>' +
+  '</div>';
+  overlay.style.display = 'flex';
+}
+function fecharModalVideo(){
+  var overlay = document.getElementById('video-modal-overlay');
+  if(overlay){ overlay.innerHTML = ''; overlay.style.display = 'none'; }
 }
 
 var extrasAdicionados = [];

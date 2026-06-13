@@ -3479,6 +3479,14 @@ function renderMontadorTreino(){
 
   document.getElementById('treino-content').innerHTML = html;
   carregarExercicios();
+  // FIX 13/jun: recalcula 1RM ao reabrir treino (carga vem do banco sem disparar onchange)
+  treinoSessoes.forEach(function(s, si) {
+    s.exercicios.forEach(function(e, ei) {
+      if (e.carga !== '' && e.carga !== null && e.carga !== undefined) {
+        atualizarCargaRM(si, ei, e.carga);
+      }
+    });
+  });
 }
 
 var sessaoAtual = null;

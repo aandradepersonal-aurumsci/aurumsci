@@ -3370,7 +3370,9 @@ function selecionarTreinoAluno(id, nome){
                 nome: e.nome_exercicio,
                 series: e.series,
                 repeticoes: e.repeticoes,
-                descanso: e.tempo_descanso_seg
+                descanso: e.tempo_descanso_seg,
+                carga: e.carga_kg ? String(e.carga_kg) : '',
+                rm: ''
               };
             })
           };

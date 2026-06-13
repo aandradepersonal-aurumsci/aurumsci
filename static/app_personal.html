@@ -263,6 +263,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
         <button class="lang-mini" onclick="setLangApp('en',this)">EN</button>
         <button class="lang-mini" onclick="setLangApp('es',this)">ES</button>
       </div>
+      <div onclick="abrirAjudaPro()" style="display:flex;flex-direction:column;align-items:center;cursor:pointer"><div class="btn-icon" style="font-size:18px">🤔</div><div style="font-size:8px;color:var(--cinza);margin-top:2px;letter-spacing:0.5px">ajuda</div></div>
       <div class="btn-icon" onclick="toggleTheme()" id="theme-btn">🌙</div>
       <div style="display:flex;flex-direction:column;align-items:center;cursor:pointer" onclick="toggleMenuPerfil(event)"><div class="avatar" id="avatar-inicial" style="position:relative">A</div><div style="font-size:8px;color:var(--cinza);margin-top:2px;letter-spacing:0.5px" data-i18n="menuLabel">MENU</div></div>
     </div>
@@ -5523,6 +5524,134 @@ function baixarRelatorioContador(){
   })
   .catch(function(e){ mostrarToast('Erro: ' + e.message); });
 }
+
+<!-- ===== AJUDA DO PROFESSOR (13/jun) — guia de uso do sistema ===== -->
+<style>
+#ajuda-pro-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;display:none;align-items:flex-end}
+#ajuda-pro-overlay.show{display:flex}
+.ajuda-pro-modal{background:var(--bg2);border-radius:24px 24px 0 0;padding:24px;width:100%;max-width:430px;margin:0 auto;max-height:85vh;overflow-y:auto}
+.ajuda-pro-item{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.ajuda-pro-emoji{font-size:22px;flex-shrink:0}
+.ajuda-pro-texto{font-size:13px;line-height:1.6;color:var(--texto)}
+.ajuda-pro-abas{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.ajuda-pro-aba{padding:6px 12px;border-radius:20px;background:var(--bg);border:1px solid var(--borda);color:var(--cinza);font-size:11px;cursor:pointer;font-weight:600;transition:all .2s}
+.ajuda-pro-aba.active{background:rgba(201,168,76,.12);border-color:var(--ouro);color:var(--ouro)}
+</style>
+<div id="ajuda-pro-overlay" onclick="if(event.target===this)fecharAjudaPro()">
+  <div class="ajuda-pro-modal">
+    <div onclick="fecharAjudaPro()" style="display:inline-flex;align-items:center;gap:6px;color:var(--ouro);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:8px 16px 8px 12px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px;font-family:DM Sans">‹ Voltar</div>
+    <div id="ajuda-pro-titulo" style="font-family:Bebas Neue;font-size:24px;color:var(--ouro2);letter-spacing:1px;margin-bottom:6px">COMO USAR</div>
+    <div style="font-size:11px;color:var(--cinza);margin-bottom:16px">Toque nas areas abaixo para aprender a usar cada parte do AurumSci PRO</div>
+    <div class="ajuda-pro-abas" id="ajuda-pro-abas"></div>
+    <div id="ajuda-pro-corpo"></div>
+  </div>
+</div>
+<script>
+var DICAS_PRO = {
+  'inicio': {
+    label: '\uD83D\uDCCA Inicio',
+    titulo: '\uD83D\uDCCA TELA INICIAL',
+    itens: [
+      {e:'\uD83D\uDC40', t:'<strong>Visao geral:</strong> aqui voce ve seus numeros - alunos ativos, check-ins do dia, pagamentos pendentes e receita do mes.'},
+      {e:'\uD83D\uDD0D', t:'<strong>Busca rapida:</strong> digite o nome de um aluno na busca do topo para abrir o perfil dele direto.'},
+      {e:'\u26A1', t:'<strong>Atalhos:</strong> os cartoes coloridos levam rapido para Alunos, Loja, Financas e Aulas.'}
+    ]
+  },
+  'alunos': {
+    label: '\uD83D\uDC65 Alunos',
+    titulo: '\uD83D\uDC65 GERENCIAR ALUNOS',
+    itens: [
+      {e:'\u2795', t:'<strong>Novo Aluno:</strong> cadastre manualmente preenchendo os dados. A senha de acesso dele sera os 6 primeiros digitos do CPF.'},
+      {e:'\uD83D\uDCF1', t:'<strong>Convidar por Questionario:</strong> envie um link por WhatsApp. O aluno preenche sozinho a anamnese e ja recebe um treino base - voce so ajusta depois.'},
+      {e:'\uD83D\uDC64', t:'<strong>Cadastro:</strong> toque em qualquer aluno para abrir o perfil completo - dados, avaliacao, treino, periodizacao e resultados.'},
+      {e:'\uD83D\uDCB0', t:'<strong>Cobrar:</strong> o botao dourado COBRAR gera a cobranca do aluno (por aula ou mensal) e o link de pagamento.'}
+    ]
+  },
+  'treino': {
+    label: '\uD83C\uDFCB\uFE0F Treino',
+    titulo: '\uD83C\uDFCB\uFE0F MONTAR TREINO',
+    itens: [
+      {e:'\u2795', t:'<strong>Adicione exercicios:</strong> dentro do perfil do aluno, va em TREINO, crie uma sessao e busque os exercicios. Nao achou? Crie o seu proprio no banco.'},
+      {e:'\uD83C\uDFCB\uFE0F', t:'<strong>Defina a carga:</strong> digite a carga de trabalho de cada exercicio. O <strong>1RM estimado</strong> aparece automatico do lado, em dourado, uma referencia motivacional pro aluno.'},
+      {e:'\u23F1\uFE0F', t:'<strong>Series, reps e descanso:</strong> ajuste conforme o objetivo (forca, hipertrofia, etc). Os presets ja sugerem valores.'},
+      {e:'\uD83D\uDCBE', t:'<strong>IMPORTANTE - Salve sempre:</strong> ao terminar, toque em SALVAR no fim. So depois de salvar o treino aparece no app do aluno!'}
+    ]
+  },
+  'avaliacao': {
+    label: '\uD83D\uDCCB Avaliacao',
+    titulo: '\uD83D\uDCCB AVALIACAO FISICA',
+    itens: [
+      {e:'\uD83D\uDCDD', t:'<strong>Anamnese:</strong> perfil, objetivos e historico de saude. Se o aluno preencheu pelo questionario, ja vem pronto.'},
+      {e:'\uD83D\uDCF8', t:'<strong>Postural com IA:</strong> tire 3 fotos (frente, lado, costas) e a IA analisa a postura em segundos.'},
+      {e:'\u2696\uFE0F', t:'<strong>Composicao:</strong> bioimpedancia, dobras ou ultrassom - calcula % gordura e massa magra.'},
+      {e:'\uD83D\uDCAA', t:'<strong>Testes:</strong> forca, flexibilidade, preensao, VO2 e potencia. Siga o ROTEIRO sugerido (VO2 sempre por ultimo).'}
+    ]
+  },
+  'financeiro': {
+    label: '\uD83D\uDCB0 Financas',
+    titulo: '\uD83D\uDCB0 FINANCEIRO',
+    itens: [
+      {e:'\uD83D\uDCB3', t:'<strong>Cobrar:</strong> feche o mes de cada aluno e gere o link de pagamento (Stripe) automatico.'},
+      {e:'\uD83E\uDDFE', t:'<strong>Recibo:</strong> apos registrar um pagamento, envie o recibo por WhatsApp, email ou PDF.'},
+      {e:'\uD83D\uDCCB', t:'<strong>Relatorio pro contador:</strong> baixe o CSV do mes com todos os recebimentos para sua contabilidade.'},
+      {e:'\uD83D\uDCA1', t:'<strong>Dica fiscal:</strong> o app mostra quanto voce economiza abrindo CNPJ no Simples Nacional vs CPF autonomo.'}
+    ]
+  },
+  'auri': {
+    label: '\uD83E\uDD16 AURI',
+    titulo: '\uD83E\uDD16 SEU ASSISTENTE AURI',
+    itens: [
+      {e:'\uD83D\uDCAC', t:'O <strong>AURI</strong> e seu copiloto de IA. Pergunte sobre protocolos, periodizacao, exercicios ou gestao dos alunos.'},
+      {e:'\uD83D\uDCCA', t:'Ele enxerga os dados dos seus alunos (cargas, avaliacoes) e ajuda a tomar decisoes - mas voce sempre da a palavra final.'},
+      {e:'\uD83C\uDF0D', t:'Funciona em Portugues, Ingles e Espanhol. Mude o idioma no topo.'}
+    ]
+  },
+  'menu': {
+    label: '\u2699\uFE0F Menu / Conta',
+    titulo: '\u2699\uFE0F MENU E SUA CONTA',
+    itens: [
+      {e:'\uD83D\uDC46', t:'Toque no <strong>"A" (MENU)</strong> no canto superior direito para acessar as opcoes da sua conta.'},
+      {e:'\uD83C\uDFA8', t:'<strong>Personalizar logo:</strong> coloque a sua marca no lugar do AurumSci (white label).'},
+      {e:'\uD83D\uDCC4', t:'<strong>Meu Contrato:</strong> visualize e baixe seu contrato de prestacao de servicos.'},
+      {e:'\uD83D\uDC8E', t:'<strong>Mudar de plano:</strong> em "Meu Plano" voce faz upgrade ou downgrade da assinatura (Bronze, Prata, Ouro, Diamante) e gerencia a cobranca a qualquer momento.'},
+      {e:'\uD83D\uDDD1\uFE0F', t:'<strong>Excluir conta:</strong> se quiser, pode encerrar sua conta e apagar todos os dados permanentemente.'}
+    ]
+  }
+};
+var ajudaProAbaAtual = 'inicio';
+function abrirAjudaPro(){
+  var menu = document.getElementById('menu-perfil');
+  if(menu) menu.style.display = 'none';
+  renderAjudaProAbas();
+  renderAjudaProConteudo(ajudaProAbaAtual);
+  document.getElementById('ajuda-pro-overlay').classList.add('show');
+}
+function fecharAjudaPro(){
+  document.getElementById('ajuda-pro-overlay').classList.remove('show');
+}
+function renderAjudaProAbas(){
+  var html = '';
+  Object.keys(DICAS_PRO).forEach(function(k){
+    var ativa = (k === ajudaProAbaAtual) ? ' active' : '';
+    html += '<div class="ajuda-pro-aba' + ativa + '" onclick="trocarAjudaProAba(\'' + k + '\')">' + DICAS_PRO[k].label + '</div>';
+  });
+  document.getElementById('ajuda-pro-abas').innerHTML = html;
+}
+function trocarAjudaProAba(k){
+  ajudaProAbaAtual = k;
+  renderAjudaProAbas();
+  renderAjudaProConteudo(k);
+}
+function renderAjudaProConteudo(k){
+  var dica = DICAS_PRO[k] || DICAS_PRO['inicio'];
+  document.getElementById('ajuda-pro-titulo').textContent = dica.titulo;
+  var html = '';
+  dica.itens.forEach(function(item){
+    html += '<div class="ajuda-pro-item"><div class="ajuda-pro-emoji">' + item.e + '</div><div class="ajuda-pro-texto">' + item.t + '</div></div>';
+  });
+  document.getElementById('ajuda-pro-corpo').innerHTML = html;
+}
 </script>
+<!-- ===== FIM AJUDA DO PROFESSOR ===== -->
 </body>
 </html>

@@ -3441,7 +3441,7 @@ function renderMontadorTreino(){
         html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">' + label2 + '</div>';
         html += '<input value="' + e.repeticoes + '" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].repeticoes=this.value" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
         html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">' + label3 + '</div>';
-        html += '<input type="number" value="' + e.descanso + '" onchange="treinoSessoes[' + si + '].exercicios[' + ei + '].descanso=parseInt(this.value)" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
+        html += '<input type="number" value="' + e.descanso + '" onchange="atualizarDescanso(' + si + ',' + ei + ',this.value)" style="width:100%;padding:6px;border-radius:6px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px;text-align:center"></div>';
         html += '</div>';
         html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
         html += '<div><div style="font-size:9px;color:var(--cinza);margin-bottom:3px">CARGA (kg)</div>';
@@ -3549,6 +3549,12 @@ function calcularRM(carga, reps){
   if(!repsN || repsN <= 0) return '';
   var rm = cargaN * (1 + repsN/30);
   return Math.round(rm);
+}
+function atualizarDescanso(si, ei, valor){
+  // Mesmo padrao da carga (atualizarCargaRM): atualiza o objeto via funcao.
+  // O onchange com atribuicao direta nao estava gravando o descanso.
+  var n = parseInt(valor);
+  treinoSessoes[si].exercicios[ei].descanso = isNaN(n) ? 90 : n;
 }
 function atualizarCargaRM(si, ei, valor){
   treinoSessoes[si].exercicios[ei].carga = valor;

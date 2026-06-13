@@ -3787,7 +3787,7 @@ function salvarTreino(){
   var btnSalvar = document.querySelector('button[onclick="salvarTreino()"]');
   var txtOriginal = btnSalvar ? btnSalvar.innerHTML : '';
   if(btnSalvar){ btnSalvar.disabled = true; btnSalvar.style.opacity = '0.7'; btnSalvar.innerHTML = '💾 Salvando...'; }
-  var dados = {objetivo:obj, nivel:'intermediario', dias_disponiveis:dias, sessoes: treinoSessoes.map(function(s){ return {nome:s.nome, exercicios:s.exercicios.map(function(e){ return {exercicio_id:e.id, series:e.series, repeticoes:e.repeticoes, tempo_descanso_seg:e.descanso}; })}; })};
+  var dados = {objetivo:obj, nivel:'intermediario', dias_disponiveis:dias, sessoes: treinoSessoes.map(function(s){ return {nome:s.nome, exercicios:s.exercicios.map(function(e){ return {exercicio_id:e.id, series:e.series, repeticoes:e.repeticoes, tempo_descanso_seg:e.descanso, carga:e.carga}; })}; })};
   fetch(window.API_BASE + '/app-personal/aluno/' + treinoAlunoId + '/salvar-treino', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify(dados)})
   .then(function(r){ return r.json(); })
   .then(function(d){

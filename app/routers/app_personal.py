@@ -342,7 +342,7 @@ def salvar_treino_aluno(aluno_id: int, dados: SalvarTreinoSchema, personal: Pers
                 ordem=j+1,
                 series=ex.get("series", 3),
                 repeticoes=str(ex.get("repeticoes", "10-12")),
-                carga_kg=0.0,
+                carga_kg=float(ex.get("carga") or 0),
                 tempo_descanso_seg=ex.get("descanso", 90),
             )
             db.add(ex_sessao)

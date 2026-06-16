@@ -525,6 +525,7 @@ async def treino_hoje(
     for e in exercicios:
         ex_obj = db.query(Exercicio).filter(Exercicio.id == e.exercicio_id).first()
         lista_ex.append({
+            "id":         e.id,
             "ordem":      e.ordem,
             "nome":       ex_obj.nome if ex_obj else "",
             "series":     e.series,
@@ -891,6 +892,31 @@ def salvar_medidas(dados: dict, aluno: Aluno = Depends(get_aluno_logado), db: Se
 
     db.commit()
     return {"mensagem": "Medidas salvas!"}
+
+@router.post("/ajustar-carga")
+def ajustar_carga(dados: dict, aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    """Aluno ajusta/salva a carga de um exercicio do treino dele. Persiste no carga_kg
+    da tabela exercicios_sessao (mesmo campo que o professor usa). Fecha o ciclo aluno->PRO."""
+    from app.routers.treino import PlanoTreino, SessaoTreino, ExercicioSessao
+    ex_id = dados.get("id")
+    carga = dados.get("carga")
+    if ex_id is None or carga is None:
+        return {"erro": "id e carga sao obrigatorios"}
+    ex = db.query(ExercicioSessao).filter(ExercicioSessao.id == ex_id).first()
+    if not ex:
+        return {"erro": "exercicio nao encontrado"}
+    sessao = db.query(SessaoTreino).filter(SessaoTreino.id == ex.sessao_id).first()
+    if not sessao:
+        return {"erro": "sessao nao encontrada"}
+    plano = db.query(PlanoTreino).filter(PlanoTreino.id == sessao.plano_id).first()
+    if not plano or plano.aluno_id != aluno.id:
+        return {"erro": "nao autorizado"}
+    try:
+        ex.carga_kg = float(carga)
+    except (ValueError, TypeError):
+        return {"erro": "carga invalida"}
+    db.commit()
+    return {"mensagem": "Carga salva!", "carga": ex.carga_kg}
 
 
 @router.get("/medidas")

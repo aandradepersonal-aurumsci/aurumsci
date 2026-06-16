@@ -916,6 +916,24 @@ def ajustar_carga(dados: dict, aluno: Aluno = Depends(get_aluno_logado), db: Ses
     except (ValueError, TypeError):
         return {"erro": "carga invalida"}
     db.commit()
+
+    # VOLUME-LOAD (16/jun) — SNAPSHOT INICIAL: a primeira carga que existir no ciclo
+    # vira o volume_inicial_kg da avaliacao vigente e CONGELA (nao sobrescreve depois).
+    # Isolado em try/except para NUNCA quebrar o salvar-carga se algo falhar.
+    try:
+        from app.routers.avaliacao import AvaliacaoFisica
+        from app.routers.treino import calcular_volume_plano
+        aval = db.query(AvaliacaoFisica).filter(
+            AvaliacaoFisica.aluno_id == aluno.id
+        ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+        if aval and aval.volume_inicial_kg is None:
+            vol = calcular_volume_plano(db, plano.id)
+            if vol and vol > 0:
+                aval.volume_inicial_kg = vol
+                db.commit()
+    except Exception:
+        db.rollback()
+
     return {"mensagem": "Carga salva!", "carga": ex.carga_kg}
 
 

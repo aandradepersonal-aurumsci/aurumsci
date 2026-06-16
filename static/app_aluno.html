@@ -4306,9 +4306,10 @@ function salvarCargaAluno(i){
   .then(function(d){
     if(d && d.mensagem){
       mostrarToast('Carga salva! ✅');
-      ex.cargaBase = ex.carga; // a carga salva vira a nova referencia
+      // NAO reseta cargaBase: a base continua sendo a 1a carga, p/ a carinha FICAR
+      // mostrando a evolucao mesmo depois de salvar (feedback motivacional permanente).
       var campoEvo = document.getElementById('aluno-evo-' + i);
-      if(campoEvo) campoEvo.innerHTML = '';
+      if(campoEvo) campoEvo.innerHTML = (ex.carga && ex.cargaBase ? calcularEvolucaoCarga(ex.carga, ex.cargaBase) : '');
     } else {
       mostrarToast((d && d.erro) ? d.erro : 'Erro ao salvar');
     }

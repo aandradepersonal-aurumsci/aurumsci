@@ -124,6 +124,46 @@ def get_aluno(aluno_id, personal_id, db):
 
 # ── Exercícios ────────────────────────────────────────────────────────────────
 
+# ============================================================
+# VOLUME-LOAD (tonelagem) — feature 16/jun. Funcoes ISOLADAS de calculo.
+# volume de 1 exercicio = carga_kg * series * reps.
+# repeticoes e texto ("10-12"): usamos o 1o numero (conservador).
+# Trocar para media: usar (n1+n2)/2 onde houver intervalo.
+# ============================================================
+def _reps_para_numero(reps):
+    """Extrai um numero de reps de um texto tipo '10-12' ou '10'. Usa o 1o numero."""
+    import re as _re
+    if reps is None:
+        return 0
+    m = _re.search(r"\d+", str(reps))
+    return int(m.group()) if m else 0
+
+def calcular_volume_exercicio(carga_kg, series, repeticoes):
+    """Volume de 1 exercicio = carga * series * reps. Retorna float (kg)."""
+    try:
+        carga = float(carga_kg) if carga_kg else 0.0
+        s = int(series) if series else 0
+        r = _reps_para_numero(repeticoes)
+        return carga * s * r
+    except (ValueError, TypeError):
+        return 0.0
+
+def calcular_volume_sessao(db, sessao_id):
+    """Soma o volume de todos os exercicios de uma sessao. Retorna float (kg)."""
+    exs = db.query(ExercicioSessao).filter(ExercicioSessao.sessao_id == sessao_id).all()
+    total = 0.0
+    for e in exs:
+        total += calcular_volume_exercicio(e.carga_kg, e.series, e.repeticoes)
+    return total
+
+def calcular_volume_plano(db, plano_id):
+    """Soma o volume de todas as sessoes de um plano (A+B+C...). Retorna float (kg)."""
+    sessoes = db.query(SessaoTreino).filter(SessaoTreino.plano_id == plano_id).all()
+    total = 0.0
+    for s in sessoes:
+        total += calcular_volume_sessao(db, s.id)
+    return total
+
 @router.post("/exercicios", response_model=ExercicioResposta, status_code=201)
 def criar_exercicio(
     dados: ExercicioCriar,

@@ -2255,6 +2255,7 @@ function renderTreino(){
             '<input type="number" value="' + (ex.carga||'') + '" placeholder="–" onchange="ajustarCargaAluno(' + i + ',this.value)" class="ex-carga-val" style="width:56px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.35);border-radius:6px;text-align:center;padding:2px 0">' +
             '<div class="ex-carga-un">kg</div>' +
             '<div class="ex-carga-rm" id="aluno-rm-' + i + '" style="font-size:11px;color:var(--ouro2);font-weight:700;margin-top:2px">' + (ex.carga && ex.repeticoes ? '🎯 ' + calcularRMAluno(ex.carga, ex.repeticoes) : '') + '</div>' +
+            '<div class="ex-carga-evo" id="aluno-evo-' + i + '" style="font-size:11px;font-weight:700;margin-top:2px">' + (function(){ if(ex.carga && !ex.cargaBase){ ex.cargaBase = ex.carga; } return (ex.carga && ex.cargaBase ? calcularEvolucaoCarga(ex.carga, ex.cargaBase) : ''); })() + '</div>' +
           '</div>' +
           '<button onclick="verVideoExercicio(\'' + ex.nome + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0" title="Ver vídeo">🎬</button>' +
           '</div></div>' +
@@ -4256,6 +4257,17 @@ function calcularRMAluno(carga, reps){
   var rm = cargaN * (1 + repsN/30);
   return Math.round(rm) + ' kg';
 }
+// EVOLUCAO DE CARGA (15/jun): compara carga atual com a carga BASE (primeira carga
+// colocada = referencia). Sobe = 💪 +X%, cai = 🤔 -X%, igual = nada. Motivacional.
+function calcularEvolucaoCarga(atual, base){
+  var a = parseFloat(atual);
+  var b = parseFloat(base);
+  if(!a || a <= 0 || !b || b <= 0) return '';
+  var pct = Math.round(((a - b) / b) * 100);
+  if(pct > 0) return '<span style="color:#7BC47F">💪 +' + pct + '%</span>';
+  if(pct < 0) return '<span style="color:var(--cinza)">🤔 ' + pct + '%</span>';
+  return '';
+}
 function ajustarCargaAluno(i, valor){
   if(treinoExercicios && treinoExercicios[i]){
     treinoExercicios[i].carga = valor;
@@ -4264,6 +4276,14 @@ function ajustarCargaAluno(i, valor){
     if(campoRM){
       var rm = calcularRMAluno(valor, reps);
       campoRM.textContent = rm ? '🎯 ' + rm : '';
+    }
+    // EVOLUCAO: se nao tem base ainda, a 1a carga vira referencia. Senao, mostra %.
+    if(valor && !treinoExercicios[i].cargaBase){
+      treinoExercicios[i].cargaBase = valor;
+    }
+    var campoEvo = document.getElementById('aluno-evo-' + i);
+    if(campoEvo){
+      campoEvo.innerHTML = (valor && treinoExercicios[i].cargaBase ? calcularEvolucaoCarga(valor, treinoExercicios[i].cargaBase) : '');
     }
   }
 }

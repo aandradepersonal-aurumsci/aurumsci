@@ -66,6 +66,10 @@ class AvaliacaoFisica(Base):
     postura_observacoes = Column(Text)
     observacoes = Column(Text)
     criado_em = Column(DateTime, default=datetime.utcnow)
+    # VOLUME-LOAD (16/jun): tonelagem do ciclo. inicial = ao montar/salvar treino;
+    # final = na reavaliacao (fecha o ciclo). Comparacao = evolucao do aluno no periodo.
+    volume_inicial_kg = Column(Float, nullable=True)
+    volume_final_kg = Column(Float, nullable=True)
 
 def get_aluno(aluno_id, personal_id, db):
     aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal_id).first()

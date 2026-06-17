@@ -142,6 +142,26 @@ def calc_flexao(reps, sexo, idade):
 @router.post("", response_model=AvaliacaoResposta, status_code=201)
 def criar(dados: AvaliacaoCriar, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
     aluno = get_aluno(dados.aluno_id, personal.id, db)
+    # VOLUME-LOAD (16/jun) — SNAPSHOT FINAL: antes de criar a nova avaliacao, fecha o ciclo
+    # anterior gravando o volume atual do treino em volume_final_kg da avaliacao mais recente.
+    # Isolado em try/except para NUNCA quebrar a criacao da avaliacao.
+    try:
+        from app.routers.treino import PlanoTreino, calcular_volume_plano
+        aval_ant = db.query(AvaliacaoFisica).filter(
+            AvaliacaoFisica.aluno_id == dados.aluno_id
+        ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+        if aval_ant and aval_ant.volume_final_kg is None:
+            plano = db.query(PlanoTreino).filter(
+                PlanoTreino.aluno_id == dados.aluno_id,
+                PlanoTreino.ativo == True
+            ).order_by(PlanoTreino.id.desc()).first()
+            if plano:
+                vol = calcular_volume_plano(db, plano.id)
+                if vol and vol > 0:
+                    aval_ant.volume_final_kg = vol
+                    db.commit()
+    except Exception:
+        db.rollback()
     idade = calcular_idade(aluno.data_nascimento)
     sexo = aluno.sexo.value if aluno.sexo else "masculino"
     av = AvaliacaoFisica(**dados.model_dump())

@@ -2769,21 +2769,58 @@ function renderDashboardEvolucao(){
       var difKg = vf - vi;
       var difPct = Math.round((difKg / vi) * 100);
       var subiu = vf >= vi;
-      var tonIni = (vi/1000).toFixed(1);
-      var tonFim = (vf/1000).toFixed(1);
-      if(subiu){
-        html += '<div style="background:linear-gradient(135deg,rgba(201,168,76,.22),rgba(201,168,76,.06));border:1px solid rgba(201,168,76,.55);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center">' +
-          '<div style="font-size:38px;line-height:1;margin-bottom:8px">\uD83C\uDFC6</div>' +
-          '<div style="font-family:Bebas Neue;font-size:22px;letter-spacing:1px;color:var(--ouro);margin-bottom:6px">VOLUME DE TREINO: +' + difPct + '%</div>' +
-          '<div style="font-size:13px;color:var(--texto);line-height:1.5;margin-bottom:10px">Voce evoluiu de <b>' + tonIni + ' ton</b> para <b>' + tonFim + ' ton</b> de carga total no ciclo. Parabens, continue assim! \uD83D\uDCAA</div>' +
-          '<div style="font-size:12px;color:var(--cinza);font-style:italic">Parabenize seu personal pelo resultado \uD83D\uDC4F</div>' +
+      // kg com separador de milhar (28314 -> 28.314)
+      function fmtKg(n){ return Math.round(n).toLocaleString('pt-BR'); }
+      var kgIni = fmtKg(vi);
+      var kgFim = fmtKg(vf);
+      var difKgFmt = fmtKg(Math.abs(difKg));
+      // AURUM SCORE por faixa de evolucao (cravado pelo Andre 16/jun)
+      function aurumScore(pct){
+        if(pct >= 8) return {medalha:'\uD83D\uDC8E', nome:'DIAMANTE', cor:'#7FD4E8', glow:'rgba(127,212,232,.45)'};
+        if(pct >= 5) return {medalha:'\uD83E\uDD47', nome:'OURO', cor:'#F0C040', glow:'rgba(240,192,64,.5)'};
+        if(pct >= 3) return {medalha:'\uD83E\uDD48', nome:'PRATA', cor:'#C4C8CC', glow:'rgba(196,200,204,.4)'};
+        if(pct >= 0) return {medalha:'\uD83E\uDD49', nome:'BRONZE', cor:'#C9844C', glow:'rgba(201,132,76,.4)'};
+        return null;
+      }
+      var sc = aurumScore(difPct);
+      // Citacao cientifica (visivel, desarma o leigo)
+      var ciencia = '<div style="margin-top:14px;padding:12px 14px;background:rgba(0,0,0,.28);border-radius:12px;border:1px solid rgba(201,168,76,.18)">' +
+        '<div style="font-size:11px;color:var(--texto);line-height:1.65;text-align:left">' +
+        '<b style="color:var(--ouro)">\u2139\uFE0F O que e volume de treino?</b> E a soma de toda carga \u00D7 series \u00D7 repeticoes que voce levantou. Com ele medimos a intensidade real do seu treino conforme o seu nivel, ao longo do periodo.' +
+        '</div>' +
+        '<div style="font-size:10px;color:var(--cinza);opacity:.8;margin-top:8px;text-align:left">\uD83D\uDCDA Schoenfeld, Ogborn & Krieger (2017) \u00B7 J Sports Sci</div>' +
+      '</div>';
+      if(subiu && sc){
+        // ===== LADO VITORIA: premium com glow + medalha + numero gigante =====
+        html += '<div style="position:relative;background:linear-gradient(150deg,rgba(201,168,76,.18),rgba(18,18,26,.6) 60%);border:1.5px solid ' + sc.cor + ';border-radius:20px;padding:24px 20px;margin-bottom:18px;text-align:center;box-shadow:0 0 28px ' + sc.glow + ', inset 0 1px 0 rgba(255,255,255,.06);overflow:hidden">' +
+          // brilho radial atras do numero
+          '<div style="position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);width:180px;height:180px;background:radial-gradient(circle,' + sc.glow + ' 0%,transparent 70%);pointer-events:none"></div>' +
+          // medalha + nome do nivel
+          '<div style="position:relative;display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,.35);border:1px solid ' + sc.cor + ';border-radius:30px;padding:5px 16px;margin-bottom:14px">' +
+            '<span style="font-size:18px;line-height:1">' + sc.medalha + '</span>' +
+            '<span style="font-family:Bebas Neue;font-size:15px;letter-spacing:3px;color:' + sc.cor + '">NIVEL ' + sc.nome + '</span>' +
+          '</div>' +
+          // titulo pequeno
+          '<div style="position:relative;font-size:11px;letter-spacing:3px;color:var(--cinza);margin-bottom:2px">VOLUME DE TREINO</div>' +
+          // NUMERO GIGANTE
+          '<div style="position:relative;font-family:Bebas Neue;font-size:68px;line-height:1;color:' + sc.cor + ';text-shadow:0 0 24px ' + sc.glow + ';margin-bottom:4px">+' + difPct + '%</div>' +
+          // kg inicial -> final
+          '<div style="position:relative;font-size:15px;color:var(--texto);margin-bottom:6px"><b>' + kgIni + ' kg</b> <span style="color:' + sc.cor + '">\u2192</span> <b>' + kgFim + ' kg</b></div>' +
+          '<div style="position:relative;font-size:12px;color:var(--ouro);margin-bottom:12px">\uD83D\uDCC8 +' + difKgFmt + ' kg movimentados neste ciclo</div>' +
+          // mensagem
+          '<div style="position:relative;font-size:13px;color:var(--texto);line-height:1.5;margin-bottom:4px">Evolucao consistente. Parabens, continue assim! \uD83D\uDCAA</div>' +
+          '<div style="position:relative;font-size:12px;color:var(--cinza);font-style:italic">Comemore com seu personal \u2014 o plano esta funcionando! \uD83D\uDC4F</div>' +
+          ciencia +
         '</div>';
       } else {
-        html += '<div style="background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.35);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center">' +
-          '<div style="font-size:38px;line-height:1;margin-bottom:8px">\uD83E\uDD14</div>' +
-          '<div style="font-family:Bebas Neue;font-size:22px;letter-spacing:1px;color:var(--ouro);margin-bottom:6px">VOLUME DE TREINO</div>' +
-          '<div style="font-size:13px;color:var(--texto);line-height:1.5;margin-bottom:10px">Seu volume passou de <b>' + tonIni + ' ton</b> para <b>' + tonFim + ' ton</b> neste ciclo.</div>' +
-          '<div style="font-size:12px;color:var(--cinza);font-style:italic">Converse com seu personal — ele ja esta ciente e preparando sua nova proposta de treino. \uD83D\uDCAA</div>' +
+        // ===== LADO DUVIDA: acolhedor, dourado, SEM vermelho (regra bem-estar) =====
+        html += '<div style="position:relative;background:linear-gradient(150deg,rgba(201,168,76,.10),rgba(18,18,26,.5) 60%);border:1.5px solid rgba(201,168,76,.4);border-radius:20px;padding:24px 20px;margin-bottom:18px;text-align:center;box-shadow:0 0 18px rgba(201,168,76,.15),inset 0 1px 0 rgba(255,255,255,.05)">' +
+          '<div style="font-size:44px;line-height:1;margin-bottom:10px">\uD83E\uDD14</div>' +
+          '<div style="font-size:11px;letter-spacing:3px;color:var(--cinza);margin-bottom:8px">VOLUME DE TREINO</div>' +
+          '<div style="font-size:16px;color:var(--texto);margin-bottom:8px"><b>' + kgIni + ' kg</b> <span style="color:var(--ouro)">\u2192</span> <b>' + kgFim + ' kg</b></div>' +
+          '<div style="font-size:13px;color:var(--texto);line-height:1.5;margin-bottom:4px">Seu volume se ajustou neste ciclo \u2014 e isso faz parte da estrategia. \uD83D\uDD25</div>' +
+          '<div style="font-size:12px;color:var(--cinza);font-style:italic">Converse com seu personal \u2014 ele ja esta ciente e preparando sua nova proposta de treino. \uD83D\uDCAA</div>' +
+          ciencia +
         '</div>';
       }
     })();

@@ -2754,10 +2754,18 @@ function renderDashboardEvolucao(){
     // Subiu = trofeu dourado + parabens. Caiu = carinha pensativa + acolhimento (bem-estar).
     var html = '';
     (function(){
-      var vi = atual.volume_inicial_kg;
-      var vf = atual.volume_final_kg;
-      // So mostra se temos os DOIS valores e o inicial > 0 (evita divisao por zero / dado incompleto)
-      if(vi == null || vf == null || vi <= 0) return;
+      // FIX 17/jun: avals[0] pode ser a avaliacao NOVA, ainda sem volume final.
+      // Varre da mais recente pra tras e pega o ultimo ciclo COMPLETO (inicial E final).
+      var ciclo = null;
+      for(var ci = 0; ci < avals.length; ci++){
+        if(avals[ci].volume_inicial_kg != null && avals[ci].volume_final_kg != null && avals[ci].volume_inicial_kg > 0){
+          ciclo = avals[ci];
+          break;
+        }
+      }
+      if(!ciclo) return;
+      var vi = ciclo.volume_inicial_kg;
+      var vf = ciclo.volume_final_kg;
       var difKg = vf - vi;
       var difPct = Math.round((difKg / vi) * 100);
       var subiu = vf >= vi;

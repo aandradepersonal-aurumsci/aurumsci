@@ -2749,8 +2749,39 @@ function renderDashboardEvolucao(){
     var avalsAsc = avals.slice().reverse();
     var atual = avals[0]; // mais recente
     
+    // ====== BANNER VOLUME-LOAD (tonelagem do ciclo) — 16/jun ======
+    // Mostra a evolucao de carga (volume = carga x series x reps) entre inicio e fim do ciclo.
+    // Subiu = trofeu dourado + parabens. Caiu = carinha pensativa + acolhimento (bem-estar).
+    var html = '';
+    (function(){
+      var vi = atual.volume_inicial_kg;
+      var vf = atual.volume_final_kg;
+      // So mostra se temos os DOIS valores e o inicial > 0 (evita divisao por zero / dado incompleto)
+      if(vi == null || vf == null || vi <= 0) return;
+      var difKg = vf - vi;
+      var difPct = Math.round((difKg / vi) * 100);
+      var subiu = vf >= vi;
+      var tonIni = (vi/1000).toFixed(1);
+      var tonFim = (vf/1000).toFixed(1);
+      if(subiu){
+        html += '<div style="background:linear-gradient(135deg,rgba(201,168,76,.22),rgba(201,168,76,.06));border:1px solid rgba(201,168,76,.55);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center">' +
+          '<div style="font-size:38px;line-height:1;margin-bottom:8px">\uD83C\uDFC6</div>' +
+          '<div style="font-family:Bebas Neue;font-size:22px;letter-spacing:1px;color:var(--ouro);margin-bottom:6px">VOLUME DE TREINO: +' + difPct + '%</div>' +
+          '<div style="font-size:13px;color:var(--texto);line-height:1.5;margin-bottom:10px">Voce evoluiu de <b>' + tonIni + ' ton</b> para <b>' + tonFim + ' ton</b> de carga total no ciclo. Parabens, continue assim! \uD83D\uDCAA</div>' +
+          '<div style="font-size:12px;color:var(--cinza);font-style:italic">Parabenize seu personal pelo resultado \uD83D\uDC4F</div>' +
+        '</div>';
+      } else {
+        html += '<div style="background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.35);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center">' +
+          '<div style="font-size:38px;line-height:1;margin-bottom:8px">\uD83E\uDD14</div>' +
+          '<div style="font-family:Bebas Neue;font-size:22px;letter-spacing:1px;color:var(--ouro);margin-bottom:6px">VOLUME DE TREINO</div>' +
+          '<div style="font-size:13px;color:var(--texto);line-height:1.5;margin-bottom:10px">Seu volume passou de <b>' + tonIni + ' ton</b> para <b>' + tonFim + ' ton</b> neste ciclo.</div>' +
+          '<div style="font-size:12px;color:var(--cinza);font-style:italic">Converse com seu personal — ele ja esta ciente e preparando sua nova proposta de treino. \uD83D\uDCAA</div>' +
+        '</div>';
+      }
+    })();
+    
     // ====== CARD NARRATIVA MOTIVACIONAL (topo) ======
-    var html = '<div style="background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.04));border:1px solid rgba(201,168,76,.4);border-radius:16px;padding:18px;margin-bottom:16px">' +
+    html += '<div style="background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.04));border:1px solid rgba(201,168,76,.4);border-radius:16px;padding:18px;margin-bottom:16px">' +
       '<div style="font-family:Bebas Neue;font-size:18px;letter-spacing:2px;color:var(--ouro);margin-bottom:6px">📈 SUA EVOLUÇÃO</div>' +
       '<div style="font-size:12px;color:var(--cinza);line-height:1.6">Acompanhe sua jornada de transformação. ' + avals.length + ' avaliação(ões) registrada(s).</div>' +
       '</div>';

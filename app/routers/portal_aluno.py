@@ -253,6 +253,8 @@ def avaliacoes(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(g
         "mmii_reps": a.teste_mmii_reps if a.teste_mmii_reps is not None else parse_extras(a.observacoes).get("mmii_reps"),
         "mmii_classificacao": parse_extras(a.observacoes).get("mmii_classificacao"),
         "hrr_bpm": parse_extras(a.observacoes).get("hrr_recuperacao") or parse_extras(a.observacoes).get("hrr_1min"),
+        "volume_inicial_kg": a.volume_inicial_kg,
+        "volume_final_kg": a.volume_final_kg,
     } for a in avals]
 
 

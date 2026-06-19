@@ -74,3 +74,6 @@ test_*.py
 *.db
 *.sqlite
 *.sqlite3
+
+# Backups locais dos routers (nao versionar)
+app/routers/_backups/

@@ -2194,10 +2194,10 @@ function renderTreino(){
       // Banner da fase da periodização
       var faseInfo = d.fase_atual || null;
       if(faseInfo){
-        var corFase = faseInfo.tipo === 'deload' ? 'var(--verde)' : faseInfo.tipo === 'choque' ? 'var(--vermelho)' : 'var(--azul)';
-        var bgFase = faseInfo.tipo === 'deload' ? 'rgba(0,229,160,.08)' : faseInfo.tipo === 'choque' ? 'rgba(255,75,75,.08)' : 'rgba(75,159,255,.08)';
-        var bordaFase = faseInfo.tipo === 'deload' ? 'rgba(0,229,160,.25)' : faseInfo.tipo === 'choque' ? 'rgba(255,75,75,.25)' : 'rgba(75,159,255,.25)';
-        var emoFase = faseInfo.tipo === 'deload' ? '🔄' : faseInfo.tipo === 'choque' ? '⚡' : '📈';
+        var corFase = faseInfo.tipo === 'deload' ? 'var(--verde)' : faseInfo.tipo === 'choque' ? 'var(--vermelho)' : faseInfo.tipo === 'hipertrofia' ? 'var(--ouro2)' : 'var(--azul)';
+        var bgFase = faseInfo.tipo === 'deload' ? 'rgba(0,229,160,.08)' : faseInfo.tipo === 'choque' ? 'rgba(255,75,75,.08)' : faseInfo.tipo === 'hipertrofia' ? 'rgba(201,168,76,.08)' : 'rgba(75,159,255,.08)';
+        var bordaFase = faseInfo.tipo === 'deload' ? 'rgba(0,229,160,.25)' : faseInfo.tipo === 'choque' ? 'rgba(255,75,75,.25)' : faseInfo.tipo === 'hipertrofia' ? 'rgba(201,168,76,.25)' : 'rgba(75,159,255,.25)';
+        var emoFase = faseInfo.tipo === 'deload' ? '🔄' : faseInfo.tipo === 'choque' ? '⚡' : faseInfo.tipo === 'hipertrofia' ? '🔥' : '📈';
         treinoHtml += '<div style="background:' + bgFase + ';border:1px solid ' + bordaFase + ';border-radius:14px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:flex-start;gap:12px">' +
           '<div style="font-size:24px;flex-shrink:0">' + emoFase + '</div>' +
           '<div>' +

@@ -761,7 +761,40 @@ def periodizacao(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends
         PresencaTreino.aluno_id == aluno.id
     ).count()
 
-    return {"objetivo": objetivo, "nivel": nivel, "ciclos": ciclos, "total_checkins": total_checkins}
+    # FASE ATUAL (17/jun) — calcula em que semana/fase o aluno esta HOJE (so leitura/exibicao).
+    # Isolado em try/except para NUNCA quebrar a rota.
+    semana_atual = None
+    fase_atual_idx = None
+    try:
+        from app.routers.treino import PlanoTreino
+        from datetime import date
+        plano = db.query(PlanoTreino).filter(
+            PlanoTreino.aluno_id == aluno.id,
+            PlanoTreino.ativo == True
+        ).order_by(PlanoTreino.id.desc()).first()
+        if plano and plano.data_inicio:
+            dias = (date.today() - plano.data_inicio).days
+            if dias < 0:
+                dias = 0
+            semana_atual = dias // 7 + 1
+            # Descobre a fase: cada ciclo tem "Semanas X-Y" ou "Semana X" na descricao
+            for idx, c in enumerate(ciclos):
+                desc = c.get("descricao", "")
+                m = re.search(r"Semanas?\s+(\d+)(?:\s*-\s*(\d+))?", desc)
+                if m:
+                    ini = int(m.group(1))
+                    fim = int(m.group(2)) if m.group(2) else ini
+                    if ini <= semana_atual <= fim:
+                        fase_atual_idx = idx
+                        break
+            # Se passou de todas as fases, fica na ultima
+            if fase_atual_idx is None and semana_atual is not None and ciclos:
+                fase_atual_idx = len(ciclos) - 1
+    except Exception:
+        semana_atual = None
+        fase_atual_idx = None
+
+    return {"objetivo": objetivo, "nivel": nivel, "ciclos": ciclos, "total_checkins": total_checkins, "semana_atual": semana_atual, "fase_atual_idx": fase_atual_idx}
 
 
 @router.get("/reavaliacao")

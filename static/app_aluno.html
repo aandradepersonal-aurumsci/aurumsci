@@ -1991,7 +1991,7 @@ var DICAS = {
       {e:'⏱️', t:'<strong>Timer de descanso</strong>: ao marcar uma série, um cronômetro abre para te ajudar a controlar o intervalo. Use se quiser.'},
       {e:'🎬', t:'<strong>Dúvida no exercício?</strong> Toque no 🎬 para ver um vídeo demonstrativo no YouTube.'},
       {e:'➕', t:'<strong>Quer adicionar um exercício?</strong> Role até o final e toque em "+ Adicionar exercício".'},
-      {e:'✅', t:'Terminou? Toque em <strong>CONCLUIR TREINO</strong> para registrar seu check-in. Marcar as séries é opcional — ajuda você a se organizar durante o treino.'},
+      {e:'✅', t:'Terminou? Toque em <strong>CONCLUIR TREINO</strong> para registrar sua presença. Marcar as séries é opcional — ajuda você a se organizar durante o treino.'},
     ]
   },
   'avaliacao': {
@@ -2557,7 +2557,7 @@ function fazerCheckin(){
   localStorage.setItem('checkin_' + hojeStr, '1');
   var seq = parseInt(localStorage.getItem('sequencia')||'0') + 1;
   localStorage.setItem('sequencia', seq);
-  mostrarToast('✅ Check-in feito! ' + seq + ' dias seguidos!');
+  mostrarToast('✅ Treino concluído! ' + seq + ' dias seguidos!');
   renderTreino();
 }
 
@@ -3057,7 +3057,7 @@ function renderPeriodo(){
     var totalSem = 0;
     d.ciclos.forEach(function(c){ var m=(c.descricao||'').match(/-(\d+)/); if(m) totalSem=Math.max(totalSem,parseInt(m[1])); });
     if(!totalSem) totalSem=17;
-    var grafico = '<div style="background:rgba(75,159,255,.08);border:1px solid rgba(75,159,255,.3);border-radius:12px;padding:14px;margin-bottom:16px"><div style="display:flex;gap:10px;align-items:flex-start"><div style="font-size:22px;flex-shrink:0">💡</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--azul);margin-bottom:4px">A periodização avança com seus CHECK-INS!</div><div style="font-size:11px;color:var(--cinza);line-height:1.6">A cada treino concluído, faça <b>CHECK-IN ✓</b>. Sem isso, você fica preso na mesma fase. Total atual: <b>'+totalCheckins+' check-ins</b>.</div></div></div></div><div style="margin-bottom:20px"><div style="font-size:10px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:10px">MACROCICLO — VISAO GERAL</div><div style="display:flex;gap:3px;height:40px;border-radius:10px;overflow:hidden;margin-bottom:8px">';
+    var grafico = '<div style="background:rgba(75,159,255,.08);border:1px solid rgba(75,159,255,.3);border-radius:12px;padding:14px;margin-bottom:16px"><div style="display:flex;gap:10px;align-items:flex-start"><div style="font-size:22px;flex-shrink:0">💡</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--azul);margin-bottom:4px">A periodização avança quando você CONCLUI seus treinos!</div><div style="font-size:11px;color:var(--cinza);line-height:1.6">Ao terminar, toque em <b>CONCLUIR TREINO ✓</b>. Sem isso, você fica preso na mesma fase. Total atual: <b>'+totalCheckins+' treinos concluídos</b>.</div></div></div></div><div style="margin-bottom:20px"><div style="font-size:10px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:10px">MACROCICLO — VISAO GERAL</div><div style="display:flex;gap:3px;height:40px;border-radius:10px;overflow:hidden;margin-bottom:8px">';
     d.ciclos.forEach(function(c, i){
       var chave=getChave(c.nome); var cor=getCor(chave);
       var m=(c.descricao||'').match(/Semanas? (\d+)(?:-(\d+))?/);

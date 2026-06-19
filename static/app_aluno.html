@@ -2168,10 +2168,8 @@ function renderTreino(){
     '<div style="flex:1;text-align:right"><div style="font-size:10px;color:var(--cinza);letter-spacing:1px">META ANUAL</div>' +
     '<div style="font-family:Bebas Neue;font-size:28px;color:var(--ouro2)">' + (seq*100/200).toFixed(0) + '%</div></div></div>';
 
-  // Checkin
-  if(!checkinFeito){
-    html += '<button class="btn-checkin" onclick="fazerCheckin()">' + T('checkinBtn') + '</button>';
-  }
+  // Checkin removido (19/jun): botao duplicava presenca com CONCLUIR TREINO.
+  // Presenca agora e registrada SO pelo CONCLUIR TREINO (evita contagem dupla na cobranca).
 
   // Treino do dia
   fetch(window.API_BASE + '/app-aluno/treino-hoje', {headers:{'Authorization':'Bearer '+token}})

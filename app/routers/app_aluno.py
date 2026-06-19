@@ -536,13 +536,66 @@ async def treino_hoje(
             "corretivo":  False,
         })
 
+    # FASE ATUAL (19/jun) — calcula em que fase o aluno esta e devolve p/ o banner do treino.
+    # So leitura/exibicao. Isolado em try/except para NUNCA quebrar o treino.
+    fase_atual = None
+    try:
+        from datetime import date as _date
+        if plano.data_inicio:
+            dias = (_date.today() - plano.data_inicio).days
+            if dias < 0:
+                dias = 0
+            semana_atual = dias // 7 + 1
+            objetivo_p = aluno.objetivo.value if aluno.objetivo else "hipertrofia"
+            fases_map = {
+                "hipertrofia": [
+                    ("ADAPTACAO", 1, 4, "Base muscular"), ("HIPERTROFIA", 5, 12, "Crescimento"),
+                    ("INTENSIFICACAO", 13, 16, "Forca"), ("DELOAD", 17, 99, "Recuperacao"),
+                ],
+                "emagrecimento": [
+                    ("ATIVACAO", 1, 4, "Queima inicial"), ("ACELERACAO", 5, 10, "Queima intensa"),
+                    ("MANUTENCAO", 11, 16, "Preservar"),
+                ],
+                "condicionamento": [
+                    ("BASE AEROBICA", 1, 6, "Cardio base"), ("POTENCIA", 7, 12, "Intensidade"),
+                ],
+                "forca": [
+                    ("ACUMULACAO", 1, 4, "Base de volume"), ("TRANSMUTACAO", 5, 8, "Alta intensidade"),
+                    ("REALIZACAO", 9, 12, "Pico de forca"),
+                ],
+            }
+            fases = fases_map.get(objetivo_p, fases_map["hipertrofia"])
+            sel = None
+            for nome_f, ini, fim, desc_f in fases:
+                if ini <= semana_atual <= fim:
+                    sel = (nome_f, ini, fim, desc_f); break
+            if sel is None and fases:
+                sel = fases[-1]
+            if sel:
+                nome_f, ini, fim, desc_f = sel
+                if "DELOAD" in nome_f:
+                    tipo_f = "deload"
+                elif nome_f in ("INTENSIFICACAO", "REALIZACAO", "POTENCIA"):
+                    tipo_f = "choque"
+                else:
+                    tipo_f = "normal"
+                fase_atual = {
+                    "tipo": tipo_f,
+                    "nome": "FASE " + nome_f + " · SEMANA " + str(semana_atual),
+                    "descricao": desc_f + " (semanas " + str(ini) + "-" + str(fim) + ")",
+                    "citacao": "Periodizacao · Issurin 2008",
+                }
+    except Exception:
+        fase_atual = None
+
     return {
         "sessao": sessao.nome,
         "data": str(date.today()),
         "exercicios": lista_ex,
         "total_exercicios": len(lista_ex),
         "postura_resumo": postura_resumo,
-        "corretivos_posturais": corretivos_posturais
+        "corretivos_posturais": corretivos_posturais,
+        "fase_atual": fase_atual
     }
 
 

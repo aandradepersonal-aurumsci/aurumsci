@@ -1876,10 +1876,12 @@ def aulas_aluno_mes(
     primeiro_dia = date_cls(ano, mes, 1)
     ultimo_dia = date_cls(ano, mes, monthrange(ano, mes)[1])
     
+    # COBRANCA: conta SO aulas presenciais (tipo="aula"), nao os treinos que o aluno faz sozinho
     presencas = db.query(PresencaTreino).filter(
         PresencaTreino.aluno_id == aluno_id,
         PresencaTreino.data >= primeiro_dia,
-        PresencaTreino.data <= ultimo_dia
+        PresencaTreino.data <= ultimo_dia,
+        PresencaTreino.tipo == "aula"
     ).all()
     
     datas = [p.data.isoformat() for p in presencas]

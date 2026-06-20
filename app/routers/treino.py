@@ -107,6 +107,7 @@ class PresencaTreino(Base):
     duracao_minutos = Column(Integer)
     sensacao_subjetiva = Column(Integer)
     observacoes = Column(Text)
+    tipo = Column(String(20), default="treino")  # "treino" (aluno) ou "aula" (presencial/cobranca)
     criado_em = Column(DateTime, default=datetime.utcnow)
 
 

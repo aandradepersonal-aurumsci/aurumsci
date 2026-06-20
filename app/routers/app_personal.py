@@ -910,12 +910,13 @@ def fazer_checkin_aula(
     if ja_existe:
         raise HTTPException(400, f"{aluno.nome} ja tem check-in nesse dia")
     
-    # Cria presenca
+    # Cria presenca — tipo="aula" marca que e AULA PRESENCIAL (para cobranca), nao treino do aluno
     nova = PresencaTreino(
         aluno_id=aluno_id,
         data=data_aula,
         presente=True,
-        observacoes=observacoes or None
+        observacoes=observacoes or None,
+        tipo="aula"
     )
     db.add(nova)
     db.commit()

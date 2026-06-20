@@ -227,7 +227,18 @@ def resumo_completo_aluno(aluno_id: int, personal: Personal = Depends(get_person
             "flexao": aval.teste_flexao_num if aval else None,
             "barra": aval.teste_barra_num if aval else None,
             "flexibilidade": aval.teste_flexibilidade_cm if aval else None,
+            "abdominal": aval.teste_abdominal_num if aval else None,
+            "mmii": aval.teste_mmii_reps if aval else None,
+            "cooper": aval.teste_cooper_metros if aval else None,
+            "preensao_dom": aval.preensao_dom_kgf if aval else None,
+            "preensao_ndom": aval.preensao_ndom_kgf if aval else None,
         },
+        "circunferencias": {
+            "pescoco": aval.circ_pescoco if aval else None,
+            "torax": aval.circ_torax if aval else None,
+            "cintura": aval.circ_cintura if aval else None,
+            "abdomen": aval.circ_abdomen if aval else None,
+        } if aval else None,
         "postural": {
             "cabeca": aval.postura_cabeca if aval else None,
             "ombros": aval.postura_ombros if aval else None,

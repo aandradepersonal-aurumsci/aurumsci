@@ -2742,6 +2742,17 @@ function avalAba(aba){
       setVal('p-wells', t.flexibilidade);
     })
     .catch(function(){});
+    // Idade certa do aluno (via perfil-vo2) nos campos de idade da forca e flexibilidade
+    fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/perfil-vo2', {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.ok ? r.json() : {}; })
+    .then(function(d){
+      if(d && d.idade){
+        window._alunoIdade = parseInt(d.idade);
+        var fi = document.getElementById('p-forca-idade'); if(fi && !fi.value) fi.value = d.idade;
+        var wi = document.getElementById('p-wells-idade'); if(wi && !wi.value) wi.value = d.idade;
+      }
+    })
+    .catch(function(){});
 
   } else if(aba==='resultados'){
     el.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:20px">Carregando...</div>';

@@ -1178,10 +1178,12 @@ def listar_fechamentos_pendentes(
         data_vencimento = data_fechamento + timedelta(days=dias_vencimento)
         
         primeiro_dia_mes = date_cls(hoje.year, hoje.month, 1)
+        # COBRANCA: conta SO aulas presenciais (tipo="aula"), nao os treinos que o aluno faz sozinho
         aulas_dadas = db.query(PresencaTreino).filter(
             PresencaTreino.aluno_id == aluno.id,
             PresencaTreino.data >= primeiro_dia_mes,
-            PresencaTreino.data <= hoje
+            PresencaTreino.data <= hoje,
+            PresencaTreino.tipo == "aula"
         ).count()
         
         if ciclo == "por_aula_mensal":
@@ -1264,12 +1266,13 @@ def fechar_mes_aluno(
     valor_aula = float(aluno.valor_aula) if aluno.valor_aula else 0
     dias_vencimento = aluno.dias_vencimento or 5
     
-    # Conta aulas do mes
+    # Conta aulas do mes — SO aulas presenciais (tipo="aula") para cobranca, nao treinos do aluno
     primeiro_dia_mes = date_cls(hoje.year, hoje.month, 1)
     aulas_dadas = db.query(PresencaTreino).filter(
         PresencaTreino.aluno_id == aluno.id,
         PresencaTreino.data >= primeiro_dia_mes,
-        PresencaTreino.data <= hoje
+        PresencaTreino.data <= hoje,
+        PresencaTreino.tipo == "aula"
     ).count()
     
     # Calcula valor

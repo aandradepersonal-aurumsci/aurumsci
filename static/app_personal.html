@@ -2728,6 +2728,20 @@ function avalAba(aba){
     }, 80);
     var idadeAuto = (window._avalDados && window._avalDados.idade) || window._alunoIdade;
     if(idadeAuto){ var ci = document.getElementById('pren-idade'); if(ci) ci.value = idadeAuto; }
+    // ETAPA 2 (20/jun): preenche os campos de FORCA com a ULTIMA avaliacao salva (prontuario do professor)
+    fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/resumo-completo', {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.ok ? r.json() : {}; })
+    .then(function(d){
+      var t = (d && d.testes) || {};
+      function setVal(id, val){ var e = document.getElementById(id); if(e && val !== null && val !== undefined && val !== '') e.value = val; }
+      setVal('p-flexao', t.flexao);
+      setVal('p-barra', t.barra);
+      setVal('p-abdom', t.abdominal);
+      setVal('p-pren-dom', t.preensao_dom);
+      setVal('p-pren-ndom', t.preensao_ndom);
+      setVal('p-wells', t.flexibilidade);
+    })
+    .catch(function(){});
 
   } else if(aba==='resultados'){
     el.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:20px">Carregando...</div>';

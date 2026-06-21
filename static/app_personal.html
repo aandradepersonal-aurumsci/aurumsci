@@ -4063,6 +4063,34 @@ function subAba(id, aba){
       var html = '';
       // Header
       html += '<div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2);margin-bottom:12px;letter-spacing:1px">📈 DASHBOARD DE RESULTADOS</div>';
+      // AURUM SCORE (21/jun): score de performance pela media das classificacoes
+      (function(){
+        function notaClass(c){
+          if(!c) return null;
+          var s = (''+c).toLowerCase();
+          if(s.indexOf('superior')>=0 || s.indexOf('excelente')>=0 || s.indexOf('atleta')>=0 || s.indexOf('atletico')>=0) return 100;
+          if(s.indexOf('acima')>=0 || s.indexOf('bom')>=0 || s.indexOf('boa forma')>=0) return 75;
+          if(s.indexOf('aceitavel')>=0 || s.indexOf('regular')>=0 || (s.indexOf('media')>=0 && s.indexOf('abaixo')<0)) return 50;
+          if(s.indexOf('abaixo')>=0 || s.indexOf('fraco')>=0 || s.indexOf('obesidade')>=0) return 25;
+          return null;
+        }
+        var notas = [notaClass(tf.classificacao_vo2), notaClass(tf.classificacao_gordura), notaClass(tf.classificacao_flexao), notaClass(tf.classificacao_flexibilidade)].filter(function(n){ return n !== null; });
+        if(notas.length > 0){
+          var score = Math.round(notas.reduce(function(a,b){ return a+b; },0) / notas.length);
+          var nivel, cor;
+          if(score >= 90){ nivel='ELITE'; cor='#C9A84C'; }
+          else if(score >= 75){ nivel='PERFORMANCE AVANCADA'; cor='#4B9FFF'; }
+          else if(score >= 60){ nivel='BOA FORMA'; cor='#00E5A0'; }
+          else if(score >= 45){ nivel='EM DESENVOLVIMENTO'; cor='#E8B04B'; }
+          else { nivel='INICIANTE'; cor='#FF6B6B'; }
+          html += '<div style="background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.04));border:1px solid ' + cor + ';border-radius:16px;padding:18px;margin-bottom:12px;text-align:center">';
+          html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:2px;margin-bottom:6px">🏆 AURUM SCORE</div>';
+          html += '<div style="font-family:Bebas Neue;font-size:48px;color:' + cor + ';line-height:1">' + score + '<span style="font-size:20px;color:var(--cinza)">/100</span></div>';
+          html += '<div style="font-family:Bebas Neue;font-size:16px;color:' + cor + ';letter-spacing:1px;margin-top:4px">' + nivel + '</div>';
+          html += '<div style="font-size:9px;color:var(--cinza);margin-top:6px">Media de ' + notas.length + ' modulo(s): VO2, gordura, forca, flexibilidade</div>';
+          html += '</div>';
+        }
+      })();
       // Frequencia
       html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;margin-bottom:10px">';
       html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin-bottom:8px">🏃 FREQUÊNCIA</div>';

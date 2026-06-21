@@ -2993,8 +2993,26 @@ function renderGraficoRadar(atual, avals){
   container.style.height = 'auto';
   container.style.minHeight = '0';
   
+  // AURUM SCORE (21/jun): media dos 4 modulos (% sobre meta) -> nivel
+  var pcts = dims.map(function(d){ var v = ultimoNaoNulo(d.campo); return v == null ? null : Math.min(100, (v/d.meta)*100); }).filter(function(p){ return p !== null; });
+  var html = '';
+  if(pcts.length > 0){
+    var score = Math.round(pcts.reduce(function(a,b){ return a+b; },0) / pcts.length);
+    var nivel, scor;
+    if(score >= 90){ nivel='ELITE'; scor='#C9A84C'; }
+    else if(score >= 75){ nivel='PERFORMANCE AVANCADA'; scor='#4B9FFF'; }
+    else if(score >= 60){ nivel='BOA FORMA'; scor='#0FB682'; }
+    else if(score >= 45){ nivel='EM DESENVOLVIMENTO'; scor='#F0C040'; }
+    else { nivel='INICIANTE'; scor='#FF7B47'; }
+    html += '<div style="background:linear-gradient(135deg,rgba(201,168,76,.14),rgba(201,168,76,.04));border:1px solid '+scor+';border-radius:18px;padding:20px;margin-bottom:14px;text-align:center">';
+    html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:2px;margin-bottom:6px">🏆 AURUM SCORE</div>';
+    html += '<div style="font-family:Bebas Neue;font-size:54px;color:'+scor+';line-height:1">'+score+'<span style="font-size:22px;color:rgba(255,255,255,.4)">/100</span></div>';
+    html += '<div style="font-family:Bebas Neue;font-size:18px;color:'+scor+';letter-spacing:1px;margin-top:4px">'+nivel+'</div>';
+    html += '<div style="font-size:9px;color:rgba(255,255,255,.4);margin-top:6px">Media de '+pcts.length+' modulo(s) de performance</div>';
+    html += '</div>';
+  }
   // Monta HTML dos 4 blocos
-  var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:4px 0">';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:4px 0">';
   dims.forEach(function(d){
     var val = ultimoNaoNulo(d.campo);
     var pct = val == null ? 0 : Math.min(100, (val/d.meta)*100);

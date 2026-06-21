@@ -4063,20 +4063,18 @@ function subAba(id, aba){
       var html = '';
       // Header
       html += '<div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2);margin-bottom:12px;letter-spacing:1px">📈 DASHBOARD DE RESULTADOS</div>';
-      // AURUM SCORE (21/jun): score de performance pela media das classificacoes
+      // AURUM SCORE (21/jun, alinhado com o app do aluno): media dos 4 modulos (% sobre meta)
+      // Metas IGUAIS ao aluno: forca(flexao)=50, cardio(vo2)=55, mmii=30, flexibilidade=35
       (function(){
-        function notaClass(c){
-          if(!c) return null;
-          var s = (''+c).toLowerCase();
-          if(s.indexOf('superior')>=0 || s.indexOf('excelente')>=0 || s.indexOf('atleta')>=0 || s.indexOf('atletico')>=0) return 100;
-          if(s.indexOf('acima')>=0 || s.indexOf('bom')>=0 || s.indexOf('boa forma')>=0) return 75;
-          if(s.indexOf('aceitavel')>=0 || s.indexOf('regular')>=0 || (s.indexOf('media')>=0 && s.indexOf('abaixo')<0)) return 50;
-          if(s.indexOf('abaixo')>=0 || s.indexOf('fraco')>=0 || s.indexOf('obesidade')>=0) return 25;
-          return null;
-        }
-        var notas = [notaClass(tf.classificacao_vo2), notaClass(tf.classificacao_gordura), notaClass(tf.classificacao_flexao), notaClass(tf.classificacao_flexibilidade)].filter(function(n){ return n !== null; });
-        if(notas.length > 0){
-          var score = Math.round(notas.reduce(function(a,b){ return a+b; },0) / notas.length);
+        var modulos = [
+          {val: tf.flexao, meta: 50},
+          {val: av.vo2max, meta: 55},
+          {val: tf.mmii, meta: 30},
+          {val: tf.flexibilidade, meta: 35}
+        ];
+        var pcts = modulos.map(function(m){ return (m.val == null || m.val === '') ? null : Math.min(100, (parseFloat(m.val)/m.meta)*100); }).filter(function(p){ return p !== null; });
+        if(pcts.length > 0){
+          var score = Math.round(pcts.reduce(function(a,b){ return a+b; },0) / pcts.length);
           var nivel, cor;
           if(score >= 90){ nivel='ELITE'; cor='#C9A84C'; }
           else if(score >= 75){ nivel='PERFORMANCE AVANCADA'; cor='#4B9FFF'; }
@@ -4087,7 +4085,7 @@ function subAba(id, aba){
           html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:2px;margin-bottom:6px">🏆 AURUM SCORE</div>';
           html += '<div style="font-family:Bebas Neue;font-size:48px;color:' + cor + ';line-height:1">' + score + '<span style="font-size:20px;color:var(--cinza)">/100</span></div>';
           html += '<div style="font-family:Bebas Neue;font-size:16px;color:' + cor + ';letter-spacing:1px;margin-top:4px">' + nivel + '</div>';
-          html += '<div style="font-size:9px;color:var(--cinza);margin-top:6px">Media de ' + notas.length + ' modulo(s): VO2, gordura, forca, flexibilidade</div>';
+          html += '<div style="font-size:9px;color:var(--cinza);margin-top:6px">Media de ' + pcts.length + ' modulo(s) de performance</div>';
           html += '</div>';
         }
       })();

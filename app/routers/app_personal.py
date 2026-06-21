@@ -252,6 +252,8 @@ def resumo_completo_aluno(aluno_id: int, personal: Personal = Depends(get_person
             "coxa_e": aval.circ_coxa_e if aval else None,
             "panturrilha_d": aval.circ_panturrilha_d if aval else None,
             "panturrilha_e": aval.circ_panturrilha_e if aval else None,
+            "rcq": aval.relacao_cintura_quadril if aval else None,
+            "risco_cardiovascular": aval.risco_cardiovascular if aval else None,
         } if aval else None,
         "postural": {
             "cabeca": aval.postura_cabeca if aval else None,

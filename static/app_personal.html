@@ -4111,6 +4111,20 @@ function subAba(id, aba){
         if(av.data) html += '<div style="margin-top:4px;text-align:center;font-size:10px;color:var(--cinza)">Avaliado em: ' + av.data + '</div>';
         html += '</div>';
       }
+      // RCQ - Relacao Cintura-Quadril (saude/risco cardiovascular) (21/jun)
+      var circ = d.circunferencias || {};
+      if(circ.rcq){
+        var rcqRisco = circ.risco_cardiovascular || '';
+        var rcqCor = rcqRisco === 'Baixo' ? 'var(--verde)' : (rcqRisco === 'Moderado' ? 'var(--ouro)' : 'var(--vermelho)');
+        html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;margin-bottom:10px">';
+        html += '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin-bottom:8px">📐 RELACAO CINTURA-QUADRIL (RCQ)</div>';
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+        html += card(circ.rcq, 'RCQ', rcqCor);
+        html += card(rcqRisco || '—', 'RISCO CARDIOVASCULAR', rcqCor);
+        html += '</div>';
+        html += '<div style="margin-top:6px;text-align:center;font-size:9px;color:var(--cinza)">Classificacao OMS · WHO 2008</div>';
+        html += '</div>';
+      }
       // VO2 e HRR
       if(av.vo2max||av.hrr){
         html += '<div style="background:var(--bg);border-radius:12px;border:1px solid var(--borda);padding:12px;margin-bottom:10px">';

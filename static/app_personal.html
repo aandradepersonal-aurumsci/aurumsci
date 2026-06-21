@@ -2652,6 +2652,26 @@ function avalAba(aba){
   } else if(aba==='circunf'){
     el.innerHTML = renderCircunferencias();
     setTimeout(function(){ ativarEnter(['circ-torax','circ-cintura','circ-abdom','circ-quadril','circ-braco-d','circ-braco-e','circ-antbr-d','circ-antbr-e','circ-coxa-d','circ-coxa-e','circ-pant-d','circ-pant-e'], salvarCircunferencias); }, 80);
+    // ETAPA 2 (20/jun): preenche circunferencias com a ultima avaliacao salva
+    fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/resumo-completo', {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.ok ? r.json() : {}; })
+    .then(function(d){
+      var c = (d && d.circunferencias) || {};
+      function setC(id, val){ var e = document.getElementById(id); if(e && val !== null && val !== undefined && val !== '') e.value = val; }
+      setC('circ-torax', c.torax);
+      setC('circ-cintura', c.cintura);
+      setC('circ-abdom', c.abdomen);
+      setC('circ-quadril', c.quadril);
+      setC('circ-braco-d', c.braco_d);
+      setC('circ-braco-e', c.braco_e);
+      setC('circ-antbr-d', c.antebraco_d);
+      setC('circ-antbr-e', c.antebraco_e);
+      setC('circ-coxa-d', c.coxa_d);
+      setC('circ-coxa-e', c.coxa_e);
+      setC('circ-pant-d', c.panturrilha_d);
+      setC('circ-pant-e', c.panturrilha_e);
+    })
+    .catch(function(){});
     // FIX 19/05/2026: pre-popula campos com ultima avaliacao (trainer ve historico pra adaptar treino)
     fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/medidas', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.ok ? r.json() : {}; })
@@ -2695,6 +2715,21 @@ function avalAba(aba){
   } else if(aba==='mmii'){
     el.innerHTML = renderMMIIPersonal();
     setTimeout(function(){ ativarEnter(['p-mmii-reps','p-mmii-idade'], calcMMIIP); }, 80);
+    // ETAPA 2 (21/jun): preenche MMII com a ultima avaliacao salva + idade certa
+    fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/resumo-completo', {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.ok ? r.json() : {}; })
+    .then(function(d){
+      var t = (d && d.testes) || {};
+      var e = document.getElementById('p-mmii-reps');
+      if(e && t.mmii !== null && t.mmii !== undefined && t.mmii !== '') e.value = t.mmii;
+    })
+    .catch(function(){});
+    fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/perfil-vo2', {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.ok ? r.json() : {}; })
+    .then(function(d){
+      if(d && d.idade){ var wi = document.getElementById('p-mmii-idade'); if(wi && !wi.value) wi.value = d.idade; }
+    })
+    .catch(function(){});
   } else if(aba==='vo2'){
     el.innerHTML = renderVO2Personal();
     setTimeout(function(){

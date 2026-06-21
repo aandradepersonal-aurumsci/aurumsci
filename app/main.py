@@ -254,7 +254,9 @@ def cadastro_pro_page():
 
 @app.get("/pro", response_class=HTMLResponse, include_in_schema=False)
 def landing_pro():
-    with open("static/landing_pro.html", "r", encoding="utf-8") as f:
+    # VENDA PAUSADA (21/jun/2026): servindo pagina "em breve" enquanto o PRO e refinado/Stripe Connect.
+    # Para REATIVAR: trocar landing_pro_em_breve.html de volta por landing_pro.html (original intacto).
+    with open("static/landing_pro_em_breve.html", "r", encoding="utf-8") as f:
         return f.read()
 
 @app.get("/paywall-pro", response_class=HTMLResponse, include_in_schema=False)

@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, Float, Date, DateTime, Text, ForeignKey
@@ -70,6 +70,22 @@ class AvaliacaoFisica(Base):
     # final = na reavaliacao (fecha o ciclo). Comparacao = evolucao do aluno no periodo.
     volume_inicial_kg = Column(Float, nullable=True)
     volume_final_kg = Column(Float, nullable=True)
+
+JANELA_AVALIACAO_DIAS = 60  # dentro dessa janela, testes caem na MESMA avaliacao (a corrente)
+
+def pegar_ou_criar_avaliacao_corrente(db, aluno_id):
+    """Retorna a avaliacao CORRENTE do aluno (a mais recente dentro de JANELA_AVALIACAO_DIAS).
+    Se nao existe nenhuma, ou a mais recente passou da janela, cria uma nova (reavaliacao).
+    Resolve o bug de testes em dias diferentes criarem avaliacoes separadas."""
+    recente = db.query(AvaliacaoFisica).filter(
+        AvaliacaoFisica.aluno_id == aluno_id
+    ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
+    hoje = date.today()
+    if recente and recente.data_avaliacao and (hoje - recente.data_avaliacao).days <= JANELA_AVALIACAO_DIAS:
+        return recente
+    nova = AvaliacaoFisica(aluno_id=aluno_id, data_avaliacao=hoje)
+    db.add(nova)
+    return nova
 
 def get_aluno(aluno_id, personal_id, db):
     aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal_id).first()

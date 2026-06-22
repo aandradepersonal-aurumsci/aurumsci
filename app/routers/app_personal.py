@@ -702,14 +702,8 @@ async def postural_aluno(
     # Bug antigo: postural pegava ULTIMA avaliacao (qualquer dia), enquanto outras
     # secoes criavam/atualizavam por DATA. Resultado: postural ficava em avaliacao
     # diferente, "sumindo" da tela do aluno apos anamnese/composicao salvar.
-    from datetime import date
-    av = db.query(AvaliacaoFisica).filter(
-        AvaliacaoFisica.aluno_id == aluno_id,
-        AvaliacaoFisica.data_avaliacao == date.today()
-    ).first()
-    if not av:
-        av = AvaliacaoFisica(aluno_id=aluno_id, data_avaliacao=date.today())
-        db.add(av)
+    from app.routers.avaliacao import pegar_ou_criar_avaliacao_corrente
+    av = pegar_ou_criar_avaliacao_corrente(db, aluno_id)
     av.postura_cabeca   = resultado.cabeca
     av.postura_ombros   = resultado.ombros
     av.postura_coluna   = resultado.coluna

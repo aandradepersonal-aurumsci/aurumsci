@@ -2755,6 +2755,15 @@ function avalAba(aba){
       if(d && d.sexo) window._alunoSexo = (d.sexo==='feminino'||d.sexo==='F')?'F':'M';
     })
     .catch(function(err){ console.warn('Erro ao carregar perfil VO2:', err); });
+    // ETAPA 2 (22/jun): preenche a distancia do Cooper com a ultima avaliacao salva (prontuario)
+    fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/resumo-completo', {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.ok ? r.json() : {}; })
+    .then(function(d){
+      var t = (d && d.testes) || {};
+      var e = document.getElementById('p-cooper-dist');
+      if(e && t.cooper !== null && t.cooper !== undefined && t.cooper !== '') e.value = t.cooper;
+    })
+    .catch(function(){});
   } else if(aba==='forca'){
     el.innerHTML = renderForcaPersonal();
     setTimeout(function(){

@@ -3322,23 +3322,26 @@ function calcWells(){
   ],'Wells & Dillon (1952) · ACSM Guidelines 2022');
 }
 function preencherIdadeTestes(){
-  console.log("3 - preencherIdadeTestes chamada. _avalDados:", window._avalDados);
+  var dados = window._avalDados || {};
+  // IDADE: prioriza campo an-idade (se visivel), senao _avalDados
   var idadeEl = document.getElementById('an-idade');
-  var idade = (idadeEl && idadeEl.value) ? idadeEl.value : '';
+  var idade = (idadeEl && idadeEl.value) ? idadeEl.value : (dados.idade || '');
   if(idade){
     var campos = ['pren-idade','d3-idade','d7-idade','us-idade','p-milha-idade','p-wells-idade','p-forca-idade','p-mmii-idade'];
     campos.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = idade; });
   }
+  // PESO
   var pesoEl = document.getElementById('an-peso');
-  var peso = (pesoEl && pesoEl.value) ? pesoEl.value : '';
+  var peso = (pesoEl && pesoEl.value) ? pesoEl.value : (dados.peso || '');
   if(peso){
     var camposPeso = ['us-peso','bio-peso','p-milha-peso'];
     camposPeso.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = peso; });
   }
+  // SEXO: _avalDados.sexo ja vem como 'M' ou 'F' (convertido na linha do fetch)
   var sexoEl = document.getElementById('an-sexo');
-  var sexo = (sexoEl && sexoEl.value) ? sexoEl.value : '';
-  if(sexo){
-    var s = String(sexo).toUpperCase();
+  var sexoRaw = (sexoEl && sexoEl.value) ? sexoEl.value : (dados.sexo || '');
+  if(sexoRaw){
+    var s = String(sexoRaw).toUpperCase();
     var sexoNorm = (s==='MASCULINO'||s==='M') ? 'M' : ((s==='FEMININO'||s==='F') ? 'F' : '');
     if(sexoNorm){
       var camposSexo = ['d3-sexo','d7-sexo','us-sexo','pren-sexo','p-wells-sexo'];

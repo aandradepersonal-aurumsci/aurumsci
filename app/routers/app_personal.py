@@ -187,7 +187,7 @@ def resumo_aluno(aluno_id: int, personal: Personal = Depends(get_personal_atual)
     ).count()
 
     return {
-        "aluno": {"id": aluno.id, "nome": aluno.nome, "objetivo": aluno.objetivo.value if aluno.objetivo else "", "nivel": aluno.nivel_experiencia.value if aluno.nivel_experiencia else ""},
+        "aluno": {"id": aluno.id, "nome": aluno.nome, "objetivo": aluno.objetivo.value if aluno.objetivo else "", "nivel": aluno.nivel_experiencia.value if aluno.nivel_experiencia else "", "sexo": aluno.sexo.value if aluno.sexo else None, "idade": ((date.today() - aluno.data_nascimento).days // 365) if aluno.data_nascimento else None},
         "avaliacao": {"peso": aval.peso if aval else None, "gordura": aval.percentual_gordura if aval else None, "data": str(aval.data_avaliacao) if aval else None},
         "plano": {"nome": plano.nome if plano else None, "dias_semana": plano.dias_semana if plano else None},
         "frequencia_mes": presencas,

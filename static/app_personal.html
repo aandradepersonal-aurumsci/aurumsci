@@ -3319,31 +3319,28 @@ function calcWells(){
   ],'Wells & Dillon (1952) · ACSM Guidelines 2022');
 }
 function preencherIdadeTestes(){
-  fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/anamnese', {headers:{'Authorization':'Bearer '+token}})
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    if(!d) return;
-    var idade = d.idade || (window._avalDados && window._avalDados.idade) || window._alunoIdade;
-    if(idade){
-      var campos = ['pren-idade','d3-idade','d7-idade','us-idade','p-milha-idade','p-wells-idade','p-forca-idade','p-mmii-idade'];
-      campos.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = idade; });
+  var idadeEl = document.getElementById('an-idade');
+  var idade = (idadeEl && idadeEl.value) ? idadeEl.value : '';
+  if(idade){
+    var campos = ['pren-idade','d3-idade','d7-idade','us-idade','p-milha-idade','p-wells-idade','p-forca-idade','p-mmii-idade'];
+    campos.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = idade; });
+  }
+  var pesoEl = document.getElementById('an-peso');
+  var peso = (pesoEl && pesoEl.value) ? pesoEl.value : '';
+  if(peso){
+    var camposPeso = ['us-peso','bio-peso','p-milha-peso'];
+    camposPeso.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = peso; });
+  }
+  var sexoEl = document.getElementById('an-sexo');
+  var sexo = (sexoEl && sexoEl.value) ? sexoEl.value : '';
+  if(sexo){
+    var s = String(sexo).toUpperCase();
+    var sexoNorm = (s==='MASCULINO'||s==='M') ? 'M' : ((s==='FEMININO'||s==='F') ? 'F' : '');
+    if(sexoNorm){
+      var camposSexo = ['d3-sexo','d7-sexo','us-sexo','pren-sexo','p-wells-sexo'];
+      camposSexo.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = sexoNorm; });
     }
-    var peso = d.peso || (window._avalDados && window._avalDados.peso) || '';
-    if(peso){
-      var camposPeso = ['us-peso','bio-peso','p-milha-peso'];
-      camposPeso.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = peso; });
-    }
-    var sexo = d.sexo || (window._avalDados && window._avalDados.sexo) || '';
-    if(sexo){
-      var s = String(sexo).toUpperCase();
-      var sexoNorm = (s==='MASCULINO'||s==='M') ? 'M' : ((s==='FEMININO'||s==='F') ? 'F' : '');
-      if(sexoNorm){
-        var camposSexo = ['d3-sexo','d7-sexo','us-sexo','pren-sexo','p-wells-sexo'];
-        camposSexo.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = sexoNorm; });
-      }
-    }
-  })
-  .catch(function(){});
+  }
 }
 function renderForcaPersonal(){
   return '<div>' +

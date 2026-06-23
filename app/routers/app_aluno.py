@@ -1362,14 +1362,8 @@ def salvar_vo2(
     
     # Procura AvaliacaoFisica do dia (cria se nao existir)
     hoje = date.today()
-    aval = db.query(AvaliacaoFisica).filter(
-        AvaliacaoFisica.aluno_id == aluno.id,
-        AvaliacaoFisica.data_avaliacao == hoje
-    ).first()
-    
-    if not aval:
-        aval = AvaliacaoFisica(aluno_id=aluno.id, data_avaliacao=hoje)
-        db.add(aval)
+    from app.routers.avaliacao import pegar_ou_criar_avaliacao_corrente
+    aval = pegar_ou_criar_avaliacao_corrente(db, aluno.id)
     
     # Campos reais em AvaliacaoFisica
     aval.vo2max = dados.vo2_calculado
@@ -1454,14 +1448,8 @@ def salvar_forca(
     from app.routers.avaliacao import AvaliacaoFisica
     
     hoje = date.today()
-    aval = db.query(AvaliacaoFisica).filter(
-        AvaliacaoFisica.aluno_id == aluno.id,
-        AvaliacaoFisica.data_avaliacao == hoje
-    ).first()
-    
-    if not aval:
-        aval = AvaliacaoFisica(aluno_id=aluno.id, data_avaliacao=hoje)
-        db.add(aval)
+    from app.routers.avaliacao import pegar_ou_criar_avaliacao_corrente
+    aval = pegar_ou_criar_avaliacao_corrente(db, aluno.id)
     
     # Tudo em observacoes JSON (sem migration)
     extras = {"forca_data": str(hoje)}
@@ -1505,14 +1493,8 @@ def salvar_potencia(
     from app.routers.avaliacao import AvaliacaoFisica
     
     hoje = date.today()
-    aval = db.query(AvaliacaoFisica).filter(
-        AvaliacaoFisica.aluno_id == aluno.id,
-        AvaliacaoFisica.data_avaliacao == hoje
-    ).first()
-    
-    if not aval:
-        aval = AvaliacaoFisica(aluno_id=aluno.id, data_avaliacao=hoje)
-        db.add(aval)
+    from app.routers.avaliacao import pegar_ou_criar_avaliacao_corrente
+    aval = pegar_ou_criar_avaliacao_corrente(db, aluno.id)
     
     # FIX 21/05/2026: salva NA COLUNA dedicada teste_mmii_reps (integer)
     # ALEM do JSON observacoes (historico + classificacoes).

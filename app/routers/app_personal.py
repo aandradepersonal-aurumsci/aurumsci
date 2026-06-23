@@ -505,11 +505,8 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
             ))
         # FIX 18/05/2026: peso/altura salvos em AvaliacaoFisica
         if an.peso or (hasattr(an, 'altura') and an.altura):
-            from app.routers.avaliacao import AvaliacaoFisica
-            av = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno_id, AvaliacaoFisica.data_avaliacao == date.today()).first()
-            if not av:
-                av = AvaliacaoFisica(aluno_id=aluno_id, data_avaliacao=date.today())
-                db.add(av)
+            from app.routers.avaliacao import AvaliacaoFisica, pegar_ou_criar_avaliacao_corrente
+            av = pegar_ou_criar_avaliacao_corrente(db, aluno_id)
             if an.peso: av.peso = an.peso
             if hasattr(an, 'altura') and an.altura: av.estatura = an.altura
         if hasattr(an, 'nivel') and an.nivel:
@@ -527,10 +524,8 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
         db.commit()
         return {"mensagem": f"Anamnese salva para {aluno.nome}!", "secao": secao, "data": str(date.today())}
 
-    av = db.query(AvaliacaoFisica).filter(AvaliacaoFisica.aluno_id == aluno_id, AvaliacaoFisica.data_avaliacao == date.today()).first()
-    if not av:
-        av = AvaliacaoFisica(aluno_id=aluno_id, data_avaliacao=date.today())
-        db.add(av)
+    from app.routers.avaliacao import pegar_ou_criar_avaliacao_corrente
+    av = pegar_ou_criar_avaliacao_corrente(db, aluno_id)
 
     if secao == "circunferencias" and dados.circunferencias:
         c = dados.circunferencias

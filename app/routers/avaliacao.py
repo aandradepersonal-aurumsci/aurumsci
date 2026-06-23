@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, Float, Date, DateTime, Text, ForeignKey
@@ -71,6 +72,13 @@ class AvaliacaoFisica(Base):
     volume_inicial_kg = Column(Float, nullable=True)
     volume_final_kg = Column(Float, nullable=True)
 
+TZ_BRASIL = ZoneInfo("America/Sao_Paulo")
+
+def hoje_brasil():
+    """Data atual no fuso de Brasilia (nao no UTC do servidor Railway).
+    Corrige o bug de avaliacoes caindo no dia errado perto da meia-noite."""
+    return datetime.now(TZ_BRASIL).date()
+
 JANELA_AVALIACAO_DIAS = 60  # dentro dessa janela, testes caem na MESMA avaliacao (a corrente)
 
 def pegar_ou_criar_avaliacao_corrente(db, aluno_id):
@@ -80,7 +88,7 @@ def pegar_ou_criar_avaliacao_corrente(db, aluno_id):
     recente = db.query(AvaliacaoFisica).filter(
         AvaliacaoFisica.aluno_id == aluno_id
     ).order_by(AvaliacaoFisica.data_avaliacao.desc()).first()
-    hoje = date.today()
+    hoje = hoje_brasil()
     if recente and recente.data_avaliacao and (hoje - recente.data_avaliacao).days <= JANELA_AVALIACAO_DIAS:
         return recente
     nova = AvaliacaoFisica(aluno_id=aluno_id, data_avaliacao=hoje)

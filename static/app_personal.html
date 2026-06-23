@@ -2711,6 +2711,7 @@ function avalAba(aba){
       '</div>' +
       '<div id="comp-aba-content"></div>';
     setTimeout(function(){ compAba('bio'); }, 50);
+    setTimeout(function(){ preencherIdadeTestes(); }, 100);
 
   } else if(aba==='mmii'){
     el.innerHTML = renderMMIIPersonal();
@@ -3328,6 +3329,13 @@ function preencherIdadeTestes(){
   if(peso){
     var camposPeso = ['us-peso','bio-peso','p-milha-peso'];
     camposPeso.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = peso; });
+  }
+  // NOVO: preenche SEXO nos protocolos a partir da anamnese
+  var sexoEl = document.getElementById('an-sexo');
+  var sexo = (sexoEl && sexoEl.value) ? sexoEl.value : ((window._avalDados && window._avalDados.sexo) || '');
+  if(sexo){
+    var camposSexo = ['d3-sexo','d7-sexo','us-sexo','pren-sexo','p-wells-sexo'];
+    camposSexo.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = sexo; });
   }
 }
 function renderForcaPersonal(){

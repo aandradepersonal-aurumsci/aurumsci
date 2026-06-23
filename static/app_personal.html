@@ -2903,6 +2903,7 @@ function compAba(tipo){
     us: [['us-idade','us-peso','us-altura','us-peit','us-axil','us-tric','us-sube','us-abdo','us-supr','us-coxa','us-pant','us-bice'], calcUltrassom]
   };
   if(mapaEnterComp[tipo]){ setTimeout(function(){ ativarEnter(mapaEnterComp[tipo][0], mapaEnterComp[tipo][1]); }, 90); }
+  setTimeout(function(){ preencherIdadeTestes(); }, 120);
 }
 
 function field(id, label, unit, ph){

@@ -1485,9 +1485,7 @@ function abrirPerfilAluno(id){
     var pl = d.plano || {};
     var po = d.postural || {};
     // Salva dados do aluno para TMB e outros cálculos
-    console.log("2 - Fetch concluido. aluno bruto:", a);
     window._avalDados = {idade: a.idade||30, sexo: (a.sexo==='feminino'?'F':'M'), altura: av.altura||170, peso: av.peso||a.peso||''};
-    console.log("2b - _avalDados populado:", window._avalDados);
     var html = '<div class="modal-titulo">' + (a.nome||'Aluno') + '</div>';
     html += '<div class="modal-sub">' + (a.objetivo||'—') + ' · ' + (a.nivel||'—') + '</div>';
 

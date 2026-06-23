@@ -1485,7 +1485,9 @@ function abrirPerfilAluno(id){
     var pl = d.plano || {};
     var po = d.postural || {};
     // Salva dados do aluno para TMB e outros cálculos
+    console.log("2 - Fetch concluido. aluno bruto:", a);
     window._avalDados = {idade: a.idade||30, sexo: (a.sexo==='feminino'?'F':'M'), altura: av.altura||170, peso: av.peso||a.peso||''};
+    console.log("2b - _avalDados populado:", window._avalDados);
     var html = '<div class="modal-titulo">' + (a.nome||'Aluno') + '</div>';
     html += '<div class="modal-sub">' + (a.objetivo||'—') + ' · ' + (a.nivel||'—') + '</div>';
 
@@ -3320,6 +3322,7 @@ function calcWells(){
   ],'Wells & Dillon (1952) · ACSM Guidelines 2022');
 }
 function preencherIdadeTestes(){
+  console.log("3 - preencherIdadeTestes chamada. _avalDados:", window._avalDados);
   var idadeEl = document.getElementById('an-idade');
   var idade = (idadeEl && idadeEl.value) ? idadeEl.value : '';
   if(idade){

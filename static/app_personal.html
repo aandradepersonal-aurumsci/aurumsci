@@ -2717,6 +2717,7 @@ function avalAba(aba){
   } else if(aba==='mmii'){
     el.innerHTML = renderMMIIPersonal();
     setTimeout(function(){ ativarEnter(['p-mmii-reps','p-mmii-idade'], calcMMIIP); }, 80);
+    setTimeout(function(){ preencherIdadeTestes(); }, 500);
     // ETAPA 2 (21/jun): preenche MMII com a ultima avaliacao salva + idade certa
     fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/resumo-completo', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.ok ? r.json() : {}; })
@@ -2734,6 +2735,7 @@ function avalAba(aba){
     .catch(function(){});
   } else if(aba==='vo2'){
     el.innerHTML = renderVO2Personal();
+    setTimeout(function(){ preencherIdadeTestes(); }, 500);
     setTimeout(function(){
       var seq = ['p-hrr-pico','p-hrr-1min','p-hrr-pa-rep-s','p-hrr-pa-rep-d','p-hrr-pa-pos-s','p-hrr-pa-pos-d'];
       seq.forEach(function(id, i){
@@ -2768,6 +2770,7 @@ function avalAba(aba){
     .catch(function(){});
   } else if(aba==='forca'){
     el.innerHTML = renderForcaPersonal();
+    setTimeout(function(){ preencherIdadeTestes(); }, 500);
     setTimeout(function(){
       ativarEnter(['p-wells','p-wells-idade'], calcWells);
       ativarEnter(['p-flexao','p-barra','p-abdom','p-pren-dom','p-pren-ndom','p-forca-idade'], calcForcaP);

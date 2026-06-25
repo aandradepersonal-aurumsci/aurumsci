@@ -3342,7 +3342,7 @@ function preencherIdadeTestes(){
     var s = String(sexoRaw).toUpperCase();
     var sexoNorm = (s==='MASCULINO'||s==='M') ? 'M' : ((s==='FEMININO'||s==='F') ? 'F' : '');
     if(sexoNorm){
-      var camposSexo = ['d3-sexo','d7-sexo','us-sexo','pren-sexo','p-wells-sexo'];
+      var camposSexo = ['d3-sexo','d7-sexo','us-sexo','pren-sexo','p-wells-sexo','p-milha-sexo','p-step-sexo','p-forca-sexo','p-mmii-sexo'];
       camposSexo.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = sexoNorm; });
     }
   }

@@ -97,6 +97,10 @@ def auto_migrate():
         "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS auto_renew BOOLEAN DEFAULT TRUE",
         "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS criado_em TIMESTAMP DEFAULT NOW()",
         "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS atualizado_em TIMESTAMP DEFAULT NOW()",
+        "ALTER TABLE personals ADD COLUMN IF NOT EXISTS stripe_account_id VARCHAR(100)",
+        "ALTER TABLE personals ADD COLUMN IF NOT EXISTS stripe_onboarding_completed BOOLEAN DEFAULT FALSE",
+        "ALTER TABLE personals ADD COLUMN IF NOT EXISTS stripe_charges_enabled BOOLEAN DEFAULT FALSE",
+        "ALTER TABLE personals ADD COLUMN IF NOT EXISTS stripe_payouts_enabled BOOLEAN DEFAULT FALSE",
         "CREATE INDEX IF NOT EXISTS idx_assinaturas_iap_aluno_id ON assinaturas_iap(aluno_id)",
         "CREATE INDEX IF NOT EXISTS idx_assinaturas_iap_personal_id ON assinaturas_iap(personal_id)",
     ]

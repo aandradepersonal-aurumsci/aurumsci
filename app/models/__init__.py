@@ -53,6 +53,11 @@ class Personal(Base):
     cref_validado_em = Column(DateTime)
     contrato_aceito_em = Column(DateTime)
     contrato_aceito_ip = Column(String(45))
+    # Stripe Connect (split de pagamento aluno -> personal)
+    stripe_account_id = Column(String(100))
+    stripe_onboarding_completed = Column(Boolean, default=False)
+    stripe_charges_enabled = Column(Boolean, default=False)
+    stripe_payouts_enabled = Column(Boolean, default=False)
     alunos = relationship("Aluno", back_populates="personal")
 
 class Aluno(Base):

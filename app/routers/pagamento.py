@@ -13,6 +13,54 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 router = APIRouter(prefix="/pagamento", tags=["Pagamento"])
 
+# ============================================================
+# STRIPE CONNECT - Onboarding do Personal (recebe dos alunos dele)
+# ============================================================
+@router.post("/connect/criar")
+def connect_criar(personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    """Cria (ou reusa) a conta Express do personal e devolve o link de onboarding."""
+    try:
+        if not personal.stripe_account_id:
+            acct = stripe.Account.create(
+                type="express",
+                country="BR",
+                email=personal.email,
+                capabilities={"transfers": {"requested": True}},
+                business_type="individual",
+                metadata={"personal_id": str(personal.id)},
+            )
+            personal.stripe_account_id = acct.id
+            db.commit()
+        link = stripe.AccountLink.create(
+            account=personal.stripe_account_id,
+            refresh_url="https://www.aurumsc.com.br/app-personal?connect=refresh",
+            return_url="https://www.aurumsc.com.br/app-personal?connect=ok",
+            type="account_onboarding",
+        )
+        return {"url": link.url}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/connect/status")
+def connect_status(personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    """Devolve o status atual da conta Connect do personal."""
+    if not personal.stripe_account_id:
+        return {"conectado": False, "charges_enabled": False, "payouts_enabled": False}
+    try:
+        acct = stripe.Account.retrieve(personal.stripe_account_id)
+        personal.stripe_charges_enabled = bool(acct.charges_enabled)
+        personal.stripe_payouts_enabled = bool(acct.payouts_enabled)
+        personal.stripe_onboarding_completed = bool(acct.details_submitted)
+        db.commit()
+        return {
+            "conectado": True,
+            "charges_enabled": bool(acct.charges_enabled),
+            "payouts_enabled": bool(acct.payouts_enabled),
+            "onboarding_completo": bool(acct.details_submitted),
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 # ============================================================
 # MAPA DE PLANOS PRO - Price IDs criados no Stripe em 01/05/2026

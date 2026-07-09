@@ -358,6 +358,40 @@
 
   <!-- BOTÕES -->
   
+<!-- GALERIA DO APP -->
+<div style="margin:0 0 32px">
+  <div style="font-size:11px;letter-spacing:3px;color:var(--ouro);margin-bottom:20px;text-align:center" data-i18n="vejaApp">VEJA O APP POR DENTRO</div>
+  <div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch">
+
+    <div style="flex:0 0 240px;scroll-snap-align:center">
+      <img src="/static/app-treino.png" alt="Treino do dia" style="width:100%;border-radius:16px;border:1px solid var(--borda);display:block">
+      <div style="font-size:13px;color:var(--texto);margin-top:10px;text-align:center;font-weight:600" data-i18n="capTreino">Seu treino do dia, já periodizado</div>
+    </div>
+
+    <div style="flex:0 0 240px;scroll-snap-align:center">
+      <img src="/static/app-avaliacao.png" alt="Avaliacao completa" style="width:100%;border-radius:16px;border:1px solid var(--borda);display:block">
+      <div style="font-size:13px;color:var(--texto);margin-top:10px;text-align:center;font-weight:600" data-i18n="capAvaliacao">Avaliação completa com seu personal</div>
+    </div>
+
+    <div style="flex:0 0 240px;scroll-snap-align:center">
+      <img src="/static/app-periodizacao.png" alt="Periodizacao cientifica" style="width:100%;border-radius:16px;border:1px solid var(--borda);display:block">
+      <div style="font-size:13px;color:var(--texto);margin-top:10px;text-align:center;font-weight:600" data-i18n="capPeriodizacao">Cada fase com base científica</div>
+    </div>
+
+    <div style="flex:0 0 240px;scroll-snap-align:center">
+      <img src="/static/app-resultados.png" alt="Aurum Score" style="width:100%;border-radius:16px;border:1px solid var(--borda);display:block">
+      <div style="font-size:13px;color:var(--texto);margin-top:10px;text-align:center;font-weight:600" data-i18n="capResultados">Sua evolução em números</div>
+    </div>
+
+    <div style="flex:0 0 240px;scroll-snap-align:center">
+      <img src="/static/app-auri.png" alt="Assistente AURI" style="width:100%;border-radius:16px;border:1px solid var(--borda);display:block">
+      <div style="font-size:13px;color:var(--texto);margin-top:10px;text-align:center;font-weight:600" data-i18n="capAuri">AURI: assistente 24h pra tirar dúvidas</div>
+    </div>
+
+  </div>
+  <div style="font-size:11px;color:var(--cinza);text-align:center;margin-top:8px" data-i18n="arrasteLado">← arraste para o lado →</div>
+</div>
+
 <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:32px;margin:0 0 32px">
   <div style="font-size:11px;letter-spacing:3px;color:var(--ouro);margin-bottom:16px;text-align:center" data-i18n="quemCuida">QUEM CUIDA DO SEU TREINO</div>
   <div style="font-size:40px;text-align:center;margin-bottom:16px">👨‍💼</div>
@@ -370,14 +404,14 @@
 </div>
 
 <div class="btns">
-    <a href="/cadastro" class="btn-principal" data-i18n="btnComecar">COMEÇAR AGORA →</a>
+    <a href="/cadastro" class="btn-principal" data-i18n="btnComecar">COMEÇAR 7 DIAS GRÁTIS →</a>
     <a href="/aluno" class="btn-secundario" data-i18n="btnLogin">Já tenho conta</a>
 <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:28px;margin:0 0 24px;text-align:center">
   <div style="font-size:11px;letter-spacing:3px;color:var(--ouro);margin-bottom:12px" data-i18n="quemJaUsa">QUEM JÁ USA</div>
   <div style="font-size:32px;margin-bottom:12px">⭐⭐⭐⭐⭐</div>
   <div style="font-family:Georgia,serif;font-size:15px;font-style:italic;color:var(--texto);line-height:1.8;margin-bottom:16px" data-i18n="depoimentoMaru">"Tive uma experiência incrível com a navegabilidade da ferramenta. Como aluno obtive informações importantes que aliam prática com ciência reforçando minha performance e resultado."</div>
   <div style="font-size:13px;color:var(--ouro);letter-spacing:2px;font-weight:600">Maru Gomez</div>
-  <div style="font-size:12px;color:var(--cinza);margin-top:4px" data-i18n="maruRole">Aluna AurumSci · Beta Tester</div>
+  <div style="font-size:12px;color:var(--cinza);margin-top:4px" data-i18n="maruRole">Aluna AurumSci</div>
 <div style="background:rgba(201,168,76,0.04);border:1px solid var(--borda);border-radius:20px;padding:28px;margin:24px 0;text-align:center">
   <div style="font-size:11px;letter-spacing:3px;color:var(--ouro);margin-bottom:8px" data-i18n="faleConosco">FALE CONOSCO</div>
   <div style="font-size:14px;color:var(--cinza);line-height:1.7;margin-bottom:16px" data-i18n="faleConoscoTexto">Tem alguma dúvida ou sugestão? Deixe seu email e o desenvolvedor vai te responder pessoalmente.</div>
@@ -422,11 +456,18 @@ const TX_LP = {
     depoimentoAndre: '"Ao longo de mais de 20 anos como personal trainer, aprendi que cada pessoa precisa de um caminho próprio. Esse aplicativo nasceu dessa experiência prática."',
     curriculo: 'Bacharel e Licenciado em Educação Física, com 4 especializações nas principais áreas do treinamento — Fisiologia do Exercício e Prescrição, Treinamento Desportivo, Personal Trainer e Nutrição Esportiva. Atuou 7 anos em avaliação física antes de se dedicar exclusivamente ao personal trainer, levando atletas a competições.',
     ptFundador: 'Personal Trainer · Fundador AurumSci',
-    btnComecar: 'COMEÇAR AGORA →',
+    vejaApp: 'VEJA O APP POR DENTRO',
+    capTreino: 'Seu treino do dia, já periodizado',
+    capAvaliacao: 'Avaliação completa com seu personal',
+    capPeriodizacao: 'Cada fase com base científica',
+    capResultados: 'Sua evolução em números',
+    capAuri: 'AURI: assistente 24h pra tirar dúvidas',
+    arrasteLado: '← arraste para o lado →',
+    btnComecar: 'COMEÇAR 7 DIAS GRÁTIS →',
     btnLogin: 'Já tenho conta',
     quemJaUsa: 'QUEM JÁ USA',
     depoimentoMaru: '"Tive uma experiência incrível com a navegabilidade da ferramenta. Como aluno obtive informações importantes que aliam prática com ciência reforçando minha performance e resultado."',
-    maruRole: 'Aluna AurumSci · Beta Tester',
+    maruRole: 'Aluna AurumSci',
     faleConosco: 'FALE CONOSCO',
     faleConoscoTexto: 'Tem alguma dúvida ou sugestão? Deixe seu email e o desenvolvedor vai te responder pessoalmente.',
     emailPh: 'seu@email.com',
@@ -440,11 +481,18 @@ const TX_LP = {
     depoimentoAndre: '"Over more than 20 years as a personal trainer, I learned that each person needs their own path. This app was born from that practical experience."',
     curriculo: 'Bachelor and Licensed in Physical Education, with 4 specializations in main training areas — Exercise Physiology and Prescription, Sports Training, Personal Trainer and Sports Nutrition. Worked 7 years in physical assessment before dedicating exclusively to personal training, taking athletes to competitions.',
     ptFundador: 'Personal Trainer · AurumSci Founder',
-    btnComecar: 'GET STARTED →',
+    vejaApp: 'SEE THE APP INSIDE',
+    capTreino: 'Your daily workout, already periodized',
+    capAvaliacao: 'Full assessment with your trainer',
+    capPeriodizacao: 'Every phase backed by science',
+    capResultados: 'Your progress in numbers',
+    capAuri: 'AURI: 24h assistant for your questions',
+    arrasteLado: '← swipe sideways →',
+    btnComecar: 'START 7 DAYS FREE →',
     btnLogin: 'I already have an account',
     quemJaUsa: 'WHO USES IT',
     depoimentoMaru: '"I had an amazing experience with the tool\'s navigability. As a student I obtained important information that combines practice with science, reinforcing my performance and results."',
-    maruRole: 'AurumSci Student · Beta Tester',
+    maruRole: 'AurumSci Student',
     faleConosco: 'CONTACT US',
     faleConoscoTexto: 'Any questions or suggestions? Leave your email and the developer will respond personally.',
     emailPh: 'your@email.com',
@@ -458,11 +506,18 @@ const TX_LP = {
     depoimentoAndre: '"A lo largo de más de 20 años como entrenador personal, aprendí que cada persona necesita su propio camino. Esta aplicación nació de esa experiencia práctica."',
     curriculo: 'Licenciado y graduado en Educación Física, con 4 especializaciones en las principales áreas del entrenamiento — Fisiología del Ejercicio y Prescripción, Entrenamiento Deportivo, Entrenador Personal y Nutrición Deportiva. Trabajó 7 años en evaluación física antes de dedicarse exclusivamente al entrenamiento personal, llevando atletas a competiciones.',
     ptFundador: 'Entrenador Personal · Fundador AurumSci',
-    btnComecar: 'COMENZAR AHORA →',
+    vejaApp: 'MIRA LA APP POR DENTRO',
+    capTreino: 'Tu entrenamiento del día, ya periodizado',
+    capAvaliacao: 'Evaluación completa con tu personal',
+    capPeriodizacao: 'Cada fase con base científica',
+    capResultados: 'Tu evolución en números',
+    capAuri: 'AURI: asistente 24h para tus dudas',
+    arrasteLado: '← desliza al lado →',
+    btnComecar: 'EMPEZAR 7 DÍAS GRATIS →',
     btnLogin: 'Ya tengo cuenta',
     quemJaUsa: 'QUIEN YA USA',
     depoimentoMaru: '"Tuve una experiencia increíble con la navegabilidad de la herramienta. Como alumna obtuve información importante que combina práctica con ciencia, reforzando mi rendimiento y resultado."',
-    maruRole: 'Alumna AurumSci · Beta Tester',
+    maruRole: 'Alumna AurumSci',
     faleConosco: 'CONTÁCTANOS',
     faleConoscoTexto: '¿Tienes alguna duda o sugerencia? Deja tu email y el desarrollador te responderá personalmente.',
     emailPh: 'tu@email.com',

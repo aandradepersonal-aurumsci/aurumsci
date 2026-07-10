@@ -2278,6 +2278,34 @@ function renderTreino(){
         '</div></div>' +
         '<button onclick="abrirExtraForm()" style="width:100%;padding:12px;background:none;border:1px dashed var(--borda);border-radius:12px;color:var(--cinza);font-size:13px;cursor:pointer">+ Adicionar exercício</button>' +
         '</div>';
+      // CRONOMETRO / TIMER (unico, escolha persiste no treino todo)
+      var descPadrao = (faseInfo && faseInfo.descanso) ? parseInt(faseInfo.descanso) || 90 : 90;
+      treinoHtml += '<div id="crono-box" style="background:var(--bg2);border:1px solid var(--borda);border-radius:16px;padding:16px;margin:16px 0">' +
+        '<div style="display:flex;gap:6px;margin-bottom:12px">' +
+          '<button id="crono-aba-c" onclick="cronoAba(\'c\')" style="flex:1;padding:8px;border-radius:10px;background:var(--ouro);border:none;color:#0A0A0F;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer">CRONÔMETRO</button>' +
+          '<button id="crono-aba-t" onclick="cronoAba(\'t\')" style="flex:1;padding:8px;border-radius:10px;background:var(--bg3);border:1px solid var(--borda);color:var(--cinza);font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer">TIMER</button>' +
+        '</div>' +
+        '<div id="crono-visor" style="font-family:\'Bebas Neue\',sans-serif;font-size:48px;text-align:center;color:var(--ouro2);letter-spacing:2px;line-height:1">00:00</div>' +
+        '<div id="crono-sel" style="display:none;margin-top:10px">' +
+          '<select id="crono-tempo" style="width:100%;padding:10px;border-radius:10px;background:var(--bg3);border:1px solid var(--borda);color:var(--texto);font-size:13px">' +
+            '<option value="60">60 segundos</option>' +
+            '<option value="90">90 segundos</option>' +
+            '<option value="180">180 segundos</option>' +
+            '<option value="180">3 minutos</option>' +
+            '<option value="300">5 minutos</option>' +
+            '<option value="600">10 minutos</option>' +
+            '<option value="900">15 minutos</option>' +
+            '<option value="1200">20 minutos</option>' +
+            '<option value="1800">30 minutos</option>' +
+            '<option value="3600">60 minutos</option>' +
+          '</select>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:12px">' +
+          '<button id="crono-play" onclick="cronoPlay()" style="flex:2;padding:12px;border-radius:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;color:#0A0A0F;font-family:\'Bebas Neue\',sans-serif;font-size:16px;letter-spacing:2px;cursor:pointer">▶ INICIAR</button>' +
+          '<button onclick="cronoZerar()" style="flex:1;padding:12px;border-radius:12px;background:var(--bg3);border:1px solid var(--borda);color:var(--cinza);font-size:16px;cursor:pointer">↺</button>' +
+        '</div>' +
+      '</div>';
+      window._cronoDescPadrao = descPadrao;
       treinoHtml += '<button class="btn-concluir" id="btn-concluir-treino" onclick="concluirTreino(0)">CONCLUIR TREINO ✓</button></div>';
 
       // Card de avaliação DEPOIS dos exercícios — checa banco antes (nao so localStorage)
@@ -4495,6 +4523,97 @@ function marcarSerie(exIdx, serieIdx, totalSeries, descanso, exNome){
 
   // Dispara timer de descanso
   iniciarTimer(descanso, proxNome ? 'Próximo: ' + proxNome : 'Último exercício!', exNome + ' · SÉRIE ' + (serieIdx+1) + '/' + totalSeries);
+}
+
+// ── CRONOMETRO / TIMER ─────────────────────────────────
+var cronoModo = 'c';      // 'c' = cronometro (sobe), 't' = timer (desce)
+var cronoInt = null;
+var cronoSeg = 0;
+var cronoRodando = false;
+
+function cronoFmt(s){
+  var m = Math.floor(s/60), sec = s%60;
+  return (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+}
+
+function cronoAba(modo){
+  if(cronoRodando) cronoPausar();
+  cronoModo = modo;
+  var abaC = document.getElementById('crono-aba-c');
+  var abaT = document.getElementById('crono-aba-t');
+  var sel  = document.getElementById('crono-sel');
+  if(modo === 'c'){
+    abaC.style.background = 'var(--ouro)'; abaC.style.color = '#0A0A0F'; abaC.style.border = 'none';
+    abaT.style.background = 'var(--bg3)';  abaT.style.color = 'var(--cinza)'; abaT.style.border = '1px solid var(--borda)';
+    sel.style.display = 'none';
+    cronoSeg = 0;
+  } else {
+    abaT.style.background = 'var(--ouro)'; abaT.style.color = '#0A0A0F'; abaT.style.border = 'none';
+    abaC.style.background = 'var(--bg3)';  abaC.style.color = 'var(--cinza)'; abaC.style.border = '1px solid var(--borda)';
+    sel.style.display = 'block';
+    // Pre-seleciona o descanso da fase
+    var alvo = window._cronoDescPadrao || 90;
+    var s = document.getElementById('crono-tempo');
+    for(var i=0;i<s.options.length;i++){ if(parseInt(s.options[i].value) === alvo){ s.selectedIndex = i; break; } }
+    cronoSeg = parseInt(s.value) || 90;
+  }
+  cronoRender();
+}
+
+function cronoRender(){
+  var v = document.getElementById('crono-visor');
+  if(v) v.textContent = cronoFmt(cronoSeg);
+}
+
+function cronoPlay(){
+  if(cronoRodando){ cronoPausar(); return; }
+  if(cronoModo === 't' && cronoSeg <= 0){
+    cronoSeg = parseInt(document.getElementById('crono-tempo').value) || 90;
+  }
+  cronoRodando = true;
+  document.getElementById('crono-play').textContent = '⏸ PAUSAR';
+  cronoInt = setInterval(function(){
+    if(cronoModo === 'c'){
+      cronoSeg++;
+    } else {
+      cronoSeg--;
+      if(cronoSeg <= 0){
+        cronoSeg = 0;
+        cronoPausar();
+        cronoAlerta();
+      }
+    }
+    cronoRender();
+  }, 1000);
+}
+
+function cronoPausar(){
+  cronoRodando = false;
+  clearInterval(cronoInt);
+  var b = document.getElementById('crono-play');
+  if(b) b.textContent = '▶ INICIAR';
+}
+
+function cronoZerar(){
+  cronoPausar();
+  if(cronoModo === 'c'){
+    cronoSeg = 0;
+  } else {
+    cronoSeg = parseInt(document.getElementById('crono-tempo').value) || 90;
+  }
+  cronoRender();
+}
+
+function cronoAlerta(){
+  var v = document.getElementById('crono-visor');
+  if(!v) return;
+  var n = 0;
+  var pisca = setInterval(function(){
+    v.style.color = (n % 2 === 0) ? 'var(--verde)' : 'var(--ouro2)';
+    n++;
+    if(n > 7){ clearInterval(pisca); v.style.color = 'var(--ouro2)'; }
+  }, 250);
+  try { if(navigator.vibrate) navigator.vibrate([200,100,200]); } catch(e){}
 }
 
 // ── AURI ──────────────────────────────────────────────

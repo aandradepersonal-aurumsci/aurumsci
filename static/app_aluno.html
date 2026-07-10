@@ -4403,7 +4403,7 @@ function ajustarCargaAluno(i, valor){
     var campoRM = document.getElementById('aluno-rm-' + i);
     if(campoRM){
       var rm = calcularRMAluno(valor, reps);
-      campoRM.textContent = rm ? '🎯 ' + rm : '';
+      campoRM.textContent = rm ? '1RM ' + rm : '';
     }
     // EVOLUCAO: se nao tem base ainda, a 1a carga vira referencia. Senao, mostra %.
     if(valor && !treinoExercicios[i].cargaBase){

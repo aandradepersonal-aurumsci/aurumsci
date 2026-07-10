@@ -2253,7 +2253,6 @@ function renderTreino(){
           '<div style="display:flex;align-items:center;gap:12px;width:100%">' +
           '<div class="ex-num" id="ex-num-' + i + '">' + (i+1) + '</div>' +
           '<div class="ex-info"><div class="ex-nome">' + ex.nome + '</div>' +
-          '<div class="ex-det">' + series + ' séries × ' + ex.repeticoes + ' reps · ' + (ex.descanso||90) + 's descanso</div>' +
           (ex.corretivo ? '<div class="ex-corretivo">CORRETIVO</div>' : '') + '</div>' +
           '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' +
           '<div class="ex-carga">' +
@@ -2265,7 +2264,6 @@ function renderTreino(){
           '</div>' +
           '<button onclick="verVideoExercicio(\'' + ex.nome + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0" title="Ver vídeo">🎬</button>' +
           '</div></div>' +
-          '<div style="display:flex;flex-wrap:wrap;gap:4px;padding-left:44px">' + botoesHtml + '</div>' +
           '</div>';
       });
       // Botão adicionar exercício extra

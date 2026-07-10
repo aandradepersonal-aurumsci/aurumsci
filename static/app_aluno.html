@@ -2201,13 +2201,12 @@ function renderTreino(){
         treinoHtml += '<div style="background:' + bgFase + ';border:1px solid ' + bordaFase + ';border-radius:14px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:flex-start;gap:12px">' +
           '<div style="font-size:24px;flex-shrink:0">' + emoFase + '</div>' +
           '<div>' +
-            '<div style="font-size:12px;font-weight:700;color:' + corFase + ';letter-spacing:1px;margin-bottom:3px">' + faseInfo.nome + '</div>' +
-            '<div style="font-size:12px;color:var(--cinza);line-height:1.6">' + faseInfo.descricao + '</div>' +
+            '<div style="font-size:10px;color:var(--cinza);letter-spacing:1.5px;margin-bottom:4px">PERIODIZAÇÃO · SEU MOMENTO NO MESOCICLO</div>' +
+            '<div style="font-size:14px;font-weight:700;color:' + corFase + ';letter-spacing:1px;margin-bottom:3px">' + faseInfo.nome.replace('FASE ','') + ' <span style="font-size:11px;font-weight:400;color:var(--cinza)">(' + faseInfo.descricao + ')</span></div>' +
             (faseInfo.series ?
               '<div style="margin-top:10px;padding-top:10px;border-top:1px solid ' + bordaFase + '">' +
                 '<div style="font-size:15px;font-weight:700;color:' + corFase + ';margin-bottom:4px">' + faseInfo.series + ' séries × ' + faseInfo.reps + ' reps</div>' +
                 '<div style="font-size:12px;color:var(--texto)">' + faseInfo.intensidade + ' de 1RM · ' + faseInfo.descanso + ' de descanso</div>' +
-                '<div style="font-size:11px;color:var(--cinza);margin-top:6px;line-height:1.5;font-style:italic">⚠️ Inicie com carga menor e progrida até a carga de trabalho.</div>' +
               '</div>'
             : '') +
             '<div style="font-size:10px;color:var(--ouro);opacity:.7;margin-top:6px">' + faseInfo.citacao + '</div>' +

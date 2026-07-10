@@ -568,7 +568,7 @@ async def treino_hoje(
         nome_f, desc_f = fases[fase_idx]
         if "DELOAD" in nome_f:
             tipo_f = "deload"
-        elif nome_f in ("INTENSIFICACAO", "REALIZACAO", "POTENCIA"):
+        elif nome_f in ("FORCA", "INTENSIFICACAO", "REALIZACAO", "POTENCIA"):
             tipo_f = "choque"
         elif nome_f in ("HIPERTROFIA", "ACELERACAO", "TRANSMUTACAO"):
             tipo_f = "hipertrofia"
@@ -579,7 +579,7 @@ async def treino_hoje(
             "hipertrofia": {
                 "ADAPTACAO":   {"series": "2", "reps": "15-20", "intensidade": "35-50%", "descanso": "90s", "ref": "Kraemer & Ratamess (2004) · ACSM"},
                 "HIPERTROFIA": {"series": "3-5", "reps": "8-12", "intensidade": "75-85%", "descanso": "60-90s", "ref": "Schoenfeld (2010) · J Strength Cond Res"},
-                "FORCA":       {"series": "3-4", "reps": "2-6", "intensidade": "85-95%", "descanso": "180s", "ref": "Rhea et al. (2003) · Med Sci Sports Exerc"},
+                "FORCA":       {"series": "3-4", "reps": "2-6", "intensidade": "80-95%", "descanso": "180s", "ref": "Rhea et al. (2003) · Med Sci Sports Exerc"},
                 "DELOAD":      {"series": "2-3", "reps": "15", "intensidade": "50%", "descanso": "90s", "ref": "Issurin (2010) · Sports Med"},
             },
         }

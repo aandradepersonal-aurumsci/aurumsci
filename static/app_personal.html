@@ -3523,7 +3523,7 @@ function renderMontadorTreino(){
       s.exercicios.forEach(function(e, ei){
         html += '<div style="background:var(--bg2);border-radius:10px;padding:10px;margin-bottom:8px">';
         html += '<div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--texto)">' + e.nome + '</div>';
-        html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">';
+        html += '<div style="display:none;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">';
         var label1 = (s.tipo==='funcional') ? 'ROUNDS' : 'SÉRIES';
         var label2 = (s.tipo==='funcional') ? 'TEMPO' : (s.tipo==='hit') ? 'TRAB/DESC' : 'REPS';
         var label3 = (s.tipo==='funcional') ? 'DESCANSO' : 'DESCANSO(s)';

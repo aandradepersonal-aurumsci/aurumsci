@@ -568,9 +568,9 @@ async def treino_hoje(
         nome_f, desc_f = fases[fase_idx]
         if "DELOAD" in nome_f:
             tipo_f = "deload"
-        elif nome_f in ("FORCA", "INTENSIFICACAO", "REALIZACAO", "POTENCIA"):
+        elif nome_f in ("INTENSIFICACAO", "REALIZACAO", "POTENCIA"):
             tipo_f = "choque"
-        elif nome_f in ("HIPERTROFIA", "ACELERACAO", "TRANSMUTACAO"):
+        elif nome_f in ("FORCA", "HIPERTROFIA", "ACELERACAO", "TRANSMUTACAO"):
             tipo_f = "hipertrofia"
         else:
             tipo_f = "normal"

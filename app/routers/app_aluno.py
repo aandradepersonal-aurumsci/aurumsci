@@ -545,7 +545,7 @@ async def treino_hoje(
         fases_map = {
             "hipertrofia": [
                 ("ADAPTACAO", "Base muscular"), ("HIPERTROFIA", "Crescimento muscular"),
-                ("INTENSIFICACAO", "Ganho de forca"), ("DELOAD", "Recuperacao"),
+                ("FORCA", "Ganho de forca"), ("DELOAD", "Recuperacao"),
             ],
             "emagrecimento": [
                 ("ATIVACAO", "Queima inicial"), ("ACELERACAO", "Queima intensa"), ("MANUTENCAO", "Preservar"),
@@ -574,11 +574,25 @@ async def treino_hoje(
             tipo_f = "hipertrofia"
         else:
             tipo_f = "normal"
+        # Prescricao por fase (CREF Andre Andrade). Objetivos sem tabela ficam sem prescricao.
+        PRESCRICAO = {
+            "hipertrofia": {
+                "ADAPTACAO":   {"series": "2", "reps": "15-20", "intensidade": "35-50%", "descanso": "90s", "ref": "Kraemer & Ratamess (2004) · ACSM"},
+                "HIPERTROFIA": {"series": "3-5", "reps": "8-12", "intensidade": "75-85%", "descanso": "60-90s", "ref": "Schoenfeld (2010) · J Strength Cond Res"},
+                "FORCA":       {"series": "3-4", "reps": "2-6", "intensidade": "85-95%", "descanso": "180s", "ref": "Rhea et al. (2003) · Med Sci Sports Exerc"},
+                "DELOAD":      {"series": "2-3", "reps": "15", "intensidade": "50%", "descanso": "90s", "ref": "Issurin (2010) · Sports Med"},
+            },
+        }
+        presc = PRESCRICAO.get(objetivo_p, {}).get(nome_f)
         fase_atual = {
             "tipo": tipo_f,
             "nome": "FASE " + nome_f,
             "descricao": desc_f,
-            "citacao": "Periodizacao · Issurin 2008",
+            "citacao": presc["ref"] if presc else "Periodizacao · Issurin 2008",
+            "series": presc["series"] if presc else None,
+            "reps": presc["reps"] if presc else None,
+            "intensidade": presc["intensidade"] if presc else None,
+            "descanso": presc["descanso"] if presc else None,
         }
     except Exception:
         fase_atual = None

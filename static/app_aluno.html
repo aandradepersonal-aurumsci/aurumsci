@@ -2203,7 +2203,14 @@ function renderTreino(){
           '<div>' +
             '<div style="font-size:12px;font-weight:700;color:' + corFase + ';letter-spacing:1px;margin-bottom:3px">' + faseInfo.nome + '</div>' +
             '<div style="font-size:12px;color:var(--cinza);line-height:1.6">' + faseInfo.descricao + '</div>' +
-            '<div style="font-size:10px;color:var(--ouro);opacity:.7;margin-top:4px">' + faseInfo.citacao + '</div>' +
+            (faseInfo.series ?
+              '<div style="margin-top:10px;padding-top:10px;border-top:1px solid ' + bordaFase + '">' +
+                '<div style="font-size:15px;font-weight:700;color:' + corFase + ';margin-bottom:4px">' + faseInfo.series + ' séries × ' + faseInfo.reps + ' reps</div>' +
+                '<div style="font-size:12px;color:var(--texto)">' + faseInfo.intensidade + ' de 1RM · ' + faseInfo.descanso + ' de descanso</div>' +
+                '<div style="font-size:11px;color:var(--cinza);margin-top:6px;line-height:1.5;font-style:italic">⚠️ Inicie com carga menor e progrida até a carga de trabalho.</div>' +
+              '</div>'
+            : '') +
+            '<div style="font-size:10px;color:var(--ouro);opacity:.7;margin-top:6px">' + faseInfo.citacao + '</div>' +
           '</div>' +
         '</div>';
       }

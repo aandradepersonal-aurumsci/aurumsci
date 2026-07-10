@@ -25,7 +25,7 @@ def connect_criar(personal: Personal = Depends(get_personal_atual), db: Session 
                 type="express",
                 country="BR",
                 email=personal.email,
-                capabilities={"transfers": {"requested": True}},
+                capabilities={"transfers": {"requested": True}, "card_payments": {"requested": True}},
                 business_type="individual",
                 metadata={"personal_id": str(personal.id)},
             )

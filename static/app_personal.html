@@ -3724,6 +3724,44 @@ function filtrarGrupo(g){
   });
 }
 
+function editarExercicioBanco(id, nome, grupo, equip){
+  var novoNome = prompt('Editar nome do exercicio:', nome);
+  if(novoNome === null) return;
+  novoNome = novoNome.trim();
+  if(!novoNome){ mostrarToast('Nome nao pode ficar vazio'); return; }
+  fetch(window.API_BASE + '/app-personal/exercicios-banco/' + id, {
+    method:'PUT',
+    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({nome: novoNome})
+  }).then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); })
+  .then(function(res){
+    if(res.ok){
+      mostrarToast('Exercicio atualizado');
+      exerciciosBanco = [];
+      carregarExercicios();
+    } else {
+      mostrarToast(res.d.detail || 'Erro ao editar');
+    }
+  }).catch(function(){ mostrarToast('Erro de conexao'); });
+}
+
+function excluirExercicioBanco(id, nome){
+  if(!confirm('Excluir "' + nome + '" do seu banco?')) return;
+  fetch(window.API_BASE + '/app-personal/exercicios-banco/' + id, {
+    method:'DELETE',
+    headers:{'Authorization':'Bearer '+token}
+  }).then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); })
+  .then(function(res){
+    if(res.ok){
+      mostrarToast('Exercicio excluido');
+      exerciciosBanco = [];
+      carregarExercicios();
+    } else {
+      mostrarToast(res.d.detail || 'Nao foi possivel excluir');
+    }
+  }).catch(function(){ mostrarToast('Erro de conexao'); });
+}
+
 function renderListaExercicios(lista){
   var el = document.getElementById('lista-exercicios-busca');
   if(!el) return;
@@ -3742,9 +3780,13 @@ function renderListaExercicios(lista){
   }
   var html = '';
   lista.forEach(function(e){
-    html += '<div onclick="adicionarExercicioById(this)" data-id="' + e.id + '" data-nome="' + e.nome.replace(/"/g, '&quot;') + '" style="padding:12px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;border-radius:8px">';
+    html += '<div style="display:flex;align-items:center;gap:8px;padding:12px;border-bottom:1px solid rgba(255,255,255,.05);border-radius:8px">';
+    html += '<div onclick="adicionarExercicioById(this)" data-id="' + e.id + '" data-nome="' + e.nome.replace(/"/g, '&quot;') + '" style="flex:1;cursor:pointer">';
     html += '<div style="font-size:14px;font-weight:600">' + e.nome + '</div>';
     html += '<div style="font-size:11px;color:var(--cinza);margin-top:2px">' + (e.grupo_muscular||'') + (e.equipamento ? ' · ' + e.equipamento : '') + '</div>';
+    html += '</div>';
+    html += '<button onclick="event.stopPropagation();editarExercicioBanco(' + e.id + ',\'' + e.nome.replace(/'/g,"\\'") + '\',\'' + (e.grupo_muscular||'') + '\',\'' + (e.equipamento||'') + '\')" style="background:none;border:none;cursor:pointer;font-size:15px;padding:4px;opacity:.6" title="Editar">✏️</button>';
+    html += '<button onclick="event.stopPropagation();excluirExercicioBanco(' + e.id + ',\'' + e.nome.replace(/'/g,"\\'") + '\')" style="background:none;border:none;cursor:pointer;font-size:15px;padding:4px;opacity:.6" title="Excluir">🗑️</button>';
     html += '</div>';
   });
   el.innerHTML = html;

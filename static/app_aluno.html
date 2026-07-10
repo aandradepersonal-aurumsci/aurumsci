@@ -2254,11 +2254,11 @@ function renderTreino(){
           '<div class="ex-num" id="ex-num-' + i + '">' + (i+1) + '</div>' +
           '<div class="ex-info"><div class="ex-nome">' + ex.nome + '</div>' +
           (ex.corretivo ? '<div class="ex-corretivo">CORRETIVO</div>' : '') + '</div>' +
-          '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' +
+          '<div style="display:flex;flex-direction:row;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end">' +
           '<div class="ex-carga">' +
             '<input type="number" value="' + (ex.carga||'') + '" placeholder="–" onchange="ajustarCargaAluno(' + i + ',this.value)" class="ex-carga-val" style="width:56px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.35);border-radius:6px;text-align:center;padding:2px 0">' +
             '<div class="ex-carga-un">kg</div>' +
-            '<div class="ex-carga-rm" id="aluno-rm-' + i + '" style="font-size:11px;color:var(--ouro2);font-weight:700;margin-top:2px">' + (ex.carga && ex.repeticoes ? '🎯 ' + calcularRMAluno(ex.carga, ex.repeticoes) : '') + '</div>' +
+            '<div class="ex-carga-rm" id="aluno-rm-' + i + '" style="font-size:11px;color:var(--ouro2);font-weight:700;margin-top:2px">' + (ex.carga && ex.repeticoes ? '1RM ' + calcularRMAluno(ex.carga, ex.repeticoes) : '') + '</div>' +
             '<div class="ex-carga-evo" id="aluno-evo-' + i + '" style="font-size:11px;font-weight:700;margin-top:2px">' + (function(){ if(ex.carga && !ex.cargaBase){ ex.cargaBase = ex.carga; } return (ex.carga && ex.cargaBase ? calcularEvolucaoCarga(ex.carga, ex.cargaBase) : ''); })() + '</div>' +
             '<button id="aluno-salvar-carga-' + i + '" onclick="salvarCargaAluno(' + i + ')" title="Salvar carga" style="background:none;border:1px solid rgba(201,168,76,.35);border-radius:6px;cursor:pointer;font-size:10px;color:var(--ouro2);margin-top:4px;padding:2px 8px">💾 ajustar</button>' +
           '</div>' +

@@ -3753,7 +3753,7 @@ function renderListaExercicios(lista){
 function adicionarExercicioById(el){
   var id = parseInt(el.getAttribute('data-id'));
   var nome = el.getAttribute('data-nome');
-  abrirModalPresetTreino(id, nome);  // Abre modal de preset em vez de adicionar direto
+  adicionarExercicioComPreset(id, nome, 3, '10-12', 90);  // Direto: periodizacao prescreve reps/descanso
 }
 
 // Modal de seleção de preset de treino

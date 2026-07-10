@@ -320,6 +320,63 @@ def criar_exercicio_personalizado(
             "descricao": novo.descricao}, "ja_existia": False}
 
 
+class ExercicioEditarSchema(BaseModel):
+    nome: str = None
+    grupo_muscular: str = None
+    equipamento: str = None
+    descricao: str = None
+
+
+@router.put("/exercicios-banco/{exercicio_id}")
+def editar_exercicio_banco(
+    exercicio_id: int,
+    dados: ExercicioEditarSchema,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Edita exercicio do banco. So o dono (ou global) pode editar."""
+    from app.routers.treino import Exercicio
+    ex = db.query(Exercicio).filter(Exercicio.id == exercicio_id).first()
+    if not ex:
+        raise HTTPException(status_code=404, detail="Exercicio nao encontrado")
+    # So edita se for do proprio personal (protege globais de outros)
+    if ex.personal_id is not None and ex.personal_id != personal.id:
+        raise HTTPException(status_code=403, detail="Voce so pode editar seus proprios exercicios")
+    if dados.nome is not None and dados.nome.strip():
+        ex.nome = dados.nome.strip()
+    if dados.grupo_muscular is not None and dados.grupo_muscular.strip():
+        ex.grupo_muscular = dados.grupo_muscular.strip()
+    if dados.equipamento is not None:
+        ex.equipamento = dados.equipamento.strip() or None
+    if dados.descricao is not None:
+        ex.descricao = dados.descricao.strip() or None
+    db.commit()
+    db.refresh(ex)
+    return {"ok": True, "id": ex.id, "nome": ex.nome}
+
+
+@router.delete("/exercicios-banco/{exercicio_id}")
+def excluir_exercicio_banco(
+    exercicio_id: int,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Exclui exercicio do banco. Bloqueia se estiver em uso em algum treino."""
+    from app.routers.treino import Exercicio, ExercicioSessao
+    ex = db.query(Exercicio).filter(Exercicio.id == exercicio_id).first()
+    if not ex:
+        raise HTTPException(status_code=404, detail="Exercicio nao encontrado")
+    if ex.personal_id is not None and ex.personal_id != personal.id:
+        raise HTTPException(status_code=403, detail="Voce so pode excluir seus proprios exercicios")
+    # Checa se esta em uso
+    em_uso = db.query(ExercicioSessao).filter(ExercicioSessao.exercicio_id == exercicio_id).count()
+    if em_uso > 0:
+        raise HTTPException(status_code=409, detail=f"Este exercicio esta em {em_uso} treino(s). Remova dos treinos antes de excluir.")
+    db.delete(ex)
+    db.commit()
+    return {"ok": True, "excluido": exercicio_id}
+
+
 class SessaoSchema(BaseModel):
     nome: str
     exercicios: List[dict]

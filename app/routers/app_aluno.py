@@ -795,10 +795,10 @@ def periodizacao(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends
 
     ciclos_map = {
         "hipertrofia": [
-            {"emoji": "💪", "nome": "FASE 1 — ADAPTACAO",     "descricao": "Semanas 1-4 · Base muscular",  "detalhes": "Volume moderado\nIntensidade 60-70% 1RM\nSugestao: 2-3 series x 12-15 reps\nFoco em tecnica e postura\n3-4x por semana"},
-            {"emoji": "🔥", "nome": "FASE 2 — HIPERTROFIA",   "descricao": "Semanas 5-12 · Crescimento",   "detalhes": "Volume alto\nIntensidade 70-85% 1RM\nSugestao: 3-4 series x 8-12 reps\nProgressao de carga semanal\n4-5x por semana"},
-            {"emoji": "⚡", "nome": "FASE 3 — INTENSIFICACAO","descricao": "Semanas 13-16 · Forca",         "detalhes": "Volume baixo\nIntensidade 85-95% 1RM\nSugestao: 4-5 series x 3-6 reps (perto do 1RM)\nMetodos avancados\n4x por semana"},
-            {"emoji": "😴", "nome": "FASE 4 — DELOAD",        "descricao": "Semana 17 · Recuperacao",      "detalhes": "Volume 50% do normal\nIntensidade reduzida\nSugestao: 2 series x 10-12 reps (leve)\nFoco em mobilidade\n3x por semana"},
+            {"emoji": "💪", "nome": "FASE 1 — ADAPTACAO",     "descricao": "Semanas 1-4 · Base muscular",  "detalhes": "Volume moderado\nIntensidade 35-50% 1RM\nSugestao: 2 series x 15-20 reps\nDescanso 90s\nFoco em tecnica e postura"},
+            {"emoji": "🔥", "nome": "FASE 2 — HIPERTROFIA",   "descricao": "Semanas 5-12 · Crescimento",   "detalhes": "Volume alto\nIntensidade 75-85% 1RM\nSugestao: 3-5 series x 8-12 reps\nDescanso 60-90s\nProgressao de carga semanal"},
+            {"emoji": "⚡", "nome": "FASE 3 — FORCA",         "descricao": "Semanas 13-16 · Ganho de forca","detalhes": "Volume baixo\nIntensidade 80-95% 1RM\nSugestao: 3-4 series x 2-6 reps\nDescanso 180s\nPerto do 1RM"},
+            {"emoji": "😴", "nome": "FASE 4 — DELOAD",        "descricao": "Semana 17 · Recuperacao",      "detalhes": "Volume reduzido\nIntensidade 50% 1RM\nSugestao: 2-3 series x 15 reps\nDescanso 90s\nRecuperacao integral"},
         ],
         "emagrecimento": [
             {"emoji": "🏃", "nome": "FASE 1 — ATIVACAO",   "descricao": "Semanas 1-4 · Queima inicial", "detalhes": "Cardio moderado\nTreino funcional\nDeficit calorico leve\n4x por semana"},

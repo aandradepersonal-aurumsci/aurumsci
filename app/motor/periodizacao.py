@@ -625,6 +625,54 @@ def normalizar_nivel(nivel: str) -> str:
     return NIVEL_ALIAS.get(nivel_lower, "iniciante")
 
 
+# ── MOTOR DE VARIACAO v2 (puxa do banco + rotaciona por ciclo) ───────────────
+# Traducao: grupo do motor (minusculo/sem acento) -> grupo do banco (como salvo)
+GRUPO_MOTOR_PARA_BANCO = {
+    "peito": "Peito",
+    "costas": "Costas",
+    "ombros": "Ombros",
+    "triceps": "Tríceps",
+    "biceps": "Bíceps",
+    "pernas": "Pernas",
+    "abdomen": "Abdômen",
+    "corretivos": "Corretivo",
+}
+
+def get_exercicios_grupo_v2(grupo: str, banco_exercicios: list, usados_anteriores: list = None) -> List[dict]:
+    """
+    NOVA versao: puxa exercicios do BANCO (nao do dicionario) e rotaciona.
+    - grupo: nome do motor (ex: 'peito')
+    - banco_exercicios: lista de dicts do banco [{'id':1,'nome':'Supino','grupo_muscular':'Peito'}, ...]
+    - usados_anteriores: lista de IDs que o aluno usou no ciclo anterior (pra rotacionar)
+    Retorna lista de exercicios do grupo, priorizando os NAO usados.
+    NAO E CHAMADA AINDA - so existe pra testar isolada.
+    """
+    usados_anteriores = usados_anteriores or []
+    grupo_banco = GRUPO_MOTOR_PARA_BANCO.get(grupo)
+    if not grupo_banco:
+        return []  # grupo sem traducao (gluteos/panturrilha/funcional/forca_especial) - tratar depois
+    # Filtra so os do grupo
+    do_grupo = [e for e in banco_exercicios if e.get("grupo_muscular") == grupo_banco]
+    if not do_grupo:
+        return []
+    # Rotacao: primeiro os NAO usados, depois os usados (se precisar completar)
+    nao_usados = [e for e in do_grupo if e.get("id") not in usados_anteriores]
+    usados = [e for e in do_grupo if e.get("id") in usados_anteriores]
+    ordenados = nao_usados + usados
+    # Normaliza pro formato que _montar_sessao espera (series/reps/descanso sao
+    # DEFAULT - a fase prescreve de verdade, o front mascara esses valores).
+    resultado = []
+    for e in ordenados:
+        resultado.append({
+            "id": e.get("id"),
+            "nome": e.get("nome"),
+            "series": 3,
+            "repeticoes": "10-12",
+            "descanso": 90,
+            "tecnica": None,
+        })
+    return resultado
+
 def get_exercicios_grupo(grupo: str, nivel: str) -> List[dict]:
     """Retorna exercícios de um grupo para o nível, com fallback para nível anterior."""
     banco = EXERCICIOS.get(grupo, {})

@@ -111,3 +111,20 @@ FALTA (proxima sessao, com cross-check e teste com 1 aluno):
 3. Aluno novo (sem plano anterior) = usados vazio = rotacao do zero (ok).
 4. Testar com 1 aluno ANTES dos 11. Se treino sair errado, reverter.
 5. Corretivos continuam do dicionario (v2 nao trata).
+
+## ✅ FASE 1 CONCLUIDA E NO AR (11/jul/2026)
+Motor de variacao LIGADO e testado em producao:
+- get_exercicios_grupo_carrossel: rotaciona por ciclo, protege nivel (iniciante nao pega tecnicos).
+- Ligado nas 2 periodizacoes (ondulatoria + blocos) via _montar_sessao(ciclo).
+- ciclo = contagem de planos do aluno (app_aluno.py) = 0 primeiro treino, 1+ reavaliacao.
+- TESTADO terminal: ciclo0 != ciclo1 (varia). TESTADO tela: aluno teste gerou treino completo
+  com card de prescricao (fase), corretivos, cronometro. Tudo junto funcionando.
+- Commits: b21aa8f (carrossel), 4fa83a8 (ligado), c7edc7c (ciclo conectado).
+- Limitacao conhecida: grupos magros (triceps/biceps 4 unicos) rotacao so reordena.
+  Enriquecer depois pra trocar exercicio de verdade. Mecanica ja provada.
+
+## PROXIMO (bug de PRODUTO achado no teste - prioridade de VENDA)
+ONBOARDING PRESENCIAL: aluno cadastrado presencial cai nos 7 passos (2 consentimentos +
+objetivo+nivel+dias) no 1o login. Funciona (nao e bug) mas e longo - personal na frente do
+cliente trava/parece amador. SOLUCAO: deixar personal preencher objetivo/nivel/dias PELO PRO
+no cadastro, aluno abre ja com treino (so assina termos rapido). Feature nova, sessao dedicada.

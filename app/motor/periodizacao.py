@@ -745,6 +745,7 @@ def gerar_periodizacao(
     semanas_total: int = 12,
     data_inicio: Optional[date] = None,
     tipo_periodizacao: str = "ondulatoria",
+    ciclo: int = 0,
 ) -> "Periodizacao":
     # Redireciona para periodização em blocos se solicitado
     if tipo_periodizacao == "blocos":
@@ -774,7 +775,7 @@ def gerar_periodizacao(
     sessoes_prescritas = []
     for i, sessao_cfg in enumerate(div["sessoes"]):
         dia = div["dias_treino"][i] if i < len(div["dias_treino"]) else i
-        sessao = _montar_sessao(sessao_cfg, nivel_norm, dia)
+        sessao = _montar_sessao(sessao_cfg, nivel_norm, dia, ciclo)
         sessoes_prescritas.append(sessao)
 
     # Monta mesociclos
@@ -869,13 +870,13 @@ def gerar_periodizacao(
     )
 
 
-def _montar_sessao(sessao_cfg: dict, nivel: str, dia_semana: int) -> SessaoPrescrita:
+def _montar_sessao(sessao_cfg: dict, nivel: str, dia_semana: int, ciclo: int = 0) -> SessaoPrescrita:
     """Monta sessão com exercícios prescritos para o nível."""
     exercicios = []
     ordem = 1
 
     for grupo in sessao_cfg["grupos"]:
-        exs = get_exercicios_grupo(grupo, nivel)
+        exs = get_exercicios_grupo_carrossel(grupo, nivel, ciclo)
         for ex in exs:
             exercicios.append(ExercicioPrescrito(
                 nome=ex["nome"],
@@ -979,6 +980,7 @@ def gerar_periodizacao_blocos(
     dias_semana: int,
     semanas_total: int = 8,
     data_inicio = None,
+    ciclo: int = 0,
 ) -> "Periodizacao":
     """
     Periodização em Blocos — Issurin (2010) · Sports Med
@@ -996,7 +998,7 @@ def gerar_periodizacao_blocos(
     sessoes_prescritas = []
     for i, sessao_cfg in enumerate(div["sessoes"]):
         dia = div["dias_treino"][i] if i < len(div["dias_treino"]) else i
-        sessao = _montar_sessao(sessao_cfg, nivel_norm, dia)
+        sessao = _montar_sessao(sessao_cfg, nivel_norm, dia, ciclo)
         sessoes_prescritas.append(sessao)
 
     # Monta mesociclos por bloco

@@ -673,6 +673,43 @@ def get_exercicios_grupo_v2(grupo: str, banco_exercicios: list, usados_anteriore
         })
     return resultado
 
+def get_exercicios_grupo_carrossel(grupo: str, nivel: str, ciclo: int = 0) -> List[dict]:
+    """
+    CARROSSEL: rotaciona entre TODOS os exercicios do grupo (juntando niveis
+    ate o nivel do aluno), variando a cada ciclo. A fase prescreve a intensidade.
+    - grupo: 'peito', 'costas'...
+    - nivel: nivel do aluno (limita ate onde pega - protege iniciante de tecnicos)
+    - ciclo: numero da reavaliacao (0=primeiro, 1=segundo...). Roda a lista.
+    NAO E CHAMADA AINDA - testar isolada primeiro.
+    """
+    banco = EXERCICIOS.get(grupo, {})
+    if grupo == "corretivos":
+        return banco.get("todos", [])
+    # Ordem do MAIS BASICO ao mais avancado (iniciante primeiro)
+    ordem_niveis = ["iniciante", "intermediario1", "intermediario2",
+                    "avancado1", "avancado2", "avancado3"]
+    nivel_norm = normalizar_nivel(nivel)
+    # Ate qual nivel o aluno pode pegar (protege iniciante de exercicio tecnico)
+    if nivel_norm in ordem_niveis:
+        limite = ordem_niveis.index(nivel_norm)
+    else:
+        limite = len(ordem_niveis) - 1
+    # Junta exercicios UNICOS de todos os niveis ate o limite do aluno
+    vistos = set()
+    pool = []
+    for n in ordem_niveis[:limite+1]:
+        for ex in banco.get(n, []):
+            if ex["nome"] not in vistos:
+                vistos.add(ex["nome"])
+                pool.append(ex)
+    if not pool:
+        return []
+    # ROTACAO: desloca a lista pelo numero do ciclo (carrossel)
+    n = len(pool)
+    desloc = ciclo % n
+    rotacionado = pool[desloc:] + pool[:desloc]
+    return rotacionado
+
 def get_exercicios_grupo(grupo: str, nivel: str) -> List[dict]:
     """Retorna exercícios de um grupo para o nível, com fallback para nível anterior."""
     banco = EXERCICIOS.get(grupo, {})

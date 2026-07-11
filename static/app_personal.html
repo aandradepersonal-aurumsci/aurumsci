@@ -3725,18 +3725,45 @@ function filtrarGrupo(g){
 }
 
 function editarExercicioBanco(id, nome, grupo, equip){
-  var novoNome = prompt('Editar nome do exercicio:', nome);
-  if(novoNome === null) return;
-  novoNome = novoNome.trim();
-  if(!novoNome){ mostrarToast('Nome nao pode ficar vazio'); return; }
+  var grupos = ['Peito','Costas','Ombros','Bíceps','Tríceps','Pernas','Glúteos','Panturrilha','Abdômen','Cardio','Corretivo','Funcional','Pliometria','Mobilidade'];
+  var opts = grupos.map(function(g){ return '<option value="'+g+'"'+(g===grupo?' selected':'')+'>'+g+'</option>'; }).join('');
+  var html = '<div id="edit-exerc-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:400;padding:20px;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center">';
+  html += '<div style="background:#12121A;border-radius:16px;padding:20px;max-width:430px;width:100%;margin-top:40px">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">';
+  html += '<div style="font-family:Bebas Neue;font-size:20px;color:var(--ouro2);letter-spacing:1px">✏️ EDITAR EXERCÍCIO</div>';
+  html += '<button onclick="fecharEditExercicio()" style="background:none;border:none;color:var(--cinza);font-size:22px;cursor:pointer">✕</button>';
+  html += '</div>';
+  html += '<label style="display:block;font-size:11px;color:var(--ouro);letter-spacing:1px;margin-bottom:4px">NOME</label>';
+  html += '<input id="edit-exerc-nome" type="text" value="'+nome.replace(/"/g,'&quot;')+'" style="width:100%;padding:10px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:14px;box-sizing:border-box;margin-bottom:12px">';
+  html += '<label style="display:block;font-size:11px;color:var(--ouro);letter-spacing:1px;margin-bottom:4px">GRUPO MUSCULAR</label>';
+  html += '<select id="edit-exerc-grupo" style="width:100%;padding:10px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:14px;box-sizing:border-box;margin-bottom:12px">'+opts+'</select>';
+  html += '<label style="display:block;font-size:11px;color:var(--ouro);letter-spacing:1px;margin-bottom:4px">EQUIPAMENTO (opcional)</label>';
+  html += '<input id="edit-exerc-equip" type="text" value="'+(equip||'').replace(/"/g,'&quot;')+'" placeholder="Ex: Halter, Polia, Smith" style="width:100%;padding:10px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:14px;box-sizing:border-box;margin-bottom:14px">';
+  html += '<button onclick="salvarEditExercicio('+id+')" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;letter-spacing:1px;cursor:pointer">💾 SALVAR</button>';
+  html += '</div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function fecharEditExercicio(){
+  var el = document.getElementById('edit-exerc-modal');
+  if(el) el.remove();
+}
+
+function salvarEditExercicio(id){
+  var nome = (document.getElementById('edit-exerc-nome')||{}).value||'';
+  var grupo = (document.getElementById('edit-exerc-grupo')||{}).value||'';
+  var equip = (document.getElementById('edit-exerc-equip')||{}).value||'';
+  nome = nome.trim();
+  if(!nome){ mostrarToast('Nome nao pode ficar vazio'); return; }
   fetch(window.API_BASE + '/app-personal/exercicios-banco/' + id, {
     method:'PUT',
     headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body: JSON.stringify({nome: novoNome})
+    body: JSON.stringify({nome: nome, grupo_muscular: grupo, equipamento: equip})
   }).then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); })
   .then(function(res){
     if(res.ok){
       mostrarToast('Exercicio atualizado');
+      fecharEditExercicio();
       exerciciosBanco = [];
       carregarExercicios();
     } else {

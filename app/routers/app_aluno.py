@@ -135,6 +135,8 @@ async def onboarding(
         aluno.dias_semana = dados.dias_disponiveis
     db.flush()
 
+    # CICLO = quantos planos o aluno ja teve (0=primeiro, 1+=reavaliacao -> treino rotaciona)
+    ciclo_aluno = db.query(PlanoTreino).filter(PlanoTreino.aluno_id == aluno.id).count()
     # Desativa plano anterior
     plano_existente = db.query(PlanoTreino).filter(
         PlanoTreino.aluno_id == aluno.id,
@@ -150,7 +152,8 @@ async def onboarding(
         dias_semana=dados.dias_disponiveis,
         semanas_total=12,
         data_inicio=date.today(),
-        tipo_periodizacao=dados.tipo_periodizacao or "ondulatoria"
+        tipo_periodizacao=dados.tipo_periodizacao or "ondulatoria",
+        ciclo=ciclo_aluno
     )
     periodo_dict = periodizacao_to_dict(periodizacao)
 

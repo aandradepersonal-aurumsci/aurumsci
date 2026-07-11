@@ -87,3 +87,27 @@ FASE 5: migrar os 11 alunos (importar treino atual como v1, professor revisa/apr
 ## DECISAO
 Projeto GRANDE (semanas). Reescreve o coracao do treino. Comecar pela FASE 1 (fundacao),
 fresco, com backup e teste. NAO enriquecer no dicionario velho (vira lixo na migracao).
+
+## PROGRESSO (sessao 11/jul) - FASE 1 EM ANDAMENTO
+FEITO E PROVADO:
+- get_exercicios_grupo_v2() criada em periodizacao.py (commit 7b2d79a).
+  Puxa do banco, traduz grupos (peito->Peito, triceps->Tríceps via GRUPO_MOTOR_PARA_BANCO),
+  rotaciona (usados_anteriores vao pro fim), devolve formato completo (series/reps default).
+  TESTADA isolada: 6 testes passaram. NAO e chamada ainda (motor real intacto, 11 alunos seguros).
+
+MAPEADO (onde plugar):
+- gerar_periodizacao() em periodizacao.py:687 - adicionar param opcional banco_exercicios=None.
+- _montar_sessao() periodizacao.py:820 - trocar get_exercicios_grupo por v2 quando banco vier.
+- Chamado em 3 lugares: app_aluno.py:147, onboarding.py:376, treino.py:209.
+- app_aluno.py ja tem db (Session) e importa Exercicio - da pra buscar os 148 e passar.
+- HISTORICO ja existe: plano anterior do aluno (ExercicioSessao.exercicio_id) = o que ele usou.
+  Nao precisa tabela nova. Ler plano antigo antes de gerar o novo.
+- Exercicios do dicionario viram registro no banco por NOME (app_aluno.py:181 filter by nome).
+
+FALTA (proxima sessao, com cross-check e teste com 1 aluno):
+1. gerar_periodizacao recebe banco_exercicios opcional (sem banco=dicionario/velho; com=v2).
+2. Tratar TODOS os grupos: v2 so cobre peito/costas/ombros/triceps/biceps/pernas/abdomen/corretivos.
+   Falta gluteos, panturrilha, funcional, forca_especial. FALLBACK pro dicionario quando v2 vazio.
+3. Aluno novo (sem plano anterior) = usados vazio = rotacao do zero (ok).
+4. Testar com 1 aluno ANTES dos 11. Se treino sair errado, reverter.
+5. Corretivos continuam do dicionario (v2 nao trata).

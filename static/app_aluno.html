@@ -4474,10 +4474,18 @@ function adicionarExtraConfirmar(){
     '</div>' +
     '<button onclick="verVideoExercicio(\'' + nome + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0" title="Ver vídeo">🎬</button>' +
     '</div></div>';
-  // Insere ANTES do botao adicionar (junto com os exercicios, nao depois do cronometro)
-  var btnAdicionar = card.querySelector('[onclick*="extra-form"]');
-  if(btnAdicionar && btnAdicionar.parentNode){
-    card.insertBefore(div, btnAdicionar.parentNode);
+  // Insere ANTES do cronometro (junto com os exercicios, nao depois do concluir)
+  var cronoBox = document.getElementById('crono-box');
+  var extraFormBox = document.getElementById('extra-form');
+  // Prioridade: antes do container do form de adicionar; senao antes do cronometro
+  var ancora = null;
+  if(extraFormBox && extraFormBox.parentNode && extraFormBox.parentNode.parentNode === card){
+    ancora = extraFormBox.parentNode;
+  } else if(cronoBox && cronoBox.parentNode === card){
+    ancora = cronoBox;
+  }
+  if(ancora){
+    card.insertBefore(div, ancora);
   } else {
     card.appendChild(div);
   }

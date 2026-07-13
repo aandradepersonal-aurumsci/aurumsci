@@ -2186,6 +2186,8 @@ function renderTreino(){
       treinoExercicios = exercicios;
       treinoSeriesFeitas = {};
       exercicios.forEach(function(ex, i){ treinoSeriesFeitas[i] = 0; });
+      window._sessaoNomeAtual = sessaoNome;
+      extrasAdicionados = [];
 
       // Banner da fase da periodização
       var faseInfo = d.fase_atual || null;
@@ -2367,6 +2369,15 @@ function renderTreino(){
         '<div style="font-size:13px;color:var(--cinza);margin-top:10px;line-height:1.6">Prepara o foco! Já já é dia de treino. 💪</div></div>';
     }
     document.getElementById('treino-content').innerHTML = html + treinoHtml;
+    // Recarrega os exercicios extras salvos deste treino (localStorage, so pro aluno)
+    if(exercicios && exercicios.length > 0){
+      var extrasSalvos = _carregarExtras();
+      if(extrasSalvos && extrasSalvos.length > 0){
+        extrasSalvos.forEach(function(nomeExtra){
+          _reAdicionarExtra(nomeExtra);
+        });
+      }
+    }
   }).catch(function(){
     document.getElementById('treino-content').innerHTML = html + renderMsgSemPlano();
   });
@@ -4447,6 +4458,55 @@ function verVideoExercicio(nome){
 }
 
 var extrasAdicionados = [];
+
+// Assinatura do treino atual (muda na reavaliacao -> extras velhos somem)
+function _assinaturaTreino(){
+  var sessao = (treinoExercicios.length && window._sessaoNomeAtual) ? window._sessaoNomeAtual : '';
+  return 'extras_' + (window._alunoId||0) + '_' + sessao + '_' + treinoExercicios.length;
+}
+function _salvarExtras(){
+  try { localStorage.setItem(_assinaturaTreino(), JSON.stringify(extrasAdicionados)); } catch(e){}
+}
+function _carregarExtras(){
+  try {
+    var s = localStorage.getItem(_assinaturaTreino());
+    return s ? JSON.parse(s) : [];
+  } catch(e){ return []; }
+}
+
+// Re-adiciona um extra na tela (usado no reload; NAO salva de novo no localStorage)
+function _reAdicionarExtra(nome){
+  var idx = treinoExercicios.length + extrasAdicionados.length;
+  extrasAdicionados.push(nome);
+  treinoSeriesFeitas[idx] = 0;
+  var card = document.getElementById('card-exercicios');
+  if(!card) return;
+  var div = document.createElement('div');
+  div.className = 'ex-item';
+  div.style.cssText = 'flex-direction:column;align-items:flex-start;padding:14px 0;gap:10px';
+  div.innerHTML = '<div style="display:flex;align-items:center;gap:12px;width:100%">' +
+    '<div class="ex-num" id="ex-num-' + idx + '" style="background:var(--azul)">' + (idx+1) + '</div>' +
+    '<div class="ex-info"><div class="ex-nome">' + nome + '</div>' +
+    '<div class="ex-corretivo" style="background:rgba(75,159,255,.1);color:var(--azul);border-color:rgba(75,159,255,.3)">EXTRA</div></div>' +
+    '<div style="display:flex;flex-direction:row;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end">' +
+    '<div class="ex-carga">' +
+      '<input type="number" value="" placeholder="–" onchange="ajustarCargaAluno(' + idx + ',this.value)" class="ex-carga-val" style="width:56px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.35);border-radius:6px;text-align:center;padding:2px 0">' +
+      '<div class="ex-carga-un">kg</div>' +
+      '<div class="ex-carga-rm" id="aluno-rm-' + idx + '" style="font-size:11px;color:var(--ouro2);font-weight:700;margin-top:2px"></div>' +
+      '<button id="aluno-salvar-carga-' + idx + '" onclick="salvarCargaAluno(' + idx + ')" title="Salvar carga" style="background:none;border:1px solid rgba(201,168,76,.35);border-radius:6px;cursor:pointer;font-size:10px;color:var(--ouro2);margin-top:4px;padding:2px 8px">💾 ajustar</button>' +
+    '</div>' +
+    '<button onclick="verVideoExercicio(\'' + nome + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0" title="Ver vídeo">🎬</button>' +
+    '</div></div>';
+  var cronoBox = document.getElementById('crono-box');
+  var extraFormBox = document.getElementById('extra-form');
+  var ancora = null;
+  if(extraFormBox && extraFormBox.parentNode && extraFormBox.parentNode.parentNode === card){
+    ancora = extraFormBox.parentNode;
+  } else if(cronoBox && cronoBox.parentNode === card){
+    ancora = cronoBox;
+  }
+  if(ancora){ card.insertBefore(div, ancora); } else { card.appendChild(div); }
+}
 function adicionarExtraConfirmar(){
   var el = document.getElementById('extra-nome'); var nome = (el.value !== undefined ? el.value : el.textContent || el.innerText).trim();
   if(!nome){ mostrarToast('Digite o nome do exercício!'); return; }
@@ -4455,6 +4515,7 @@ function adicionarExtraConfirmar(){
   var idx = treinoExercicios.length + extrasAdicionados.length;
   extrasAdicionados.push(nome);
   treinoSeriesFeitas[idx] = 0;
+  _salvarExtras();
   var card = document.getElementById('card-exercicios');
   if(!card) return;
   // Template NOVO (igual aos exercicios normais: carga + 1RM + video, sem bolinhas)

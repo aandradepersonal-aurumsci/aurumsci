@@ -4455,25 +4455,26 @@ function adicionarExtraConfirmar(){
   var idx = treinoExercicios.length + extrasAdicionados.length;
   extrasAdicionados.push(nome);
   treinoSeriesFeitas[idx] = 0;
-  // Adiciona visualmente no card
   var card = document.getElementById('card-exercicios');
   if(!card) return;
-  var botoesHtml = '';
-  for(var s = 0; s < 3; s++){
-    botoesHtml += '<button class="btn-serie" id="serie-' + idx + '-' + s + '" onclick="marcarSerie(' + idx + ',' + s + ',3,60,\'' + nome + '\')" style="width:32px;height:32px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--cinza);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin:2px">' + (s+1) + '</button>';
-  }
+  // Template NOVO (igual aos exercicios normais: carga + 1RM + video, sem bolinhas)
   var div = document.createElement('div');
   div.className = 'ex-item';
-  div.style.cssText = 'flex-direction:column;align-items:flex-start;padding:14px 0;gap:10px;border-top:1px solid var(--borda)';
+  div.style.cssText = 'flex-direction:column;align-items:flex-start;padding:14px 0;gap:10px';
   div.innerHTML = '<div style="display:flex;align-items:center;gap:12px;width:100%">' +
     '<div class="ex-num" id="ex-num-' + idx + '" style="background:var(--azul)">' + (idx+1) + '</div>' +
     '<div class="ex-info"><div class="ex-nome">' + nome + '</div>' +
-    '<div class="ex-det">3 séries · livre</div>' +
     '<div class="ex-corretivo" style="background:rgba(75,159,255,.1);color:var(--azul);border-color:rgba(75,159,255,.3)">EXTRA</div></div>' +
-    '<button onclick="verVideoExercicio(\'' + nome + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;margin-left:auto">🎬</button>' +
+    '<div style="display:flex;flex-direction:row;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end">' +
+    '<div class="ex-carga">' +
+      '<input type="number" value="" placeholder="–" onchange="ajustarCargaAluno(' + idx + ',this.value)" class="ex-carga-val" style="width:56px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.35);border-radius:6px;text-align:center;padding:2px 0">' +
+      '<div class="ex-carga-un">kg</div>' +
+      '<div class="ex-carga-rm" id="aluno-rm-' + idx + '" style="font-size:11px;color:var(--ouro2);font-weight:700;margin-top:2px"></div>' +
+      '<button id="aluno-salvar-carga-' + idx + '" onclick="salvarCargaAluno(' + idx + ')" title="Salvar carga" style="background:none;border:1px solid rgba(201,168,76,.35);border-radius:6px;cursor:pointer;font-size:10px;color:var(--ouro2);margin-top:4px;padding:2px 8px">💾 ajustar</button>' +
     '</div>' +
-    '<div style="display:flex;flex-wrap:wrap;gap:4px;padding-left:44px">' + botoesHtml + '</div>';
-  // Insere antes do botão adicionar
+    '<button onclick="verVideoExercicio(\'' + nome + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0" title="Ver vídeo">🎬</button>' +
+    '</div></div>';
+  // Insere ANTES do botao adicionar (junto com os exercicios, nao depois do cronometro)
   var btnAdicionar = card.querySelector('[onclick*="extra-form"]');
   if(btnAdicionar && btnAdicionar.parentNode){
     card.insertBefore(div, btnAdicionar.parentNode);
@@ -4482,7 +4483,6 @@ function adicionarExtraConfirmar(){
   }
   mostrarToast('✅ ' + nome + ' adicionado!');
 }
-
 function pularTimer(){ clearInterval(timerInterval); document.getElementById('timer-overlay').classList.remove('ativo'); }
 
 function marcarSerie(exIdx, serieIdx, totalSeries, descanso, exNome){

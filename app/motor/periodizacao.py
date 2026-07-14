@@ -686,6 +686,36 @@ def get_exercicios_grupo_v2(grupo: str, banco_exercicios: list, usados_anteriore
         })
     return resultado
 
+# Palavras-chave de exercicios MULTIARTICULARES (compostos - musculo grande + auxiliares).
+# CREF Andre: multi vem primeiro no treino (base), mono depois (isolador).
+PALAVRAS_MULTI = [
+    "supino", "agachamento", "leg press", "terra", "levantamento",
+    "remada", "puxada", "barra fixa", "pull down", "pulldown",
+    "desenvolvimento", "flexao", "flexão", "crossover", "avanco", "avanço",
+    "bulgaro", "afundo", "passada", "walking", "step up", "hack", "mergulho",
+    "paralela", "arnold", "hip thrust", "cavalinho",
+]
+
+# Excecoes: exercicios que TEM palavra multi no nome mas sao MONO (isoladores).
+# Ex: "Panturrilha no Leg Press" tem "leg press" mas panturrilha e isolador.
+# Pull down = so articulacao do ombro (CREF Andre) = mono.
+PALAVRAS_EXCECAO_MONO = ["panturrilha", "punho", "rosca inversa", "encolhimento", "pull down", "pulldown"]
+
+def _eh_multiarticular(nome: str) -> bool:
+    """True se o exercicio e multiarticular (pelo nome). CREF Andre define as palavras.
+    Excecoes (panturrilha, punho, pull down...) sao SEMPRE mono."""
+    nome_lower = nome.lower()
+    if any(exc in nome_lower for exc in PALAVRAS_EXCECAO_MONO):
+        return False
+    return any(palavra in nome_lower for palavra in PALAVRAS_MULTI)
+
+def _ordenar_multi_primeiro(lista: List[dict]) -> List[dict]:
+    """Ordena: multiarticulares primeiro (base), monoarticulares depois (isolador).
+    Mantem a ordem relativa dentro de cada grupo (estabilidade da rotacao)."""
+    multi = [e for e in lista if _eh_multiarticular(e["nome"])]
+    mono = [e for e in lista if not _eh_multiarticular(e["nome"])]
+    return multi + mono
+
 def get_exercicios_grupo_carrossel(grupo: str, nivel: str, ciclo: int = 0) -> List[dict]:
     """
     CARROSSEL: rotaciona entre TODOS os exercicios do grupo (juntando niveis
@@ -721,7 +751,14 @@ def get_exercicios_grupo_carrossel(grupo: str, nivel: str, ciclo: int = 0) -> Li
     n = len(pool)
     desloc = ciclo % n
     rotacionado = pool[desloc:] + pool[:desloc]
-    return rotacionado
+    # ORDEM CIENTIFICA (CREF Andre): MULTIARTICULAR primeiro (composto, musculo grande),
+    # MONOARTICULAR depois (isolador). O nome do exercicio indica o tipo.
+    rotacionado = _ordenar_multi_primeiro(rotacionado)
+    # LIMITE por grupo: treino e intensidade (carga/tecnica), nao quantidade.
+    # Pega so os primeiros N; a rotacao (ciclo) garante que na reavaliacao
+    # entrem exercicios diferentes. Evita dias com 40+ exercicios.
+    MAX_POR_GRUPO = 2
+    return rotacionado[:MAX_POR_GRUPO]
 
 def get_exercicios_grupo(grupo: str, nivel: str) -> List[dict]:
     """Retorna exercícios de um grupo para o nível, com fallback para nível anterior."""
@@ -890,8 +927,14 @@ def _montar_sessao(sessao_cfg: dict, nivel: str, dia_semana: int, ciclo: int = 0
     exercicios = []
     ordem = 1
 
+    # Quantos por grupo depende de quantos grupos tem no dia (evita Full Body gigante
+    # E evita cortar grupo de fora). Muitos grupos (Full Body) = 1 cada (todos entram).
+    # Poucos grupos (ABC, Agonista) = 2 cada.
+    num_grupos = len(sessao_cfg["grupos"])
+    por_grupo = 1 if num_grupos >= 5 else 2
+
     for grupo in sessao_cfg["grupos"]:
-        exs = get_exercicios_grupo_carrossel(grupo, nivel, ciclo)
+        exs = get_exercicios_grupo_carrossel(grupo, nivel, ciclo)[:por_grupo]
         for ex in exs:
             exercicios.append(ExercicioPrescrito(
                 nome=ex["nome"],

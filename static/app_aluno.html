@@ -2251,7 +2251,8 @@ function renderTreino(){
           '<div style="display:flex;align-items:center;gap:12px;width:100%">' +
           '<div class="ex-num" id="ex-num-' + i + '">' + (i+1) + '</div>' +
           '<div class="ex-info"><div class="ex-nome">' + ex.nome + '</div>' +
-          (ex.corretivo ? '<div class="ex-corretivo">CORRETIVO</div>' : '') + '</div>' +
+          (ex.corretivo ? '<div class="ex-corretivo">CORRETIVO</div>' : '') +
+          ((ex.observacao && ex.observacao !== 'CORRETIVO' && ex.observacao.trim() !== '') ? '<div class="ex-tecnica" style="display:inline-block;background:rgba(255,107,53,.12);color:#FF6B35;border:1px solid rgba(255,107,53,.35);border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 8px;margin-top:4px;text-transform:uppercase">🔥 ' + ex.observacao + '</div>' : '') + '</div>' +
           '<div style="display:flex;flex-direction:row;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end">' +
           '<div class="ex-carga">' +
             '<input type="number" value="' + (ex.carga||'') + '" placeholder="–" onchange="ajustarCargaAluno(' + i + ',this.value)" class="ex-carga-val" style="width:56px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.35);border-radius:6px;text-align:center;padding:2px 0">' +

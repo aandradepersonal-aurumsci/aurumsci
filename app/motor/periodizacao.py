@@ -531,8 +531,8 @@ DIVISOES = {
         "descricao": "Divisão clássica 3x: A=Peito/Ombro/Tríceps | B=Costas/Bíceps | C=Pernas",
         "sessoes": [
             {"nome": "A — Peito, Ombro & Triceps", "grupos": ["peito", "ombros", "triceps"]},
-            {"nome": "B — Costas & Biceps",         "grupos": ["costas", "biceps"]},
-            {"nome": "C — Pernas",                  "grupos": ["pernas", "abdomen"]},
+            {"nome": "B — Costas, Biceps & Abs",    "grupos": ["costas", "biceps", "abdomen"]},
+            {"nome": "C — Pernas, Gluteo & Panturrilha", "grupos": ["pernas", "gluteos", "panturrilha"]},
         ],
         "dias_treino": [1, 3, 5],  # Seg, Qua, Sex
     },
@@ -542,8 +542,8 @@ DIVISOES = {
         "sessoes": [
             {"nome": "A — Peito & Costas",   "grupos": ["peito", "costas"]},
             {"nome": "B — Biceps & Triceps", "grupos": ["biceps", "triceps"]},
-            {"nome": "C — Pernas & Ombros",  "grupos": ["pernas", "ombros"]},
-            {"nome": "D — Pernas & Ombros",  "grupos": ["pernas", "ombros"]},
+            {"nome": "C — Pernas, Gluteo, Pant. & Ombros",  "grupos": ["pernas", "gluteos", "panturrilha", "ombros"]},
+            {"nome": "D — Pernas, Gluteo, Pant. & Ombros",  "grupos": ["pernas", "gluteos", "panturrilha", "ombros"]},
         ],
         "dias_treino": [1, 2, 4, 5],  # Seg, Ter, Qui, Sex
     },
@@ -555,7 +555,7 @@ DIVISOES = {
             {"nome": "B — Costas",  "grupos": ["costas"]},
             {"nome": "C — Ombros",  "grupos": ["ombros"]},
             {"nome": "D — Bracos",  "grupos": ["biceps", "triceps"]},
-            {"nome": "E — Pernas",  "grupos": ["pernas", "abdomen"]},
+            {"nome": "E — Pernas, Gluteo & Panturrilha",  "grupos": ["pernas", "gluteos", "panturrilha"]},
         ],
         "dias_treino": [1, 2, 3, 4, 5],  # Seg a Sex
     },
@@ -565,10 +565,10 @@ DIVISOES = {
         "sessoes": [
             {"nome": "Push A — Peito, Ombro & Triceps", "grupos": ["peito", "ombros", "triceps"]},
             {"nome": "Pull A — Costas & Biceps",         "grupos": ["costas", "biceps"]},
-            {"nome": "Legs A — Pernas",                  "grupos": ["pernas", "abdomen"]},
+            {"nome": "Legs A — Pernas, Gluteo & Pant.",  "grupos": ["pernas", "gluteos", "panturrilha"]},
             {"nome": "Push B — Peito, Ombro & Triceps",  "grupos": ["peito", "ombros", "triceps"]},
             {"nome": "Pull B — Costas & Biceps",         "grupos": ["costas", "biceps"]},
-            {"nome": "Legs B — Pernas",                  "grupos": ["pernas", "abdomen"]},
+            {"nome": "Legs B — Pernas, Gluteo & Pant.",  "grupos": ["pernas", "gluteos", "panturrilha"]},
         ],
         "dias_treino": [1, 2, 3, 4, 5, 6],
     },

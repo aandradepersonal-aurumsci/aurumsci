@@ -491,13 +491,13 @@ DIVISOES = {
         "dias_treino": [1, 3, 5],  # Seg, Qua, Sex
     },
     4: {
-        "nome": "ABCD 4x",
-        "descricao": "A=Peito/Ombro/Tríceps | B=Costas/Bíceps | C=Pernas | D=Full Body Extra",
+        "nome": "Agonista/Antagonista 4x",
+        "descricao": "Método agonista/antagonista: músculos opostos no mesmo dia. A=Peito/Costas | B=Bíceps/Tríceps | C=Pernas/Ombros | D=Pernas/Ombros",
         "sessoes": [
-            {"nome": "A — Peito, Ombro & Triceps", "grupos": ["peito", "ombros", "triceps"]},
-            {"nome": "B — Costas & Biceps",         "grupos": ["costas", "biceps"]},
-            {"nome": "C — Pernas",                  "grupos": ["pernas", "abdomen"]},
-            {"nome": "D — Full Body Extra",         "grupos": ["peito", "costas", "pernas"]},
+            {"nome": "A — Peito & Costas",   "grupos": ["peito", "costas"]},
+            {"nome": "B — Biceps & Triceps", "grupos": ["biceps", "triceps"]},
+            {"nome": "C — Pernas & Ombros",  "grupos": ["pernas", "ombros"]},
+            {"nome": "D — Pernas & Ombros",  "grupos": ["pernas", "ombros"]},
         ],
         "dias_treino": [1, 2, 4, 5],  # Seg, Ter, Qui, Sex
     },
@@ -788,7 +788,9 @@ def gerar_periodizacao(
     sessoes_prescritas = []
     for i, sessao_cfg in enumerate(div["sessoes"]):
         dia = div["dias_treino"][i] if i < len(div["dias_treino"]) else i
-        sessao = _montar_sessao(sessao_cfg, nivel_norm, dia, ciclo)
+        # ciclo + i: cada dia desloca o carrossel (evita dias iguais na semana
+        # quando grupo repete, ex: Agonista/Antagonista C e D = pernas/ombros)
+        sessao = _montar_sessao(sessao_cfg, nivel_norm, dia, ciclo + i)
         sessoes_prescritas.append(sessao)
 
     # Monta mesociclos
@@ -1011,7 +1013,9 @@ def gerar_periodizacao_blocos(
     sessoes_prescritas = []
     for i, sessao_cfg in enumerate(div["sessoes"]):
         dia = div["dias_treino"][i] if i < len(div["dias_treino"]) else i
-        sessao = _montar_sessao(sessao_cfg, nivel_norm, dia, ciclo)
+        # ciclo + i: cada dia desloca o carrossel (evita dias iguais na semana
+        # quando grupo repete, ex: Agonista/Antagonista C e D = pernas/ombros)
+        sessao = _montar_sessao(sessao_cfg, nivel_norm, dia, ciclo + i)
         sessoes_prescritas.append(sessao)
 
     # Monta mesociclos por bloco

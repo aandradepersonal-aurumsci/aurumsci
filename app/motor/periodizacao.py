@@ -84,6 +84,8 @@ NIVEIS = {
 # Mapeamento de aliases para normalização
 NIVEL_ALIAS = {
     "iniciante":       "iniciante",
+    "intermediario":   "intermediario2",
+    "avancado":        "avancado3",
     "intermediario1":  "intermediario1",
     "intermediario 1": "intermediario1",
     "inter1":          "intermediario1",
@@ -349,8 +351,6 @@ EXERCICIOS = {
             {"nome": "Cadeira flexora",              "series": 3, "repeticoes": "12-15", "descanso": 60, "tecnica": None},
             {"nome": "Mesa Flexora",                 "series": 3, "repeticoes": "12-15", "descanso": 60, "tecnica": None},
             {"nome": "Cadeira abdutora",             "series": 3, "repeticoes": "15-20", "descanso": 60, "tecnica": None},
-            {"nome": "Panturrilha em Pé na Máquina", "series": 4, "repeticoes": "15-20", "descanso": 45, "tecnica": None},
-            {"nome": "Panturrilha no Leg Press",     "series": 3, "repeticoes": "15-20", "descanso": 45, "tecnica": None},
         ],
         "intermediario1": [
             {"nome": "Agachamento no smith",         "series": 4, "repeticoes": "10-12", "descanso": 90, "tecnica": None},
@@ -358,7 +358,6 @@ EXERCICIOS = {
             {"nome": "Avanço com Halteres (no lugar, dinâmico alternado)", "series": 3, "repeticoes": "10-12", "descanso": 60, "tecnica": None},
             {"nome": "Stiff com Halteres",           "series": 3, "repeticoes": "10-12", "descanso": 75, "tecnica": None},
             {"nome": "Hip Thrust com Barra e elastico abaixo dos joelhos", "series": 3, "repeticoes": "10-12", "descanso": 75, "tecnica": None},
-            {"nome": "Panturrilha Sentado (sóleo)",  "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
         ],
         "intermediario2": [
             {"nome": "Agachamento Livre",            "series": 4, "repeticoes": "8-12",  "descanso": 120, "tecnica": None},
@@ -366,7 +365,6 @@ EXERCICIOS = {
             {"nome": "Step up no banco",             "series": 3, "repeticoes": "10-12", "descanso": 60, "tecnica": None},
             {"nome": "Stiff com Halteres",           "series": 3, "repeticoes": "10-12", "descanso": 75, "tecnica": None},
             {"nome": "Hip Thrust com Barra e elastico abaixo dos joelhos", "series": 4, "repeticoes": "10-12", "descanso": 75, "tecnica": None},
-            {"nome": "Panturrilha Sentado (sóleo)",  "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
         ],
         "avancado1": [
             {"nome": "Agachamento Livre",            "series": 4, "repeticoes": "6-10",  "descanso": 120, "tecnica": None},
@@ -374,7 +372,6 @@ EXERCICIOS = {
             {"nome": "Stiff - barra livre",          "series": 3, "repeticoes": "10-12", "descanso": 90, "tecnica": None},
             {"nome": "Walking lunges (passadas com halteres)", "series": 3, "repeticoes": "12", "descanso": 60, "tecnica": None},
             {"nome": "Hip Thrust com Barra e elastico abaixo dos joelhos", "series": 4, "repeticoes": "8-12", "descanso": 90, "tecnica": None},
-            {"nome": "Panturrilha em pé no espaldar unilateral", "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
         ],
         "avancado2": [
             {"nome": "Agachamento Livre",            "series": 5, "repeticoes": "5-8",   "descanso": 180, "tecnica": None},
@@ -382,7 +379,6 @@ EXERCICIOS = {
             {"nome": "Stiff - barra livre",          "series": 4, "repeticoes": "8-10",  "descanso": 90, "tecnica": None},
             {"nome": "Levantamento Terra em défict (anilha embaixo dos pés)", "series": 4, "repeticoes": "8-10", "descanso": 120, "tecnica": None},
             {"nome": "Hip Thrust com Barra e elastico abaixo dos joelhos", "series": 4, "repeticoes": "8-10", "descanso": 90, "tecnica": "rest-pause"},
-            {"nome": "Panturrilha Unilateral (sentado) — corrige assimetria", "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
         ],
         "avancado3": [
             {"nome": "Agachamento Livre",            "series": 5, "repeticoes": "3-6",   "descanso": 180, "tecnica": None},
@@ -390,6 +386,56 @@ EXERCICIOS = {
             {"nome": "Levantamento Terra em défict (anilha embaixo dos pés)", "series": 5, "repeticoes": "5-8", "descanso": 150, "tecnica": None},
             {"nome": "Stiff unilateral com halteres", "series": 4, "repeticoes": "10-12", "descanso": 75, "tecnica": None},
             {"nome": "Hip Thrust com Barra e elastico abaixo dos joelhos", "series": 5, "repeticoes": "6-8", "descanso": 90, "tecnica": "rest-pause"},
+        ],
+    },
+
+    # ── GLÚTEOS ───────────────────────────────────────────────────────────────
+    "gluteos": {
+        "iniciante": [
+            {"nome": "Abdução no Cabo",                "series": 3, "repeticoes": "15-20", "descanso": 45, "tecnica": None},
+            {"nome": "Glúteo com caneleira no solo",   "series": 3, "repeticoes": "15-20", "descanso": 45, "tecnica": None},
+        ],
+        "intermediario1": [
+            {"nome": "Elevação Pélvica no fit ball (bola suiça)", "series": 3, "repeticoes": "12-15", "descanso": 60, "tecnica": None},
+            {"nome": "Glúteo cabo com o banco",        "series": 3, "repeticoes": "12-15", "descanso": 60, "tecnica": None},
+        ],
+        "intermediario2": [
+            {"nome": "Hip Thrust com Barra e elastico abaixo dos joelhos", "series": 4, "repeticoes": "10-12", "descanso": 75, "tecnica": None},
+            {"nome": "Kickback no Cabo",               "series": 3, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
+        ],
+        "avancado1": [
+            {"nome": "Agachamento Sumô",               "series": 4, "repeticoes": "10-12", "descanso": 90, "tecnica": None},
+            {"nome": "Flexão de joelhos no fit ball (bola suiça)", "series": 3, "repeticoes": "12-15", "descanso": 60, "tecnica": None},
+        ],
+        "avancado2": [
+            {"nome": "Elevação de pelve com a barra livre", "series": 4, "repeticoes": "8-10", "descanso": 90, "tecnica": None},
+            {"nome": "Hip Thrust com Barra e elastico abaixo dos joelhos", "series": 4, "repeticoes": "8-10", "descanso": 90, "tecnica": "rest-pause"},
+        ],
+        "avancado3": [
+            {"nome": "Elevação de pelve com a barra livre", "series": 4, "repeticoes": "6-8", "descanso": 120, "tecnica": None},
+            {"nome": "Agachamento Sumô",               "series": 4, "repeticoes": "8-10", "descanso": 90, "tecnica": None},
+        ],
+    },
+
+    # ── PANTURRILHA ───────────────────────────────────────────────────────────
+    "panturrilha": {
+        "iniciante": [
+            {"nome": "Panturrilha em Pé na Máquina", "series": 4, "repeticoes": "15-20", "descanso": 45, "tecnica": None},
+            {"nome": "Panturrilha no Leg Press",     "series": 3, "repeticoes": "15-20", "descanso": 45, "tecnica": None},
+        ],
+        "intermediario1": [
+            {"nome": "Panturrilha Sentado (sóleo)",  "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
+        ],
+        "intermediario2": [
+            {"nome": "Panturrilha Sentado (sóleo)",  "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
+        ],
+        "avancado1": [
+            {"nome": "Panturrilha em pé no espaldar unilateral", "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
+        ],
+        "avancado2": [
+            {"nome": "Panturrilha Unilateral (sentado) — corrige assimetria", "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
+        ],
+        "avancado3": [
             {"nome": "Panturrilha Burrinho (donkey calf) — inclinado", "series": 4, "repeticoes": "15-20", "descanso": 45, "tecnica": None},
         ],
     },

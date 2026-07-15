@@ -980,7 +980,7 @@ def _montar_sessao(sessao_cfg: dict, nivel: str, dia_semana: int, ciclo: int = 0
     por_grupo = 1 if num_grupos >= 5 else 2
 
     for grupo in sessao_cfg["grupos"]:
-        exs = get_exercicios_grupo_carrossel(grupo, nivel, ciclo)[:por_grupo]
+        exs = get_exercicios_grupo_carrossel(grupo, nivel, ciclo)[:(2 if (por_grupo == 1 and grupo == "pernas") else por_grupo)]
         for ex in exs:
             exercicios.append(ExercicioPrescrito(
                 nome=ex["nome"],

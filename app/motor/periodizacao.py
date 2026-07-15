@@ -494,29 +494,6 @@ EXERCICIOS = {
         ],
     },
 
-    # ── FORÇA ESPECIAL (intermediário 2+) ────────────────────────────────────
-    "forca_especial": {
-        "intermediario2": [
-            {"nome": "Deadlift",   "series": 4, "repeticoes": "5-6",  "descanso": 180, "tecnica": None},
-            {"nome": "Back Squat", "series": 4, "repeticoes": "5-8",  "descanso": 180, "tecnica": None},
-            {"nome": "Barra Fixa", "series": 4, "repeticoes": "6-10", "descanso": 120, "tecnica": None},
-        ],
-        "avancado1": [
-            {"nome": "Deadlift",   "series": 5, "repeticoes": "4-5",  "descanso": 240, "tecnica": None},
-            {"nome": "Back Squat", "series": 5, "repeticoes": "4-6",  "descanso": 240, "tecnica": None},
-            {"nome": "Barra Fixa", "series": 5, "repeticoes": "6-10", "descanso": 120, "tecnica": "multi-serie"},
-        ],
-        "avancado2": [
-            {"nome": "Deadlift",   "series": 5, "repeticoes": "3-5",  "descanso": 300, "tecnica": "multi-serie"},
-            {"nome": "Back Squat", "series": 5, "repeticoes": "3-5",  "descanso": 300, "tecnica": "multi-serie"},
-            {"nome": "Barra Fixa", "series": 5, "repeticoes": "8-12", "descanso": 120, "tecnica": "multi-serie"},
-        ],
-        "avancado3": [
-            {"nome": "Deadlift",   "series": 6, "repeticoes": "2-4",  "descanso": 360, "tecnica": "multi-serie"},
-            {"nome": "Back Squat", "series": 6, "repeticoes": "2-4",  "descanso": 360, "tecnica": "multi-serie"},
-            {"nome": "Barra Fixa", "series": 6, "repeticoes": "8-12", "descanso": 120, "tecnica": "multi-serie"},
-        ],
-    },
 }
 
 

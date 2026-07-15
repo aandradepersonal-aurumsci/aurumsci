@@ -166,6 +166,7 @@ EXERCICIOS = {
         ],
         "intermediario1": [
             {"nome": "Puxada Frontal",              "series": 4, "repeticoes": "10-12", "descanso": 60, "tecnica": None},
+            {"nome": "Barra Fixa com a pegada pronada", "series": 4, "repeticoes": "6-10", "descanso": 90, "tecnica": None},
             {"nome": "Remada Curvada com Barra",    "series": 3, "repeticoes": "10-12", "descanso": 75, "tecnica": None},
             {"nome": "Remada Unilateral com ketlebell", "series": 3, "repeticoes": "10-12", "descanso": 60, "tecnica": None},
             {"nome": "Remada unilateral com halteres (serrote)", "series": 3, "repeticoes": "10-12", "descanso": 60, "tecnica": None},
@@ -354,6 +355,7 @@ EXERCICIOS = {
         ],
         "intermediario1": [
             {"nome": "Agachamento no smith",         "series": 4, "repeticoes": "10-12", "descanso": 90, "tecnica": None},
+            {"nome": "Back squat livre com anilha de 5 kg em cada calcanhar", "series": 4, "repeticoes": "10-12", "descanso": 90, "tecnica": None},
             {"nome": "Leg Press 45°",                "series": 4, "repeticoes": "10-12", "descanso": 90, "tecnica": None},
             {"nome": "Avanço com Halteres (no lugar, dinâmico alternado)", "series": 3, "repeticoes": "10-12", "descanso": 60, "tecnica": None},
             {"nome": "Stiff com Halteres",           "series": 3, "repeticoes": "10-12", "descanso": 75, "tecnica": None},
@@ -422,18 +424,22 @@ EXERCICIOS = {
         "iniciante": [
             {"nome": "Panturrilha em Pé na Máquina", "series": 4, "repeticoes": "15-20", "descanso": 45, "tecnica": None},
             {"nome": "Panturrilha no Leg Press",     "series": 3, "repeticoes": "15-20", "descanso": 45, "tecnica": None},
+            {"nome": "Panturrilha em Pé no solo",    "series": 3, "repeticoes": "15-20", "descanso": 45, "tecnica": None},
         ],
         "intermediario1": [
             {"nome": "Panturrilha Sentado (sóleo)",  "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
+            {"nome": "Panturrilha em pé com step no Smith", "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
         ],
         "intermediario2": [
             {"nome": "Panturrilha Sentado (sóleo)",  "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
+            {"nome": "Panturrilha em Pé (spaldar)",  "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
         ],
         "avancado1": [
             {"nome": "Panturrilha em pé no espaldar unilateral", "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
         ],
         "avancado2": [
             {"nome": "Panturrilha Unilateral (sentado) — corrige assimetria", "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
+            {"nome": "Panturrilha no leg press unilateral", "series": 4, "repeticoes": "12-15", "descanso": 45, "tecnica": None},
         ],
         "avancado3": [
             {"nome": "Panturrilha Burrinho (donkey calf) — inclinado", "series": 4, "repeticoes": "15-20", "descanso": 45, "tecnica": None},

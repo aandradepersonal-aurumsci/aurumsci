@@ -786,8 +786,9 @@ def get_exercicios_grupo_carrossel(grupo: str, nivel: str, ciclo: int = 0) -> Li
     # LIMITE por grupo: treino e intensidade (carga/tecnica), nao quantidade.
     # Pega so os primeiros N; a rotacao (ciclo) garante que na reavaliacao
     # entrem exercicios diferentes. Evita dias com 40+ exercicios.
-    MAX_POR_GRUPO = 2
-    return rotacionado[:MAX_POR_GRUPO]
+    # Retorna o pool inteiro ordenado (multi->mono). O CORTE de quantos por grupo
+    # e feito no _montar_sessao (regra "8 por dia distribuido").
+    return rotacionado
 
 def get_exercicios_grupo(grupo: str, nivel: str) -> List[dict]:
     """Retorna exercícios de um grupo para o nível, com fallback para nível anterior."""
@@ -956,14 +957,46 @@ def _montar_sessao(sessao_cfg: dict, nivel: str, dia_semana: int, ciclo: int = 0
     exercicios = []
     ordem = 1
 
-    # Quantos por grupo depende de quantos grupos tem no dia (evita Full Body gigante
-    # E evita cortar grupo de fora). Muitos grupos (Full Body) = 1 cada (todos entram).
-    # Poucos grupos (ABC, Agonista) = 2 cada.
-    num_grupos = len(sessao_cfg["grupos"])
-    por_grupo = 1 if num_grupos >= 5 else 2
+    # DISTRIBUICAO "8 por dia" (CREF Andre): todo dia mira ~8 exercicios de forca,
+    # distribuidos entre os grupos. Dia focado (1 grupo)=8. 2 grupos=4+4. 3 grupos=3+3+2
+    # (resto vai pros primeiros). Full Body ESPECIAL: perna 5 + peito/costas/ombro 1
+    # (musculo pequeno nao entra - compostos ja pegam braco).
+    grupos_dia = sessao_cfg["grupos"]
+    num_grupos = len(grupos_dia)
+    ALVO_DIA = 8
+    eh_full_body = "full body" in sessao_cfg["nome"].lower() or num_grupos >= 5
 
-    for grupo in sessao_cfg["grupos"]:
-        exs = get_exercicios_grupo_carrossel(grupo, nivel, ciclo)[:(2 if (por_grupo == 1 and grupo == "pernas") else por_grupo)]
+    quantidade_por_grupo = {}
+    if eh_full_body:
+        for g in grupos_dia:
+            if g == "pernas":
+                quantidade_por_grupo[g] = 5
+            elif g in ("peito", "costas", "ombros"):
+                quantidade_por_grupo[g] = 1
+            else:
+                quantidade_por_grupo[g] = 0
+    else:
+        base = ALVO_DIA // num_grupos
+        resto = ALVO_DIA % num_grupos
+        for i, g in enumerate(grupos_dia):
+            quantidade_por_grupo[g] = base + (1 if i < resto else 0)
+
+    # REGRA "nao repetir no dia": um exercicio que esta em 2 grupos (ex: Hip Thrust
+    # em pernas E gluteos) so entra 1x. Guarda os nomes usados; se ja entrou, pula
+    # pro proximo do carrossel. Evita duplicata no mesmo treino.
+    usados_no_dia = set()
+    for grupo in grupos_dia:
+        qtd = quantidade_por_grupo.get(grupo, 0)
+        if qtd == 0:
+            continue
+        pool = get_exercicios_grupo_carrossel(grupo, nivel, ciclo)
+        exs = []
+        for ex in pool:
+            if ex["nome"] not in usados_no_dia:
+                exs.append(ex)
+                usados_no_dia.add(ex["nome"])
+            if len(exs) == qtd:
+                break
         for ex in exs:
             exercicios.append(ExercicioPrescrito(
                 nome=ex["nome"],

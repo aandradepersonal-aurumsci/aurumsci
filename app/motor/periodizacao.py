@@ -827,6 +827,21 @@ def gerar_periodizacao(
     tipo_periodizacao: str = "ondulatoria",
     ciclo: int = 0,
 ) -> "Periodizacao":
+    # PROGRESSAO AUTOMATICA DE NIVEL (CREF Andre): o aluno EVOLUI pelo ciclo
+    # (reavaliacao). ciclo>=2 (2a reavaliacao) -> intermediario. ciclo>=4 -> avancado.
+    # So SOBE, nunca desce (quem cadastrou avancado continua avancado).
+    _ordem_prog = ["iniciante", "intermediario1", "intermediario2",
+                   "avancado1", "avancado2", "avancado3"]
+    if ciclo >= 4:
+        _nivel_ciclo = "avancado3"
+    elif ciclo >= 2:
+        _nivel_ciclo = "intermediario2"
+    else:
+        _nivel_ciclo = "iniciante"
+    _norm_cadastro = normalizar_nivel(nivel)
+    if _ordem_prog.index(_nivel_ciclo) > _ordem_prog.index(_norm_cadastro):
+        nivel = _nivel_ciclo  # promove: usa o nivel do ciclo (maior)
+
     # Redireciona para periodização em blocos se solicitado
     if tipo_periodizacao == "blocos":
         return gerar_periodizacao_blocos(

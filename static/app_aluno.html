@@ -2308,7 +2308,7 @@ function renderTreino(){
         '</div>' +
       '</div>';
       window._cronoDescPadrao = descPadrao;
-      treinoHtml += '<button class="btn-concluir" id="btn-concluir-treino" onclick="concluirTreino(0)">CONCLUIR TREINO ✓</button></div>';
+      treinoHtml += '<button class="btn-concluir" id="btn-concluir-treino" onclick="pedirConfirmacaoConcluir(this)">CONCLUIR TREINO ✓</button></div>';
 
       // Card de avaliação DEPOIS dos exercícios — checa banco antes (nao so localStorage)
       var posturalFeita = localStorage.getItem('aurum_postural_feita');
@@ -2604,6 +2604,24 @@ function fazerCheckin(){
   localStorage.setItem('sequencia', seq);
   mostrarToast('✅ Treino concluído! ' + seq + ' dias seguidos!');
   renderTreino();
+}
+
+// 2 TOQUES (CREF Andre, jul/2026): aluno apertava CONCLUIR sem querer (perto do
+// cronometro) e inflava a frequencia. 1o toque vira "CONCLUIR?"; 2o toque conclui.
+// Sem 2o toque em 4s, volta ao normal. Toque acidental = inofensivo.
+function pedirConfirmacaoConcluir(btn){
+  if(btn.dataset.confirmando === '1'){
+    btn.dataset.confirmando = '';
+    clearTimeout(window._timerConfirmaConcluir);
+    concluirTreino(0);
+    return;
+  }
+  btn.dataset.confirmando = '1';
+  btn.textContent = 'CONCLUIR? ✓';
+  window._timerConfirmaConcluir = setTimeout(function(){
+    btn.dataset.confirmando = '';
+    btn.textContent = 'CONCLUIR TREINO ✓';
+  }, 4000);
 }
 
 function concluirTreino(idx){

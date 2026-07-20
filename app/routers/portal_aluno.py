@@ -27,6 +27,13 @@ router = APIRouter(prefix="/aluno-portal", tags=["Portal do Aluno"])
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_aluno = OAuth2PasswordBearer(tokenUrl="/aluno-portal/login")
 
+# ── Status de assinatura que LIBERAM acesso ao app (porteira poliglota) ───────
+# O webhook grava status crus do Stripe em INGLES ('active','trialing');
+# o codigo legado usa PT ('ativa','trial'). Esta e a definicao UNICA de
+# "assinante com acesso" — usada no login E na retomada do cadastro.
+# NAO inclui past_due / canceled / sem_assinatura de proposito.
+STATUS_ACESSO = frozenset({"trial", "trialing", "ativa", "active"})
+
 
 # ── Modelo de credenciais do aluno ────────────────────────────────────────────
 
@@ -140,7 +147,7 @@ def login_aluno(dados: AlunoLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=403, detail="Acesso desativado. Verifique sua assinatura em aurumsc.com.br")
     # FIX 17/05/2026: aluno autonomo precisa ter assinatura ativa OU trial
     if aluno.personal_id is None:
-        if aluno.assinatura_status not in ('trial', 'ativa'):
+        if aluno.assinatura_status not in STATUS_ACESSO:
             raise HTTPException(status_code=403, detail="Assinatura inativa. Acesse aurumsc.com.br para renovar.")
         # FECHA A TORNEIRA (jul/2026, Andre testou na pele): todo cadastro nasce
         # com default 'trial' no banco SEM o Stripe saber. Quem abandona o checkout

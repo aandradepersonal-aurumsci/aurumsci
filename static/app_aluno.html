@@ -2201,6 +2201,7 @@ function renderTreino(){
           '<div style="font-size:24px;flex-shrink:0">' + emoFase + '</div>' +
           '<div>' +
             '<div style="font-size:10px;color:var(--cinza);letter-spacing:1.5px;margin-bottom:4px">PERIODIZAÇÃO · SEU MOMENTO NO MESOCICLO</div>' +
+            (d.nivel ? '<div style="font-size:11px;font-weight:700;color:var(--ouro);letter-spacing:1px;margin-bottom:4px">NÍVEL ' + d.nivel.toUpperCase() + ' ' + (d.nivel === 'avancado' ? '🥇' : d.nivel === 'intermediario' ? '🥈' : '🥉') + '</div>' : '') +
             '<div style="font-size:14px;font-weight:700;color:' + corFase + ';letter-spacing:1px;margin-bottom:3px">' + faseInfo.nome.replace('FASE ','') + ' <span style="font-size:11px;font-weight:400;color:var(--cinza)">(' + faseInfo.descricao + ')</span></div>' +
             (faseInfo.series ?
               '<div style="margin-top:10px;padding-top:10px;border-top:1px solid ' + bordaFase + '">' +

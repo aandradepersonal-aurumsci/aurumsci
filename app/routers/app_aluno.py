@@ -619,7 +619,8 @@ async def treino_hoje(
         "total_exercicios": len(lista_ex),
         "postura_resumo": postura_resumo,
         "corretivos_posturais": corretivos_posturais,
-        "fase_atual": fase_atual
+        "fase_atual": fase_atual,
+        "nivel": nivel_efetivo_aluno(aluno, db)
     }
 
 

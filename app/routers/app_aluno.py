@@ -572,7 +572,8 @@ async def treino_hoje(
                 ("ACUMULACAO", "Base de volume"), ("TRANSMUTACAO", "Alta intensidade"), ("REALIZACAO", "Pico de forca"),
             ],
         }
-        fases = fases_map.get(objetivo_p, fases_map["hipertrofia"])
+        # CREF Andre: toda musculacao segue a regua da hipertrofia (ver ciclos_map)
+        fases = fases_map["hipertrofia"]
         # Iniciante comeca na fase 0 (adaptacao); intermediario/avancado pulam pra fase 1
         fase_inicial = 0 if nivel_p == "iniciante" else 1
         fase_idx = fase_inicial + (total_checkins // 12)
@@ -598,7 +599,7 @@ async def treino_hoje(
                 "DELOAD":      {"series": "2-3", "reps": "15", "intensidade": "50%", "descanso": "90s", "ref": "Issurin (2010) · Sports Med"},
             },
         }
-        presc = PRESCRICAO.get(objetivo_p, {}).get(nome_f)
+        presc = PRESCRICAO["hipertrofia"].get(nome_f)
         fase_atual = {
             "tipo": tipo_f,
             "nome": "FASE " + nome_f,
@@ -851,7 +852,10 @@ def periodizacao(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends
         ],
     }
 
-    ciclos = ciclos_map.get(objetivo, ciclos_map["hipertrofia"])
+    # CREF Andre (jul/2026): TODO objetivo usa a regua da MUSCULACAO (Adaptacao ->
+    # Hipertrofia -> Forca -> Deload). O que emagrece e deficit calorico + cardio
+    # (orientados a parte); o treino de ferro promete musculo e forca pra todos.
+    ciclos = ciclos_map["hipertrofia"]
 
     from app.routers.treino import PresencaTreino
     total_checkins = db.query(PresencaTreino).filter(

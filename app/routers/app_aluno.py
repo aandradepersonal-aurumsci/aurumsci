@@ -790,11 +790,30 @@ def resultado(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(ge
     }
 
 
+def nivel_efetivo_aluno(aluno, db):
+    """PROGRESSAO AUTOMATICA (CREF Andre): nivel EFETIVO do aluno.
+    ciclo (n. de planos/reavaliacoes) >= 2 -> intermediario, >= 4 -> avancado.
+    So SOBE, nunca desce (quem cadastrou avancado continua)."""
+    from app.routers.treino import PlanoTreino
+    ciclo = db.query(PlanoTreino).filter(PlanoTreino.aluno_id == aluno.id).count()
+    cadastro = (aluno.nivel_experiencia.value if aluno.nivel_experiencia else "iniciante").lower()
+    ordem = {"iniciante": 0, "intermediario": 1, "avancado": 2}
+    if ciclo >= 4:
+        por_ciclo = "avancado"
+    elif ciclo >= 2:
+        por_ciclo = "intermediario"
+    else:
+        por_ciclo = "iniciante"
+    if ordem.get(por_ciclo, 0) > ordem.get(cadastro, 0):
+        return por_ciclo
+    return cadastro
+
+
 @router.get("/periodizacao")
 def periodizacao(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
     """Retorna fases da periodização baseadas no objetivo do aluno."""
     objetivo = aluno.objetivo.value if aluno.objetivo else "hipertrofia"
-    nivel = aluno.nivel_experiencia.value if aluno.nivel_experiencia else "intermediario"
+    nivel = nivel_efetivo_aluno(aluno, db)  # nivel EFETIVO (com promocao por ciclo)
 
     ciclos_map = {
         "hipertrofia": [
@@ -1188,7 +1207,7 @@ async def chat_aluno(
     aluno_dict = {
         "nome":    aluno.nome,
         "objetivo": aluno.objetivo.value if aluno.objetivo else "hipertrofia",
-        "nivel":   aluno.nivel_experiencia.value if aluno.nivel_experiencia else "iniciante",
+        "nivel":   nivel_efetivo_aluno(aluno, db),
     }
 
     avals_dict = [{

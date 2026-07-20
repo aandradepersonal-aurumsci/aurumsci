@@ -159,6 +159,43 @@ def enviar_email_boas_vindas_aluno(nome, email):
     enviar_email(para=email, assunto="Seu personal criou seu acesso AurumSci! 💪", html=html)
 
 
+def enviar_email_promocao_nivel(nome, email, novo_nivel):
+    """PROGRESSAO (CREF Andre): email de parabens quando o aluno sobe de nivel."""
+    if novo_nivel == "avancado":
+        emoji = "🏆"
+        titulo = f"Parabens, {nome}! Voce chegou ao nivel AVANCADO {emoji}"
+        msg = "Voce evoluiu para o nivel <strong style='color:#C9A84C;'>AVANCADO</strong>! Agora seu treino inclui forca maxima, barra livre pesada e tecnicas de intensidade. Voce construiu essa base — aproveite o proximo nivel!"
+        assunto = "Voce chegou ao nivel AVANCADO! 🏆"
+    else:
+        emoji = "🎉"
+        titulo = f"Parabens, {nome}! Voce evoluiu para INTERMEDIARIO {emoji}"
+        msg = "Voce evoluiu para o nivel <strong style='color:#C9A84C;'>INTERMEDIARIO</strong>! Agora pode desfrutar de exercicios mais complexos — movimentos que envolvem equilibrio e coordenacao. Seu treino acompanha a sua evolucao!"
+        assunto = "Voce evoluiu para INTERMEDIARIO! 🎉"
+    html = f"""<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#0A0A0F;font-family:Arial,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:40px 24px;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-family:Georgia,serif;font-size:36px;font-weight:900;color:#C9A84C;letter-spacing:8px;">AURUMSCI</div>
+    </div>
+    <div style="height:2px;background:linear-gradient(90deg,transparent,#C9A84C,transparent);margin-bottom:32px;"></div>
+    <div style="background:#12121A;border:1px solid #2A2A3A;border-radius:16px;padding:28px;margin-bottom:20px;">
+      <div style="font-size:22px;font-weight:700;color:#C9A84C;margin-bottom:12px;">{titulo}</div>
+      <p style="color:#ccc;line-height:1.9;font-size:15px;margin:0 0 16px 0;">{msg}</p>
+      <div style="background:#0d1a0d;border:1px solid #1a3a1a;border-radius:12px;padding:16px;">
+        <div style="font-size:13px;color:#00E5A0;font-weight:700;margin-bottom:8px;">💪 O QUE MUDA:</div>
+        <div style="color:#ccc;font-size:13px;line-height:1.8;">
+          Seus proximos treinos ja incluem os novos exercicios do seu nivel.<br>
+          Abra o app e confira: <a href="https://aurumsc.com.br/aluno" style="color:#C9A84C;">aurumsc.com.br/aluno</a>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;color:#444;font-size:12px;">AurumSci — aurumsc.com.br</div>
+  </div>
+</body></html>"""
+    enviar_email(para=email, assunto=assunto, html=html)
+
+
 def enviar_email_boas_vindas_personal(nome, email, plano="bronze"):
     plano = (plano or "bronze").lower().strip()
     if plano not in PLANOS_PRO:

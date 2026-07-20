@@ -157,6 +157,18 @@ async def onboarding(
     )
     periodo_dict = periodizacao_to_dict(periodizacao)
 
+    # PROMOCAO DE NIVEL (CREF Andre): email de parabens SO na virada exata do ciclo
+    # (2 = intermediario, 4 = avancado). try/except: email falhar NAO quebra o treino.
+    try:
+        if ciclo_aluno == 2:
+            from app.routers.pagamento import enviar_email_promocao_nivel
+            enviar_email_promocao_nivel(aluno.nome, aluno.email, "intermediario")
+        elif ciclo_aluno == 4:
+            from app.routers.pagamento import enviar_email_promocao_nivel
+            enviar_email_promocao_nivel(aluno.nome, aluno.email, "avancado")
+    except Exception:
+        pass  # email e bonus; o treino e o essencial
+
     # Cria plano
     plano = PlanoTreino(
         aluno_id=aluno.id,

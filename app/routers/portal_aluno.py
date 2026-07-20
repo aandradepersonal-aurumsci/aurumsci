@@ -142,6 +142,24 @@ def login_aluno(dados: AlunoLogin, db: Session = Depends(get_db)):
     if aluno.personal_id is None:
         if aluno.assinatura_status not in ('trial', 'ativa'):
             raise HTTPException(status_code=403, detail="Assinatura inativa. Acesse aurumsc.com.br para renovar.")
+        # FECHA A TORNEIRA (jul/2026, Andre testou na pele): todo cadastro nasce
+        # com default 'trial' no banco SEM o Stripe saber. Quem abandona o checkout
+        # nunca cria subscription -> nenhum webhook chega -> ficaria gratis eterno.
+        # Regra: trial SEM stripe_subscription_id vale 7 dias a partir do criado_em.
+        # try/except: checagem nunca pode derrubar login de aluno legitimo.
+        if aluno.assinatura_status == 'trial' and not aluno.stripe_subscription_id:
+            try:
+                from datetime import datetime, timedelta
+                criado = aluno.criado_em
+                if criado is not None:
+                    if getattr(criado, 'tzinfo', None) is not None:
+                        criado = criado.replace(tzinfo=None)
+                    if datetime.utcnow() > (criado + timedelta(days=7)):
+                        raise HTTPException(status_code=403, detail="Seu periodo de teste terminou. Assine em aurumsc.com.br para continuar treinando!")
+            except HTTPException:
+                raise
+            except Exception:
+                pass
     # FIX 14/05/2026: Valida personal (se houver) antes de retornar
     if aluno.personal_id is not None:
         from app.models import Personal as PersonalModel

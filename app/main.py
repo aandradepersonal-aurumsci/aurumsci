@@ -238,7 +238,9 @@ app.include_router(iap_router)  # Apple In-App Purchase
 # ── App do Aluno ──────────────────────────────────────────────
 @app.get("/cadastro", response_class=HTMLResponse, include_in_schema=False)
 def cadastro_page():
-    with open("static/cadastro.html", "r", encoding="utf-8") as f:
+    # VENDA ALUNO PAUSADA (21/jul/2026): servindo em-breve enquanto o funil e blindado.
+    # Para REATIVAR: trocar landing_aluno_em_breve.html de volta por cadastro.html.
+    with open("static/landing_aluno_em_breve.html", "r", encoding="utf-8") as f:
         return f.read()
 
 @app.get("/aluno", response_class=HTMLResponse, include_in_schema=False)

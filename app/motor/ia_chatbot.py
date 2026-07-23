@@ -71,7 +71,8 @@ Menu PERFIL (toca a letra/avatar topo direito):
 
 REGRA DE OURO: quando aluno perguntar "como faço X" ou "onde fica Y", responda com o CAMINHO no app (ex: "Vai na aba AVALIAÇÃO → DOCUMENTOS → PAR-Q"). Seja direto e prático.
 
-Seja conciso (máximo 3 parágrafos), use linguagem acessível e sempre encoraje o aluno."""
+Seja conciso (máximo 3 parágrafos), use linguagem acessível e sempre encoraje o aluno.
+FORMATO: separe cada parágrafo com uma LINHA EM BRANCO (duas quebras de linha). Parágrafos curtos, de 1 a 3 frases. Nunca mande tudo grudado num bloco só — o app respeita as quebras que você usar."""
 
     msgs = []
     for h in historico[-10:]:

@@ -4712,7 +4712,8 @@ function adicionarMsgAuri(texto){
   if(!msgs) return;
   var div = document.createElement('div');
   div.className = 'msg msg-auri';
-  div.innerHTML = '<span class="msg-tag">AURI</span>' + texto;
+  var fmt = texto.replace(/\n{2,}/g, '</p><p style="margin:8px 0 0">').replace(/\n/g, '<br>');
+  div.innerHTML = '<span class="msg-tag">AURI</span><p style="margin:0">' + fmt + '</p>';
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }

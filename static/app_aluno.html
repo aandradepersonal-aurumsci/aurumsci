@@ -2287,7 +2287,7 @@ function renderTreino(){
           '<div id="crono-visor" style="font-family:\'Bebas Neue\',sans-serif;font-size:76px;text-align:center;color:var(--texto);letter-spacing:4px;line-height:1">00:00</div>' +
         '</div>' +
         '<div id="crono-sel" style="display:none;margin-top:10px">' +
-          '<select id="crono-tempo" style="width:100%;padding:10px;border-radius:10px;background:var(--bg3);border:1px solid var(--borda);color:var(--texto);font-size:13px">' +
+          '<select id="crono-tempo" onchange="cronoTrocarTempo()" style="width:100%;padding:10px;border-radius:10px;background:var(--bg3);border:1px solid var(--borda);color:var(--texto);font-size:13px">' +
             '<option value="60">60 segundos</option>' +
             '<option value="90">90 segundos</option>' +
             '<option value="180">180 segundos</option>' +
@@ -4648,6 +4648,11 @@ function cronoAba(modo){
 function cronoRender(){
   var v = document.getElementById('crono-visor');
   if(v) v.textContent = cronoFmt(cronoSeg);
+}
+function cronoTrocarTempo(){
+  if(cronoRodando) cronoPausar();
+  cronoSeg = parseInt(document.getElementById('crono-tempo').value) || 90;
+  cronoRender();
 }
 
 function cronoPlay(){

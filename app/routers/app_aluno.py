@@ -1204,6 +1204,16 @@ async def chat_aluno(
     rapida = resposta_rapida(dados.mensagem, {"nome": aluno.nome})
     if rapida:
         return {"resposta": rapida}
+    # Limite diário do Auri — protege custo de API (barra ANTES de chamar o modelo)
+    AURI_LIMITE_DIA = 5
+    hoje_auri = date.today()
+    if aluno.auri_msgs_data != hoje_auri:
+        aluno.auri_msgs_hoje = 0
+        aluno.auri_msgs_data = hoje_auri
+    if (aluno.auri_msgs_hoje or 0) >= AURI_LIMITE_DIA:
+        return {"resposta": f"Opa {aluno.nome.split()[0]}, você usou suas {AURI_LIMITE_DIA} perguntas de hoje! 💪 Volta em 24h que eu tô aqui pra te ajudar. Enquanto isso, bora treinar! 🔥"}
+    aluno.auri_msgs_hoje = (aluno.auri_msgs_hoje or 0) + 1
+    db.commit()
 
     # Contexto do aluno
     avals = db.query(AvaliacaoFisica).filter(

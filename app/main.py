@@ -82,6 +82,8 @@ def auto_migrate():
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS data_proxima_cobranca TIMESTAMP",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS valor_assinatura INTEGER DEFAULT 4990",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS data_cancelamento TIMESTAMP",
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS auri_msgs_hoje INTEGER DEFAULT 0",
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS auri_msgs_data DATE",
         # IAP Apple In-App Purchase (24/05/2026)
         "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS personal_id INTEGER REFERENCES personals(id)",
         "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS aluno_id INTEGER REFERENCES alunos(id)",

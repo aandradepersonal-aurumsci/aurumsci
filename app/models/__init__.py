@@ -86,6 +86,9 @@ class Aluno(Base):
     # Stripe
     stripe_customer_id = Column(String(100))
     stripe_subscription_id = Column(String(100))
+    # Limite diario do Auri (chatbot) - protege custo de API
+    auri_msgs_hoje = Column(Integer, default=0)
+    auri_msgs_data = Column(Date)
     # Exclusao de conta
     data_solicitacao_exclusao = Column(DateTime)
     token_exclusao = Column(String(100))

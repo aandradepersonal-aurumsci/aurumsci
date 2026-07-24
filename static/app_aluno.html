@@ -1157,11 +1157,15 @@ window.onload = function(){
           if(d && d.sessao){
             localStorage.setItem('aurum_onb_done','1');
             mostrarApp();
-           
+          } else if(localStorage.getItem('aurum_onb_done') === '1'){
+            mostrarApp();  // ja fez onboarding — nao repete por resposta vazia
           } else {
             iniciarOnboarding();
           }
-        }).catch(function(){ iniciarOnboarding(); });
+        }).catch(function(){
+          if(localStorage.getItem('aurum_onb_done') === '1'){ mostrarApp(); }
+          else { iniciarOnboarding(); }  // so repete se REALMENTE nunca fez
+        });
       }
     }
   }, 2400);
@@ -1377,8 +1381,14 @@ function fazerLogin(){
             localStorage.setItem('aurum_onb_done','1');
             mostrarApp();
             verificarPagamentosAluno();
+          } else if(localStorage.getItem('aurum_onb_done') === '1'){
+            mostrarApp();  // ja fez onboarding antes — nao repete por resposta vazia
+            verificarPagamentosAluno();
           } else { iniciarOnboarding(); }
-        }).catch(function(){ iniciarOnboarding(); });
+        }).catch(function(){
+          if(localStorage.getItem('aurum_onb_done') === '1'){ mostrarApp(); verificarPagamentosAluno(); }
+          else { iniciarOnboarding(); }  // so repete se REALMENTE nunca fez
+        });
       }
     } else { mostrarToast(d.detail || 'Email ou senha incorretos'); }
   }).catch(function(){ mostrarToast('Erro de conexão'); });

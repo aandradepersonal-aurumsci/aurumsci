@@ -4668,7 +4668,15 @@ function cronoTrocarTempo(){
   cronoRender();
 }
 
+var _audioCtx = null;
+function _acordarAudio(){
+  try {
+    if(_audioCtx === null) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(_audioCtx.state === 'suspended') _audioCtx.resume();
+  } catch(e){}
+}
 function cronoPlay(){
+  _acordarAudio();
   if(cronoRodando){ cronoPausar(); return; }
   if(cronoModo === 't' && cronoSeg <= 0){
     cronoSeg = parseInt(document.getElementById('crono-tempo').value) || 90;
@@ -4719,7 +4727,8 @@ function cronoAlerta(){
   try { if(navigator.vibrate) navigator.vibrate([200,100,200]); } catch(e){}
   // Bip suave no fim do timer (2 toques curtos, volume baixo — avisa sem estressar)
   try {
-    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    _acordarAudio();
+    var ctx = _audioCtx;
     [0, 0.28].forEach(function(t){
       var osc = ctx.createOscillator(), gain = ctx.createGain();
       osc.type = 'sine'; osc.frequency.value = 660;

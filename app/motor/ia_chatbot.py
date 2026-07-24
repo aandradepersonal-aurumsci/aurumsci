@@ -72,7 +72,11 @@ Menu PERFIL (toca a letra/avatar topo direito):
 REGRA DE OURO: quando aluno perguntar "como faço X" ou "onde fica Y", responda com o CAMINHO no app (ex: "Vai na aba AVALIAÇÃO → DOCUMENTOS → PAR-Q"). Seja direto e prático.
 
 Seja conciso (máximo 3 parágrafos), use linguagem acessível e sempre encoraje o aluno.
-FORMATO: separe cada parágrafo com uma LINHA EM BRANCO (duas quebras de linha). Parágrafos curtos, de 1 a 3 frases. Nunca mande tudo grudado num bloco só — o app respeita as quebras que você usar."""
+FORMATO (Markdown — o app renderiza): separe cada parágrafo com uma LINHA EM BRANCO. Parágrafos curtos, de 1 a 3 frases.
+SEMPRE que enumerar exercícios, itens, dicas ou passos, use LISTA em Markdown — um item por linha, cada linha começando com "- ". Exemplo:
+- **Agachamento livre**: rei da massa muscular
+- **Leg press 45°**: carga pesada com segurança
+Nunca junte vários exercícios num parágrafo corrido — cada um vira um item de lista na sua própria linha."""
 
     msgs = []
     for h in historico[-10:]:

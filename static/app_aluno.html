@@ -583,7 +583,7 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 </div>
 
 <!-- BOTÃO AJUDA -->
-<button class="btn-ajuda" id="btn-ajuda" onclick="abrirAjuda()"><span class="ajuda-emoji-top">🤔</span><span class="ajuda-txt-top">ajuda</span></button>
+<button class="btn-ajuda" id="btn-ajuda" onclick="abrirAjuda()" style="display:none"><span class="ajuda-emoji-top">🤔</span><span class="ajuda-txt-top">ajuda</span></button>
 
 <!-- MODAL AJUDA -->
 <div class="ajuda-overlay" id="ajuda-overlay" onclick="fecharAjuda()">
@@ -1923,6 +1923,7 @@ function toggleModoMedidas(){
 
 // ── APP PRINCIPAL ─────────────────────────────────────
 function mostrarApp(){
+  var _btnAjuda = document.getElementById('btn-ajuda'); if(_btnAjuda) _btnAjuda.style.display = 'flex';
   // FIX 24/05/2026 — Etapa 3H IAP Aluno:
   // - Endpoint /iap/status-aluno (token aluno, nao trainer)
   // - BLOQUEANTE: app so libera APOS fetch resolver

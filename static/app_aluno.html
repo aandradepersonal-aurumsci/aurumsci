@@ -4717,6 +4717,19 @@ function cronoAlerta(){
     if(n > 7){ clearInterval(pisca); v.style.color = 'var(--texto)'; }
   }, 250);
   try { if(navigator.vibrate) navigator.vibrate([200,100,200]); } catch(e){}
+  // Bip suave no fim do timer (2 toques curtos, volume baixo — avisa sem estressar)
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [0, 0.28].forEach(function(t){
+      var osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = 'sine'; osc.frequency.value = 660;
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime + t);
+      gain.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + t + 0.18);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + t); osc.stop(ctx.currentTime + t + 0.2);
+    });
+  } catch(e){}
 }
 
 // ── AURI ──────────────────────────────────────────────

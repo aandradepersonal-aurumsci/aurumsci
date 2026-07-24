@@ -888,7 +888,7 @@ def gerar_periodizacao(
         microciclos = []
         for semana in range(1, 5):
             deload = (semana == 4)
-            choque = (semana == 3)
+            choque = (semana == 3 and i > 0)  # choque só do 2º meso em diante — 1º mês consolida a base (CREF André)
             if deload:
                 total_deload += 1
 

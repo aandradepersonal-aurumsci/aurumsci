@@ -89,6 +89,8 @@ class Aluno(Base):
     # Limite diario do Auri (chatbot) - protege custo de API
     auri_msgs_hoje = Column(Integer, default=0)
     auri_msgs_data = Column(Date)
+    # Limite da analise postural (Claude Vision) - protege custo de API
+    postural_ultima_data = Column(Date)
     # Exclusao de conta
     data_solicitacao_exclusao = Column(DateTime)
     token_exclusao = Column(String(100))

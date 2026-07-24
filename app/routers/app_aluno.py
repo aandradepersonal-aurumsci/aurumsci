@@ -383,6 +383,13 @@ async def analise_postural(
     """Análise postural com IA."""
     import base64
     from app.motor.ia_postural import analisar_postural
+    # Limite da postural — 1 análise a cada 50 dias (protege custo do Claude Vision)
+    POSTURAL_INTERVALO_DIAS = 50
+    if aluno.postural_ultima_data:
+        dias_desde = (date.today() - aluno.postural_ultima_data).days
+        if dias_desde < POSTURAL_INTERVALO_DIAS:
+            faltam = POSTURAL_INTERVALO_DIAS - dias_desde
+            raise HTTPException(status_code=429, detail=f"Sua análise postural libera a cada {POSTURAL_INTERVALO_DIAS} dias. Faltam {faltam} dia(s) pra próxima. 💪")
 
     foto_frente_b64 = base64.b64encode(await foto_frente.read()).decode() if foto_frente else None
     foto_lado_b64   = base64.b64encode(await foto_lado.read()).decode()   if foto_lado   else None
@@ -401,6 +408,7 @@ async def analise_postural(
     aval.postura_joelhos     = resultado.joelhos
     aval.postura_pes         = resultado.pes
     aval.postura_observacoes = resultado.observacoes
+    aluno.postural_ultima_data = date.today()
     db.commit()
 
     return {

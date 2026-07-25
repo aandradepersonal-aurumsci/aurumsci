@@ -59,7 +59,8 @@ section{padding:60px 24px;max-width:640px;margin:0 auto}
 .plano-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#0A0A0F;font-family:'Bebas Neue';font-size:12px;letter-spacing:2px;padding:4px 16px;border-radius:20px}
 .plano-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .plano-icon{font-size:28px}
-.plano-nome{font-family:'Bebas Neue';font-size:24px;letter-spacing:1px}
+.plano-cap{font-family:'Bebas Neue';font-size:27px;letter-spacing:1px;color:var(--ouro);line-height:1.1}
+.plano-nome{font-size:11px;letter-spacing:3px;color:var(--cinza);margin-top:2px}
 .plano-alunos{font-size:12px;color:var(--cinza)}
 .plano-preco{margin-bottom:16px}
 .plano-valor{font-family:'Bebas Neue';font-size:42px;color:var(--ouro)}
@@ -209,17 +210,13 @@ footer a{color:#444;text-decoration:none}
   <p class="section-sub" data-i18n="diferencaAlunos">A diferença é só o número de alunos. Todos têm acesso completo a todas as funcionalidades.</p>
 
   <div class="planos">
-
     <div class="plano">
       <div class="plano-header">
         <div class="plano-icon">🥉</div>
         <div>
+          <div class="plano-cap" data-i18n="bronzeAlunos">Até 10 alunos</div>
           <div class="plano-nome" data-i18n="bronzeNome">BRONZE</div>
-          <div class="plano-alunos" data-i18n="bronzeAlunos">Até 10 alunos</div>
         </div>
-      </div>
-      <div class="plano-preco">
-        <span class="plano-valor">R$49</span><span class="plano-periodo">,90/mês</span>
       </div>
       <ul class="plano-items">
         <li data-i18n="bronzeF1">Acesso completo a todas as funcionalidades</li>
@@ -231,72 +228,61 @@ footer a{color:#444;text-decoration:none}
       </ul>
       <a href="/cadastro-pro?plano=bronze" class="btn-plano outline" data-i18n="btnComecarGratis">COMEÇAR GRÁTIS →</a>
     </div>
-
     <div class="plano destaque">
       <div class="plano-badge" data-i18n="maisPopular">MAIS POPULAR</div>
       <div class="plano-header">
         <div class="plano-icon">🥈</div>
         <div>
+          <div class="plano-cap" data-i18n="prataAlunos">Até 20 alunos</div>
           <div class="plano-nome" data-i18n="prataNome">PRATA</div>
-          <div class="plano-alunos" data-i18n="prataAlunos">Até 20 alunos</div>
         </div>
       </div>
-      <div class="plano-preco">
-        <span class="plano-valor">R$89</span><span class="plano-periodo">,90/mês</span>
-      </div>
       <ul class="plano-items">
-        <li data-i18n="prataF1">Tudo do Bronze</li>
-        <li data-i18n="prataF2">Até 20 alunos simultâneos</li>
-        <li data-i18n="prataF3">Gestão financeira avançada</li>
-        <li data-i18n="prataF4">Alertas de reavaliação automáticos</li>
-        <li data-i18n="prataF5">Questionário overtraining mensal</li>
+        <li data-i18n="bronzeF1">Acesso completo a todas as funcionalidades</li>
+        <li data-i18n="bronzeF2">AURI PRO — assistente IA 24h</li>
+        <li data-i18n="bronzeF3">Periodização científica automática</li>
+        <li data-i18n="bronzeF4">Análise postural com IA</li>
+        <li data-i18n="bronzeF5">White label — sua marca</li>
         <li data-i18n="seteDias">7 dias grátis para testar</li>
       </ul>
       <a href="/cadastro-pro?plano=prata" class="btn-plano" data-i18n="btnComecarGratis">COMEÇAR GRÁTIS →</a>
     </div>
-
     <div class="plano">
       <div class="plano-header">
         <div class="plano-icon">🥇</div>
         <div>
+          <div class="plano-cap" data-i18n="ouroAlunos">Até 50 alunos</div>
           <div class="plano-nome" data-i18n="ouroNome">OURO</div>
-          <div class="plano-alunos" data-i18n="ouroAlunos">Até 50 alunos</div>
         </div>
       </div>
-      <div class="plano-preco">
-        <span class="plano-valor">R$149</span><span class="plano-periodo">,90/mês</span>
-      </div>
       <ul class="plano-items">
-        <li data-i18n="ouroF1">Tudo do Prata</li>
-        <li data-i18n="ouroF2">Até 50 alunos simultâneos</li>
-        <li data-i18n="ouroF3">Suporte prioritário</li>
-        <li data-i18n="ouroF4">Relatórios avançados de evolução</li>
+        <li data-i18n="bronzeF1">Acesso completo a todas as funcionalidades</li>
+        <li data-i18n="bronzeF2">AURI PRO — assistente IA 24h</li>
+        <li data-i18n="bronzeF3">Periodização científica automática</li>
+        <li data-i18n="bronzeF4">Análise postural com IA</li>
+        <li data-i18n="bronzeF5">White label — sua marca</li>
         <li data-i18n="seteDias">7 dias grátis para testar</li>
       </ul>
       <a href="/cadastro-pro?plano=ouro" class="btn-plano outline" data-i18n="btnComecarGratis">COMEÇAR GRÁTIS →</a>
     </div>
-
     <div class="plano">
       <div class="plano-header">
         <div class="plano-icon">💎</div>
         <div>
+          <div class="plano-cap" data-i18n="diamanteAlunos">Alunos ilimitados</div>
           <div class="plano-nome" data-i18n="diamanteNome">DIAMANTE</div>
-          <div class="plano-alunos" data-i18n="diamanteAlunos">Alunos ilimitados</div>
         </div>
       </div>
-      <div class="plano-preco">
-        <span class="plano-valor">R$249</span><span class="plano-periodo">,90/mês</span>
-      </div>
       <ul class="plano-items">
-        <li data-i18n="diamanteF1">Tudo do Ouro</li>
-        <li data-i18n="diamanteF2">Alunos ilimitados</li>
-        <li data-i18n="diamanteF3">Avaliação com ultrassom integrada</li>
-        <li data-i18n="diamanteF4">Suporte VIP direto com o desenvolvedor</li>
+        <li data-i18n="bronzeF1">Acesso completo a todas as funcionalidades</li>
+        <li data-i18n="bronzeF2">AURI PRO — assistente IA 24h</li>
+        <li data-i18n="bronzeF3">Periodização científica automática</li>
+        <li data-i18n="bronzeF4">Análise postural com IA</li>
+        <li data-i18n="bronzeF5">White label — sua marca</li>
         <li data-i18n="seteDias">7 dias grátis para testar</li>
       </ul>
       <a href="/cadastro-pro?plano=diamante" class="btn-plano outline" data-i18n="btnComecarGratis">COMEÇAR GRÁTIS →</a>
     </div>
-
   </div>
 </section>
 

@@ -238,6 +238,19 @@ def responder_questionario(
         personal = db.query(Personal).filter(Personal.id == link.personal_id).first()
         if not personal:
             raise HTTPException(404, "Personal nao encontrado")
+
+    # Limite de alunos do plano — o link nao pode furar o plano (mesma regra do POST /alunos)
+    if tem_personal:
+        from app.routers.alunos import LIMITES_PLANO
+        from app.models import Aluno as _AlunoModel
+        _total = db.query(_AlunoModel).filter(
+            _AlunoModel.personal_id == personal.id,
+            _AlunoModel.ativo == True
+        ).count()
+        _limite = LIMITES_PLANO.get(personal.plano or 'bronze', 10)
+        _plano_nome = (personal.plano or 'bronze').upper()
+        if _total >= _limite:
+            raise HTTPException(403, f'Limite de {_limite} alunos do plano {_plano_nome} atingido. Peca ao seu personal para fazer o upgrade.')
     
     # Variaveis ternarias para uso em multiplos pontos:
     nome_quem_contata = personal.nome if personal else "Equipe AurumSci"

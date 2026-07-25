@@ -261,6 +261,11 @@ def cadastro_pro_page():
     with open("static/cadastro_pro.html", "r", encoding="utf-8") as f:
         return f.read()
 
+@app.get("/family", response_class=HTMLResponse, include_in_schema=False)
+def landing_family():
+    """Casa-mae do ecossistema AurumSci — apresenta os 4 projetos + busca de ciencia."""
+    with open("static/family.html", "r", encoding="utf-8") as f:
+        return f.read()
 @app.get("/pro", response_class=HTMLResponse, include_in_schema=False)
 def landing_pro():
     # VENDA PAUSADA (21/jun/2026): servindo pagina "em breve" enquanto o PRO e refinado/Stripe Connect.

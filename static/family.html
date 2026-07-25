@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AurumSci — Ciência que vira resultado</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ouro:#C9A84C;--ouro2:#E8D08A;--bg:#0A0A0F;--bg2:#12121A;--borda:#2A2A3A;--cinza:#9A9AA5}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'DM Sans',-apple-system,sans-serif;background:linear-gradient(135deg,#0A0A0F 0%,#15151F 100%);color:#fff;min-height:100vh;padding:32px 20px 60px}
+  .wrap{max-width:720px;margin:0 auto}
+  .logo{font-family:Georgia,serif;font-size:38px;font-weight:900;letter-spacing:6px;text-align:center;background:linear-gradient(135deg,var(--ouro),var(--ouro2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .tag{text-align:center;font-size:10px;letter-spacing:4px;color:var(--cinza);margin:8px 0 34px}
+  .titulo{font-family:'Bebas Neue';font-size:26px;letter-spacing:2px;color:var(--ouro);text-align:center;margin-bottom:6px}
+  .sub{text-align:center;font-size:14px;color:var(--cinza);line-height:1.6;margin-bottom:28px}
+  .card{display:block;text-decoration:none;background:var(--bg2);border:1px solid var(--borda);border-radius:18px;padding:20px;margin-bottom:14px;transition:all .2s}
+  .card:active{transform:scale(.98)}
+  .card-emoji{font-size:26px;margin-bottom:8px}
+  .card-nome{font-family:'Bebas Neue';font-size:20px;letter-spacing:1px;color:var(--ouro);margin-bottom:4px}
+  .card-desc{font-size:13px;color:var(--cinza);line-height:1.5}
+  .card.breve{opacity:.55}
+  .selo{display:inline-block;margin-top:8px;padding:4px 12px;border:1px solid rgba(201,168,76,.4);border-radius:20px;color:var(--ouro);font-size:10px;letter-spacing:1px}
+  .sec{margin-top:44px;padding-top:32px;border-top:1px solid var(--borda)}
+  .temas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+  .chip{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:7px 14px;color:var(--ouro);font-size:12px;cursor:pointer;transition:all .2s}
+  .chip:hover,.chip.on{background:var(--ouro);color:#0A0A0F;font-weight:600}
+  .chip .n{opacity:.65;font-size:10px;margin-left:4px}
+  .vid{display:block;text-decoration:none;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+  .vid-t{font-size:13px;color:#fff;line-height:1.45}
+  .vid-a{font-size:11px;color:var(--ouro);margin-top:4px}
+  .vazio{text-align:center;color:var(--cinza);font-size:13px;padding:20px}
+  .rodape{text-align:center;color:#555;font-size:11px;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">AURUMSCI</div>
+  <div class="tag">CIENCIA QUE VIRA RESULTADO</div>
+
+  <div class="titulo">A FAMÍLIA AURUMSCI</div>
+  <div class="sub">Ciência, avaliação e tecnologia — cada porta leva a uma parte do ecossistema.</div>
+
+  <a class="card" href="https://www.youtube.com/@cienciadahipertrofia" target="_blank">
+    <div class="card-emoji">🧬</div>
+    <div class="card-nome">CIÊNCIA DA HIPERTROFIA</div>
+    <div class="card-desc">A evidência que embasa tudo. Estudos traduzidos em vídeos curtos, todo dia.</div>
+  </a>
+
+  <a class="card" href="https://lab.aurumsc.com.br" target="_blank">
+    <div class="card-emoji">🔬</div>
+    <div class="card-nome">AURUMSCI LAB</div>
+    <div class="card-desc">Avaliação física premium — composição corporal, VO2, testes e dinamometria.</div>
+  </a>
+
+  <a class="card" href="https://aurumsc.com.br">
+    <div class="card-emoji">📱</div>
+    <div class="card-nome">APP DO ALUNO</div>
+    <div class="card-desc">Seu treino guiado por ciência, no bolso — com o AURI, seu assistente 24h.</div>
+  </a>
+
+  <div class="card breve">
+    <div class="card-emoji">💼</div>
+    <div class="card-nome">AURUMSCI PRO</div>
+    <div class="card-desc">A plataforma do personal trainer — avaliação avançada, periodização e prescrição.</div>
+    <div class="selo">🔒 EM BREVE</div>
+  </div>
+
+  <div class="sec">
+    <div class="titulo">BUSQUE POR TEMA</div>
+    <div class="sub" id="resumo">Carregando a biblioteca...</div>
+    <div class="temas" id="temas"></div>
+    <div id="lista"></div>
+  </div>
+
+  <div class="rodape">AurumSci — André Andrade · CREF 62702-G/SP</div>
+</div>
+
+<script>
+var DADOS = null;
+fetch('/static/ciencia_videos.json')
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    DADOS = d;
+    document.getElementById('resumo').textContent =
+      d.total_videos + ' vídeos em ' + d.total_temas + ' temas. Toque num tema pra ver.';
+    var box = document.getElementById('temas');
+    var nomes = Object.keys(d.temas).sort(function(a,b){ return d.temas[b].length - d.temas[a].length; });
+    nomes.forEach(function(nome){
+      var c = document.createElement('div');
+      c.className = 'chip';
+      c.innerHTML = nome + '<span class="n">' + d.temas[nome].length + '</span>';
+      c.onclick = function(){ mostrarTema(nome, c); };
+      box.appendChild(c);
+    });
+  })
+  .catch(function(){
+    document.getElementById('resumo').textContent = 'Biblioteca indisponível no momento.';
+  });
+
+function mostrarTema(nome, chip){
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+  chip.classList.add('on');
+  var vids = DADOS.temas[nome] || [];
+  var lista = document.getElementById('lista');
+  if(!vids.length){ lista.innerHTML = '<div class="vazio">Nenhum vídeo neste tema ainda.</div>'; return; }
+  var html = '';
+  vids.forEach(function(v){
+    html += '<a class="vid" href="' + v.url + '" target="_blank">' +
+            '<div class="vid-t">' + v.titulo + '</div>' +
+            '<div class="vid-a">▶ assistir · ' + (v.ano || '') + '</div></a>';
+  });
+  lista.innerHTML = html;
+  lista.scrollIntoView({behavior:'smooth', block:'start'});
+}
+</script>
+</body>
+</html>

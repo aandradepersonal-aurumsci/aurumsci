@@ -261,6 +261,11 @@ def cadastro_pro_page():
     with open("static/cadastro_pro.html", "r", encoding="utf-8") as f:
         return f.read()
 
+@app.get("/pro-preview", response_class=HTMLResponse, include_in_schema=False)
+def landing_pro_preview():
+    """PREVIEW da landing do PRO (nao publica). /pro segue servindo o em-breve."""
+    with open("static/landing_pro.html", "r", encoding="utf-8") as f:
+        return f.read()
 @app.get("/family", response_class=HTMLResponse, include_in_schema=False)
 def landing_family():
     """Casa-mae do ecossistema AurumSci — apresenta os 4 projetos + busca de ciencia."""

@@ -258,7 +258,8 @@ def landing():
 
 @app.get("/cadastro-pro", response_class=HTMLResponse, include_in_schema=False)
 def cadastro_pro_page():
-    with open("static/cadastro_pro.html", "r", encoding="utf-8") as f:
+    # VENDA PRO PAUSADA (25/jul): serve o em-breve. Para REATIVAR: voltar cadastro_pro.html.
+    with open("static/landing_pro_em_breve.html", "r", encoding="utf-8") as f:
         return f.read()
 
 @app.get("/pro-preview", response_class=HTMLResponse, include_in_schema=False)

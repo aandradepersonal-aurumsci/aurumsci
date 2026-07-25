@@ -274,9 +274,9 @@ def landing_family():
         return f.read()
 @app.get("/pro", response_class=HTMLResponse, include_in_schema=False)
 def landing_pro():
-    # VENDA PAUSADA (21/jun/2026): servindo pagina "em breve" enquanto o PRO e refinado/Stripe Connect.
-    # Para REATIVAR: trocar landing_pro_em_breve.html de volta por landing_pro.html (original intacto).
-    with open("static/landing_pro_em_breve.html", "r", encoding="utf-8") as f:
+    # VITRINE ABERTA (25/jul): landing sem preco e sem checkout; os botoes caem no em-breve via /cadastro-pro.
+    # Para FECHAR de novo: trocar landing_pro.html por landing_pro_em_breve.html.
+    with open("static/landing_pro.html", "r", encoding="utf-8") as f:
         return f.read()
 
 @app.get("/paywall-pro", response_class=HTMLResponse, include_in_schema=False)

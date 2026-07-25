@@ -82,7 +82,7 @@
   </a>
 
   <div class="sec">
-    <div class="titulo">BUSQUE POR TEMA</div>
+    <div class="titulo">QUER SE APROFUNDAR EM ALGUM TEMA?</div>
     <div class="sub" id="resumo">Carregando a biblioteca...</div>
     <input class="busca" id="busca" type="text" placeholder="Buscar tema ou assunto — ex: joelho, creatina, idoso...">
     <div class="temas" id="temas"></div>
@@ -111,7 +111,7 @@ fetch('/static/ciencia_videos.json')
   .then(function(d){
     DADOS = d;
     document.getElementById('resumo').textContent =
-      d.total_videos + ' vídeos em ' + d.total_temas + ' temas.';
+      'Já são ' + d.total_videos + ' vídeos publicados em ' + d.total_temas + ' temas. Escolha o seu.';
     renderChips();
   })
   .catch(function(){

@@ -593,6 +593,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 <audio id="narracao" src="/static/narracao_app_aluno_FINAL.mp3" preload="auto"></audio>
 <script>
+var _carrosselCentrado = false;
 var _autoScroll = false, _scrollInicial = 0;
 window.addEventListener('wheel', function(){ if(_autoScroll) _autoScroll = false; }, {passive:true});
 window.addEventListener('touchmove', function(){ if(_autoScroll) _autoScroll = false; }, {passive:true});
@@ -605,6 +606,7 @@ function tocarNarracao(){
     icon.innerHTML = '&#10074;&#10074;';
     txt.textContent = 'Ouvindo... (toque para pausar)';
     _scrollInicial = window.scrollY;
+    _carrosselCentrado = false;
     _autoScroll = true;
   } else {
     a.pause();
@@ -623,7 +625,7 @@ function tocarNarracao(){
       var alvoFinal = document.body.scrollHeight - window.innerHeight;
       window.scrollTo(0, _scrollInicial + (alvoFinal - _scrollInicial) * Math.min(pv,1));
     } else {
-      carrossel.scrollIntoView({behavior:'auto', block:'center'});
+      if(!_carrosselCentrado){ carrossel.scrollIntoView({behavior:'smooth', block:'center'}); _carrosselCentrado = true; }
       var ph = (progresso - 0.8) / 0.2;
       carrossel.scrollLeft = (carrossel.scrollWidth - carrossel.clientWidth) * ph;
     }

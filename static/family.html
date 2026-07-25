@@ -19,13 +19,17 @@
   .card-emoji{font-size:26px;margin-bottom:8px}
   .card-nome{font-family:'Bebas Neue';font-size:20px;letter-spacing:1px;color:var(--ouro);margin-bottom:4px}
   .card-desc{font-size:13px;color:var(--cinza);line-height:1.5}
-  .card.breve{opacity:.55}
+  .card.breve{opacity:.6}
   .selo{display:inline-block;margin-top:8px;padding:4px 12px;border:1px solid rgba(201,168,76,.4);border-radius:20px;color:var(--ouro);font-size:10px;letter-spacing:1px}
   .sec{margin-top:44px;padding-top:32px;border-top:1px solid var(--borda)}
+  .busca{width:100%;padding:13px 16px;border-radius:12px;background:var(--bg2);border:1px solid rgba(201,168,76,.35);color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;margin-bottom:16px}
+  .busca::placeholder{color:#6a6a75}
+  .busca:focus{outline:none;border-color:var(--ouro)}
   .temas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
   .chip{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:7px 14px;color:var(--ouro);font-size:12px;cursor:pointer;transition:all .2s}
   .chip:hover,.chip.on{background:var(--ouro);color:#0A0A0F;font-weight:600}
   .chip .n{opacity:.65;font-size:10px;margin-left:4px}
+  .vermais{text-align:center;color:var(--ouro);font-size:12px;cursor:pointer;padding:8px;margin-bottom:16px}
   .vid{display:block;text-decoration:none;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:12px 14px;margin-bottom:8px}
   .vid-t{font-size:13px;color:#fff;line-height:1.45}
   .vid-a{font-size:11px;color:var(--ouro);margin-top:4px}
@@ -41,35 +45,37 @@
   <div class="titulo">A FAMÍLIA AURUMSCI</div>
   <div class="sub">Ciência, avaliação e tecnologia — cada porta leva a uma parte do ecossistema.</div>
 
-  <a class="card" href="https://www.youtube.com/@andreandrade8248" target="_blank">
-    <div class="card-emoji">🧬</div>
-    <div class="card-nome">CIÊNCIA DA HIPERTROFIA</div>
-    <div class="card-desc">A evidência que embasa tudo. Estudos traduzidos em vídeos curtos, todo dia.</div>
-  </a>
-
   <a class="card" href="https://lab.aurumsc.com.br" target="_blank">
     <div class="card-emoji">🔬</div>
     <div class="card-nome">AURUMSCI LAB</div>
     <div class="card-desc">Avaliação física premium — composição corporal, VO2, testes e dinamometria.</div>
   </a>
 
-  <a class="card" href="https://aurumsc.com.br">
+  <a class="card" href="https://aurumsc.com.br" target="_blank">
     <div class="card-emoji">📱</div>
     <div class="card-nome">APP DO ALUNO</div>
     <div class="card-desc">Seu treino guiado por ciência, no bolso — com o AURI, seu assistente 24h.</div>
   </a>
 
-  <div class="card breve">
+  <a class="card breve" href="https://aurumsc.com.br/pro" target="_blank">
     <div class="card-emoji">💼</div>
     <div class="card-nome">AURUMSCI PRO</div>
     <div class="card-desc">A plataforma do personal trainer — avaliação avançada, periodização e prescrição.</div>
     <div class="selo">🔒 EM BREVE</div>
-  </div>
+  </a>
+
+  <a class="card" href="https://www.youtube.com/@andreandrade8248" target="_blank">
+    <div class="card-emoji">🧬</div>
+    <div class="card-nome">CIÊNCIA DA HIPERTROFIA</div>
+    <div class="card-desc">A evidência que embasa tudo. Estudos traduzidos em vídeos curtos, todo dia.</div>
+  </a>
 
   <div class="sec">
     <div class="titulo">BUSQUE POR TEMA</div>
     <div class="sub" id="resumo">Carregando a biblioteca...</div>
+    <input class="busca" id="busca" type="text" placeholder="Buscar tema ou assunto — ex: joelho, creatina, idoso...">
     <div class="temas" id="temas"></div>
+    <div class="vermais" id="vermais" style="display:none">ver todos os temas ↓</div>
     <div id="lista"></div>
   </div>
 
@@ -77,33 +83,63 @@
 </div>
 
 <script>
-var DADOS = null;
+var DADOS = null, EXPANDIDO = false, TOP = 6;
+var ACENTO = {
+  "Forca e Carga":"Força e Carga",
+  "Volume e Series":"Volume e Séries",
+  "Avaliacao Fisica":"Avaliação Física",
+  "Proteina e Dieta":"Proteína e Dieta",
+  "Recuperacao e Sono":"Recuperação e Sono",
+  "Lesao e Reabilitacao":"Lesão e Reabilitação",
+  "Tendao e Colageno":"Tendão e Colágeno"
+};
+function bonito(n){ return ACENTO[n] || n; }
+
 fetch('/static/ciencia_videos.json')
   .then(function(r){ return r.json(); })
   .then(function(d){
     DADOS = d;
     document.getElementById('resumo').textContent =
-      d.total_videos + ' vídeos em ' + d.total_temas + ' temas. Toque num tema pra ver.';
-    var box = document.getElementById('temas');
-    var nomes = Object.keys(d.temas).sort(function(a,b){ return d.temas[b].length - d.temas[a].length; });
-    nomes.forEach(function(nome){
-      var c = document.createElement('div');
-      c.className = 'chip';
-      c.innerHTML = nome + '<span class="n">' + d.temas[nome].length + '</span>';
-      c.onclick = function(){ mostrarTema(nome, c); };
-      box.appendChild(c);
-    });
+      d.total_videos + ' vídeos em ' + d.total_temas + ' temas.';
+    renderChips();
   })
   .catch(function(){
     document.getElementById('resumo').textContent = 'Biblioteca indisponível no momento.';
   });
 
+function nomesOrdenados(){
+  return Object.keys(DADOS.temas).sort(function(a,b){ return DADOS.temas[b].length - DADOS.temas[a].length; });
+}
+
+function renderChips(){
+  var box = document.getElementById('temas');
+  box.innerHTML = '';
+  var nomes = nomesOrdenados();
+  var mostrar = EXPANDIDO ? nomes : nomes.slice(0, TOP);
+  mostrar.forEach(function(nome){
+    var c = document.createElement('div');
+    c.className = 'chip';
+    c.innerHTML = bonito(nome) + '<span class="n">' + DADOS.temas[nome].length + '</span>';
+    c.onclick = function(){ mostrarTema(nome, c); };
+    box.appendChild(c);
+  });
+  var vm = document.getElementById('vermais');
+  if(nomes.length > TOP){
+    vm.style.display = 'block';
+    vm.textContent = EXPANDIDO ? 'mostrar menos ↑' : 'ver todos os ' + nomes.length + ' temas ↓';
+    vm.onclick = function(){ EXPANDIDO = !EXPANDIDO; renderChips(); };
+  }
+}
+
 function mostrarTema(nome, chip){
   document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
-  chip.classList.add('on');
-  var vids = DADOS.temas[nome] || [];
+  if(chip) chip.classList.add('on');
+  pintar(DADOS.temas[nome] || [], bonito(nome));
+}
+
+function pintar(vids, titulo){
   var lista = document.getElementById('lista');
-  if(!vids.length){ lista.innerHTML = '<div class="vazio">Nenhum vídeo neste tema ainda.</div>'; return; }
+  if(!vids.length){ lista.innerHTML = '<div class="vazio">Nada encontrado.</div>'; return; }
   var html = '';
   vids.forEach(function(v){
     html += '<a class="vid" href="' + v.url + '" target="_blank">' +
@@ -111,8 +147,22 @@ function mostrarTema(nome, chip){
             '<div class="vid-a">▶ assistir · ' + (v.ano || '') + '</div></a>';
   });
   lista.innerHTML = html;
-  lista.scrollIntoView({behavior:'smooth', block:'start'});
 }
+
+document.getElementById('busca').addEventListener('input', function(e){
+  if(!DADOS) return;
+  var q = e.target.value.trim().toLowerCase();
+  if(q.length < 2){ document.getElementById('lista').innerHTML = ''; renderChips(); return; }
+  var achados = [];
+  nomesOrdenados().forEach(function(nome){
+    var temaBate = bonito(nome).toLowerCase().indexOf(q) >= 0 || nome.toLowerCase().indexOf(q) >= 0;
+    DADOS.temas[nome].forEach(function(v){
+      if(temaBate || v.titulo.toLowerCase().indexOf(q) >= 0) achados.push(v);
+    });
+  });
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+  pintar(achados.slice(0, 60), 'busca');
+});
 </script>
 </body>
 </html>

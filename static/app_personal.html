@@ -1953,7 +1953,7 @@ function renderFinanceiro(){
   cardTrib += '</div>';
   cardTrib += '<div style="font-size:10px;color:#444;text-align:center">Valores estimados. Consulte um contador de confiança para planejamento tributário personalizado.</div>';
   cardTrib += '</div>';
-  document.getElementById('card-trib').innerHTML = cardTrib;
+  document.getElementById('card-trib').innerHTML = '';  // CPF-CNPJ oculto 26-07 guardado p aba dicas
 
   // Somatoria mensal
   if(recebido > 0 || pendente > 0){

@@ -186,6 +186,42 @@ def email_sentimos_sua_falta():
         db.close()
 
 
+def email_aniversario():
+    """Parabens no dia do aniversario do aluno. Roda diariamente."""
+    db: Session = SessionLocal()
+    try:
+        hoje = date.today()
+        alunos = db.query(Aluno).filter(Aluno.ativo == True).all()
+        enviados = 0
+
+        for aluno in alunos:
+            if not aluno.data_nascimento or not aluno.email:
+                continue
+            if (aluno.data_nascimento.month, aluno.data_nascimento.day) != (hoje.month, hoje.day):
+                continue
+
+            primeiro = (aluno.nome or "Atleta").split()[0]
+            conteudo = (
+                '<p style="font-size:17px;line-height:1.8">Hoje o dia e seu, <strong>' + primeiro + '</strong>! 🎉</p>'
+                '<p style="font-size:15px;line-height:1.8">A familia AurumSci deseja um ano de saude, '
+                'disposicao e evolucao — dentro e fora do treino.</p>'
+                '<p style="font-size:15px;line-height:1.8">Que tal comemorar com um bom treino?</p>'
+            )
+            html = _template_email(
+                "FELIZ ANIVERSARIO",
+                "#C9A84C",
+                conteudo,
+                "ABRIR MEU TREINO",
+                "https://www.aurumsc.com.br/aluno",
+            )
+            _enviar_email(aluno.email, "Feliz aniversario, " + primeiro + "! 🎂", html)
+            enviados += 1
+
+        print("[SCHEDULER] aniversario: " + str(enviados) + " email(s) enviado(s)")
+    finally:
+        db.close()
+
+
 def iniciar_scheduler():
     """Inicia o scheduler em background. Chamado por main.py no startup."""
     scheduler = BackgroundScheduler(timezone="America/Sao_Paulo")
@@ -206,6 +242,14 @@ def iniciar_scheduler():
         replace_existing=True
     )
     
+    # Aniversario: diario 9h
+    scheduler.add_job(
+        email_aniversario,
+        trigger=CronTrigger(hour=9, minute=0),
+        id="aniversario",
+        replace_existing=True
+    )
+    
     scheduler.start()
-    print("[SCHEDULER] Iniciado: reavaliacao_bimestral (10h) + sentimos_sua_falta (11h)")
+    print("[SCHEDULER] Iniciado: aniversario (9h) + reavaliacao_bimestral (10h) + sentimos_sua_falta (11h)")
     return scheduler

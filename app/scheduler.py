@@ -222,6 +222,52 @@ def email_aniversario():
         db.close()
 
 
+def _email_data_festiva(titulo_topo: str, assunto: str, conteudo_html: str):
+    """Dispara um email pra todos os alunos ativos com email. Usado em Natal e Ano Novo."""
+    db: Session = SessionLocal()
+    try:
+        alunos = db.query(Aluno).filter(Aluno.ativo == True).all()
+        enviados = 0
+        for aluno in alunos:
+            if not aluno.email:
+                continue
+            primeiro = (aluno.nome or "Atleta").split()[0]
+            html = _template_email(
+                titulo_topo,
+                "#C9A84C",
+                conteudo_html.replace("{NOME}", primeiro),
+                "ABRIR MEU TREINO",
+                "https://www.aurumsc.com.br/aluno",
+            )
+            _enviar_email(aluno.email, assunto, html)
+            enviados += 1
+        print("[SCHEDULER] " + titulo_topo + ": " + str(enviados) + " email(s) enviado(s)")
+    finally:
+        db.close()
+
+
+def email_natal():
+    """Feliz Natal — 25/12 as 9h."""
+    conteudo = (
+        '<p style="font-size:17px;line-height:1.8">Feliz Natal, <strong>{NOME}</strong>! 🎄</p>'
+        '<p style="font-size:15px;line-height:1.8">A família AurumSci deseja um Natal de paz, '
+        'boa companhia e descanso merecido.</p>'
+        '<p style="font-size:15px;line-height:1.8">Obrigado por treinar com a gente neste ano.</p>'
+    )
+    _email_data_festiva("FELIZ NATAL", "Feliz Natal! 🎄", conteudo)
+
+
+def email_ano_novo():
+    """Feliz Ano Novo — 01/01 as 9h."""
+    conteudo = (
+        '<p style="font-size:17px;line-height:1.8">Feliz Ano Novo, <strong>{NOME}</strong>! 🎉</p>'
+        '<p style="font-size:15px;line-height:1.8">Que o ano novo traga saúde, disposição e '
+        'consistência — porque é a consistência que constrói resultado.</p>'
+        '<p style="font-size:15px;line-height:1.8">Um novo ciclo começa. Bora?</p>'
+    )
+    _email_data_festiva("FELIZ ANO NOVO", "Feliz Ano Novo! 🎉", conteudo)
+
+
 def iniciar_scheduler():
     """Inicia o scheduler em background. Chamado por main.py no startup."""
     scheduler = BackgroundScheduler(timezone="America/Sao_Paulo")
@@ -250,6 +296,22 @@ def iniciar_scheduler():
         replace_existing=True
     )
     
+    # Natal: 25/12 as 9h
+    scheduler.add_job(
+        email_natal,
+        trigger=CronTrigger(month=12, day=25, hour=9, minute=0),
+        id="natal",
+        replace_existing=True
+    )
+    
+    # Ano Novo: 01/01 as 9h
+    scheduler.add_job(
+        email_ano_novo,
+        trigger=CronTrigger(month=1, day=1, hour=9, minute=0),
+        id="ano_novo",
+        replace_existing=True
+    )
+    
     scheduler.start()
-    print("[SCHEDULER] Iniciado: aniversario (9h) + reavaliacao_bimestral (10h) + sentimos_sua_falta (11h)")
+    print("[SCHEDULER] Iniciado: aniversario (9h) + reavaliacao_bimestral (10h) + sentimos_sua_falta (11h) + natal (25/12) + ano_novo (01/01)")
     return scheduler

@@ -28,9 +28,9 @@
   .card-btn{display:block;margin-top:14px;padding:11px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;border-radius:12px;text-align:center;font-weight:700;font-size:13px;letter-spacing:1px}
   .selo{display:inline-block;margin-top:8px;padding:4px 12px;border:1px solid rgba(201,168,76,.4);border-radius:20px;color:var(--ouro);font-size:10px;letter-spacing:1px}
   .sec{margin-top:44px;padding-top:32px;border-top:1px solid var(--borda)}
-  .busca{width:100%;padding:13px 16px;border-radius:12px;background:var(--bg2);border:1px solid rgba(201,168,76,.35);color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;margin-bottom:16px}
+  .busca{width:100%;padding:16px 18px;border-radius:14px;background:linear-gradient(135deg,rgba(201,168,76,.08),var(--bg2));border:1.5px solid var(--ouro);color:#fff;font-size:15px;font-family:'DM Sans',sans-serif;margin-bottom:16px;box-shadow:0 4px 18px rgba(201,168,76,.18);transition:all .2s}
   .busca::placeholder{color:#6a6a75}
-  .busca:focus{outline:none;border-color:var(--ouro)}
+  .busca:focus{outline:none;border-color:var(--ouro2);box-shadow:0 6px 28px rgba(201,168,76,.38)}
   .temas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
   .chip{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:7px 14px;color:var(--ouro);font-size:12px;cursor:pointer;transition:all .2s}
   .chip:hover,.chip.on{background:var(--ouro);color:#0A0A0F;font-weight:600}
@@ -84,7 +84,7 @@
   <div class="sec">
     <div class="titulo">QUER SE APROFUNDAR EM ALGUM TEMA?</div>
     <div class="sub" id="resumo">Carregando a biblioteca...</div>
-    <input class="busca" id="busca" type="text" placeholder="Buscar tema ou assunto — ex: joelho, creatina, idoso...">
+    <input class="busca" id="busca" type="text" placeholder="🔍  Buscar tema ou assunto — ex: joelho, creatina, idoso...">
     <div class="temas" id="temas"></div>
     <div class="vermais" id="vermais" style="display:none">ver todos os temas ↓</div>
     <div id="lista"></div>

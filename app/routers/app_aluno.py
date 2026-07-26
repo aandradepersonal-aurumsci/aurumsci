@@ -621,9 +621,17 @@ async def treino_hoje(
     except Exception:
         fase_atual = None
 
+    _hj = date.today()
+    _aniver = bool(
+        aluno.data_nascimento
+        and aluno.data_nascimento.month == _hj.month
+        and aluno.data_nascimento.day == _hj.day
+    )
+
     return {
         "sessao": sessao.nome,
         "data": str(date.today()),
+        "aniversario_hoje": _aniver,
         "exercicios": lista_ex,
         "total_exercicios": len(lista_ex),
         "postura_resumo": postura_resumo,

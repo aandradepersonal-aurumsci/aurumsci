@@ -1,6 +1,6 @@
 {
-  "atualizado_em": "2026-07-25 12:05",
-  "total_videos": 280,
+  "atualizado_em": "2026-07-26 09:38",
+  "total_videos": 282,
   "total_temas": 17,
   "temas": {
     "Forca e Carga": [
@@ -411,6 +411,12 @@
         "titulo": "Efeitos da intensidade do treinamento de resistência na quantidade/qualidade muscular em pessoas de meia-idade e idosas: um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=DPj6KWW2Urs",
         "ano": 2022
+      },
+      {
+        "id": 506,
+        "titulo": "O treinamento intervalado de alta intensidade melhora a remodelação óssea, o perfil lipídico e a função física em pacientes com esclerose múltipla.",
+        "url": "https://youtube.com/watch?v=9k9qY_UwWCI",
+        "ano": 2024
       },
       {
         "id": 480,
@@ -1777,6 +1783,12 @@
         "ano": 2023
       },
       {
+        "id": 421,
+        "titulo": "Eficácia do treinamento intervalado na melhoria da composição corporal e da adiposidade em adultos aparentemente saudáveis: uma revisão abrangente com meta-análise.",
+        "url": "https://youtube.com/watch?v=tshagMVtVws",
+        "ano": 2024
+      },
+      {
         "id": 415,
         "titulo": "O treinamento aeróbico e de resistência combinado melhora a composição corporal, altera o risco cardiometabólico e melhora os indicadores relacionados ao câncer em pacientes com câncer de mama e sobreviventes com sobrepeso/obesidade: uma revisão sistemática e meta-análise de ensaios clínicos randomizados.",
         "url": "https://youtube.com/watch?v=2Rh_upXPmDo",
@@ -2045,6 +2057,12 @@
         "ano": 2025
       },
       {
+        "id": 506,
+        "titulo": "O treinamento intervalado de alta intensidade melhora a remodelação óssea, o perfil lipídico e a função física em pacientes com esclerose múltipla.",
+        "url": "https://youtube.com/watch?v=9k9qY_UwWCI",
+        "ano": 2024
+      },
+      {
         "id": 470,
         "titulo": "Efeitos de 12 semanas de treinamento aeróbico versus combinado aeróbico mais treinamento de resistência na variabilidade da pressão arterial de curto prazo em pacientes com hipertensão.",
         "url": "https://youtube.com/watch?v=etXEBAYqXZw",
@@ -2061,6 +2079,12 @@
         "titulo": "O treinamento de força é mais eficaz que o exercício aeróbico para melhorar o controle glicêmico e a composição corporal em pessoas com diabetes tipo 2 com peso normal: um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=XSO1s27gzO8",
         "ano": 2023
+      },
+      {
+        "id": 421,
+        "titulo": "Eficácia do treinamento intervalado na melhoria da composição corporal e da adiposidade em adultos aparentemente saudáveis: uma revisão abrangente com meta-análise.",
+        "url": "https://youtube.com/watch?v=tshagMVtVws",
+        "ano": 2024
       },
       {
         "id": 415,

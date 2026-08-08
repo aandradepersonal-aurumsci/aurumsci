@@ -184,7 +184,6 @@ def gerar_pdf_contrato(personal, output_dir="static/contratos"):
         ['CONTRATO ACEITO DIGITALMENTE', ''],
         ['Data:', personal.contrato_aceito_em.strftime('%d/%m/%Y às %H:%M:%S') if personal.contrato_aceito_em else '—'],
         ['IP:', personal.contrato_aceito_ip or '—'],
-        ['Status CREF:', personal.cref_status or 'pendente'],
     ]
     
     aceite_table = Table(aceite_data, colWidths=[5*cm, 12*cm])

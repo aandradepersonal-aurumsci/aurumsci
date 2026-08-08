@@ -414,7 +414,8 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     </div>
     
     <!-- Lista do dia -->
-    <div style="font-family:Bebas Neue;font-size:16px;color:var(--ouro2);letter-spacing:1.5px;margin-bottom:8px" data-i18n="alunosTreinaram">ALUNOS QUE TREINARAM</div>
+    <div style="font-family:Bebas Neue;font-size:16px;color:var(--ouro2);letter-spacing:1.5px;margin-bottom:2px" data-i18n="alunosTreinaram">ALUNOS QUE TREINARAM</div>
+    <div style="font-size:11px;color:var(--cinza);margin-bottom:8px">👥 A aula começa como Individual. Se foi em dupla/grupo, toque no botão pra alternar.</div>
     <div id="aulas-lista">
       <div style="color:var(--cinza);text-align:center;padding:30px;font-size:13px" data-i18n="nenhumaAula">Nenhuma aula registrada</div>
     </div>
@@ -1219,7 +1220,6 @@ function carregarApp(){
   
   carregarDashboard();
   carregarAlunos();
-  carregarFinanceiro();
 }
 
 // ── LOGOUT ────────────────────────────────────────────────────
@@ -1421,6 +1421,7 @@ function carregarAlunos(){
     console.log('[carregarAlunos] Sucesso! Alunos:', alunos);
     todosAlunos = alunos.alunos || alunos;
     renderAlunos(alunos);
+    carregarFinanceiro();  // FIX 27/07: so roda depois que todosAlunos esta pronto (senao RECEBIDO fica R$0)
   }).catch(function(err){ 
     console.error('[carregarAlunos] ERRO:', err);
     document.getElementById('lista-alunos').innerHTML = '<div style="color:var(--cinza);text-align:center;padding:30px"><div style="font-size:14px;margin-bottom:8px">Sem conexao no momento</div><button onclick="carregarAlunos()" style="background:var(--ouro);color:#0A0A0F;border:none;padding:8px 16px;border-radius:8px;font-weight:700;cursor:pointer">Tentar novamente</button></div>'; 
@@ -1502,6 +1503,7 @@ function abrirPerfilAluno(id){
     html += '<button onclick="subAba(' + id + ',\'treino\')" id="sab-treino" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">🏋️ TREINO</button>';
     html += '<button onclick="subAba(' + id + ',\'period\')" id="sab-period" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📅 PERIOD.</button>';
     html += '<button onclick="subAba(' + id + ',\'result\')" id="sab-result" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📈 RESULT.</button>';
+    html += '<button onclick="subAba(' + id + ',\'financeiro\')" id="sab-financeiro" style="padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">💰 FINANCEIRO</button>';
     html += '</div>';
     html += '<div id="sub-aba-content" style="margin-top:12px"></div>';
     document.getElementById('perfil-aluno-content').innerHTML = html;
@@ -1676,6 +1678,15 @@ function aulasAtualizar() {
   aulasCarregarLista();
 }
 
+function toggleAulaGrupo(presencaId, novoValor){
+  fetch(window.API_BASE + '/app-personal/aulas/' + presencaId + '/em-grupo', {
+    method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body: JSON.stringify({em_grupo: novoValor})
+  }).then(function(r){ return r.json(); }).then(function(res){
+    if(res.ok){ mostrarToast(novoValor ? '\uD83D\uDC65 Marcada como dupla' : 'Marcada como individual'); aulasCarregarLista(); }
+    else { mostrarToast('Erro ao marcar'); }
+  }).catch(function(e){ mostrarToast('Erro ao marcar'); });
+}
 function aulasCarregarLista() {
   var dataAPI = aulasFormatarDataAPI(aulasDataAtual);
   
@@ -1696,6 +1707,8 @@ function aulasCarregarLista() {
         html += '<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--ouro),var(--ouro2));display:flex;align-items:center;justify-content:center;color:#0A0A0F;font-weight:700">' + a.aluno_nome.charAt(0).toUpperCase() + '</div>';
         html += '<div style="flex:1"><div style="font-weight:700;color:var(--branco)">' + a.aluno_nome + '</div>';
         html += '<div style="font-size:10px;color:var(--cinza);margin-top:2px">Check-in registrado</div></div>';
+        var _g = !!a.em_grupo;
+        html += '<button onclick="toggleAulaGrupo(' + a.id + ',' + (_g?'false':'true') + ')" style="background:' + (_g?'rgba(75,159,255,.2)':'transparent') + ';border:1px solid ' + (_g?'#4B9FFF':'var(--borda)') + ';color:' + (_g?'#4B9FFF':'var(--cinza)') + ';font-size:12px;font-weight:700;cursor:pointer;padding:5px 10px;border-radius:8px;margin-right:6px">' + (_g?'\uD83D\uDC65 Dupla':'Individual') + '</button>';
         html += '<button onclick="aulasRemover(' + a.id + ', \'' + a.aluno_nome.replace(/[\'\"]/g,'') + '\')" style="background:transparent;border:none;color:var(--vermelho);font-size:18px;cursor:pointer;padding:4px 8px">×</button>';
         html += '</div>';
       });
@@ -1747,7 +1760,7 @@ function aulasMarcar(alunoId, alunoNome) {
   fetch(window.API_BASE + '/app-personal/aulas/checkin', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body: JSON.stringify({aluno_id: alunoId, data: dataAPI, observacoes: ''})
+    body: JSON.stringify({aluno_id: alunoId, data: dataAPI, observacoes: '', em_grupo: false})
   })
   .then(function(r){ return r.json(); })
   .then(function(d){
@@ -1906,7 +1919,7 @@ function carregarFinanceiro(){
       .then(function(r){ return r.ok ? r.json() : []; })
       .then(function(d){
         var pags = d.pagamentos || d || [];
-        return pags.map(function(p){ return Object.assign({}, p, {aluno_nome: a.nome, aluno_id: a.id}); });
+        return pags.map(function(p){ return Object.assign({}, p, {aluno_nome: a.nome, aluno_id: a.id, aluno_cpf: a.cpf||''}); });
       })      .catch(function(){ return []; });
   });
   Promise.all(promises).then(function(results){
@@ -1924,7 +1937,19 @@ function renderFinanceiro(){
     else pendente += val;
   });
   document.getElementById('fin-pago').textContent = 'R$' + recebido.toFixed(0);
-  document.getElementById('fin-pendente').textContent = 'R$' + pendente.toFixed(0);
+  Promise.all([
+    fetch(window.API_BASE + '/app-personal/financeiro/total-pendente', {headers:{'Authorization':'Bearer '+token}}).then(function(r){ return r.ok ? r.json() : {total_pendente:0,alunos:[]}; }),
+    fetch(window.API_BASE + '/app-personal/financeiro/total-atrasado', {headers:{'Authorization':'Bearer '+token}}).then(function(r){ return r.ok ? r.json() : {total_atrasado:0,alunos:[]}; })
+  ]).then(function(res){
+    var tp = res[0], ta = res[1];
+    var atras = ta.total_atrasado||0;
+    var pend = (tp.total_pendente||0) - atras;
+    if(pend < 0) pend = 0;
+    document.getElementById('fin-pendente').textContent = 'R$' + pend.toFixed(0);
+    document.getElementById('fin-atrasado').textContent = 'R$' + atras.toFixed(0);
+    var el = document.getElementById('stat-pendentes');
+    if(el) el.textContent = (tp.alunos ? tp.alunos.length : 0);
+  }).catch(function(){ document.getElementById('fin-pendente').textContent = 'R$' + pendente.toFixed(0); });
   document.getElementById('fin-atrasado').textContent = 'R$' + atrasado.toFixed(0);
 
   // Card tributário
@@ -2002,12 +2027,12 @@ function renderFinanceiro(){
     cardSoma += '<div id="card-soma-end">';
     cardSoma += '</div>';
     cardSoma += '</div></div>';
-    document.getElementById('card-soma').innerHTML = cardSoma;
+    document.getElementById('card-soma').innerHTML = '';  // RESUMO FISCO oculto 27-07 (imposto varia por municipio/pais)
   }
 
   // FIX 22/05/2026: botao de exportar CSV pro contador (relatorio mensal de pagamentos pagos)
-  var html = '<button onclick="baixarRelatorioContador()" style="width:100%;padding:12px;background:linear-gradient(135deg,#4B9FFF,#2A7FE0);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer;margin-bottom:10px">📋 RELATÓRIO PRO CONTADOR (CSV)</button>';
-  html += '<button onclick="abrirModalPagamento()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;cursor:pointer;margin-bottom:14px">➕ REGISTRAR PAGAMENTO</button>';
+  var html = '';  // CSV e Registrar Pagamento escondidos - nota vai pelo banner/contador
+
 
   if(pagamentosDB.length === 0){
     html += '<div style="color:var(--cinza);text-align:center;padding:30px">Nenhum pagamento registrado ainda.</div>';
@@ -2026,11 +2051,62 @@ function renderFinanceiro(){
         html += '<div style="text-align:right"><div style="font-family:Bebas Neue;font-size:20px;color:'+cor+'">R$'+parseFloat(p.valor).toFixed(0)+'</div>';
         html += '<div style="display:flex;gap:4px;margin-top:4px">';
         if(p.status !== 'pago') html += '<button onclick="marcarPagoDB('+p.id+')" style="padding:4px 8px;background:var(--verde);border:none;border-radius:6px;color:#fff;font-size:11px;cursor:pointer">✓ PAGO</button>';
+        if(p.status === 'pago') html += '<button onclick=\'notaContador('+p.id+')\' style="padding:4px 8px;background:rgba(201,168,76,.15);border:1px solid var(--ouro);border-radius:6px;color:var(--ouro2);font-size:11px;cursor:pointer">📄 Nota</button>';
         html += '</div></div></div></div>';
       });
     });
   }
   document.getElementById('lista-pagamentos').innerHTML = html;
+}
+
+function notaContador(pid){
+  var p = (pagamentosDB||[]).find(function(x){ return x.id === pid; });
+  if(!p){ mostrarToast('Pagamento não encontrado'); return; }
+  fetch(window.API_BASE + '/app-personal/aluno/' + p.aluno_id + '/dados', {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.ok ? r.json() : {}; })
+    .then(function(dd){ notaContadorRender(p, dd); })
+    .catch(function(){ notaContadorRender(p, {}); });
+}
+function notaContadorRender(p, dd){
+  var ehCnpj = (dd.tipo_nf === 'cnpj');
+  var docLabel = ehCnpj ? 'CNPJ' : 'CPF';
+  var docValor = ehCnpj ? (dd.cnpj || '—') : (dd.cpf || p.aluno_cpf || '—');
+  var cpf = docValor;
+  var dt = p.data_pagamento || p.vencimento || p.data_vencimento || '—';
+  var val = parseFloat(p.valor||0).toFixed(2).replace('.',',');
+  var texto = 'DADOS PARA NOTA FISCAL\n'
+    + '------------------------------\n'
+    + 'Aluno: ' + (p.aluno_nome||'—') + '\n'
+    + docLabel + ': ' + docValor + '\n'
+    + 'Servico: ' + (p.descricao||'—') + '\n'
+    + 'Data: ' + dt + '\n'
+    + 'Valor: R$ ' + val;
+  var ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  ov.onclick = function(e){ if(e.target===ov) ov.remove(); };
+  var card = '<div style="background:var(--bg2);border:1px solid var(--ouro);border-radius:18px;padding:22px;max-width:400px;width:100%;box-sizing:border-box">'
+    + '<div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2);letter-spacing:1px;margin-bottom:4px">📄 DADOS PARA NOTA FISCAL</div>'
+    + '<div style="height:1px;background:rgba(201,168,76,.3);margin:12px 0"></div>'
+    + '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">' + (p.aluno_nome||'—') + '</div>'
+    + '<div style="font-size:13px;color:var(--cinza);line-height:1.9">'
+    + docLabel + ': <span style="color:#fff">' + docValor + '</span><br>'
+    + 'Serviço: <span style="color:#fff">' + (p.descricao||'—') + '</span><br>'
+    + 'Data: <span style="color:#fff">' + dt + '</span><br>'
+    + 'Valor: <span style="color:var(--ouro2);font-weight:700">R$ ' + val + '</span>'
+    + '</div>'
+    + '<div style="height:1px;background:rgba(201,168,76,.3);margin:12px 0"></div>'
+    + '<div style="font-size:12px;color:var(--cinza);line-height:1.6;margin-bottom:14px">Basta enviar esses dados — está pronto para emissão da nota fiscal do seu aluno, pelo seu contador ou por você.</div>'
+    + '<div style="display:flex;gap:8px">'
+    + '<button id="btn-copia-nota" style="flex:1;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;padding:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:14px;letter-spacing:1px;cursor:pointer">📋 COPIAR DADOS</button>'
+    + '<button id="btn-fecha-nota" style="background:transparent;border:1px solid var(--borda);border-radius:10px;padding:12px 16px;color:var(--cinza);font-size:13px;cursor:pointer">Fechar</button>'
+    + '</div></div>';
+  ov.innerHTML = card;
+  document.body.appendChild(ov);
+  document.getElementById('btn-fecha-nota').onclick = function(){ ov.remove(); };
+  document.getElementById('btn-copia-nota').onclick = function(){
+    if(navigator.clipboard){ navigator.clipboard.writeText(texto).then(function(){ mostrarToast('✅ Copiado!'); }); }
+    else { mostrarToast('Copie manualmente'); }
+  };
 }
 
 function marcarPagoDB(pid){
@@ -2151,14 +2227,10 @@ function gerarRecibo(){
     + "<div style='font-family:Bebas Neue;font-size:20px;color:var(--ouro);margin-bottom:4px'>GERAR RECIBO</div>"
     + "<div style='font-size:12px;color:var(--cinza);margin-bottom:16px'>Como voce presta servico atualmente?</div>"
     + "<div onclick='confirmarRecibo(&quot;cpf&quot;)' style='background:rgba(255,75,75,.08);border:1px solid rgba(255,75,75,.3);border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer'>"
-    + "<div style='font-family:Bebas Neue;font-size:16px;color:#FF4B4B'>😰 CPF — AUTONOMO</div>"
-    + "<div style='font-size:11px;color:var(--cinza);margin-top:3px'>Carga estimada: 35-40% | IR + ISS + INSS</div>"
-    + "<div style='font-size:10px;color:#FF4B4B;margin-top:4px;font-weight:700'>⚠️ Abrir CNPJ pode reduzir para ~6%!</div>"
+    + "<div style='font-family:Bebas Neue;font-size:16px;color:#FF4B4B'>📄 CPF</div>"
     + "</div>"
     + "<div onclick='confirmarRecibo(&quot;cnpj&quot;)' style='background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.3);border-radius:12px;padding:14px;margin-bottom:16px;cursor:pointer'>"
-    + "<div style='font-family:Bebas Neue;font-size:16px;color:var(--verde)'>😎 CNPJ — SIMPLES NACIONAL</div>"
-    + "<div style='font-size:11px;color:var(--cinza);margin-top:3px'>Carga estimada: ~6% | DAS mensal unificado</div>"
-    + "<div style='font-size:10px;color:var(--verde);margin-top:4px;font-weight:700'>✅ Melhor opcao para personal trainer!</div>"
+    + "<div style='font-family:Bebas Neue;font-size:16px;color:var(--verde)'>📄 CNPJ</div>"
     + "</div>"
     + "<button onclick='document.getElementById(&quot;modal-tipo-recibo&quot;).remove()' style='width:100%;padding:10px;background:var(--borda);color:var(--texto);border:none;border-radius:10px;cursor:pointer'>Cancelar</button>"
     + "</div>";
@@ -2175,14 +2247,7 @@ function confirmarRecibo(regime){
   var nomePers = localStorage.getItem("aurum_wl_nome") || nomePersonal || "Personal Trainer";
   var dataHoje = new Date().toLocaleDateString("pt-BR");
   var num = "REC-"+Date.now().toString().slice(-6);
-  var tribHtml = "";
-  if(regime==="cpf"){
-    var iss=(total*0.05).toFixed(2).replace(".",","); var ir=(total*0.275).toFixed(2).replace(".",","); var inss=(total*0.20).toFixed(2).replace(".",","); var tot=(total*0.40).toFixed(2).replace(".",",");
-    tribHtml = "<div style='background:#fff5f5;border:1px solid #ffcccc;border-radius:8px;padding:14px;margin:14px 0'><div style='font-size:12px;font-weight:700;color:#cc0000;margin-bottom:8px'>TRIBUTOS ESTIMADOS - CPF (Autonomo)</div><table style='width:100%;font-size:12px;border-collapse:collapse'><tr><td>ISS (5% - Sao Paulo)</td><td style='text-align:right'>R$ "+iss+"</td></tr><tr><td>IR progressivo (ate 27,5%)</td><td style='text-align:right'>R$ "+ir+"</td></tr><tr><td>INSS contrib. individual (20%)</td><td style='text-align:right'>R$ "+inss+"</td></tr><tr style='font-weight:700;color:#cc0000;border-top:1px solid #ffcccc'><td>CARGA TOTAL ESTIMADA (~40%)</td><td style='text-align:right'>R$ "+tot+"</td></tr></table><div style='font-size:10px;color:#cc0000;margin-top:8px;font-weight:700'>⚠️ Abrir CNPJ (ME/SLU) no Simples Nacional pode reduzir para apenas ~6%!</div></div>";
-  } else {
-    var das=(total*0.06).toFixed(2).replace(".",",");
-    tribHtml = "<div style='background:#f0fff8;border:1px solid #99eedd;border-radius:8px;padding:14px;margin:14px 0'><div style='font-size:12px;font-weight:700;color:#007744;margin-bottom:8px'>TRIBUTOS ESTIMADOS - CNPJ (Simples Nacional)</div><table style='width:100%;font-size:12px;border-collapse:collapse'><tr><td>DAS - Simples Nacional (~6%)</td><td style='text-align:right'>R$ "+das+"</td></tr><tr><td>IR, ISS, INSS, PIS, COFINS</td><td style='text-align:right'>Inclusos</td></tr><tr style='font-weight:700;color:#007744;border-top:1px solid #99eedd'><td>CARGA TOTAL (~6%)</td><td style='text-align:right'>R$ "+das+"</td></tr></table><div style='font-size:10px;color:#007744;margin-top:8px'>✅ Voce esta no regime mais eficiente para personal trainer!</div></div>";
-  }
+  var tribHtml = "";  // imposto removido - recibo limpo pro cliente
   var regLabel = regime==="cpf" ? "CPF - Autonomo" : "CNPJ - Simples Nacional";
   var pg = window.open("","_blank");
   pg.document.write("<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Recibo "+num+"</title><style>body{font-family:Arial,sans-serif;padding:40px;color:#111}.hd{text-align:center;border-bottom:3px solid #C9A84C;padding-bottom:16px;margin-bottom:20px}.logo{font-size:24px;font-weight:900;color:#C9A84C;letter-spacing:6px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px}.lbl{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}.val{font-size:14px;font-weight:600}.tbox{background:#f8f4e8;border:2px solid #C9A84C;border-radius:8px;padding:14px;text-align:center;margin:14px 0}.ass{margin-top:48px;display:flex;justify-content:space-between}.ab{border-top:1px solid #111;width:200px;text-align:center;padding-top:6px;font-size:11px}.rod{border-top:1px solid #ddd;padding-top:10px;text-align:center;font-size:10px;color:#999;margin-top:20px}@media print{body{padding:20px}}</style></head><body>");
@@ -2193,7 +2258,8 @@ function confirmarRecibo(regime){
   pg.document.write("<div class='tbox'><div style='font-size:11px;color:#888;margin-bottom:4px'>VALOR DO SERVICO</div><div style='font-size:30px;font-weight:900;color:#C9A84C'>R$ "+total.toFixed(2).replace(".",",")+"</div><div style='font-size:11px;color:#888;margin-top:3px'>"+regLabel+"</div></div>");
   pg.document.write(tribHtml);
   pg.document.write("<div class='ass'><div class='ab'>"+nomePers+"<br><span style='color:#888'>Prestador</span></div><div class='ab'>"+alunoNome+"<br><span style='color:#888'>Tomador</span></div></div>");
-  pg.document.write("<div class='rod'>Recibo gerado pelo AurumSci PRO — aurumsc.com.br<br>Valores tributarios sao estimativas. Consulte um contador.</div></body></html>");
+  pg.document.write("<div style='background:#f8f4e8;border:1px solid #C9A84C;border-radius:6px;padding:8px;text-align:center;font-size:11px;color:#8a6d1a;font-weight:700;margin-top:16px'>Recibo de pagamento — não substitui nota fiscal</div>");
+  pg.document.write("<div class='rod'>Recibo gerado pelo AurumSci PRO — aurumsc.com.br</div></body></html>");
   pg.document.close();
   setTimeout(function(){ pg.print(); }, 600);
 }
@@ -4117,7 +4183,7 @@ function subAba(id, aba){
   var el = document.getElementById('sub-aba-content');
   if(!el) return;
   // Highlight botão ativo
-  ['dados','resumo','treino','aval','period','result'].forEach(function(b){
+  ['dados','resumo','treino','aval','period','result','financeiro'].forEach(function(b){
     var btn = document.getElementById('sab-'+b);
     if(!btn) return;
     if(b===aba){ btn.style.background='linear-gradient(135deg,var(--ouro),var(--ouro2))'; btn.style.color='#0A0A0F'; btn.style.border='none'; }
@@ -4147,6 +4213,20 @@ function subAba(id, aba){
     setTimeout(function(){ avalAba('anamnese'); }, 50);
   } else if(aba === 'period'){
     el.innerHTML = renderPeriodizacaoPersonal(id);
+  } else if(aba === 'financeiro'){
+    el.innerHTML = '<div style="color:var(--cinza);text-align:center;padding:20px">Carregando...</div>';
+    fetch(window.API_BASE + '/app-personal/aluno/' + id + '/aulas-a-receber', {headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var ms=['jan','fev','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+      var meses=d.meses||[];
+      if(meses.length===0){ el.innerHTML='<div style="background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.3);border-radius:12px;padding:20px;text-align:center;color:var(--verde);font-size:14px">✅ Nenhuma aula a receber — tá tudo em dia!</div>'; return; }
+      var h='<div style="font-size:11px;color:var(--ouro);letter-spacing:1px;font-weight:700;margin-bottom:12px">💰 AULAS A RECEBER</div>';
+      meses.forEach(function(m){ var pp=m.mes.split('-'); var nome=ms[parseInt(pp[1])-1]+'/'+pp[0]; h+='<div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--borda);border-radius:10px;padding:12px 14px;margin-bottom:8px"><div><div style="font-size:13px;color:#fff;font-weight:600">📅 '+nome+'</div><div style="font-size:11px;color:var(--cinza)">'+m.qtd+' aula'+(m.qtd>1?'s':'')+'</div></div><div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro2)">R$ '+m.valor.toFixed(2)+'</div></div>'; });
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--borda);margin-top:10px;padding-top:12px"><div style="font-size:13px;color:var(--cinza);font-weight:700">TOTAL DEVENDO</div><div style="font-family:Bebas Neue;font-size:24px;color:var(--verde)">R$ '+(d.total_valor||0).toFixed(2)+'</div></div>';
+      el.innerHTML=h;
+    })
+    .catch(function(e){ el.innerHTML='<div style="color:var(--vermelho);padding:20px;text-align:center">Erro ao carregar: '+e+'</div>'; });
   } else if(aba === 'result'){
     fetch(window.API_BASE + '/app-personal/aluno/' + id + '/resumo-completo', {headers:{'Authorization':'Bearer '+token}})
     .then(function(r){ return r.json(); })
@@ -4927,10 +5007,10 @@ function baixarMeuContrato() {
       Plataforma SaaS para gestão profissional de personal trainers e seus alunos, incluindo: cadastro, avaliação, treinos, cobrança e relacionamento.</div>
       
       <div style="margin-bottom:14px"><strong style="color:var(--texto);font-size:13px">2. PLANOS E MENSALIDADE</strong><br>
-      🥉 Bronze: R$ 49,90/mês (até 10 alunos)<br>
-      🥈 Prata: R$ 89,90/mês (até 20 alunos)<br>
-      🥇 Ouro: R$ 149,90/mês (até 50 alunos)<br>
-      💎 Diamante: R$ 249,90/mês (alunos ilimitados)<br>
+      🥉 Bronze: R$ 189,90/mês (até 10 alunos)<br>
+      🥈 Prata: R$ 249,90/mês (até 20 alunos)<br>
+      🥇 Ouro: R$ 399,90/mês (até 50 alunos)<br>
+      💎 Diamante: R$ 449,90/mês (alunos ilimitados)<br>
       Cobrança automática via cartão. Upgrade/downgrade a qualquer momento.</div>
       
       <div style="margin-bottom:14px"><strong style="color:var(--texto);font-size:13px">3. VALIDAÇÃO PROFISSIONAL</strong><br>
@@ -5290,9 +5370,135 @@ async function reativarAssinatura() {
 // SISTEMA DE COBRANÇA DO ALUNO
 // ============================================================
 
+async function acertarPendencia(alunoId, mes, valor){
+  var _mn=['jan','fev','março','abril','maio','junho','julho','ago','set','out','nov','dez'];
+  var _p=mes.split('-');
+  var _nomeMes=_mn[parseInt(_p[1])-1]+'/'+_p[0];
+  if(!confirm('Confirmar recebimento de R$ '+valor.toFixed(2)+' referente a '+_nomeMes+'?\n\nAs aulas saem da pendência e entram na sua receita.')) return;
+  try {
+    var r = await fetch(window.API_BASE + '/app-personal/aluno/' + alunoId + '/acertar-pendencia', {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body: JSON.stringify({mes: mes})
+    });
+    var d = await r.json();
+    if(r.ok && d.ok){
+      alert('✅ Recebido! '+d.aulas+' aula(s) de '+_nomeMes+' — R$ '+d.valor.toFixed(2)+' lançado na sua receita.');
+      var m=document.querySelector('div[style*="fixed"]'); if(m) m.remove();
+      if(typeof carregarAlunos==='function') carregarAlunos();
+    } else {
+      alert('Erro: '+(d.detail||'não foi possível acertar'));
+    }
+  } catch(e){ alert('Erro ao acertar pendência: '+e); }
+}
+
+function salvarMensal(alunoId){
+  var inp = document.getElementById('val-mensal-edit-' + alunoId);
+  var btn = document.getElementById('btn-salvar-mensal-' + alunoId);
+  var vm = inp && inp.value !== '' ? parseFloat(inp.value) : null;
+  if(btn){ btn.textContent = 'Salvando...'; btn.disabled = true; }
+  var aluno = todosAlunos.find(function(a){ return a.id === alunoId; });
+  if(aluno && vm!==null) aluno.valor_mensal = vm;
+  fetch(window.API_BASE + '/app-personal/aluno/' + alunoId + '/dados', {
+    method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body: JSON.stringify({valor_mensal: vm})
+  }).then(function(r){ return r.json(); }).then(function(res){
+    if(btn){
+      btn.textContent = res.ok ? '\u2705 Salvo!' : '\u26a0\ufe0f Erro';
+      setTimeout(function(){ btn.textContent = '\uD83D\uDCBE Salvar mensal'; btn.disabled = false; }, 2500);
+    }
+  }).catch(function(e){ if(btn){ btn.textContent = '\u26a0\ufe0f Erro'; btn.disabled = false; } });
+}
+function toggleGrupoDia(data, alunoId){
+  if(!window._aulasGrupo) window._aulasGrupo = {};
+  if(window._aulasGrupo[data]){ delete window._aulasGrupo[data]; }
+  else { window._aulasGrupo[data] = true; }
+  // preserva os valores digitados (nao salvos) antes de re-renderizar
+  var inpA = document.getElementById('val-aula-edit-' + alunoId);
+  var inpG = document.getElementById('val-grupo-edit-' + alunoId);
+  var aluno = todosAlunos.find(function(a){ return a.id === alunoId; });
+  if(aluno){
+    if(inpA && inpA.value !== '') aluno.valor_aula = parseFloat(inpA.value);
+    if(inpG && inpG.value !== '') aluno.valor_aula_grupo = parseFloat(inpG.value);
+  }
+  // re-renderiza o modal pra atualizar a lista e o total
+  var modais = document.querySelectorAll('div[style*="position:fixed"]');
+  modais.forEach(function(m){ m.remove(); });
+  abrirCobrancaAluno(alunoId);
+}
+function salvarValores(alunoId){
+  var inpA = document.getElementById('val-aula-edit-' + alunoId);
+  var inpG = document.getElementById('val-grupo-edit-' + alunoId);
+  var btn = document.getElementById('btn-salvar-valores-' + alunoId);
+  var va = inpA && inpA.value !== '' ? parseFloat(inpA.value) : null;
+  var vg = inpG && inpG.value !== '' ? parseFloat(inpG.value) : null;
+  if(btn){ btn.textContent = 'Salvando...'; btn.disabled = true; }
+  var aluno = todosAlunos.find(function(a){ return a.id === alunoId; });
+  if(aluno){ if(va!==null) aluno.valor_aula = va; aluno.valor_aula_grupo = vg; }
+  fetch(window.API_BASE + '/app-personal/aluno/' + alunoId + '/dados', {
+    method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body: JSON.stringify({valor_aula: va, valor_aula_grupo: vg})
+  }).then(function(r){ return r.json(); }).then(function(res){
+    if(btn){
+      btn.textContent = res.ok ? '\u2705 Valores salvos!' : '\u26a0\ufe0f Erro ao salvar';
+      btn.style.background = res.ok ? 'rgba(0,229,160,.15)' : 'rgba(231,76,60,.15)';
+      btn.style.borderColor = res.ok ? 'var(--verde)' : '#e74c3c';
+      btn.style.color = res.ok ? 'var(--verde)' : '#e74c3c';
+      setTimeout(function(){
+        btn.textContent = '\uD83D\uDCBE Salvar valores';
+        btn.style.background = 'rgba(201,168,76,.15)';
+        btn.style.borderColor = 'var(--ouro)';
+        btn.style.color = 'var(--ouro)';
+        btn.disabled = false;
+      }, 2500);
+    }
+  }).catch(function(e){ if(btn){ btn.textContent = '\u26a0\ufe0f Erro'; btn.disabled = false; } });
+}
+function salvarValorGrupo(alunoId){
+  var inp = document.getElementById('val-grupo-edit-' + alunoId);
+  if(!inp) return;
+  var novo = inp.value === '' ? null : parseFloat(inp.value);
+  if(novo !== null && (isNaN(novo) || novo < 0)){ return; }
+  var aluno = todosAlunos.find(function(a){ return a.id === alunoId; });
+  if(aluno) aluno.valor_aula_grupo = novo;
+  fetch(window.API_BASE + '/app-personal/aluno/' + alunoId + '/dados', {
+    method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body: JSON.stringify({valor_aula_grupo: novo})
+  }).then(function(r){ return r.json(); }).then(function(res){
+    if(res.ok){ mostrarToast('\u2705 Valor de grupo salvo' + (novo!==null?': R$ '+novo.toFixed(2):'')); }
+    else { mostrarToast('Erro ao salvar valor de grupo'); }
+  }).catch(function(e){ mostrarToast('Erro ao salvar valor de grupo'); });
+}
+function salvarValorAula(alunoId){
+  var inp = document.getElementById('val-aula-edit-' + alunoId);
+  if(!inp) return;
+  var novo = parseFloat(inp.value);
+  if(isNaN(novo) || novo < 0){ return; }
+  // atualiza em memoria pra recalcular na hora
+  var aluno = todosAlunos.find(function(a){ return a.id === alunoId; });
+  if(aluno) aluno.valor_aula = novo;
+  // salva no cadastro
+  fetch(window.API_BASE + '/app-personal/aluno/' + alunoId + '/dados', {
+    method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body: JSON.stringify({valor_aula: novo})
+  }).then(function(r){ return r.json(); }).then(function(res){
+    if(res.ok){ mostrarToast('\u2705 Valor da aula salvo: R$ ' + novo.toFixed(2)); }
+    else { mostrarToast('Erro ao salvar valor'); }
+  }).catch(function(e){ mostrarToast('Erro ao salvar valor'); });
+}
 async function abrirCobrancaAluno(alunoId){
+  // reset da familia ao abrir (evita valor fantasma de uma abertura anterior)
+  if(typeof familiaMembros !== 'undefined') familiaMembros[alunoId] = [];
+  window._familiaTotal = 0;
   var aluno = todosAlunos.find(function(a){ return a.id === alunoId; });
   if(!aluno) return;
+  
+  // Carrega servicos salvos no BANCO (nao-cobrados) pro cache antes de montar
+  try {
+    var _rs = await fetch(window.API_BASE + '/app-personal/aluno/' + alunoId + '/servicos', {headers:{'Authorization':'Bearer '+token}});
+    var _ds = await _rs.json();
+    servicosExtrasCache[alunoId] = (_ds.servicos || []).map(function(x){ return {id: x.id, descricao: x.descricao, valor: x.valor}; });
+  } catch(e){ /* se falhar, mantem o que tiver */ }
   
   // Buscar check-ins do mês atual DO BACKEND
   var hoje = new Date();
@@ -5307,6 +5513,9 @@ async function abrirCobrancaAluno(alunoId){
     if(resp.ok) {
       var dados = await resp.json();
       checkins = dados.checkins || 0;
+      window._datasAulas = dados.datas || [];
+      window._aulasEmGrupo = {};
+      (dados.aulas || []).forEach(function(a){ if(a.em_grupo) window._aulasEmGrupo[a.data] = true; });
     }
   } catch(e) {
     console.error('Erro ao buscar checkins:', e);
@@ -5339,15 +5548,67 @@ async function abrirCobrancaAluno(alunoId){
   modal += '<span style="font-family:Bebas Neue;font-size:16px;color:var(--ouro2)">POR AULA</span>';
   modal += '</div>';
   modal += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;font-size:11px">';
-  modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Valor da aula</div><div style="color:#fff;font-weight:700">R$ ' + valorAula.toFixed(2) + '</div></div>';
+  modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Valor da aula</div><div style="display:flex;align-items:center;gap:2px"><span style="color:#fff;font-weight:700;font-size:11px">R$</span><input id="val-aula-edit-' + alunoId + '" type="number" value="' + valorAula.toFixed(2) + '" onclick="event.stopPropagation()" style="width:70px;background:var(--bg2);border:1px solid rgba(201,168,76,.3);border-radius:6px;color:#fff;font-weight:700;font-size:13px;padding:4px 6px"></div></div>';
   modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Combinadas</div><div style="color:#fff;font-weight:700">' + qtdCombinada + ' aulas</div></div>';
   modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Check-ins</div><div style="color:var(--verde);font-weight:700">' + checkins + ' ✅</div></div>';
   modal += '</div>';
+  var _vGrupo = (aluno.valor_aula_grupo != null ? parseFloat(aluno.valor_aula_grupo) : 0);
+  modal += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(201,168,76,.15)"><div style="display:flex;align-items:center;justify-content:space-between"><div style="color:var(--cinza);font-size:11px">\uD83D\uDC65 Aula em grupo/dupla</div><div style="display:flex;align-items:center;gap:2px"><span style="color:#fff;font-weight:700;font-size:11px">R$</span><input id="val-grupo-edit-' + alunoId + '" type="number" value="' + (_vGrupo>0?_vGrupo.toFixed(2):'') + '" placeholder="0.00" onclick="event.stopPropagation()" style="width:70px;background:var(--bg2);border:1px solid rgba(75,159,255,.3);border-radius:6px;color:#fff;font-weight:700;font-size:13px;padding:4px 6px"></div></div></div>';
+  modal += '<button id="btn-salvar-valores-' + alunoId + '" onclick="event.stopPropagation();salvarValores(' + alunoId + ')" style="width:100%;margin-top:10px;padding:8px 14px;background:rgba(201,168,76,.15);border:1px solid var(--ouro);border-radius:8px;color:var(--ouro);font-size:12px;font-weight:700;cursor:pointer">\uD83D\uDCBE Salvar valores</button>';
+  var _dws=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+  var _ms=['jan','fev','março','abril','maio','junho','julho','ago','set','out','nov','dez'];
+  var _da=window._datasAulas||[];
+  if(_da.length){
+    var _mes1=_da[0].split('-');
+    var _lista='<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:14px;margin-bottom:16px"><div style="font-size:11px;color:var(--ouro);letter-spacing:1px;font-weight:700;margin-bottom:10px">📋 AULAS — '+_ms[parseInt(_mes1[1])-1]+'/'+_mes1[0]+'</div>';
+    var _eg = window._aulasEmGrupo || {};
+    _da.forEach(function(d){var p=d.split('-');var dt=new Date(p[0],p[1]-1,p[2]);var _isG=!!_eg[d];_lista+='<div style="font-size:13px;color:'+(_isG?'#4B9FFF':'#fff')+';padding:5px 8px;border-radius:6px;background:'+(_isG?'rgba(75,159,255,.1)':'transparent')+';display:flex;justify-content:space-between;align-items:center"><span>'+p[2]+' - '+_dws[dt.getDay()]+(_isG?' <strong>(D)</strong>':'')+'</span><span style="font-size:10px;color:var(--cinza)">'+(_isG?'\uD83D\uDC65 dupla':'individual')+'</span></div>';});
+    _lista+='</div>';
+    modal+=_lista;
+  }
+  // Divida de meses ANTERIORES (retroativo) — aparece no modal de cobranca
+  try {
+    var _rd = await fetch(window.API_BASE + '/app-personal/aluno/' + alunoId + '/aulas-a-receber', {headers:{'Authorization':'Bearer '+token}});
+    if(_rd.ok){
+      var _dj = await _rd.json();
+      var _mesAtualStr = anoAtual + '-' + ('0'+(mesAtual+1)).slice(-2);
+      var _ant = (_dj.meses||[]).filter(function(m){ return m.mes < _mesAtualStr; });
+      if(_ant.length){
+        var _tot=0; var _qtdAtras=0; _ant.forEach(function(m){_tot+=m.valor; _qtdAtras+=m.qtd;}); window._divRetroAtras=_qtdAtras;
+        var _mn=['jan','fev','março','abril','maio','junho','julho','ago','set','out','nov','dez'];
+        var _dws=['dom','seg','ter','qua','qui','sex','sáb'];
+        var _hr='<div style="background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.35);border-radius:12px;padding:14px;margin:16px 0;width:100%;box-sizing:border-box"><div style="font-size:11px;color:#e74c3c;letter-spacing:1px;font-weight:700;margin-bottom:12px">⚠️ MESES ANTERIORES A RECEBER</div>';
+        _ant.forEach(function(m){ var _p=m.mes.split('-'); _hr+='<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:4px"><span style="color:#fff;font-weight:700">📅 '+_mn[parseInt(_p[1])-1]+'/'+_p[0]+'</span><span style="color:var(--ouro2);font-weight:700">'+m.qtd+' aula'+(m.qtd>1?'s':'')+' · R$ '+m.valor.toFixed(2)+'</span></div>'; (m.datas||[]).forEach(function(d){ var _dp=d.split('-'); var _dt=new Date(_dp[0],_dp[1]-1,_dp[2]); _hr+='<div style="font-size:12px;color:var(--cinza);padding:1px 0 1px 18px">'+_dp[2]+' - '+_dws[_dt.getDay()]+'</div>'; }); _hr+='</div>'; });
+        _hr+='<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(231,76,60,.25);margin-top:8px;padding-top:10px;font-size:13px;font-weight:700"><span style="color:var(--cinza)">TOTAL ATRASADO</span><span style="color:#e74c3c;font-family:Bebas Neue;font-size:20px">R$ '+_tot.toFixed(2)+'</span></div>';
+        _hr+='<button onclick="acertarPendencia('+alunoId+',&quot;'+_ant[0].mes+'&quot;,'+_tot+')" style="width:100%;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;padding:12px;margin-top:14px;color:#0A0A0F;font-family:Bebas Neue;font-size:15px;letter-spacing:1px;cursor:pointer">✅ ACERTAR PENDÊNCIA</button>';
+        _hr+='</div>';
+        var _mesAcerto = _ant[0].mes;
+        var _totAcerto = _tot;
+        _hr='<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.35);border-radius:12px;padding:14px;margin:16px 0;width:100%;box-sizing:border-box"><div style="font-size:11px;color:var(--ouro);letter-spacing:1px;font-weight:700;margin-bottom:12px">📋 MESES ANTERIORES A RECEBER</div>'+_hr.substring(_hr.indexOf('<div style="margin-bottom'));
+        modal+=_hr;
+      }
+    }
+  } catch(e){ console.error('erro divida retro:', e); }
+  // SOMA RETROATIVO: junta aulas de meses anteriores no total a cobrar
+  var _atrasAulas = 0;
+  try {
+    if(window._divRetroAtras){ _atrasAulas = window._divRetroAtras; }
+  } catch(e){}
+  var checkinsCobrar = checkins + _atrasAulas;
   if(modeloCobr === 'aula'){
-    var totalAula = checkins * valorAula;
+    var _eg2 = window._aulasEmGrupo || {};
+    var _vGrupo2 = (aluno.valor_aula_grupo != null && aluno.valor_aula_grupo > 0) ? parseFloat(aluno.valor_aula_grupo) : valorAula;
+    var _qtdGrupo = (window._datasAulas||[]).filter(function(d){ return !!_eg2[d]; }).length;
+    var _qtdInd = checkinsCobrar - _qtdGrupo;
+    if(_qtdInd < 0) _qtdInd = 0;
+    var totalAula = (_qtdGrupo * _vGrupo2) + (_qtdInd * valorAula);
     modal += '<div style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:8px;padding:8px;margin-top:8px;text-align:center">';
     modal += '<div style="font-size:10px;color:var(--cinza)">COBRANÇA</div>';
-    modal += '<div style="font-family:Bebas Neue;font-size:20px;color:var(--ouro2)">' + checkins + ' × R$ ' + valorAula.toFixed(0) + ' = R$ ' + totalAula.toFixed(2) + '</div>';
+    if(_qtdGrupo > 0){
+      modal += '<div style="font-size:12px;color:#fff;margin:2px 0">' + _qtdInd + ' individual × R$ ' + valorAula.toFixed(0) + ' = R$ ' + (_qtdInd*valorAula).toFixed(2) + '</div>';
+      modal += '<div style="font-size:12px;color:#4B9FFF;margin:2px 0">\uD83D\uDC65 ' + _qtdGrupo + ' dupla × R$ ' + _vGrupo2.toFixed(0) + ' = R$ ' + (_qtdGrupo*_vGrupo2).toFixed(2) + '</div>';
+    }
+    modal += '<div style="font-family:Bebas Neue;font-size:20px;color:var(--ouro2)">R$ ' + totalAula.toFixed(2) + '</div>';
     modal += '</div>';
   }
   modal += '</label>';
@@ -5359,16 +5620,13 @@ async function abrirCobrancaAluno(alunoId){
   modal += '<span style="font-family:Bebas Neue;font-size:16px;color:var(--verde)">POR MÊS</span>';
   modal += '</div>';
   modal += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;font-size:11px">';
-  modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Valor mensal</div><div style="color:#fff;font-weight:700">R$ ' + valorMensal.toFixed(2) + '</div></div>';
+  modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Valor mensal</div><div style="display:flex;align-items:center;gap:2px"><span style="color:#fff;font-weight:700;font-size:11px">R$</span><input id="val-mensal-edit-' + alunoId + '" type="number" value="' + (valorMensal>0?valorMensal.toFixed(2):'') + '" placeholder="0.00" onclick="event.stopPropagation()" style="width:70px;background:var(--bg2);border:1px solid rgba(0,229,160,.3);border-radius:6px;color:#fff;font-weight:700;font-size:13px;padding:4px 6px"></div></div>';
   modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Combinadas</div><div style="color:#fff;font-weight:700">' + qtdCombinada + ' aulas</div></div>';
   modal += '<div><div style="color:var(--cinza);margin-bottom:3px">Check-ins</div><div style="color:var(--cinza);font-weight:700">' + checkins + ' (info)</div></div>';
   modal += '</div>';
-  if(modeloCobr === 'mensal'){
-    modal += '<div style="background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);border-radius:8px;padding:8px;margin-top:8px;text-align:center">';
-    modal += '<div style="font-size:10px;color:var(--cinza)">COBRANÇA</div>';
-    modal += '<div style="font-family:Bebas Neue;font-size:20px;color:var(--verde)">R$ ' + valorMensal.toFixed(2) + ' (fixo)</div>';
-    modal += '</div>';
-  }
+  modal += '<div style="background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);border-radius:8px;padding:8px;margin-top:8px;text-align:center">';
+  modal += '<button id="btn-salvar-mensal-' + alunoId + '" onclick="event.stopPropagation();salvarMensal(' + alunoId + ')" style="padding:6px 12px;background:rgba(0,229,160,.15);border:1px solid var(--verde);border-radius:8px;color:var(--verde);font-size:11px;font-weight:700;cursor:pointer">\uD83D\uDCBE Salvar mensal</button>';
+  modal += '</div>';
   modal += '</label>';
   
   modal += '</div>';
@@ -5385,7 +5643,7 @@ async function abrirCobrancaAluno(alunoId){
     servicosAluno.forEach(function(s, idx){
       modal += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2);border-radius:8px;margin-bottom:6px">';
       modal += '<div style="flex:1"><div style="color:#fff;font-size:13px;font-weight:600">' + s.descricao + '</div><div style="color:var(--cinza);font-size:11px">R$ ' + s.valor.toFixed(2) + '</div></div>';
-      modal += '<button onclick="removerServicoExtra(' + alunoId + ',' + idx + ')" style="background:transparent;border:none;color:#FF4B4B;font-size:18px;cursor:pointer;padding:4px 8px">×</button>';
+      modal += '<button onclick="removerServicoExtra(' + alunoId + ',' + s.id + ')" style="background:transparent;border:none;color:#FF4B4B;font-size:18px;cursor:pointer;padding:4px 8px">×</button>';
       modal += '</div>';
     });
   }
@@ -5393,22 +5651,47 @@ async function abrirCobrancaAluno(alunoId){
   modal += '<button onclick="adicionarServicoExtra(' + alunoId + ')" style="width:100%;padding:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:10px;color:var(--ouro);font-size:13px;margin-top:8px;cursor:pointer">➕ ADICIONAR SERVIÇO</button>';
   modal += '</div>';
   
+  // FAMILIA (banner azul)
+  modal += '<div style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.3);border-radius:14px;padding:18px;margin-bottom:16px">';
+  modal += '<div style="font-size:11px;color:#4B9FFF;letter-spacing:2px;font-weight:700;margin-bottom:6px">\uD83D\uDC6A FAM\u00cdLIA</div>';
+  modal += '<div style="font-size:11px;color:var(--cinza);margin-bottom:12px">Acrescente outros alunos que voc\u00ea cobra junto neste pagador. As aulas de cada um entram no total.</div>';
+  modal += '<div style="display:flex;gap:8px">';
+  modal += '<input id="familia-busca-' + alunoId + '" type="text" oninput="familiaFiltrar(' + alunoId + ')" autocomplete="off" placeholder="Digite o nome do aluno..." style="flex:1;padding:10px;background:var(--bg2);border:1px solid rgba(75,159,255,.3);border-radius:8px;color:#fff;font-size:13px">';
+  modal += '<div id="familia-sugestoes-' + alunoId + '"></div>';
+  modal += '</div>';
+  modal += '<div id="familia-membros-' + alunoId + '"></div>';
+  modal += '<button id="btn-salvar-familia-' + alunoId + '" onclick="familiaSalvar(' + alunoId + ')" style="margin-top:10px;padding:8px 14px;background:rgba(75,159,255,.15);border:1px solid #4B9FFF;border-radius:8px;color:#4B9FFF;font-size:12px;font-weight:700;cursor:pointer">\uD83D\uDCBE Salvar fam\u00edlia</button>';
+  modal += '</div>';
+
   // VALOR TOTAL
-  var valorBase = modeloCobr === 'aula' ? (checkins * valorAula) : valorMensal;
+  var _atr1 = (window._divRetroAtras||0);
+  var _egVT = window._aulasEmGrupo || {};
+  var _vGrupoVT = (aluno.valor_aula_grupo != null && aluno.valor_aula_grupo > 0) ? parseFloat(aluno.valor_aula_grupo) : valorAula;
+  var _qtdGrupoVT = (window._datasAulas||[]).filter(function(d){ return !!_egVT[d]; }).length;
+  var _qtdIndVT = (checkins + _atr1) - _qtdGrupoVT;
+  if(_qtdIndVT < 0) _qtdIndVT = 0;
+  var valorBase = modeloCobr === 'aula' ? ((_qtdGrupoVT * _vGrupoVT) + (_qtdIndVT * valorAula)) : valorMensal;
   var valorServicos = 0;
   var servicosAluno2 = servicosExtrasCache[alunoId] || [];
   servicosAluno2.forEach(function(s){ valorServicos += s.valor; });
-  var valorTotal = valorBase + valorServicos;
+  var _famT = (window._familiaTotal||0);
+  window._modalAlunoId = alunoId;
+  window._valorSemFamilia = valorBase + valorServicos;
+  var valorTotal = valorBase + valorServicos + _famT;
   
   modal += '<div style="background:linear-gradient(135deg,#1A1A2E,#12121A);border:2px solid var(--ouro);border-radius:14px;padding:18px;margin-bottom:16px">';
   modal += '<div style="font-size:11px;color:var(--ouro);letter-spacing:2px;font-weight:700;margin-bottom:12px;text-align:center">💰 VALOR TOTAL</div>';
   modal += '<div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--borda)">';
-  modal += '<div style="color:var(--cinza);font-size:13px">' + (modeloCobr === 'aula' ? 'Aulas (' + checkins + '×)' : 'Mensalidade') + ':</div>';
+  modal += '<div style="color:var(--cinza);font-size:13px">' + (modeloCobr === 'aula' ? 'Aulas (' + (checkins + (window._divRetroAtras||0)) + '×)' : 'Mensalidade') + ':</div>';
   modal += '<div style="color:#fff;font-size:13px;font-weight:700">R$ ' + valorBase.toFixed(2) + '</div>';
   modal += '</div>';
   modal += '<div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--borda)">';
   modal += '<div style="color:var(--cinza);font-size:13px">Serviços:</div>';
   modal += '<div style="color:#fff;font-size:13px;font-weight:700" id="total-servicos-' + alunoId + '">R$ ' + valorServicos.toFixed(2) + '</div>';
+  modal += '</div>';
+  modal += '<div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--borda)" id="linha-familia-' + alunoId + '" '+(_famT>0?'':'hidden')+'>';
+  modal += '<div style="color:#4B9FFF;font-size:13px">\uD83D\uDC6A Fam\u00edlia:</div>';
+  modal += '<div style="color:#4B9FFF;font-size:13px;font-weight:700" id="total-familia-' + alunoId + '">R$ ' + _famT.toFixed(2) + '</div>';
   modal += '</div>';
   modal += '<div style="display:grid;grid-template-columns:1fr auto;gap:8px">';
   modal += '<div style="font-family:Bebas Neue;font-size:18px;color:var(--ouro)">TOTAL:</div>';
@@ -5424,6 +5707,17 @@ async function abrirCobrancaAluno(alunoId){
   modal += '</div></div>';
   
   document.body.insertAdjacentHTML('beforeend', modal);
+  document.querySelectorAll('div[data-modal-velho="1"]').forEach(function(m){ m.remove(); });
+  // PERSISTENCIA: carrega a familia salva desse pagador e relista
+  fetch(window.API_BASE + '/app-personal/financeiro/familia/' + alunoId, {
+    headers: {'Authorization':'Bearer '+token}
+  }).then(function(r){ return r.json(); }).then(function(res){
+    var ids = res.membros || [];
+    if(ids.length > 0){
+      familiaMembros[alunoId] = ids;
+      familiaAtualizar(alunoId);
+    }
+  }).catch(function(e){ console.error('carregar familia', e); });
 }
 
 function alterarModelo(modelo, alunoId){
@@ -5439,17 +5733,146 @@ function alterarModelo(modelo, alunoId){
     headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'},
     body: JSON.stringify({ciclo_cobranca: cicloBanco})
   }).catch(function(){ /* falha silenciosa, ainda tem em memoria */ });
-  // Reabrir modal atualizado com novo modelo
-  setTimeout(function(){
-    var modals = document.querySelectorAll('div[style*="position:fixed"]');
-    modals.forEach(function(m){ m.remove(); });
-    abrirCobrancaAluno(alunoId);
-  }, 100);
+  // Reabrir modal atualizado com novo modelo - sem delay pra nao piscar
+  document.querySelectorAll('div[style*="position:fixed"]').forEach(function(m){ m.setAttribute('data-modal-velho','1'); });
+  abrirCobrancaAluno(alunoId);
 }
 
 // Cache de servicos extras por aluno (em memoria)
 var servicosExtrasCache = servicosExtrasCache || {};
 
+// FAMILIA: lista de membros acrescentados, por pagador (chave = alunoId do modal)
+var familiaMembros = {};
+function familiaRecalcularTotal(alunoId){
+  var famT = window._familiaTotal || 0;
+  var base = window._valorSemFamilia || 0;
+  var elLinha = document.getElementById('linha-familia-' + alunoId);
+  var elFam = document.getElementById('total-familia-' + alunoId);
+  var elTot = document.getElementById('valor-total-' + alunoId);
+  if(elFam) elFam.textContent = 'R$ ' + famT.toFixed(2);
+  if(elLinha){ if(famT > 0){ elLinha.removeAttribute('hidden'); } else { elLinha.setAttribute('hidden',''); } }
+  if(elTot) elTot.textContent = 'R$ ' + (base + famT).toFixed(2);
+}
+function familiaSalvar(alunoId){
+  var ids = familiaMembros[alunoId] || [];
+  var btn = document.getElementById('btn-salvar-familia-' + alunoId);
+  if(btn){ btn.textContent = 'Salvando...'; btn.disabled = true; }
+  fetch(window.API_BASE + '/app-personal/financeiro/familia/' + alunoId + '/salvar', {
+    method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body: JSON.stringify({membros: ids})
+  }).then(function(r){ return r.json(); }).then(function(res){
+    if(btn){
+      btn.textContent = res.ok ? '\u2705 Fam\u00edlia salva!' : '\u26a0\ufe0f Erro ao salvar';
+      btn.style.background = res.ok ? 'rgba(0,229,160,.15)' : 'rgba(231,76,60,.15)';
+      btn.style.borderColor = res.ok ? 'var(--verde)' : '#e74c3c';
+      btn.style.color = res.ok ? 'var(--verde)' : '#e74c3c';
+      setTimeout(function(){
+        btn.textContent = '\uD83D\uDCBE Salvar fam\u00edlia';
+        btn.style.background = 'rgba(75,159,255,.15)';
+        btn.style.borderColor = '#4B9FFF';
+        btn.style.color = '#4B9FFF';
+        btn.disabled = false;
+      }, 2500);
+    }
+  }).catch(function(e){
+    if(btn){ btn.textContent = '\u26a0\ufe0f Erro'; btn.disabled = false; }
+  });
+}
+function familiaFiltrar(alunoId){
+  var inp = document.getElementById('familia-busca-' + alunoId);
+  var box = document.getElementById('familia-sugestoes-' + alunoId);
+  if(!inp || !box) return;
+  var termo = (inp.value || '').trim().toLowerCase();
+  if(termo.length < 2){ box.innerHTML = ''; return; }
+  var palavras = termo.split(/\s+/).filter(function(x){ return x; });
+  var jaTem = familiaMembros[alunoId] || [];
+  var achados = todosAlunos.filter(function(a){
+    if(a.id === alunoId) return false;
+    if(jaTem.indexOf(a.id) >= 0) return false;
+    var nome = (a.nome||'').toLowerCase();
+    return palavras.some(function(pl){ return nome.indexOf(pl) >= 0; });
+  });
+  if(achados.length === 0){ box.innerHTML = '<div style="padding:8px;color:var(--cinza);font-size:12px">Nenhum aluno encontrado</div>'; return; }
+  var lista = '<div style="margin-top:6px;border:1px solid rgba(75,159,255,.3);border-radius:8px;overflow:hidden">';
+  achados.slice(0,6).forEach(function(a){
+    lista += '<div onclick="familiaEscolher(' + alunoId + ',' + a.id + ')" style="padding:10px;cursor:pointer;color:#fff;font-size:13px;border-bottom:1px solid rgba(75,159,255,.1)">' + a.nome + '</div>';
+  });
+  lista += '</div>';
+  box.innerHTML = lista;
+}
+function familiaAcrescentar(alunoId){
+  var inp = document.getElementById('familia-busca-' + alunoId);
+  if(!inp) return;
+  var termo = (inp.value || '').trim().toLowerCase();
+  if(!termo){ alert('Digite o nome do aluno.'); return; }
+  var palavras = termo.split(/\s+/).filter(function(x){ return x; });
+  var jaTem = familiaMembros[alunoId] || [];
+  var achados = todosAlunos.filter(function(a){
+    if(a.id === alunoId) return false;
+    if(jaTem.indexOf(a.id) >= 0) return false;
+    var nome = (a.nome||'').toLowerCase();
+    return palavras.some(function(pl){ return nome.indexOf(pl) >= 0; });
+  });
+  if(achados.length === 0){ alert('Nenhum aluno com "' + termo + '".'); return; }
+  if(achados.length > 1){
+    var div = document.getElementById('familia-membros-' + alunoId);
+    var lista = '<div style="margin-top:8px;border:1px solid rgba(75,159,255,.3);border-radius:8px;overflow:hidden">';
+    achados.slice(0,8).forEach(function(a){
+      lista += '<div onclick="familiaEscolher(' + alunoId + ',' + a.id + ')" style="padding:10px;cursor:pointer;color:#fff;font-size:13px;border-bottom:1px solid rgba(75,159,255,.1)" onmouseover="this.style.background=&quot;rgba(75,159,255,.1)&quot;" onmouseout="this.style.background=&quot;transparent&quot;">' + a.nome + '</div>';
+    });
+    lista += '</div>';
+    if(div){ div.innerHTML = lista; }
+    return;
+  }
+  var achado = achados[0];
+  if(!achado){ alert('Aluno nao encontrado: ' + termo); return; }
+  if(achado.id === alunoId){ alert('Esse ja e o pagador.'); return; }
+  if(!familiaMembros[alunoId]) familiaMembros[alunoId] = [];
+  if(familiaMembros[alunoId].indexOf(achado.id) >= 0){ alert(achado.nome + ' ja foi acrescentado.'); return; }
+  familiaMembros[alunoId].push(achado.id);
+  inp.value = '';
+  familiaAtualizar(alunoId);
+}
+function familiaEscolher(alunoId, membroId){
+  if(!familiaMembros[alunoId]) familiaMembros[alunoId] = [];
+  if(familiaMembros[alunoId].indexOf(membroId) < 0) familiaMembros[alunoId].push(membroId);
+  var inp = document.getElementById('familia-busca-' + alunoId);
+  if(inp) inp.value = '';
+  var box = document.getElementById('familia-sugestoes-' + alunoId);
+  if(box) box.innerHTML = '';
+  familiaAtualizar(alunoId);
+}
+function familiaRemover(alunoId, membroId){
+  if(!familiaMembros[alunoId]) return;
+  familiaMembros[alunoId] = familiaMembros[alunoId].filter(function(x){ return x !== membroId; });
+  familiaAtualizar(alunoId);
+  familiaSalvar(alunoId);
+}
+function familiaAtualizar(alunoId){
+  var div = document.getElementById('familia-membros-' + alunoId);
+  if(!div) return;
+  var ids = familiaMembros[alunoId] || [];
+  if(ids.length === 0){ div.innerHTML = ''; window._familiaTotal = 0; familiaRecalcularTotal(alunoId); return; }
+  fetch('/app-personal/financeiro/preview-familia', {
+    method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body: JSON.stringify({membros: ids})
+  }).then(function(r){ return r.json(); }).then(function(res){
+    var membros = res.membros || [];
+    var html = '<div style="margin-top:12px">';
+    membros.forEach(function(m){
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2);border-radius:8px;margin-bottom:6px">';
+      var _linha = (m.modelo === 'mensal') ? 'mensalidade' : (m.aulas + ' aula(s) x R$ ' + m.valor_aula.toFixed(2));
+      html += '<div style="flex:1"><div style="color:#fff;font-size:13px;font-weight:600">' + m.nome + '</div><div style="color:var(--cinza);font-size:11px">' + _linha + '</div></div>';
+      html += '<div style="color:#4B9FFF;font-weight:700;font-size:13px;margin-right:8px">R$ ' + m.valor.toFixed(2) + '</div>';
+      html += '<button onclick="familiaRemover(' + alunoId + ',' + m.aluno_id + ')" style="background:transparent;border:none;color:#FF4B4B;font-size:18px;cursor:pointer;padding:4px 8px">x</button>';
+      html += '</div>';
+    });
+    html += '</div>';
+    div.innerHTML = html;
+    window._familiaTotal = res.total_familia || 0;
+    familiaRecalcularTotal(alunoId);
+  }).catch(function(e){ div.innerHTML = '<div style="color:#FF4B4B;font-size:12px;margin-top:8px">Erro ao carregar familia</div>'; });
+}
 function adicionarServicoExtra(alunoId){
   var descricao = prompt('Descrição do serviço:\n(ex: Avaliação física completa)');
   if(!descricao) return;
@@ -5459,29 +5882,24 @@ function adicionarServicoExtra(alunoId){
   valor = parseFloat(valor.replace(',','.'));
   if(isNaN(valor)) return;
   
-  // Salvar em memoria local
-  if(!servicosExtrasCache[alunoId]) servicosExtrasCache[alunoId] = [];
-  servicosExtrasCache[alunoId].push({descricao: descricao, valor: valor});
-  
-  mostrarToast('✅ Serviço adicionado: ' + descricao + ' - R$ ' + valor.toFixed(2));
-  
-  // Reabrir modal atualizado (vai mostrar o novo serviço)
-  setTimeout(function(){
-    var modals = document.querySelectorAll('div[style*="position:fixed"]');
-    modals.forEach(function(m){ m.remove(); });
+  // Salvar no BANCO (fica gravado ate ser cobrado)
+  fetch(window.API_BASE + '/app-personal/aluno/' + alunoId + '/servico', {
+    method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body: JSON.stringify({descricao: descricao, valor: valor})
+  }).then(function(r){ return r.json(); }).then(function(res){
+    mostrarToast('✅ Serviço salvo: ' + descricao + ' - R$ ' + valor.toFixed(2));
+    document.querySelectorAll('div[style*="position:fixed"]').forEach(function(m){ m.setAttribute('data-modal-velho','1'); });
     abrirCobrancaAluno(alunoId);
-  }, 500);
+  }).catch(function(e){ mostrarToast('⚠️ Erro ao salvar serviço'); });
 }
 
-function removerServicoExtra(alunoId, index){
-  if(servicosExtrasCache[alunoId]) {
-    servicosExtrasCache[alunoId].splice(index, 1);
-    setTimeout(function(){
-      var modals = document.querySelectorAll('div[style*="position:fixed"]');
-      modals.forEach(function(m){ m.remove(); });
-      abrirCobrancaAluno(alunoId);
-    }, 100);
-  }
+function removerServicoExtra(alunoId, servicoId){
+  fetch(window.API_BASE + '/app-personal/aluno/' + alunoId + '/servico/' + servicoId, {
+    method:'DELETE', headers:{'Authorization':'Bearer '+token}
+  }).then(function(){
+    document.querySelectorAll('div[style*="position:fixed"]').forEach(function(m){ m.setAttribute('data-modal-velho','1'); });
+    abrirCobrancaAluno(alunoId);
+  }).catch(function(e){ mostrarToast('⚠️ Erro ao remover'); });
 }
 
 async function gerarCobrancaAluno(alunoId){
@@ -5513,19 +5931,28 @@ async function gerarCobrancaAluno(alunoId){
     console.error('Erro ao buscar checkins:', e);
   }
   
-  var valorBase = modeloCobr === 'aula' ? (checkins * valorAula) : valorMensal;  
+  var _atr2 = (window._divRetroAtras||0);
+  var _egCR = window._aulasEmGrupo || {};
+  var _vGrupoCR = (aluno.valor_aula_grupo != null && aluno.valor_aula_grupo > 0) ? parseFloat(aluno.valor_aula_grupo) : valorAula;
+  var _qtdGrupoCR = (window._datasAulas||[]).filter(function(d){ return !!_egCR[d]; }).length;
+  var _qtdIndCR = (checkins + _atr2) - _qtdGrupoCR;
+  if(_qtdIndCR < 0) _qtdIndCR = 0;
+  var valorBase = modeloCobr === 'aula' ? ((_qtdGrupoCR * _vGrupoCR) + (_qtdIndCR * valorAula)) : valorMensal;  
   var servicosAluno = servicosExtrasCache[alunoId] || [];
   var valorServicos = 0;
   servicosAluno.forEach(function(s){ valorServicos += s.valor; });
-  var total = valorBase + valorServicos;
+  var _famTotal = (window._familiaTotal || 0);
+  var total = valorBase + valorServicos + _famTotal;
+  var _famLinha = _famTotal > 0 ? ('\n\uD83D\uDC6A Família: R$ ' + _famTotal.toFixed(2)) : '';
   
-  if(!confirm('Gerar cobrança de ' + aluno.nome + '?\n\nModelo: ' + modeloCobr.toUpperCase() + '\nValor base: R$ ' + valorBase.toFixed(2) + '\nServiços: R$ ' + valorServicos.toFixed(2) + '\nTOTAL: R$ ' + total.toFixed(2))) return;
+  if(!confirm('Gerar cobrança de ' + aluno.nome + '?\n\nModelo: ' + modeloCobr.toUpperCase() + '\nValor base: R$ ' + valorBase.toFixed(2) + '\nServiços: R$ ' + valorServicos.toFixed(2) + _famLinha + '\nTOTAL: R$ ' + total.toFixed(2))) return;
   
   mostrarToast('💳 Gerando cobrança...');
   
   fetch(window.API_BASE + '/app-personal/financeiro/fechar-mes-aluno/' + alunoId, {
     method: 'POST',
-    headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'}
+    headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body: JSON.stringify({servicos: servicosAluno, membros: (familiaMembros[alunoId]||[]), aulas_grupo: Object.keys(window._aulasEmGrupo||{})})
   })
   .then(function(r){ return r.json(); })
   .then(function(d){
@@ -5748,9 +6175,9 @@ var DICAS_PRO = {
     titulo: '\uD83D\uDCCA TELA INICIAL',
     itens: [
       {e:'\uD83D\uDC40', t:'<strong>Vis\u00e3o geral:</strong> aqui voc\u00ea v\u00ea seus n\u00fameros - alunos ativos, check-ins do dia, pagamentos pendentes e receita do m\u00eas.'},
-      {e:'\uD83D\uDC65', t:'<strong>Aten\u00e7\u00e3o: aqui s\u00e3o DOIS bot\u00f5es, n\u00e3o um s\u00f3!</strong> No card de cada aluno voc\u00ea tem: <strong>\uD83D\uDC64 CADASTRO</strong> (lado esquerdo) \u2014 toque aqui para abrir o perfil, a avalia\u00e7\u00e3o e o treino do aluno. <strong>\uD83D\uDCB0 COBRAR</strong> (lado direito) \u2014 toque aqui para gerar a cobran\u00e7a das aulas presenciais e servi\u00e7os (avalia\u00e7\u00e3o, etc.).'},
+      {e:'\uD83D\uDC65', t:'<strong>Seus alunos:</strong> toque em Alunos pra ver e gerenciar todo mundo. No card de cada um h\u00e1 dois lados \u2014 CADASTRO e COBRAR \u2014 explicados na aba Alunos.'},
       {e:'\uD83D\uDD0D', t:'<strong>Busca r\u00e1pida:</strong> digite o nome de um aluno na busca do topo para abrir o perfil dele direto.'},
-      {e:'\u2705', t:'<strong>Antes de cobrar por aula:</strong> registre a aula no <strong>Check-in presencial</strong> (tela Aulas). S\u00f3 as aulas marcadas ali entram na cobran\u00e7a.'},
+      {e:'\u2705', t:'<strong>O que entra na cobran\u00e7a:</strong> s\u00f3 as aulas que <strong>voc\u00ea</strong> lan\u00e7a no Check-in presencial (tela Aulas) \u2014 as aulas que voc\u00ea realmente deu. \u26a0\ufe0f Isso \u00e9 diferente do "concluir" que o aluno aperta ao treinar sozinho pelo app: essa presen\u00e7a conta pro desenvolvimento dele (periodiza\u00e7\u00e3o e reavalia\u00e7\u00e3o), mas N\u00c3O gera cobran\u00e7a. Ex.: se o aluno treina 2x com voc\u00ea e 1x sozinho, voc\u00ea cobra as 2 presenciais \u2014 n\u00e3o as 3.'},
       {e:'\u26A1', t:'<strong>Atalhos:</strong> os cart\u00f5es coloridos levam r\u00e1pido para Alunos, Loja, Finan\u00e7as e Aulas.'}
     ]
   },
@@ -5758,11 +6185,12 @@ var DICAS_PRO = {
     label: '\uD83D\uDC65 Alunos',
     titulo: '\uD83D\uDC65 GERENCIAR ALUNOS',
     itens: [
-      {e:'\uD83D\uDCCB', t:'<strong>Como preparar a avalia\u00e7\u00e3o deste aluno</strong><br><br><strong>\u2b50 Op\u00e7\u00e3o 1 \u2014 Link via WhatsApp (recomendado):</strong> envie o link do question\u00e1rio. Assim que o aluno preencher, o acesso \u00e0 avalia\u00e7\u00e3o \u00e9 liberado no seu PRO \u2014 \u00e9 s\u00f3 fazer e o treino sai na hora.<br><br><strong>Op\u00e7\u00e3o 2 \u2014 Presencial:</strong> sem o link, o aluno passa pelas 7 etapas iniciais no primeiro acesso ao app antes de voc\u00ea avaliar.<br><br>\uD83D\uDCA1 A avalia\u00e7\u00e3o f\u00edsica \u00e9 sempre feita por voc\u00ea. O question\u00e1rio s\u00f3 adianta os dados do aluno.'},
-      {e:'\u2795', t:'<strong>Novo Aluno:</strong> cadastre manualmente preenchendo os dados. A senha de acesso dele será os 6 primeiros dígitos do CPF.'},
-      {e:'\uD83D\uDCF1', t:'<strong>Convidar por Questionário:</strong> envie um link por WhatsApp. O aluno preenche sozinho a anamnese e já recebe um treino base — você só ajusta depois.'},
-      {e:'\uD83D\uDC64', t:'<strong>Cadastro:</strong> toque em qualquer aluno para abrir o perfil completo — dados, avaliação, treino, periodização e resultados.'},
-      {e:'\uD83D\uDCB0', t:'<strong>Cobrar:</strong> o botão dourado COBRAR gera a cobrança do aluno (por aula ou mensal) e o link de pagamento.'}
+      {e:'\uD83D\uDCCB', t:'<strong>Como preparar a avalia\u00e7\u00e3o deste aluno</strong><br><br><strong>\u2b50 Op\u00e7\u00e3o 1 \u2014 Link via WhatsApp (recomendada):</strong> envie o link do question\u00e1rio. O aluno preenche em casa, cria v\u00ednculo com o processo e j\u00e1 valoriza o seu trabalho. Assim que ele envia, o acesso \u00e9 liberado no seu PRO pra voc\u00ea realizar a avalia\u00e7\u00e3o f\u00edsica \u2014 com os exerc\u00edcios posturais analisados pela IA \u2014 e montar o treino do seu jeito. E pra n\u00e3o deixar o aluno na m\u00e3o, o sistema j\u00e1 envia um treino provis\u00f3rio ajustado \u00e0s necessidades dele at\u00e9 voc\u00ea finalizar o seu.<br><br><strong>Op\u00e7\u00e3o 2 \u2014 Presencial:</strong> caso o aluno esque\u00e7a o celular ou n\u00e3o tenha preenchido o link, ele passa pelas 7 etapas iniciais no primeiro acesso ao app antes de voc\u00ea avaliar.<br><br>\uD83D\uDCA1 A avalia\u00e7\u00e3o f\u00edsica \u00e9 sempre feita por voc\u00ea. O question\u00e1rio s\u00f3 adianta os dados do aluno.'},
+      {e:'\u2795', t:'<strong>Novo Aluno:</strong> cadastre manualmente preenchendo os dados. O login do aluno \u00e9 o e-mail dele, e a primeira senha s\u00e3o os 6 primeiros d\u00edgitos do CPF \u2014 o AurumSci recomenda que ele troque depois, em casa.'},
+      {e:'\uD83D\uDC64', t:'<strong>Bot\u00e3o bipartido:</strong> no card de cada aluno h\u00e1 dois lados \u2014 esquerda \ud83d\udc64 CADASTRO abre o perfil completo (dados, avalia\u00e7\u00e3o, treino, periodiza\u00e7\u00e3o e resultados); direita \ud83d\udcb0 COBRAR gera a cobran\u00e7a das aulas e servi\u00e7os.'},
+      {e:'\uD83D\uDCB0', t:'<strong>Cobrar:</strong> o bot\u00e3o dourado COBRAR gera a cobran\u00e7a do aluno (por aula ou mensal) e o link de pagamento. Se houver aulas de meses anteriores ainda n\u00e3o recebidas, elas aparecem como MESES ANTERIORES A RECEBER, pra voc\u00ea cobrar tudo junto.'},
+      {e:'\uD83D\uDC6A', t:'<strong>Fam\u00edlia / mesmo pagador:</strong> atende uma fam\u00edlia (pai e filhos, ou um grupo) em que <strong>um s\u00f3 paga por todos</strong>? Abra o COBRAR de quem paga, v\u00e1 no banner \uD83D\uDC6A FAM\u00cdLIA, busque e acrescente cada membro e clique em \uD83D\uDCBE Salvar. Na hora de cobrar, o sistema junta as aulas de todos numa cobran\u00e7a s\u00f3 \u2014 cada um no seu valor (aula ou mensal). A fam\u00edlia fica salva pro pr\u00f3ximo m\u00eas. \u26a0\ufe0f Aluno mensalista: confira se o valor est\u00e1 salvo (bot\u00e3o \uD83D\uDCBE Salvar mensal no COBRAR dele) \u2014 sem isso ele entra zerado na fam\u00edlia.'},
+      {e:'\uD83D\uDC65', t:'<strong>Aula em dupla/grupo:</strong> atende um aluno que \u00e0s vezes treina em dupla ou grupo, com outro valor por aula? <strong>Primeiro</strong>, abra o COBRAR dele e defina o valor no campo azul \u201c\uD83D\uDC65 Aula em grupo/dupla\u201d, depois toque em \uD83D\uDCBE Salvar valores (fica salvo). <strong>Depois</strong>, na aba AULAS, ao lan\u00e7ar a aula, use o bot\u00e3o Individual/Dupla pra marcar as que foram em dupla. Na cobran\u00e7a, o sistema soma sozinho: cada aula no seu valor.'}
     ]
   },
   'treino': {
@@ -5791,10 +6219,10 @@ var DICAS_PRO = {
     label: '\uD83D\uDCB0 Finan\u00e7as',
     titulo: '\uD83D\uDCB0 FINANCEIRO',
     itens: [
-      {e:'\uD83D\uDCB3', t:'<strong>Cobrar:</strong> feche o m\u00eas de cada aluno e gere o link de pagamento (Stripe) autom\u00e1tico.'},
-      {e:'\uD83E\uDDFE', t:'<strong>Recibo:</strong> ap\u00f3s registrar um pagamento, envie o recibo por WhatsApp, email ou PDF.'},
-      {e:'\uD83D\uDCCB', t:'<strong>Relat\u00f3rio pro contador:</strong> baixe o CSV do m\u00eas com todos os recebimentos para sua contabilidade.'},
-      {e:'\uD83D\uDCA1', t:'<strong>Dica fiscal:</strong> o app mostra quanto voc\u00ea economiza abrindo CNPJ no Simples Nacional vs CPF aut\u00f4nomo.'}
+      {e:'\uD83D\uDCB3', t:'<strong>Cobrar:</strong> a cobran\u00e7a das aulas (por aula ou mensal) \u00e9 feita na \u00e1rea do pr\u00f3prio aluno, no bot\u00e3o bipartido (esquerda CADASTRO / direita COBRAR). As aulas presenciais precisam ser lan\u00e7adas na aba AULAS \u2014 se esquecer, d\u00e1 pra lan\u00e7ar depois s\u00f3 ajustando a data. O check-in do aluno \u00e9 s\u00f3 pro controle do treino dele (periodiza\u00e7\u00e3o e reavalia\u00e7\u00e3o), n\u00e3o entra na cobran\u00e7a.'},
+      {e:'\uD83D\uDCB0', t:'<strong>Controle do que entrou:</strong> os cards RECEBIDO, PENDENTE e ATRASADO mostram o que j\u00e1 caiu, o que falta receber no prazo e o que passou do vencimento.'},
+      {e:'\u2705', t:'<strong>Recibo autom\u00e1tico:</strong> quando o pagamento \u00e9 confirmado, o aluno recebe o recibo por email na hora \u2014 voc\u00ea n\u00e3o precisa fazer nada.'},
+      {e:'\uD83D\uDCC4', t:'<strong>Dados para nota fiscal:</strong> em cada recebimento pago, toque em 📄 Nota para ver os dados prontos (nome, CPF ou CNPJ, valor) e enviar ao seu contador emitir a nota do seu aluno.'}
     ]
   },
   'auri': {

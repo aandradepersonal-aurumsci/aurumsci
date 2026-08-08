@@ -1,7 +1,7 @@
 """
 Router — App Personal (expandido)
 """
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form, Request
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form, Request, Body
 from pydantic import BaseModel
 from typing import Optional, List
 from sqlalchemy.orm import Session
@@ -956,6 +956,7 @@ def fazer_checkin_aula(
     aluno_id = payload.get("aluno_id")
     data_str = payload.get("data")
     observacoes = payload.get("observacoes", "")
+    em_grupo = bool(payload.get("em_grupo", False))
     
     if not aluno_id or not data_str:
         raise HTTPException(400, "aluno_id e data sao obrigatorios")
@@ -989,7 +990,8 @@ def fazer_checkin_aula(
         data=data_aula,
         presente=True,
         observacoes=observacoes or None,
-        tipo="aula"
+        tipo="aula",
+        em_grupo=em_grupo
     )
     db.add(nova)
     db.commit()
@@ -1038,6 +1040,7 @@ def listar_aulas_do_dia(
                 "aluno_nome": aluno.nome,
                 "data": p.data.isoformat(),
                 "observacoes": p.observacoes,
+                "em_grupo": bool(getattr(p, "em_grupo", False)),
                 "criado_em": p.criado_em.isoformat() if p.criado_em else None
             })
     
@@ -1046,6 +1049,27 @@ def listar_aulas_do_dia(
         "total": len(resultado),
         "aulas": resultado
     }
+
+
+@router.put("/aulas/{presenca_id}/em-grupo")
+def marcar_aula_em_grupo(
+    presenca_id: int,
+    payload: dict,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Marca/desmarca uma aula como em grupo/dupla. Body: {em_grupo: true/false}."""
+    from app.routers.treino import PresencaTreino
+    em_grupo = bool(payload.get("em_grupo", False))
+    presenca = db.query(PresencaTreino).join(Aluno).filter(
+        PresencaTreino.id == presenca_id,
+        Aluno.personal_id == personal.id
+    ).first()
+    if not presenca:
+        raise HTTPException(404, "Aula nao encontrada")
+    presenca.em_grupo = em_grupo
+    db.commit()
+    return {"ok": True, "id": presenca_id, "em_grupo": em_grupo}
 
 
 @router.delete("/aulas/checkin/{presenca_id}")
@@ -1147,21 +1171,21 @@ def relatorio_contador(
     
     sql = text("""
         SELECT 
-            c.id AS cobranca_id,
+            p.id AS pagamento_id,
             a.nome AS aluno_nome,
             a.cpf AS aluno_cpf,
             a.email AS aluno_email,
-            c.valor,
-            c.descricao,
-            c.data_pagamento,
-            c.metodo_pagamento
-        FROM cobrancas c
-        JOIN alunos a ON a.id = c.aluno_id
-        WHERE a.personal_id = :personal_id
-          AND c.status = 'pago'
-          AND EXTRACT(MONTH FROM c.data_pagamento) = :mes
-          AND EXTRACT(YEAR FROM c.data_pagamento) = :ano
-        ORDER BY c.data_pagamento ASC
+            p.valor,
+            p.descricao,
+            p.data_pagamento,
+            p.metodo_pagamento
+        FROM pagamentos p
+        JOIN alunos a ON a.id = p.aluno_id
+        WHERE p.personal_id = :personal_id
+          AND p.status = 'pago'
+          AND EXTRACT(MONTH FROM p.data_pagamento) = :mes
+          AND EXTRACT(YEAR FROM p.data_pagamento) = :ano
+        ORDER BY p.data_pagamento ASC
     """)
     rows = db.execute(sql, {"personal_id": personal.id, "mes": mes, "ano": ano}).fetchall()
     
@@ -1185,8 +1209,6 @@ def relatorio_contador(
         ])
     writer.writerow([])
     writer.writerow(['', '', '', 'TOTAL', f"{total:.2f}".replace('.', ','), '', '', ''])
-    writer.writerow(['', '', '', 'DAS estimado 6%', f"{total*0.06:.2f}".replace('.', ','), '', '', ''])
-    writer.writerow(['', '', '', 'Liquido', f"{total*0.94:.2f}".replace('.', ','), '', '', ''])
     
     output.seek(0)
     filename = f"aurumsci_relatorio_{ano}_{mes:02d}.csv"
@@ -1195,6 +1217,66 @@ def relatorio_contador(
         media_type="text/csv",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'}
     )
+
+@router.get("/financeiro/total-pendente")
+def total_pendente(
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Soma o que FALTA RECEBER: aulas tipo=aula cobrada=false de todos os alunos ativos, x valor_aula de cada."""
+    from app.routers.treino import PresencaTreino
+    alunos = db.query(Aluno).filter(Aluno.personal_id == personal.id, Aluno.ativo == True).all()
+    total = 0.0
+    detalhe = []
+    for a in alunos:
+        qtd = db.query(PresencaTreino).filter(
+            PresencaTreino.aluno_id == a.id,
+            PresencaTreino.tipo == "aula",
+            (PresencaTreino.cobrada == False) | (PresencaTreino.cobrada == None)
+        ).count()
+        if qtd > 0:
+            va = float(a.valor_aula or 0)
+            sub = qtd * va
+            total += sub
+            detalhe.append({"aluno_id": a.id, "aluno_nome": a.nome, "aulas": qtd, "valor": round(sub, 2)})
+    return {"total_pendente": round(total, 2), "alunos": detalhe}
+
+
+@router.get("/financeiro/total-atrasado")
+def total_atrasado(
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """ATRASADO = aulas cobrada=false cujo VENCIMENTO do mes da aula ja passou.
+    Venc = ultimo dia do mes da aula + dias_vencimento do aluno."""
+    from app.routers.treino import PresencaTreino
+    from datetime import date as date_cls, timedelta
+    from calendar import monthrange
+    hoje = date_cls.today()
+    alunos = db.query(Aluno).filter(Aluno.personal_id == personal.id, Aluno.ativo == True).all()
+    total = 0.0
+    detalhe = []
+    for a in alunos:
+        dias_venc = a.dias_vencimento or 5
+        va = float(a.valor_aula or 0)
+        aulas = db.query(PresencaTreino).filter(
+            PresencaTreino.aluno_id == a.id,
+            PresencaTreino.tipo == "aula",
+            (PresencaTreino.cobrada == False) | (PresencaTreino.cobrada == None)
+        ).all()
+        qtd_atras = 0
+        for aula in aulas:
+            d = aula.data
+            ultimo_dia = monthrange(d.year, d.month)[1]
+            venc = date_cls(d.year, d.month, ultimo_dia) + timedelta(days=dias_venc)
+            if venc < hoje:
+                qtd_atras += 1
+        if qtd_atras > 0:
+            sub = qtd_atras * va
+            total += sub
+            detalhe.append({"aluno_id": a.id, "aluno_nome": a.nome, "aulas": qtd_atras, "valor": round(sub, 2)})
+    return {"total_atrasado": round(total, 2), "alunos": detalhe}
+
 
 @router.get("/financeiro/fechamentos-pendentes")
 def listar_fechamentos_pendentes(
@@ -1256,7 +1338,8 @@ def listar_fechamentos_pendentes(
             PresencaTreino.aluno_id == aluno.id,
             PresencaTreino.data >= primeiro_dia_mes,
             PresencaTreino.data <= hoje,
-            PresencaTreino.tipo == "aula"
+            PresencaTreino.tipo == "aula",
+            (PresencaTreino.cobrada == False) | (PresencaTreino.cobrada == None)
         ).count()
         
         if ciclo == "por_aula_mensal":
@@ -1308,6 +1391,7 @@ def listar_fechamentos_pendentes(
 @router.post("/financeiro/fechar-mes-aluno/{aluno_id}")
 def fechar_mes_aluno(
     aluno_id: int,
+    dados: dict = Body(default={}),
     personal: Personal = Depends(get_personal_atual),
     db: Session = Depends(get_db)
 ):
@@ -1341,21 +1425,110 @@ def fechar_mes_aluno(
     
     # Conta aulas do mes — SO aulas presenciais (tipo="aula") para cobranca, nao treinos do aluno
     primeiro_dia_mes = date_cls(hoje.year, hoje.month, 1)
-    aulas_dadas = db.query(PresencaTreino).filter(
+    aulas_query = db.query(PresencaTreino).filter(
         PresencaTreino.aluno_id == aluno.id,
-        PresencaTreino.data >= primeiro_dia_mes,
-        PresencaTreino.data <= hoje,
-        PresencaTreino.tipo == "aula"
-    ).count()
+        PresencaTreino.tipo == "aula",
+        (PresencaTreino.cobrada == False) | (PresencaTreino.cobrada == None)
+    )
+    aulas_dadas = aulas_query.count()
     
-    # Calcula valor
+    # Calcula valor — considera aulas em dupla/grupo (valor_aula_grupo)
+    valor_grupo = float(aluno.valor_aula_grupo) if getattr(aluno, "valor_aula_grupo", None) else valor_aula
+    aulas_grupo_datas = set(dados.get("aulas_grupo") or [])
+    # Monta a lista de aulas (data + individual/dupla) pra descriminar no email
+    _linhas_aulas = []
     if ciclo == "por_aula_mensal":
-        valor_total = aulas_dadas * valor_aula
-        descricao = f"{aulas_dadas} aulas em {hoje.strftime('%m/%Y')}"
+        for _a in sorted(aulas_query.all(), key=lambda x: x.data):
+            _eh_grupo = _a.data.isoformat() in aulas_grupo_datas or bool(getattr(_a, "em_grupo", False))
+            _linhas_aulas.append(_a.data.strftime('%d/%m') + (" - dupla/grupo" if _eh_grupo else " - individual"))
+    lista_aulas_email = "\n".join(_linhas_aulas)
+    if ciclo == "por_aula_mensal":
+        if aulas_grupo_datas:
+            qtd_grupo = 0
+            for _a in aulas_query.all():
+                if _a.data.isoformat() in aulas_grupo_datas or bool(getattr(_a, "em_grupo", False)):
+                    qtd_grupo += 1
+            qtd_ind = aulas_dadas - qtd_grupo
+            if qtd_ind < 0:
+                qtd_ind = 0
+            valor_total = (qtd_grupo * valor_grupo) + (qtd_ind * valor_aula)
+            if qtd_grupo > 0:
+                descricao = f"{qtd_ind} aula(s) + {qtd_grupo} em dupla em {hoje.strftime('%m/%Y')}"
+            else:
+                descricao = f"{aulas_dadas} aulas em {hoje.strftime('%m/%Y')}"
+        else:
+            valor_total = aulas_dadas * valor_aula
+            descricao = f"{aulas_dadas} aulas em {hoje.strftime('%m/%Y')}"
     else:
         valor_total = valor_mensal
         descricao = f"Mensalidade {hoje.strftime('%m/%Y')}"
     
+    # Serviços extras (ex: avaliação) — somados no total (fix 27/07)
+    servicos = dados.get("servicos") or []
+    valor_servicos = 0.0
+    nomes_servicos = []
+    for sv in servicos:
+        try:
+            valor_servicos += float(sv.get("valor") or 0)
+            if sv.get("descricao"):
+                nomes_servicos.append(str(sv.get("descricao")))
+        except Exception:
+            pass
+    if valor_servicos > 0:
+        valor_total += valor_servicos
+        if nomes_servicos:
+            descricao += " + " + " + ".join(nomes_servicos)
+
+    # FAMILIA (30/jul): agrega aulas/mensalidade dos membros no total do pagador
+    familia_ids = dados.get("membros") or []
+    familia_aulas_queries = []  # guarda as queries pra dar baixa depois do INSERT
+    if familia_ids:
+        for mid in familia_ids:
+            if mid == aluno.id:
+                continue
+            membro = db.query(Aluno).filter(Aluno.id == mid, Aluno.personal_id == personal.id).first()
+            if not membro:
+                continue
+            m_ciclo = membro.ciclo_cobranca or "mensal"
+            m_valor_aula = float(membro.valor_aula) if membro.valor_aula else 0
+            m_valor_mensal = float(membro.valor_mensal) if membro.valor_mensal else 0
+            m_query = db.query(PresencaTreino).filter(
+                PresencaTreino.aluno_id == membro.id,
+                PresencaTreino.tipo == "aula",
+                (PresencaTreino.cobrada == False) | (PresencaTreino.cobrada == None)
+            )
+            m_aulas = m_query.count()
+            m_valor_grupo = float(membro.valor_aula_grupo) if getattr(membro, "valor_aula_grupo", None) else m_valor_aula
+            if m_ciclo == "por_aula_mensal":
+                m_qtd_grupo = m_query.filter(PresencaTreino.em_grupo == True).count()
+                m_qtd_ind = m_aulas - m_qtd_grupo
+                if m_qtd_ind < 0:
+                    m_qtd_ind = 0
+                m_sub = (m_qtd_grupo * m_valor_grupo) + (m_qtd_ind * m_valor_aula)
+                if m_qtd_grupo > 0 and m_qtd_ind > 0:
+                    m_desc = f"{membro.nome} ({m_qtd_ind} individual + {m_qtd_grupo} em dupla)"
+                elif m_qtd_grupo > 0:
+                    m_desc = f"{membro.nome} ({m_qtd_grupo} em dupla)"
+                else:
+                    m_desc = f"{membro.nome} ({m_aulas} aulas)"
+            else:
+                m_sub = m_valor_mensal
+                m_desc = f"{membro.nome} (mensalidade)"
+            # SERVICOS EXTRAS do membro (avaliacao do filho, etc) - entram na cobranca do pagador
+            from sqlalchemy import text as _txt
+            m_servicos = db.execute(_txt("SELECT descricao, valor FROM servicos_extras WHERE aluno_id=:a AND cobrado=FALSE"), {"a": membro.id}).fetchall()
+            m_serv_total = 0.0
+            for _sv in m_servicos:
+                m_serv_total += float(_sv[1] or 0)
+            if m_serv_total > 0:
+                m_sub += m_serv_total
+                _nomes_sv = " + ".join([str(_sv[0]) for _sv in m_servicos])
+                m_desc += f" + {_nomes_sv}"
+            if m_sub > 0:
+                valor_total += m_sub
+                descricao += " | " + m_desc
+                familia_aulas_queries.append(m_query)
+
     if valor_total <= 0:
         raise HTTPException(400, "Valor a cobrar e zero. Verifique aulas dadas ou valor configurado")
     
@@ -1399,6 +1572,14 @@ def fechar_mes_aluno(
         "descricao": descricao
     })
     cobranca_id = result.fetchone()[0]
+    # Marca as aulas desse fechamento como cobradas (fix 27/07: nao recobrar + zerar tela)
+    aulas_query.update({PresencaTreino.cobrada: True}, synchronize_session=False)
+    # FAMILIA: da baixa nas aulas de cada membro tambem
+    try:
+        for _mq in familia_aulas_queries:
+            _mq.update({PresencaTreino.cobrada: True}, synchronize_session=False)
+    except Exception:
+        pass
     db.commit()
     
     return {
@@ -1489,7 +1670,7 @@ def gerar_link_pagamento(
     # Busca cobranca
     sql = text("""
         SELECT c.id, c.aluno_id, c.valor, c.descricao, c.data_vencimento, c.status,
-               a.nome, a.email, a.cpf
+               a.nome, a.email, a.cpf, c.data_fechamento
         FROM cobrancas c
         JOIN alunos a ON a.id = c.aluno_id
         WHERE c.id = :cid AND a.personal_id = :pid
@@ -1507,6 +1688,61 @@ def gerar_link_pagamento(
     descricao = row[3]
     aluno_nome = row[6]
     aluno_email = row[7]
+
+    # Monta a lista de aulas (data + individual/dupla) pra discriminar no email
+    lista_aulas_email = ""
+    try:
+        from app.routers.treino import PresencaTreino
+        _aluno_id = row[1]
+        _mes_ref = row[9]  # data_fechamento da cobranca
+        _q = db.query(PresencaTreino).filter(
+            PresencaTreino.aluno_id == _aluno_id,
+            PresencaTreino.tipo == "aula",
+            (PresencaTreino.cobrada == True)
+        )
+        if _mes_ref:
+            from sqlalchemy import extract
+            _q = _q.filter(
+                extract('month', PresencaTreino.data) == _mes_ref.month,
+                extract('year', PresencaTreino.data) == _mes_ref.year
+            )
+        _presencas = _q.order_by(PresencaTreino.data.desc()).limit(30).all()
+        # pega as aulas cobradas mais recentes (as que entraram nesta cobranca)
+        _linhas = []
+        for _a in sorted(_presencas, key=lambda x: x.data):
+            _g = bool(getattr(_a, "em_grupo", False))
+            _linhas.append(_a.data.strftime("%d/%m") + (" - dupla/grupo" if _g else " - individual"))
+        # servicos (avaliacao etc) do pagador - linha separada com valor
+        from sqlalchemy import text as _txsv
+        _psv = db.execute(_txsv("SELECT descricao, valor FROM servicos_extras WHERE aluno_id=:a AND cobrado=FALSE ORDER BY id DESC LIMIT 10"), {"a": _aluno_id}).fetchall()
+        for _sv in _psv:
+            _linhas.append(str(_sv[0]) + " - R$ " + ("%.2f" % float(_sv[1])).replace(".", ","))
+        # FAMILIA: adiciona as aulas dos membros (quem tem pagador_id = pagador)
+        _membros = db.query(Aluno).filter(Aluno.pagador_id == _aluno_id).all()
+        for _m in _membros:
+            _mq = db.query(PresencaTreino).filter(
+                PresencaTreino.aluno_id == _m.id,
+                PresencaTreino.tipo == "aula",
+                (PresencaTreino.cobrada == True)
+            )
+            if _mes_ref:
+                _mq = _mq.filter(
+                    extract('month', PresencaTreino.data) == _mes_ref.month,
+                    extract('year', PresencaTreino.data) == _mes_ref.year
+                )
+            _maulas = _mq.order_by(PresencaTreino.data.desc()).limit(30).all()
+            _msv = db.execute(_txsv("SELECT descricao, valor FROM servicos_extras WHERE aluno_id=:a AND cobrado=FALSE ORDER BY id DESC LIMIT 10"), {"a": _m.id}).fetchall()
+            if _maulas or _msv:
+                _linhas.append("")
+                _linhas.append(_m.nome + ":")
+                for _a in sorted(_maulas, key=lambda x: x.data):
+                    _g = bool(getattr(_a, "em_grupo", False))
+                    _linhas.append(_a.data.strftime("%d/%m") + (" - dupla/grupo" if _g else " - individual"))
+                for _sv in _msv:
+                    _linhas.append(str(_sv[0]) + " - R$ " + ("%.2f" % float(_sv[1])).replace(".", ","))
+        lista_aulas_email = "\n".join(_linhas)
+    except Exception as _e:
+        lista_aulas_email = ""
     
     try:
         # Cria sessao Stripe
@@ -1563,7 +1799,9 @@ def gerar_link_pagamento(
                 valor=float(row[2]),
                 data_vencimento=data_venc_fmt,
                 url_pagamento=session.url,
-                personal_nome=personal.nome or "Seu Personal Trainer"
+                personal_nome=personal.nome or "Seu Personal Trainer",
+                lista_aulas=lista_aulas_email,
+                mes_ref=(row[9].strftime("%m/%Y") if row[9] else "")
             )
             email_ok = enviar_email(
                 para=aluno_email,
@@ -1734,10 +1972,13 @@ def get_dados_aluno(
         "email": aluno.email,
         "telefone": aluno.telefone,
         "cpf": aluno.cpf,
+        "tipo_nf": getattr(aluno, "tipo_nf", None) or "cpf",
+        "cnpj": getattr(aluno, "cnpj", None),
         "data_nascimento": aluno.data_nascimento.isoformat() if aluno.data_nascimento else None,
         "ciclo_cobranca": aluno.ciclo_cobranca or "mensal",
         "valor_mensal": float(aluno.valor_mensal) if aluno.valor_mensal else None,
         "valor_aula": float(aluno.valor_aula) if aluno.valor_aula else None,
+        "valor_aula_grupo": float(aluno.valor_aula_grupo) if getattr(aluno, "valor_aula_grupo", None) else None,
         "dia_fechamento": aluno.dia_fechamento or 30,
         "dias_vencimento": aluno.dias_vencimento or 5,
     }
@@ -1779,6 +2020,8 @@ def put_dados_aluno(
         aluno.valor_mensal = float(payload["valor_mensal"]) if payload["valor_mensal"] else None
     if "valor_aula" in payload:
         aluno.valor_aula = float(payload["valor_aula"]) if payload["valor_aula"] else None
+    if "valor_aula_grupo" in payload:
+        aluno.valor_aula_grupo = float(payload["valor_aula_grupo"]) if payload["valor_aula_grupo"] else None
     if "dia_fechamento" in payload and payload["dia_fechamento"]:
         aluno.dia_fechamento = int(payload["dia_fechamento"])
     if "dias_vencimento" in payload and payload["dias_vencimento"]:
@@ -1786,6 +2029,36 @@ def put_dados_aluno(
     
     db.commit()
     return {"ok": True, "mensagem": "Dados atualizados"}
+
+
+@router.post("/aluno/{aluno_id}/servico")
+def add_servico_extra(aluno_id: int, payload: dict, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    from sqlalchemy import text
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal.id).first()
+    if not aluno:
+        raise HTTPException(404, "Aluno nao encontrado")
+    desc = (payload.get("descricao") or "").strip()
+    val = payload.get("valor")
+    if not desc or val is None:
+        raise HTTPException(400, "descricao e valor obrigatorios")
+    db.execute(text("INSERT INTO servicos_extras (aluno_id, descricao, valor, cobrado) VALUES (:a, :d, :v, FALSE)"),
+               {"a": aluno_id, "d": desc, "v": float(val)})
+    db.commit()
+    return {"ok": True}
+
+@router.get("/aluno/{aluno_id}/servicos")
+def listar_servicos_extras(aluno_id: int, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    from sqlalchemy import text
+    rows = db.execute(text("SELECT id, descricao, valor FROM servicos_extras WHERE aluno_id=:a AND cobrado=FALSE ORDER BY id"),
+                      {"a": aluno_id}).fetchall()
+    return {"servicos": [{"id": r[0], "descricao": r[1], "valor": float(r[2])} for r in rows]}
+
+@router.delete("/aluno/{aluno_id}/servico/{servico_id}")
+def del_servico_extra(aluno_id: int, servico_id: int, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    from sqlalchemy import text
+    db.execute(text("DELETE FROM servicos_extras WHERE id=:s AND aluno_id=:a"), {"s": servico_id, "a": aluno_id})
+    db.commit()
+    return {"ok": True}
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1813,8 +2086,6 @@ def aceitar_contrato(
         raise HTTPException(400, "CREF obrigatorio")
     if not cref_estado or len(cref_estado) != 2:
         raise HTTPException(400, "Estado do CREF obrigatorio (UF)")
-    if not consultou_confef:
-        raise HTTPException(400, "Voce precisa consultar seu CREF no CONFEF antes de continuar")
     if not aceito_contrato:
         raise HTTPException(400, "Voce precisa aceitar o contrato")
     
@@ -1824,7 +2095,7 @@ def aceitar_contrato(
     # Atualiza Personal
     personal.cref = cref
     personal.cref_estado = cref_estado
-    personal.cref_consultado_confef = True
+    personal.cref_consultado_confef = consultou_confef  # grava o que ele declarou, sem bloquear
     personal.cref_status = "pendente"  # admin valida depois (auditoria por amostragem)
     personal.contrato_aceito_em = dt.utcnow()
     personal.contrato_aceito_ip = ip
@@ -1954,18 +2225,194 @@ def aulas_aluno_mes(
         PresencaTreino.aluno_id == aluno_id,
         PresencaTreino.data >= primeiro_dia,
         PresencaTreino.data <= ultimo_dia,
-        PresencaTreino.tipo == "aula"
+        PresencaTreino.tipo == "aula",
+        (PresencaTreino.cobrada == False) | (PresencaTreino.cobrada.is_(None))
     ).all()
     
     datas = [p.data.isoformat() for p in presencas]
+    aulas_detalhe = [{"data": p.data.isoformat(), "em_grupo": bool(getattr(p, "em_grupo", False))} for p in presencas]
     
     return {
         "aluno_id": aluno_id,
         "ano": ano,
         "mes": mes,
         "checkins": len(presencas),
-        "datas": datas
+        "datas": datas,
+        "aulas": aulas_detalhe
     }
+
+@router.get("/aluno/{aluno_id}/aulas-a-receber")
+def aulas_a_receber(
+    aluno_id: int,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Prontuario de divida: aulas nao cobradas do aluno, agrupadas por mes."""
+    from app.routers.treino import PresencaTreino
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal.id).first()
+    if not aluno:
+        raise HTTPException(404, "Aluno nao encontrado")
+    valor_aula = float(getattr(aluno, "valor_aula", 0) or 0)
+    presencas = db.query(PresencaTreino).filter(
+        PresencaTreino.aluno_id == aluno_id,
+        PresencaTreino.tipo == "aula",
+        (PresencaTreino.cobrada == False) | (PresencaTreino.cobrada.is_(None))
+    ).order_by(PresencaTreino.data).all()
+    grupos = {}
+    for p in presencas:
+        chave = p.data.strftime("%Y-%m")
+        grupos.setdefault(chave, []).append(p.data.isoformat())
+    meses = []
+    total_aulas = 0
+    for chave in sorted(grupos.keys()):
+        qtd = len(grupos[chave])
+        total_aulas += qtd
+        meses.append({"mes": chave, "qtd": qtd, "valor": round(qtd * valor_aula, 2), "datas": grupos[chave]})
+    return {"aluno_id": aluno_id, "valor_aula": valor_aula, "meses": meses, "total_aulas": total_aulas, "total_valor": round(total_aulas * valor_aula, 2)}
+
+@router.post("/financeiro/preview-familia")
+def preview_familia(
+    dados: dict = Body(default={}),
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Preview da cobranca de familia: recebe {membros:[id,...]} e devolve, por membro,
+    nome + qtd de aulas pendentes + valor (valor_aula do proprio membro), mais o total geral.
+    So LEITURA - nao grava nada."""
+    from app.routers.treino import PresencaTreino
+    ids = dados.get("membros") or []
+    if not isinstance(ids, list) or not ids:
+        raise HTTPException(400, "membros obrigatorio (lista de ids)")
+    membros = []
+    total_geral = 0.0
+    for aid in ids:
+        aluno = db.query(Aluno).filter(Aluno.id == aid, Aluno.personal_id == personal.id).first()
+        if not aluno:
+            continue
+        va = float(getattr(aluno, "valor_aula", 0) or 0)
+        m_ciclo = aluno.ciclo_cobranca or "mensal"
+        qtd = db.query(PresencaTreino).filter(
+            PresencaTreino.aluno_id == aid,
+            PresencaTreino.tipo == "aula",
+            (PresencaTreino.cobrada == False) | (PresencaTreino.cobrada.is_(None))
+        ).count()
+        if m_ciclo == "por_aula_mensal":
+            vg = float(getattr(aluno, "valor_aula_grupo", 0) or 0) or va
+            qtd_grupo = db.query(PresencaTreino).filter(
+                PresencaTreino.aluno_id == aid,
+                PresencaTreino.tipo == "aula",
+                (PresencaTreino.cobrada == False) | (PresencaTreino.cobrada.is_(None)),
+                PresencaTreino.em_grupo == True
+            ).count()
+            qtd_ind = qtd - qtd_grupo
+            if qtd_ind < 0:
+                qtd_ind = 0
+            sub = round((qtd_grupo * vg) + (qtd_ind * va), 2)
+            _modelo = "aula"
+        else:
+            sub = round(float(getattr(aluno, "valor_mensal", 0) or 0), 2)
+            _modelo = "mensal"
+        # SERVICOS EXTRAS do membro (avaliacao, etc) - somam no preview igual na cobranca
+        from sqlalchemy import text as _txtp
+        _msv = db.execute(_txtp("SELECT COALESCE(SUM(valor),0) FROM servicos_extras WHERE aluno_id=:a AND cobrado=FALSE"), {"a": aid}).fetchone()
+        _serv_m = float(_msv[0] or 0) if _msv else 0
+        sub = round(sub + _serv_m, 2)
+        total_geral += sub
+        membros.append({"aluno_id": aid, "nome": aluno.nome, "aulas": qtd, "valor_aula": va, "valor": sub, "modelo": _modelo})
+    return {"membros": membros, "total_familia": round(total_geral, 2)}
+
+
+@router.post("/financeiro/familia/{pagador_id}/salvar")
+def salvar_familia(
+    pagador_id: int,
+    dados: dict = Body(default={}),
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Salva a familia de um pagador: marca pagador_id nos membros escolhidos e
+    limpa quem saiu. Recebe {membros:[ids]}. So mexe em alunos do proprio personal."""
+    from sqlalchemy import text
+    pagador = db.query(Aluno).filter(Aluno.id == pagador_id, Aluno.personal_id == personal.id).first()
+    if not pagador:
+        raise HTTPException(404, "Pagador nao encontrado")
+    ids = dados.get("membros") or []
+    ids = [int(x) for x in ids if int(x) != pagador_id]
+    # 1) limpa quem apontava pra esse pagador mas nao esta mais na lista
+    db.execute(text("UPDATE alunos SET pagador_id=NULL WHERE pagador_id=:pid AND personal_id=:perid"),
+        {"pid": pagador_id, "perid": personal.id})
+    # 2) marca os membros atuais (so alunos do proprio personal)
+    for mid in ids:
+        db.execute(text("UPDATE alunos SET pagador_id=:pid WHERE id=:mid AND personal_id=:perid"),
+            {"pid": pagador_id, "mid": mid, "perid": personal.id})
+    db.commit()
+    return {"ok": True, "pagador_id": pagador_id, "membros": ids}
+
+
+@router.get("/financeiro/familia/{pagador_id}")
+def carregar_familia(
+    pagador_id: int,
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Carrega os membros salvos da familia de um pagador (quem tem pagador_id = ele)."""
+    membros = db.query(Aluno).filter(Aluno.pagador_id == pagador_id, Aluno.personal_id == personal.id).all()
+    return {"pagador_id": pagador_id, "membros": [m.id for m in membros]}
+
+
+@router.post("/aluno/{aluno_id}/acertar-pendencia")
+def acertar_pendencia(
+    aluno_id: int,
+    dados: dict = Body(default={}),
+    personal: Personal = Depends(get_personal_atual),
+    db: Session = Depends(get_db)
+):
+    """Da baixa nas aulas atrasadas de UM mes: marca cobrada=true e lanca na receita."""
+    from app.routers.treino import PresencaTreino
+    from datetime import date as date_cls
+    from calendar import monthrange
+    from sqlalchemy import text
+    mes_str = dados.get("mes")
+    if not mes_str:
+        raise HTTPException(400, "mes obrigatorio (YYYY-MM)")
+    try:
+        _ano, _mes = int(mes_str.split("-")[0]), int(mes_str.split("-")[1])
+    except Exception:
+        raise HTTPException(400, "mes invalido")
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal.id).first()
+    if not aluno:
+        raise HTTPException(404, "Aluno nao encontrado")
+    primeiro = date_cls(_ano, _mes, 1)
+    ultimo = date_cls(_ano, _mes, monthrange(_ano, _mes)[1])
+    q = db.query(PresencaTreino).filter(
+        PresencaTreino.aluno_id == aluno_id,
+        PresencaTreino.tipo == "aula",
+        PresencaTreino.data >= primeiro,
+        PresencaTreino.data <= ultimo,
+        (PresencaTreino.cobrada == False) | (PresencaTreino.cobrada == None)
+    )
+    qtd = q.count()
+    if qtd == 0:
+        raise HTTPException(400, "Nenhuma aula pendente nesse mes")
+    valor_aula = float(getattr(aluno, "valor_aula", 0) or 0)
+    valor_total = round(qtd * valor_aula, 2)
+    _mn = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
+    descricao = str(qtd) + " aulas (acerto " + _mn[_mes-1] + "/" + str(_ano) + ")"
+    q.update({PresencaTreino.cobrada: True}, synchronize_session=False)
+    try:
+        db.execute(text("INSERT INTO pagamentos (aluno_id, personal_id, valor, descricao, data_vencimento, data_pagamento, status) VALUES (:aid, :pid, :val, :desc, :venc, :dtpag, :st)"),
+            {"aid": aluno_id, "pid": personal.id, "val": valor_total, "desc": descricao, "venc": date_cls.today(), "dtpag": date_cls.today(), "st": "pago"})
+        # TRAVA ANTI-DUPLO (30/jul): se existe cobranca Stripe pendente desse aluno cujo fechamento cai no mes acertado,
+        # marca como paga via acerto manual -> quando/se o aluno pagar o link, o webhook ve status=pago e nao duplica.
+        db.execute(text("""
+            UPDATE cobrancas SET status='pago', data_pagamento=:hoje, metodo_pagamento='acerto_manual', atualizado_em=NOW()
+            WHERE aluno_id=:aid AND status!='pago'
+              AND EXTRACT(MONTH FROM data_fechamento)=:mes AND EXTRACT(YEAR FROM data_fechamento)=:ano
+        """), {"hoje": date_cls.today(), "aid": aluno_id, "mes": _mes, "ano": _ano})
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(500, "Erro ao lancar recebimento: " + str(e))
+    db.commit()
+    return {"ok": True, "aluno_id": aluno_id, "mes": mes_str, "aulas": qtd, "valor": valor_total}
 
 
 # ==========================================
@@ -2035,11 +2482,6 @@ def enviar_recibo_email(
               <div style="font-size:32px;color:#0A0A0F;font-weight:bold">{valor_fmt}</div>
             </div>
             
-            <div style="background:rgba(201,168,76,.05);padding:12px;border-radius:8px;font-size:11px;color:#888;line-height:1.6">
-              <b style="color:#C9A84C">Tributos estimados (Simples Nacional):</b><br>
-              DAS ~6%: {tributos_fmt}<br>
-              <i>Valores aproximados. Consulte seu contador.</i>
-            </div>
           </div>
           
           <div style="text-align:center;color:#888;font-size:11px;line-height:1.6">

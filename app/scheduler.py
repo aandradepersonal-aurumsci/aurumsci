@@ -121,6 +121,29 @@ def email_reavaliacao_bimestral():
             
             if _enviar_email(aluno.email, f"⏰ {aluno.nome}, hora da reavaliação bimestral!", html):
                 enviados += 1
+
+            # Avisa o PERSONAL — e ele quem faz a reavaliacao e cobra por ela
+            if aluno.personal_id:
+                try:
+                    from app.models import Personal
+                    _p = db.query(Personal).filter(Personal.id == aluno.personal_id).first()
+                    if _p and _p.email:
+                        _html_p = _template_email(
+                            titulo_topo=f"📋 Reavaliação de {aluno.nome}",
+                            cor_destaque="#C9A84C",
+                            conteudo_html=f"""
+                <p style="color:#ccc;font-size:15px;line-height:1.8;">
+                  <strong style="color:#fff;">{aluno.nome}</strong> completou 8 semanas desde a última avaliação.
+                </p>
+                <p style="color:#ccc;font-size:14px;line-height:1.7;">
+                  O aluno já foi avisado. Agende a reavaliação e lance o serviço no financeiro dele.
+                </p>""",
+                            cta_texto="ABRIR O PRO",
+                            cta_url="https://www.aurumsc.com.br/personal"
+                        )
+                        _enviar_email(_p.email, f"📋 {aluno.nome} está na hora da reavaliação", _html_p)
+                except Exception as e:
+                    print(f"[SCHEDULER] erro ao avisar personal de {aluno.nome}: {e}")
         
         print(f"[SCHEDULER] email_reavaliacao_bimestral: {enviados} enviados")
     finally:

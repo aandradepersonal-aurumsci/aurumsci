@@ -139,23 +139,14 @@ def gerar_pdf_contrato(personal, output_dir="static/contratos"):
         texto_style
     ))
     
-    story.append(Paragraph("4. CUSTOS DE TERCEIROS", secao_style))
-    story.append(Paragraph(
-        "Serviços automatizados têm custo repassado sem margem:<br/>"
-        "• WhatsApp (Meta): R$ 0,12 por mensagem<br/>"
-        "• NF-e (prefeitura): R$ 0,30 por nota<br/><br/>"
-        "Consumo visível em tempo real no painel financeiro.",
-        texto_style
-    ))
-    
-    story.append(Paragraph("5. TRIAL E CANCELAMENTO", secao_style))
+    story.append(Paragraph("4. TRIAL E CANCELAMENTO", secao_style))
     story.append(Paragraph(
         "Trial gratuito de 7 dias. Após esse período, cobrança automática mensal. "
         "Cancelamento a qualquer momento, com acesso ativo até o fim do ciclo pago.",
         texto_style
     ))
     
-    story.append(Paragraph("6. RESPONSABILIDADE TÉCNICA", secao_style))
+    story.append(Paragraph("5. RESPONSABILIDADE TÉCNICA", secao_style))
     story.append(Paragraph(
         "AurumSci é ferramenta tecnológica. O personal CREF é o ÚNICO responsável "
         "por treinos, avaliações e atendimentos. Sugestões geradas por IA (treinos, "
@@ -163,14 +154,14 @@ def gerar_pdf_contrato(personal, output_dir="static/contratos"):
         texto_style
     ))
     
-    story.append(Paragraph("7. PROTEÇÃO DE DADOS (LGPD)", secao_style))
+    story.append(Paragraph("6. PROTEÇÃO DE DADOS (LGPD)", secao_style))
     story.append(Paragraph(
         "Dados dos alunos pertencem ao personal. AurumSci não comercializa nem "
         "compartilha. Personal pode exportar/excluir dados a qualquer momento.",
         texto_style
     ))
     
-    story.append(Paragraph("8. JURISDIÇÃO", secao_style))
+    story.append(Paragraph("7. JURISDIÇÃO", secao_style))
     story.append(Paragraph(
         f"Foro da comarca de São Paulo/SP. Lei brasileira aplicável. "
         "Versão 2.0, vigente desde 07/08/2026.",

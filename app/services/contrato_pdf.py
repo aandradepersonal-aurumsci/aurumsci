@@ -133,7 +133,7 @@ def gerar_pdf_contrato(personal, output_dir="static/contratos"):
         "3.2 Personal declara, sob as penas da lei (Art. 299 CP — Falsidade Ideológica), que:<br/>"
         "a) CREF informado é seu, ativo e adimplente;<br/>"
         
-        "c) Não responde a processo ético em andamento.<br/><br/>"
+        "b) Não responde a processo ético em andamento.<br/><br/>"
         "3.3 AurumSci pode validar o registro a qualquer momento. Irregularidade detectada "
         "suspende o acesso sem reembolso.",
         texto_style

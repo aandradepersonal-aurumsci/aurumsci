@@ -5052,15 +5052,9 @@ function baixarMeuContrato() {
         <label style="font-size:11px;color:var(--cinza);display:block;margin-bottom:4px">Estado (UF)</label>
         <input type="text" id="cont-cref-uf" placeholder="Ex: SP" maxlength="2" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--borda);border-radius:8px;color:var(--texto);font-size:13px;text-transform:uppercase">
       </div>
-      <a href="https://www.confef.org.br/extra/perfil/" target="_blank" style="display:block;text-align:center;padding:12px;background:linear-gradient(135deg,#0066cc,#003d7a);color:#fff;border-radius:8px;text-decoration:none;font-family:Bebas Neue;font-size:14px;letter-spacing:1px;margin-bottom:8px">🔗 CONSULTAR MEU CREF NO CONFEF</a>
-      <div style="font-size:10px;color:var(--cinza);text-align:center;font-style:italic">Verifique se está ATIVO e ADIMPLENTE antes de continuar</div>
     </div>
     
     <div style="margin-bottom:14px;font-size:12px;color:var(--texto);line-height:1.7">
-      <label style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;cursor:pointer">
-        <input type="checkbox" id="cont-chk-consultou" style="margin-top:3px;width:18px;height:18px;flex-shrink:0">
-        <span>Consultei meu CREF no site oficial do CONFEF e confirmo que está <strong>ATIVO e ADIMPLENTE</strong></span>
-      </label>
       <label style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;cursor:pointer">
         <input type="checkbox" id="cont-chk-veracidade" style="margin-top:3px;width:18px;height:18px;flex-shrink:0">
         <span>Declaro, sob as penas da lei (Art. 299 CP), que todas as informações são <strong>verdadeiras</strong></span>
@@ -5085,13 +5079,11 @@ function abrirContratoAurumSci(){
 function aceitarContratoAurumSci(){
   var cref = document.getElementById('cont-cref').value.trim();
   var uf = document.getElementById('cont-cref-uf').value.trim().toUpperCase();
-  var chk1 = document.getElementById('cont-chk-consultou').checked;
   var chk2 = document.getElementById('cont-chk-veracidade').checked;
   var chk3 = document.getElementById('cont-chk-aceito').checked;
   
   if(!cref){ alert('⚠️ Informe seu numero de CREF'); return; }
   if(!uf || uf.length !== 2){ alert('⚠️ Informe o estado do CREF (2 letras)'); return; }
-  if(!chk1){ alert('⚠️ Voce precisa confirmar que consultou seu CREF no CONFEF'); return; }
   if(!chk2){ alert('⚠️ Voce precisa declarar veracidade das informacoes'); return; }
   if(!chk3){ alert('⚠️ Voce precisa aceitar os termos do contrato'); return; }
   

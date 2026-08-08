@@ -108,6 +108,8 @@ class PresencaTreino(Base):
     sensacao_subjetiva = Column(Integer)
     observacoes = Column(Text)
     tipo = Column(String(20), default="treino")  # "treino" (aluno) ou "aula" (presencial/cobranca)
+    cobrada = Column(Boolean, default=False)  # True = ja faturada num fechamento (fix 27/07)
+    em_grupo = Column(Boolean, default=False)  # True = aula em dupla/grupo (valor reduzido) (30/07)
     criado_em = Column(DateTime, default=datetime.utcnow)
 
 

@@ -74,6 +74,8 @@ def auto_migrate():
         "ALTER TABLE personals ADD COLUMN IF NOT EXISTS contrato_aceito_em TIMESTAMP",
         "ALTER TABLE personals ADD COLUMN IF NOT EXISTS contrato_aceito_ip VARCHAR(45)",
         # Stripe + Assinatura no Aluno (02/05/2026)
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS tipo_nf VARCHAR(10) DEFAULT 'cpf'",
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS cnpj VARCHAR(20)",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS stripe_customer_id VARCHAR(100)",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS stripe_subscription_id VARCHAR(100)",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS assinatura_status VARCHAR(20) DEFAULT 'sem_assinatura'",
@@ -85,6 +87,12 @@ def auto_migrate():
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS auri_msgs_hoje INTEGER DEFAULT 0",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS auri_msgs_data DATE",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS postural_ultima_data DATE",
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS pagador_id INTEGER",
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS valor_aula_grupo FLOAT",
+        "ALTER TABLE presencas ADD COLUMN IF NOT EXISTS cobrada BOOLEAN DEFAULT FALSE",
+        "ALTER TABLE presencas ADD COLUMN IF NOT EXISTS em_grupo BOOLEAN DEFAULT FALSE",
+        # SERVICO EXTRA persistente (avaliacao, etc) - fica salvo ate ser cobrado
+        "CREATE TABLE IF NOT EXISTS servicos_extras (id SERIAL PRIMARY KEY, aluno_id INTEGER REFERENCES alunos(id), descricao VARCHAR(200), valor FLOAT, data DATE DEFAULT CURRENT_DATE, cobrado BOOLEAN DEFAULT FALSE)",
         # IAP Apple In-App Purchase (24/05/2026)
         "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS personal_id INTEGER REFERENCES personals(id)",
         "ALTER TABLE assinaturas_iap ADD COLUMN IF NOT EXISTS aluno_id INTEGER REFERENCES alunos(id)",
@@ -267,6 +275,56 @@ def landing_pro_preview():
     """PREVIEW da landing do PRO (nao publica). /pro segue servindo o em-breve."""
     with open("static/landing_pro.html", "r", encoding="utf-8") as f:
         return f.read()
+@app.get("/robots.txt", include_in_schema=False)
+def robots_txt():
+    """Diz aos buscadores o que rastrear. Bloqueia login, checkout e API."""
+    from fastapi.responses import PlainTextResponse
+    txt = """User-agent: *
+Allow: /$
+Allow: /family
+Allow: /pro
+Allow: /privacidade
+Allow: /termos
+
+Disallow: /app-aluno/
+Disallow: /app-personal/
+Disallow: /onboarding/
+Disallow: /pagamento/
+Disallow: /iap/
+Disallow: /aluno
+Disallow: /personal
+Disallow: /cadastro
+Disallow: /cadastro-pro
+Disallow: /paywall-pro
+Disallow: /paywall-aluno
+Disallow: /redefinir-senha
+Disallow: /upgrade
+Disallow: /postural
+Disallow: /aura
+Disallow: /pro-preview
+Disallow: /health
+Disallow: /debug-path
+Disallow: /docs
+Disallow: /redoc
+
+Sitemap: https://www.aurumsc.com.br/sitemap.xml
+"""
+    return PlainTextResponse(txt)
+
+
+@app.get("/sitemap.xml", include_in_schema=False)
+def sitemap_xml():
+    """Lista as paginas publicas que queremos indexadas."""
+    from fastapi.responses import Response
+    paginas = ["/", "/family", "/pro", "/privacidade", "/termos"]
+    hoje = datetime.now().strftime("%Y-%m-%d")
+    urls = ""
+    for p in paginas:
+        urls += "  <url><loc>https://www.aurumsc.com.br" + p + "</loc><lastmod>" + hoje + "</lastmod></url>\n"
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + "</urlset>\n"
+    return Response(content=xml, media_type="application/xml")
+
+
 @app.get("/family", response_class=HTMLResponse, include_in_schema=False)
 def landing_family():
     """Casa-mae do ecossistema AurumSci — apresenta os 4 projetos + busca de ciencia."""

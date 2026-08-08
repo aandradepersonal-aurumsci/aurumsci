@@ -73,7 +73,7 @@ def gerar_pdf_contrato(personal, output_dir="static/contratos"):
     
     # Titulo
     story.append(Paragraph("CONTRATO DE PRESTAÇÃO DE SERVIÇOS", titulo_style))
-    story.append(Paragraph(f"AurumSci PRO · Versão 1.0 · {datetime.now().strftime('%d/%m/%Y')}", subtitulo_style))
+    story.append(Paragraph("AurumSci PRO · Versão 2.0 · vigente desde 07/08/2026", subtitulo_style))
     
     # Dados das partes
     dados_data = [
@@ -119,10 +119,10 @@ def gerar_pdf_contrato(personal, output_dir="static/contratos"):
     
     story.append(Paragraph("2. PLANOS E MENSALIDADE", secao_style))
     story.append(Paragraph(
-        "<b>Bronze:</b> R$ 49,90/mês (até 10 alunos)<br/>"
-        "<b>Prata:</b> R$ 89,90/mês (até 20 alunos)<br/>"
-        "<b>Ouro:</b> R$ 149,90/mês (até 50 alunos)<br/>"
-        "<b>Diamante:</b> R$ 249,90/mês (alunos ilimitados)<br/><br/>"
+        "<b>Bronze:</b> R$ 189,90/mês (até 10 alunos)<br/>"
+        "<b>Prata:</b> R$ 249,90/mês (até 20 alunos)<br/>"
+        "<b>Ouro:</b> R$ 399,90/mês (até 50 alunos)<br/>"
+        "<b>Diamante:</b> R$ 449,90/mês (alunos ilimitados)<br/><br/>"
         "Cobrança automática via cartão. Upgrade/downgrade a qualquer momento.",
         texto_style
     ))
@@ -132,7 +132,7 @@ def gerar_pdf_contrato(personal, output_dir="static/contratos"):
         "3.1 Acesso EXCLUSIVO a profissionais com registro ATIVO e ADIMPLENTE no CREF.<br/><br/>"
         "3.2 Personal declara, sob as penas da lei (Art. 299 CP — Falsidade Ideológica), que:<br/>"
         "a) CREF informado é seu, ativo e adimplente;<br/>"
-        "b) Consultou o site oficial do CONFEF (www.confef.org.br);<br/>"
+        
         "c) Não responde a processo ético em andamento.<br/><br/>"
         "3.3 AurumSci pode validar o registro a qualquer momento. Irregularidade detectada "
         "suspende o acesso sem reembolso.",
@@ -173,7 +173,7 @@ def gerar_pdf_contrato(personal, output_dir="static/contratos"):
     story.append(Paragraph("8. JURISDIÇÃO", secao_style))
     story.append(Paragraph(
         f"Foro da comarca de São Paulo/SP. Lei brasileira aplicável. "
-        f"Versão 1.0 datada de {datetime.now().strftime('%d/%m/%Y')}.",
+        "Versão 2.0, vigente desde 07/08/2026.",
         texto_style
     ))
     
@@ -185,7 +185,6 @@ def gerar_pdf_contrato(personal, output_dir="static/contratos"):
         ['Data:', personal.contrato_aceito_em.strftime('%d/%m/%Y às %H:%M:%S') if personal.contrato_aceito_em else '—'],
         ['IP:', personal.contrato_aceito_ip or '—'],
         ['Status CREF:', personal.cref_status or 'pendente'],
-        ['Consultou CONFEF:', 'Sim' if personal.cref_consultado_confef else 'Não'],
     ]
     
     aceite_table = Table(aceite_data, colWidths=[5*cm, 12*cm])

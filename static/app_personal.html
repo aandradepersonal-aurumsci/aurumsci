@@ -2507,6 +2507,14 @@ function abrirModalWhatsApp(nome, email, telefone, cpf){
 }
 
 // ── CHAT ──────────────────────────────────────────────────────
+function copiarMsgAuri(btn){
+  var md = btn.previousElementSibling;
+  var texto = md ? md.innerText : '';
+  if(navigator.clipboard){ navigator.clipboard.writeText(texto); }
+  else { var t=document.createElement('textarea'); t.value=texto; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); }
+  var orig = btn.innerHTML; btn.innerHTML = '✅ Copiado!';
+  setTimeout(function(){ btn.innerHTML = orig; }, 1500);
+}
 function enviarMsg(){
   var input = document.getElementById('chat-input');
   var msg = input.value.trim();
@@ -2529,7 +2537,9 @@ function enviarMsg(){
     body: JSON.stringify({mensagem:msgComIdioma, historico:chatHist.slice(-10), idioma:lang})})
   .then(function(r){ return r.json(); })
   .then(function(d){ 
-    typing.innerHTML = '<span class="msg-tag">AURI</span>' + (d.resposta || 'Tente novamente');
+    var _r = d.resposta || 'Tente novamente';
+    var _f = (typeof marked !== 'undefined') ? marked.parse(_r) : _r.replace(/\n/g,'<br>');
+    typing.innerHTML = '<span class="msg-tag">AURI</span><div class="auri-md">' + _f + '</div>' + '<button onclick="copiarMsgAuri(this)" style="margin-top:8px;background:transparent;border:1px solid var(--borda,rgba(212,175,55,.4));color:var(--ouro);font-size:11px;padding:4px 10px;border-radius:8px;cursor:pointer">📋 Copiar</button>';
     chatHist.push({role:'assistant', content:d.resposta||''});
     msgs.scrollTop = msgs.scrollHeight;
   })

@@ -4757,13 +4757,22 @@ function cronoAlerta(){
 }
 
 // ── AURI ──────────────────────────────────────────────
+function copiarMsgAuri(btn){
+  var bloco = btn.closest('.msg-auri');
+  var md = bloco ? bloco.querySelector('.auri-md') : null;
+  var texto = md ? md.innerText : (bloco ? bloco.innerText.replace('AURI','').trim() : '');
+  if(navigator.clipboard){ navigator.clipboard.writeText(texto); }
+  else { var t=document.createElement('textarea'); t.value=texto; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); }
+  var orig = btn.innerHTML; btn.innerHTML = '✅ Copiado!';
+  setTimeout(function(){ btn.innerHTML = orig; }, 1500);
+}
 function adicionarMsgAuri(texto){
   var msgs = document.getElementById('chat-msgs');
   if(!msgs) return;
   var div = document.createElement('div');
   div.className = 'msg msg-auri';
   var fmt = (typeof marked !== 'undefined') ? marked.parse(texto) : texto.replace(/\n/g, '<br>');
-  div.innerHTML = '<span class="msg-tag">AURI</span><div class="auri-md">' + fmt + '</div>';
+  div.innerHTML = '<span class="msg-tag">AURI</span><div class="auri-md">' + fmt + '</div><button onclick="copiarMsgAuri(this)" style="margin-top:8px;background:transparent;border:1px solid var(--borda);color:var(--ouro);font-size:11px;padding:4px 10px;border-radius:8px;cursor:pointer">\ud83d\udccb Copiar</button>';
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -4794,8 +4803,10 @@ function enviarMsg(){
     body: JSON.stringify({mensagem:msgComIdioma, historico:chatHist.slice(-10)})})
   .then(function(r){ return r.json(); })
   .then(function(d){
-    typing.innerHTML = '<span class="msg-tag">AURI</span>' + (d.resposta||'Tente novamente!');
-    chatHist.push({role:'assistant', content:d.resposta||''});
+    var respTxt = d.resposta||'Tente novamente!';
+    var respFmt = (typeof marked !== 'undefined') ? marked.parse(respTxt) : respTxt.replace(/\n/g,'<br>');
+    typing.innerHTML = '<span class="msg-tag">AURI</span><div class="auri-md">' + respFmt + '</div><button onclick="copiarMsgAuri(this)" style="margin-top:8px;background:transparent;border:1px solid var(--borda);color:var(--ouro);font-size:11px;padding:4px 10px;border-radius:8px;cursor:pointer">\ud83d\udccb Copiar</button>';
+    chatHist.push({role:'assistant', content:respTxt});
     msgs.scrollTop = msgs.scrollHeight;
   }).catch(function(){ typing.innerHTML = '<span class="msg-tag">AURI</span>Tente novamente!'; });
 }

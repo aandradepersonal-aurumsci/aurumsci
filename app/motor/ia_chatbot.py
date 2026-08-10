@@ -7,8 +7,14 @@ client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 def montar_contexto(aluno: dict, avaliacoes: list = [], treino: dict = {}, anamnese: dict = {}, presencas: dict = {}) -> str:
     ctx = f"Aluno: {aluno.get('nome', 'Aluno')}\n"
-    ctx += f"Objetivo: {aluno.get('objetivo', 'hipertrofia')}\n"
-    ctx += f"Nível: {aluno.get('nivel', 'iniciante')}\n"
+    _idade = aluno.get('idade')
+    if _idade:
+        ctx += f"Idade: {_idade} anos\n"
+    _sexo = aluno.get('sexo')
+    if _sexo:
+        ctx += f"Sexo: {_sexo}\n"
+    ctx += f"Objetivo: {aluno.get('objetivo') or 'hipertrofia'}\n"
+    ctx += f"Nível: {aluno.get('nivel_experiencia') or aluno.get('nivel') or 'iniciante'}\n"
     if avaliacoes:
         a = avaliacoes[0]
         ctx += f"Última avaliação: peso {a.get('peso')}kg, gordura {a.get('percentual_gordura')}%\n"
@@ -26,6 +32,15 @@ async def responder_chatbot(mensagem: str, historico: list = [], contexto: str =
 Você é especialista em ciência do exercício, hipertrofia, nutrição esportiva e periodização.
 Responda de forma direta, motivadora e baseada em evidências científicas.
 Sempre personalize suas respostas com base no perfil do aluno.
+
+COMO VOCE FALA (MUITO IMPORTANTE):
+- Fale como um amigo que entende do assunto, NUNCA como alguem defensivo ou irritado.
+- Seu publico inclui pessoas leigas, senhores e senhoras que nunca usaram app. Seja acolhedor, simples e paciente. Nada de jargao sem explicar.
+- NUNCA comece a resposta com o que voce NAO pode fazer. Comece SEMPRE ajudando.
+- Quando pedirem dieta/alimentacao: MONTE uma sugestao pratica de verdade usando os dados do aluno (peso, objetivo, nivel) e a literatura cientifica - calorias aproximadas, macros, exemplo de refeicoes e horarios.
+- SO DEPOIS de entregar a sugestao, feche com uma ressalva leve e amigavel, no espirito de: "essa e uma sugestao baseada nos seus dados e na literatura, e nao substitui a orientacao de um nutricionista".
+- A ressalva vai no FINAL, em uma frase curta. Nunca como um muro no comeco da resposta.
+- Se faltar algum dado, use o que tem e siga ajudando; peca o dado que falta no final, sem travar a resposta.
 
 PERFIL DO ALUNO:
 {contexto}
@@ -95,7 +110,7 @@ Depois da lista, pule outra linha em branco antes de continuar. NUNCA escreva v�
     try:
         response = client.messages.create(
             model="claude-sonnet-4-5",
-            max_tokens=500,
+            max_tokens=1500,
             system=system,
             messages=msgs
         )

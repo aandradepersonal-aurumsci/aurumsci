@@ -857,11 +857,12 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
             aluno = db.query(Aluno).filter(Aluno.stripe_subscription_id == stripe_sub_id).first()
             if aluno:
                 try:
+                    from datetime import datetime as _dt
                     aluno.assinatura_status = sub["status"]
                     _itens = sub["items"]["data"]
                     _fim = _itens[0]["current_period_end"] if _itens else None
                     if _fim:
-                        aluno.data_proxima_cobranca = datetime.fromtimestamp(_fim)
+                        aluno.data_proxima_cobranca = _dt.fromtimestamp(_fim)
                     db.commit()
                 except Exception as e:
                     print(f"[WEBHOOK ALUNO updated] {e}")

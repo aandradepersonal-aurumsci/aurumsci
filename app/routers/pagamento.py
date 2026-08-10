@@ -838,7 +838,7 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
 
     if event["type"] == "customer.subscription.updated":
         sub = event["data"]["object"]
-        stripe_sub_id = sub.get("id")
+        stripe_sub_id = sub["id"]
         if stripe_sub_id:
             personal = db.query(Personal).filter(Personal.stripe_subscription_id == stripe_sub_id).first()
             if personal:
@@ -857,16 +857,18 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
             aluno = db.query(Aluno).filter(Aluno.stripe_subscription_id == stripe_sub_id).first()
             if aluno:
                 try:
-                    aluno.assinatura_status = sub.get("status", "active")
-                    if sub.get("current_period_end"):
-                        aluno.data_proxima_cobranca = datetime.fromtimestamp(sub["current_period_end"])
+                    aluno.assinatura_status = sub["status"]
+                    _itens = sub["items"]["data"]
+                    _fim = _itens[0]["current_period_end"] if _itens else None
+                    if _fim:
+                        aluno.data_proxima_cobranca = datetime.fromtimestamp(_fim)
                     db.commit()
                 except Exception as e:
                     print(f"[WEBHOOK ALUNO updated] {e}")
 
     if event["type"] in ["customer.subscription.deleted", "customer.subscription.paused"]:
         sub = event["data"]["object"]
-        stripe_sub_id = sub.get("id")
+        stripe_sub_id = sub["id"]
         if stripe_sub_id:
             personal = db.query(Personal).filter(Personal.stripe_subscription_id == stripe_sub_id).first()
             if personal:

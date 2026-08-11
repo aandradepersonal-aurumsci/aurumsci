@@ -1233,7 +1233,8 @@ async def chat_aluno(
 
     # Contexto do aluno
     avals = db.query(AvaliacaoFisica).filter(
-        AvaliacaoFisica.aluno_id == aluno.id
+        AvaliacaoFisica.aluno_id == aluno.id,
+        AvaliacaoFisica.peso != None
     ).order_by(AvaliacaoFisica.data_avaliacao.desc()).limit(3).all()
 
     plano = db.query(PlanoTreino).filter(

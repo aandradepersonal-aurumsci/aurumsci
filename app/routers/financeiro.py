@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import Column, Integer, String, Float, Date, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Date, DateTime, ForeignKey, text
 from app.database import get_db
 from app.models import Base, Aluno, Personal
 from app.utils.auth import get_personal_atual
@@ -104,10 +104,14 @@ def resumo(personal: Personal = Depends(get_personal_atual), db: Session = Depen
     for a in alunos:
         at = [p for p in todos if p.aluno_id == a.id and cs(p) == "atrasado"]
         if at: inad.append({"aluno": a.nome, "valor": round(sum(p.valor for p in at), 2), "parcelas": len(at)})
-    return {"geral": {"recebido": round(sum(p.valor for p in todos if p.status == "pago"), 2),
+    # Cobrancas pagas do Stripe (tabela cobrancas) — somadas ao RECEBIDO (fix 27/07 bug 3)
+    _cob = db.execute(text("SELECT COALESCE(valor,0) AS valor, data_fechamento FROM cobrancas c WHERE c.status = :st AND c.aluno_id IN (SELECT id FROM alunos WHERE personal_id = :pid)"), {"st": "pago", "pid": personal.id}).fetchall()
+    cob_geral = round(sum(float(r.valor) for r in _cob), 2)
+    cob_mes = round(sum(float(r.valor) for r in _cob if r.data_fechamento and r.data_fechamento >= mi), 2)
+    return {"geral": {"recebido": round(sum(p.valor for p in todos if p.status == "pago"), 2) + cob_geral,
                       "pendente": round(sum(p.valor for p in todos if cs(p) == "pendente"), 2),
                       "atrasado": round(sum(p.valor for p in todos if cs(p) == "atrasado"), 2)},
-            "mes_atual": {"recebido": round(rm, 2), "esperado": round(em, 2),
+            "mes_atual": {"recebido": round(rm + cob_mes, 2), "esperado": round(em + cob_mes, 2),
                           "percentual": round(rm / em * 100, 1) if em > 0 else 0},
             "inadimplentes": inad}
 

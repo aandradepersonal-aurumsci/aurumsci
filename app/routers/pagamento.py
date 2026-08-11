@@ -9,7 +9,7 @@ from datetime import datetime
 import stripe
 from app.services.email_service import enviar_email
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+stripe.api_key = (settings.STRIPE_SECRET_KEY or "").strip()  # .strip() = tira espaco/enter colado junto na variavel do Railway
 
 router = APIRouter(prefix="/pagamento", tags=["Pagamento"])
 
@@ -112,7 +112,7 @@ def enviar_email_boas_vindas(nome, email, link_onboarding=None):
       <a href="https://www.aurumsc.com.br/aluno" style="display:inline-block;background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#0A0A0F;padding:16px 40px;border-radius:12px;text-decoration:none;font-weight:900;font-size:16px;letter-spacing:2px;">COMECAR AGORA →</a>
     </div>
     <div style="text-align:center;">
-      <p style="color:#555;font-size:12px;">Trial de 7 dias gratis. Apos esse periodo, R$49,90/mes sera cobrado automaticamente.<br>
+      <p style="color:#555;font-size:12px;">Trial de 7 dias gratis. Apos esse periodo, R$149,90/mes sera cobrado automaticamente.<br>
       Cancele quando quiser, sem burocracia.<br><br>
       <strong style="color:#C9A84C;">Equipe AurumSci</strong> — Ciencia que vira resultado.</p>
     </div>
@@ -659,6 +659,26 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                     """), {"hoje": date.today(), "cid": cobranca[0]})
                     db.commit()
                     print(f"[WEBHOOK STRIPE] Cobranca {cobranca[0]} marcada como PAGA")
+                    # SERVICO EXTRA: marca cobrado=true SO agora (dinheiro entrou) - sem brecha de gerar sem pagar
+                    try:
+                        db.execute(text("UPDATE servicos_extras SET cobrado=TRUE WHERE aluno_id=:aid AND cobrado=FALSE"), {"aid": cobranca[1]})
+                        # tambem marca os servicos dos MEMBROS da familia (quem tem pagador_id = o pagador que pagou)
+                        db.execute(text("UPDATE servicos_extras SET cobrado=TRUE WHERE cobrado=FALSE AND aluno_id IN (SELECT id FROM alunos WHERE pagador_id=:aid)"), {"aid": cobranca[1]})
+                        db.commit()
+                        print(f"[WEBHOOK STRIPE] Servicos extras do aluno {cobranca[1]} marcados como cobrados")
+                    except Exception as _es:
+                        print(f"[WEBHOOK STRIPE] erro ao marcar servicos: {_es}")
+                    # FIX 27/07: espelha o pagamento na tabela pagamentos (financeiro le de la) - sem botao, automatico
+                    try:
+                        _ja = db.execute(text("SELECT id FROM pagamentos WHERE aluno_id = :aid AND descricao = :desc AND valor = :val AND status = :st"), {"aid": cobranca[1], "desc": cobranca[3], "val": cobranca[2], "st": "pago"}).fetchone()
+                        if not _ja:
+                            _pers = db.query(Aluno).filter(Aluno.id == cobranca[1]).first()
+                            _pid = _pers.personal_id if _pers else None
+                            db.execute(text("INSERT INTO pagamentos (aluno_id, personal_id, valor, descricao, data_vencimento, data_pagamento, status) VALUES (:aid, :pid, :val, :desc, :venc, :dtpag, :st)"), {"aid": cobranca[1], "pid": _pid, "val": cobranca[2], "desc": cobranca[3], "venc": date.today(), "dtpag": date.today(), "st": "pago"})
+                            db.commit()
+                            print(f"[WEBHOOK STRIPE] Pagamento espelhado na tabela pagamentos (cobranca {cobranca[0]})")
+                    except Exception as _e_esp:
+                        print(f"[WEBHOOK STRIPE] Falha ao espelhar pagamento (nao critico): {_e_esp}")
                     
                     # Busca aluno e personal
                     aluno_cob = db.query(Aluno).filter(Aluno.id == cobranca[1]).first()
@@ -708,11 +728,6 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                                   <div style="font-size:11px;color:#0A0A0F;letter-spacing:2px;margin-bottom:4px">VALOR PAGO</div>
                                   <div style="font-size:32px;color:#0A0A0F;font-weight:bold">{valor_fmt}</div>
                                 </div>
-                                <div style="background:rgba(201,168,76,.05);padding:12px;border-radius:8px;font-size:11px;color:#888;line-height:1.6">
-                                  <b style="color:#C9A84C">Tributos estimados (Simples Nacional):</b><br>
-                                  DAS ~6%: {tributos_fmt}<br>
-                                  <i>Valores aproximados. Consulte seu contador.</i>
-                                </div>
                               </div>
                               <div style="text-align:center;color:#888;font-size:11px;line-height:1.6">
                                 <p>Recibo gerado automaticamente apos confirmacao de pagamento</p>
@@ -740,12 +755,14 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
         # FIX 22/05/2026: se foi cobranca avulsa (sem subscription), PARA AQUI.
         # Bug antigo: codigo continuava e disparava "Bem-vindo a familia" pro aluno
         # que so pagou uma cobranca avulsa. "Bem-vindo" e SO pro aluno autonomo
-        # que assina trial 7 dias + R$49,90/mes (tem subscription Stripe).
+        # que assina trial 7 dias + R$149,90/mes (tem subscription Stripe).
+        _has_subscription = False
         try:
-            if session.get("id") and not session.get("subscription"):
-                return {"status": "ok", "tipo": "cobranca_avulsa"}
+            _has_subscription = bool(session["subscription"])
         except Exception:
-            pass
+            _has_subscription = False
+        if not _has_subscription:
+            return {"status": "ok", "tipo": "cobranca_avulsa"}
         
         aluno_id = None
         try:
@@ -773,7 +790,7 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                 aluno.assinatura_status = "trialing"
                 aluno.data_inicio_trial = datetime.utcnow()
                 aluno.data_fim_trial = datetime.utcnow() + timedelta(days=7)
-                aluno.valor_assinatura = 4990
+                aluno.valor_assinatura = 14990
                 db.commit()
                 # FIX 16/05/2026: gera link onboarding autonomo e envia no email
                 link_onboarding = None

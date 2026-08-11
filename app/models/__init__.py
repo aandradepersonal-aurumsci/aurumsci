@@ -82,6 +82,8 @@ class Aluno(Base):
     dia_fechamento = Column(Integer, default=30)
     valor_aula = Column(Float)
     valor_mensal = Column(Float)
+    pagador_id = Column(Integer)
+    valor_aula_grupo = Column(Float)
     dias_vencimento = Column(Integer, default=5)
     # Stripe
     stripe_customer_id = Column(String(100))

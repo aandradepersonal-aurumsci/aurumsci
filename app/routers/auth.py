@@ -269,37 +269,17 @@ def excluir_conta(
     # BUG FIX 04/05/2026: cascade COMPLETO via SQL direto (igual BUG 2 dos alunos)
     from sqlalchemy import text
     
+    # BLINDADO 02/08/2026: NAO apaga mais os alunos. So DESATIVA (soft delete).
+    # Antes fazia DELETE em cascata e sumia com os alunos sem rastro. Agora os
+    # alunos ficam guardados (ativo=false) - o personal some da vista dele, mas
+    # os dados ficam recuperaveis. Apagar de vez (apos periodo/backup) fica pra
+    # um processo separado, feito com cuidado.
     if alunos_ids:
         try:
-            # Hierarquia treino (mais profundo primeiro)
-            db.execute(text("""
-                DELETE FROM exercicios_sessao 
-                WHERE sessao_id IN (
-                    SELECT s.id FROM sessoes_treino s 
-                    JOIN planos_treino p ON s.plano_id = p.id 
-                    WHERE p.aluno_id = ANY(:aids)
-                )
-            """), {"aids": alunos_ids})
-            
-            db.execute(text("""
-                DELETE FROM sessoes_treino 
-                WHERE plano_id IN (
-                    SELECT id FROM planos_treino WHERE aluno_id = ANY(:aids)
-                )
-            """), {"aids": alunos_ids})
-            
-            db.execute(text("DELETE FROM planos_treino WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
-            db.execute(text("DELETE FROM presencas WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
-            db.execute(text("DELETE FROM anamneses WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
-            db.execute(text("DELETE FROM avaliacoes_fisicas WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
-            db.execute(text("DELETE FROM mensagens_chat WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
-            db.execute(text("DELETE FROM pagamentos WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
-            db.execute(text("DELETE FROM contratos_servico WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
-            db.execute(text("DELETE FROM aluno_credenciais WHERE aluno_id = ANY(:aids)"), {"aids": alunos_ids})
-            db.execute(text("DELETE FROM alunos WHERE personal_id = :pid"), {"pid": personal_id})
+            db.execute(text("UPDATE alunos SET ativo = false WHERE personal_id = :pid"), {"pid": personal_id})
         except Exception as e:
             db.rollback()
-            logger.error(f"Erro ao deletar alunos do personal {personal_id}: {e}")
+            logger.error(f"Erro ao desativar alunos do personal {personal_id}: {e}")
             raise HTTPException(500, f"Erro ao excluir conta: {str(e)}")
     
     # Apaga tokens de reset

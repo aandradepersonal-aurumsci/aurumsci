@@ -16,6 +16,7 @@ class AlunoBase(BaseModel):
     ciclo_cobranca: Optional[Literal['mensal', 'quinzenal', 'semanal', 'por_aula_mensal']] = 'mensal'
     dia_fechamento: Optional[int] = 30
     valor_aula: Optional[float] = None
+    valor_aula_grupo: Optional[float] = None
     valor_mensal: Optional[float] = None
     dias_vencimento: Optional[int] = 5
 
@@ -35,6 +36,7 @@ class AlunoAtualizar(BaseModel):
     ciclo_cobranca: Optional[Literal['mensal', 'quinzenal', 'semanal', 'por_aula_mensal']] = None
     dia_fechamento: Optional[int] = None
     valor_aula: Optional[float] = None
+    valor_aula_grupo: Optional[float] = None
     valor_mensal: Optional[float] = None
     dias_vencimento: Optional[int] = None
 
@@ -71,6 +73,7 @@ class AlunoListagem(BaseModel):
     # BUG FIX 04/05/2026: incluir cobranca pra modal 💰 ler valores reais
     ciclo_cobranca: Optional[str] = None
     valor_aula: Optional[float] = None
+    valor_aula_grupo: Optional[float] = None
     valor_mensal: Optional[float] = None
     dia_fechamento: Optional[int] = None
     dias_vencimento: Optional[int] = None

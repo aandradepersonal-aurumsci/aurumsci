@@ -326,6 +326,8 @@ def responder_questionario(
             nome=dados.nome,
             email=dados.email,
             cpf=cpf_limpo,
+            tipo_nf=(dados.tipo_nf or "cpf"),
+            cnpj=(dados.cnpj or None),
             personal_id=personal_id_aluno,
             ativo=True,
             objetivo=dados.objetivo.upper() if dados.objetivo else None,

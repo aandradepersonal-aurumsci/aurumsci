@@ -2,8 +2,21 @@
 AurumSci — Templates de email
 """
 
-def email_cobranca(aluno_nome: str, descricao: str, valor: float, data_vencimento: str, url_pagamento: str, personal_nome: str = "Seu Personal Trainer") -> str:
+def email_cobranca(aluno_nome: str, descricao: str, valor: float, data_vencimento: str, url_pagamento: str, personal_nome: str = "Seu Personal Trainer", lista_aulas: str = "", mes_ref: str = "") -> str:
     valor_fmt = f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    _aulas_html = ""
+    if lista_aulas:
+        _meses_pt = ["janeiro","fevereiro","mar\u00e7o","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"]
+        _titulo = ""
+        try:
+            if mes_ref:
+                _mm, _yy = mes_ref.split("/")
+                _titulo = "Aulas referentes ao m\u00eas de " + _meses_pt[int(_mm)-1] + "/" + _yy
+        except Exception:
+            _titulo = ""
+        _cab = ("<div style=\"font-weight:bold;color:#1a3a5c;font-size:13px;margin-bottom:6px;\">" + _titulo + "</div>") if _titulo else ""
+        _linhas = "".join(("<div style=\"padding:4px 0;color:#1a3a5c;font-size:13px;font-weight:bold;margin-top:6px;\">" + l[:-1] + "</div>") if l.endswith(":") else ("<div style=\"padding:3px 0 3px 10px;border-bottom:1px solid #eee;color:#555;font-size:13px;\">\u2022 " + l + "</div>") for l in lista_aulas.split("\n") if l.strip())
+        _aulas_html = "<div style=\"margin:8px 0 4px;\">" + _cab + _linhas + "</div>"
     
     return f"""
     <!DOCTYPE html>
@@ -33,6 +46,7 @@ def email_cobranca(aluno_nome: str, descricao: str, valor: float, data_venciment
           
           <div class="valor-box">
             <div style="color: #888; font-size: 14px;">{descricao}</div>
+            {_aulas_html}
             <div class="valor">{valor_fmt}</div>
             <div style="color: #888; font-size: 13px;">Vencimento: {data_vencimento}</div>
           </div>

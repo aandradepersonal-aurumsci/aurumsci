@@ -32,7 +32,7 @@ oauth2_aluno = OAuth2PasswordBearer(tokenUrl="/aluno-portal/login")
 # o codigo legado usa PT ('ativa','trial'). Esta e a definicao UNICA de
 # "assinante com acesso" — usada no login E na retomada do cadastro.
 # NAO inclui past_due / canceled / sem_assinatura de proposito.
-STATUS_ACESSO = frozenset({"trial", "trialing", "ativa", "active"})
+STATUS_ACESSO = frozenset({"trialing", "ativa", "active"})  # modelo C: so quem tem Stripe (trialing/active) entra; trial-sem-cartao NAO acessa
 
 
 # ── Modelo de credenciais do aluno ────────────────────────────────────────────
@@ -362,7 +362,13 @@ def cadastro_rapido(dados: CadastroRapido, db: Session = Depends(get_db)):
     from app.models import Aluno
     existente = db.query(Aluno).filter(Aluno.email == dados.email).first()
     if existente:
-        raise HTTPException(status_code=400, detail="Email ja cadastrado")
+        # RETOMADA (modelo C): conta existe mas o checkout foi abandonado.
+        if existente.assinatura_status in ("active", "trialing", "ativa"):
+            raise HTTPException(status_code=400, detail="Voce ja tem uma assinatura ativa. Faca login para acessar.")
+        cred_ret = db.query(AlunoCredencial).filter(AlunoCredencial.aluno_id == existente.id).first()
+        if cred_ret and pwd_context.verify(dados.senha, cred_ret.senha_hash):
+            return {"aluno_id": existente.id, "retomada": True, "mensagem": "Bem-vindo de volta! Vamos concluir seu pagamento."}
+        raise HTTPException(status_code=400, detail="Email ja cadastrado. Faca login ou use 'Esqueci minha senha'.")
     aluno = Aluno(
         nome=dados.nome, email=dados.email,
         telefone="", objetivo="HIPERTROFIA",

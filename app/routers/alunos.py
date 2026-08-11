@@ -61,64 +61,9 @@ async def upload_foto(aluno_id: int, foto: UploadFile = File(...), personal: Per
 
 @router.delete("/{aluno_id}/permanente")
 def excluir_permanente(aluno_id: int, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
-    """BUG FIX 04/05/2026: cascade COMPLETO - deleta hierarquia inteira em ordem"""
-    from sqlalchemy import text
-    
-    aluno = buscar_aluno(aluno_id, personal.id, db)
-    nome_aluno = aluno.nome
-    
-    try:
-        # 1. Hierarquia treino (mais profundo primeiro)
-        # ExercicioSessao -> SessaoTreino -> PlanoTreino
-        db.execute(text("""
-            DELETE FROM exercicios_sessao 
-            WHERE sessao_id IN (
-                SELECT s.id FROM sessoes_treino s 
-                JOIN planos_treino p ON s.plano_id = p.id 
-                WHERE p.aluno_id = :aid
-            )
-        """), {"aid": aluno_id})
-        
-        db.execute(text("""
-            DELETE FROM sessoes_treino 
-            WHERE plano_id IN (
-                SELECT id FROM planos_treino WHERE aluno_id = :aid
-            )
-        """), {"aid": aluno_id})
-        
-        db.execute(text("DELETE FROM planos_treino WHERE aluno_id = :aid"), {"aid": aluno_id})
-        
-        # 2. Outras tabelas dependentes
-        db.execute(text("DELETE FROM presencas WHERE aluno_id = :aid"), {"aid": aluno_id})
-        db.execute(text("DELETE FROM anamneses WHERE aluno_id = :aid"), {"aid": aluno_id})
-        db.execute(text("DELETE FROM avaliacoes_fisicas WHERE aluno_id = :aid"), {"aid": aluno_id})
-        db.execute(text("DELETE FROM mensagens_chat WHERE aluno_id = :aid"), {"aid": aluno_id})
-        db.execute(text("DELETE FROM pagamentos WHERE aluno_id = :aid"), {"aid": aluno_id})
-        db.execute(text("DELETE FROM contratos_servico WHERE aluno_id = :aid"), {"aid": aluno_id})
-        db.execute(text("DELETE FROM aluno_credenciais WHERE aluno_id = :aid"), {"aid": aluno_id})
-        
-        # FIX 23/05/2026: tabelas novas faltantes no cascade.
-        # Defensivo: cada DELETE em savepoint proprio. Se tabela nao existir
-        # (deploy ainda nao rodou create_all), ignora silenciosamente.
-        for tabela in ("cobrancas", "assinaturas_iap"):
-            try:
-                sp = db.begin_nested()
-                db.execute(text(f"DELETE FROM {tabela} WHERE aluno_id = :aid"), {"aid": aluno_id})
-                sp.commit()
-            except Exception as ex_tab:
-                try:
-                    sp.rollback()
-                except Exception:
-                    pass
-                print(f"[DELETE CASCADE] tabela {tabela} ignorada: {ex_tab}")
-        
-        # 4. Por ultimo, o aluno
-        db.execute(text("DELETE FROM alunos WHERE id = :aid"), {"aid": aluno_id})
-        
-        db.commit()
-        return {"mensagem": f"Aluno {nome_aluno} excluido permanentemente"}
-    
-    except Exception as e:
-        db.rollback()
-        print(f"[DELETE ERROR] aluno_id={aluno_id}: {e}")
-        raise HTTPException(500, f"Erro ao excluir: {str(e)}")
+    """BLINDADO 02/08/2026: NAO apaga mais nada. So DESATIVA (esconde).
+    Antes fazia DELETE em cascata e sumia com o aluno sem rastro - causou perda
+    de cadastro/avaliacao. Agora chama desativar_aluno: o registro fica guardado
+    no banco (ativo=false) e pode ser reativado. Nunca mais perde aluno."""
+    from app.services.aluno_service import desativar_aluno
+    return desativar_aluno(aluno_id, personal.id, db)

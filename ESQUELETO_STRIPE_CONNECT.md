@@ -40,3 +40,20 @@
 ## REGRAS DE OURO
 Railway only. Backup antes. Uma coisa por vez. Investigar e provar antes. Chave nunca no chat.
 Cross-check ChatGPT+Gemini ja feito pra arquitetura. Commit 1 de cada vez.
+
+## DUVIDA IMPORTANTE (Andre, 11/jul) - STRIPE vs APPLE STORE
+Dois fluxos de dinheiro diferentes:
+
+1. PERSONAL ASSINA O PRO (assinatura do app = conteudo DIGITAL):
+   - Via web/link -> Stripe (taxa baixa ~3%, Andre fica com mais)
+   - Via App Store iOS -> Apple EXIGE IAP (Apple leva 15-30%)
+   - E a raiz do bug Guideline 3.1.1: Apple viu link Stripe pra assinatura digital no app.
+
+2. ALUNO PAGA O PERSONAL (mensalidade = SERVICO FISICO/presencial):
+   - Treino/acompanhamento e servico fisico -> Apple PERMITE fora do IAP.
+   - Stripe Connect (split 10%) funciona aqui SEM passar pela Apple. OK!
+
+REGRA APPLE: conteudo digital = IAP obrigatorio. Servico fisico = pode usar Stripe.
+ESTRATEGIA: assinatura PRO via IAP no iOS (ou so vender PRO via web). 
+Pagamento aluno->personal sempre Stripe Connect (e servico fisico, liberado).
+CROSS-CHECK necessario antes de implementar (regras Apple mudam, verificar 2026).

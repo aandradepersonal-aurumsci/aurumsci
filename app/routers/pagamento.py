@@ -887,9 +887,10 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
             aluno = db.query(Aluno).filter(Aluno.stripe_subscription_id == stripe_sub_id).first()
             if aluno:
                 try:
+                    from datetime import datetime as _dt
                     aluno.ativo = False
                     aluno.assinatura_status = "canceled"
-                    aluno.data_cancelamento = datetime.utcnow()
+                    aluno.data_cancelamento = _dt.utcnow()
                     db.commit()
                     primeiro_nome_aluno = aluno.nome.split()[0] if aluno.nome else "Aluno"
                     html_cancel_aluno = f"""<html><body style='background:#0A0A0F;font-family:Arial;padding:40px'>

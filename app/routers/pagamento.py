@@ -66,10 +66,10 @@ def connect_status(personal: Personal = Depends(get_personal_atual), db: Session
 # MAPA DE PLANOS PRO - Price IDs criados no Stripe em 01/05/2026
 # ============================================================
 PLANOS_PRO = {
-    "bronze":   {"price_id": settings.STRIPE_PRICE_BRONZE,   "valor": 4990,  "limite_alunos": 10,   "nome": "Bronze",   "icone": "🥉", "cor": "#CD7F32", "frase": "Voce comecou. Agora e ritmo."},
-    "prata":    {"price_id": settings.STRIPE_PRICE_PRATA,    "valor": 8990,  "limite_alunos": 20,   "nome": "Prata",    "icone": "🥈", "cor": "#C0C0C0", "frase": "Voce cresceu. O movimento comecou."},
-    "ouro":     {"price_id": settings.STRIPE_PRICE_OURO,     "valor": 14990, "limite_alunos": 50,   "nome": "Ouro",     "icone": "🥇", "cor": "#C9A84C", "frase": "Voce esta na elite. 50 alunos te esperam."},
-    "diamante": {"price_id": settings.STRIPE_PRICE_DIAMANTE, "valor": 24990, "limite_alunos": 9999, "nome": "Diamante", "icone": "💎", "cor": "#B9F2FF", "frase": "Voce e ELITE. Sem limites. Bem-vindo ao topo."},
+    "bronze":   {"price_id": settings.STRIPE_PRICE_BRONZE,   "valor": 18990,  "limite_alunos": 10,   "nome": "Bronze",   "icone": "🥉", "cor": "#CD7F32", "frase": "Voce comecou. Agora e ritmo."},
+    "prata":    {"price_id": settings.STRIPE_PRICE_PRATA,    "valor": 24990,  "limite_alunos": 20,   "nome": "Prata",    "icone": "🥈", "cor": "#C0C0C0", "frase": "Voce cresceu. O movimento comecou."},
+    "ouro":     {"price_id": settings.STRIPE_PRICE_OURO,     "valor": 39990, "limite_alunos": 50,   "nome": "Ouro",     "icone": "🥇", "cor": "#C9A84C", "frase": "Voce esta na elite. 50 alunos te esperam."},
+    "diamante": {"price_id": settings.STRIPE_PRICE_DIAMANTE, "valor": 44990, "limite_alunos": 9999, "nome": "Diamante", "icone": "💎", "cor": "#B9F2FF", "frase": "Voce e ELITE. Sem limites. Bem-vindo ao topo."},
 }
 
 

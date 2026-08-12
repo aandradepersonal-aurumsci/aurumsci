@@ -111,7 +111,7 @@ fetch('/static/ciencia_videos.json')
   .then(function(d){
     DADOS = d;
     document.getElementById('resumo').textContent =
-      'Já são ' + d.total_videos + ' vídeos publicados em ' + d.total_temas + ' temas — de um banco com mais de 2.000 artigos científicos. Escolha o seu.';
+      'Já são ' + d.total_videos + ' vídeos publicados em ' + d.total_temas + ' temas — de um banco com mais de 2.200 artigos científicos. Escolha o seu.';
     renderChips();
   })
   .catch(function(){

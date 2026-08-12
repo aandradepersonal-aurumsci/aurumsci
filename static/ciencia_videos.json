@@ -1,9 +1,27 @@
 {
-  "atualizado_em": "2026-07-26 09:38",
-  "total_videos": 282,
-  "total_temas": 17,
+  "atualizado_em": "2026-08-12 20:37",
+  "total_videos": 316,
+  "total_temas": 19,
   "temas": {
     "Forca e Carga": [
+      {
+        "id": 2266,
+        "titulo": "Um suplemento nutricional de cinco ingredientes e exercícios de resistência feitos em casa melhoram a massa magra e a força em idosos de vida livre.",
+        "url": "https://youtube.com/watch?v=JCaXll64RJg",
+        "ano": 2020
+      },
+      {
+        "id": 2201,
+        "titulo": "Os efeitos do treinamento excêntrico na arquitetura e força do bíceps femoral: uma revisão sistemática com meta-análise.",
+        "url": "https://youtube.com/watch?v=HhgJbWvilWU",
+        "ano": 2020
+      },
+      {
+        "id": 2186,
+        "titulo": "A suplementação específica de peptídeos de colágeno aumenta o conteúdo de colágeno tipo I no músculo esquelético após 12 semanas de treinamento de resistência de alta carga: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=EmdrA5BU7QM",
+        "ano": 2026
+      },
       {
         "id": 1989,
         "titulo": "Desenvolvimento de força e massa muscular após um período de treinamento de resistência em hipóxia intermitente terrestre e normobárica.",
@@ -155,6 +173,18 @@
         "ano": 2024
       },
       {
+        "id": 1017,
+        "titulo": "Adaptações de longo prazo no agachamento, supino e levantamento terra: avaliando o ganho de força em atletas de levantamento de peso.",
+        "url": "https://youtube.com/watch?v=zHJvkAOeQB8",
+        "ano": 2022
+      },
+      {
+        "id": 1016,
+        "titulo": "A dose mínima eficaz de treinamento necessária para força de 1RM em levantadores de peso.",
+        "url": "https://youtube.com/watch?v=wasgKhVomjY",
+        "ano": 2021
+      },
+      {
         "id": 1007,
         "titulo": "Forças musculares glúteas durante exercícios de prevenção e reabilitação de lesões com foco no quadril.",
         "url": "https://youtube.com/watch?v=YBojJvvNQlc",
@@ -251,6 +281,12 @@
         "ano": 2022
       },
       {
+        "id": 784,
+        "titulo": "A dose mínima eficaz de treinamento necessária para aumentar a força de 1RM em homens treinados em resistência: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=JMUpI3pYHWw",
+        "ano": 2020
+      },
+      {
         "id": 780,
         "titulo": "Efeitos do treinamento de força na aptidão física de atletas de esportes olímpicos de combate: uma revisão sistemática.",
         "url": "https://youtube.com/watch?v=b4VUFVnfYqk",
@@ -311,6 +347,12 @@
         "ano": 1995
       },
       {
+        "id": 710,
+        "titulo": "Comparação dos efeitos do treinamento de resistência isotônica excêntrico, concêntrico e excêntrico-concêntrico em duas velocidades na força e na hipertrofia muscular.",
+        "url": "https://youtube.com/watch?v=Qf0Pc5xjtV0",
+        "ano": 2020
+      },
+      {
         "id": 707,
         "titulo": "Hipertrofia específica do tipo de fibra com o uso de treinamento de resistência com restrição de fluxo sanguíneo de baixa carga: uma revisão sistemática.",
         "url": "https://youtube.com/watch?v=XHlCH1tUt64",
@@ -341,6 +383,12 @@
         "ano": 2023
       },
       {
+        "id": 676,
+        "titulo": "A deficiência de energia prejudica os ganhos do treinamento de resistência em massa magra, mas não em força: uma meta-análise e meta-regressão.",
+        "url": "https://youtube.com/watch?v=ah8P1a6Kack",
+        "ano": 2022
+      },
+      {
         "id": 670,
         "titulo": "Efeito de diferentes frequências de treinamento no desempenho de força máxima e hipertrofia muscular em indivíduos treinados - um desenho dentro do sujeito.",
         "url": "https://youtube.com/watch?v=ukr2VB29wBg",
@@ -365,9 +413,21 @@
         "ano": 2024
       },
       {
+        "id": 642,
+        "titulo": "Efeitos do treinamento pliométrico versus treinamento de força na força, sprint e desempenho funcional em jogadores de futebol: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=RmWUeKJCy3I",
+        "ano": 2023
+      },
+      {
         "id": 634,
         "titulo": "Efeito da estimulação elétrica muscular específica de frequência de 8 semanas combinada com treinamento físico resistido na massa muscular, força e composição corporal em homens e mulheres: um estudo de viabilidade e segurança.",
         "url": "https://youtube.com/watch?v=OoMFU0_9wIU",
+        "ano": 2023
+      },
+      {
+        "id": 609,
+        "titulo": "O papel do treinamento resistido e da suplementação de creatina no estresse oxidativo, defesa antioxidante, força muscular e qualidade de vida em idosos.",
+        "url": "https://youtube.com/watch?v=hflboobth4A",
         "ano": 2023
       },
       {
@@ -413,6 +473,12 @@
         "ano": 2022
       },
       {
+        "id": 525,
+        "titulo": "Eficácia do treinamento resistido de baixa carga com restrição do fluxo sanguíneo versus treinamento resistido convencional de alta intensidade em idosos com diagnóstico de sarcopenia: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=1TOA6xLjjyc",
+        "ano": 2024
+      },
+      {
         "id": 506,
         "titulo": "O treinamento intervalado de alta intensidade melhora a remodelação óssea, o perfil lipídico e a função física em pacientes com esclerose múltipla.",
         "url": "https://youtube.com/watch?v=9k9qY_UwWCI",
@@ -423,6 +489,12 @@
         "titulo": "Treinamento de força no tratamento da hipertensão arterial: revisão sistemática e meta-análise de ensaios clínicos randomizados.",
         "url": "https://youtube.com/watch?v=rBIXf-KNQZQ",
         "ano": 2023
+      },
+      {
+        "id": 446,
+        "titulo": "Efeitos do treinamento progressivo de exercícios com sacos de areia de 12 semanas no controle glicêmico e na força muscular em pacientes com diabetes mellitus tipo 2 combinado com possível sarcopenia.",
+        "url": "https://youtube.com/watch?v=_FTUOVJbkCk",
+        "ano": 2022
       },
       {
         "id": 443,
@@ -531,6 +603,12 @@
         "titulo": "Efeito do treinamento de força com peso livre versus treinamento de força baseado em máquina na força máxima, hipertrofia e desempenho de salto - uma revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=4V8pAj0Tp5Q",
         "ano": 2023
+      },
+      {
+        "id": 273,
+        "titulo": "O treinamento de resistência de baixa intensidade com restrição moderada do fluxo sanguíneo parece seguro e aumenta a força e o tamanho do músculo esquelético em pacientes de cirurgia cardiovascular: um estudo piloto.",
+        "url": "https://youtube.com/watch?v=bVniHF6Z7oA",
+        "ano": 2021
       },
       {
         "id": 271,
@@ -645,6 +723,12 @@
         "titulo": "Efeitos de diferentes estratégias de carga de treinamento de resistência com volume equacionado nas adaptações musculares em homens bem treinados.",
         "url": "https://youtube.com/watch?v=iKpw9nOL0UI",
         "ano": 2014
+      },
+      {
+        "id": 192,
+        "titulo": "Compatibilidade do treinamento aeróbico e de força simultâneo para tamanho e função do músculo esquelético: uma revisão sistemática e meta-análise atualizadas.",
+        "url": "https://youtube.com/watch?v=kgYfbjVRq8U",
+        "ano": 2022
       },
       {
         "id": 189,
@@ -787,6 +871,36 @@
     ],
     "Hipertrofia e Massa": [
       {
+        "id": 2220,
+        "titulo": "Os efeitos do treinamento isométrico de longo comprimento muscular versus treinamento isotônico de amplitude total de movimento na hipertrofia regional do quadríceps femoral em indivíduos treinados em resistência.",
+        "url": "https://youtube.com/watch?v=Vb4I3WDd6js",
+        "ano": 2025
+      },
+      {
+        "id": 2206,
+        "titulo": "Os ângulos de penação das fibras musculares são maiores nos músculos hipertrofiados do que nos normais.",
+        "url": "https://youtube.com/watch?v=dYnQAkuONTY",
+        "ano": 1993
+      },
+      {
+        "id": 2039,
+        "titulo": "Efeitos da administração de lactato na hipertrofia e ativação da sinalização mTOR no músculo esquelético de camundongos.",
+        "url": "https://youtube.com/watch?v=RTFkvq2q6gQ",
+        "ano": 2022
+      },
+      {
+        "id": 2034,
+        "titulo": "PoWeR provoca sinalização intracelular, adaptações mitocondriais e hipertrofia em múltiplos músculos consistentes com treinamento de exercícios de resistência e resistência.",
+        "url": "https://youtube.com/watch?v=YXM_-w2bDu8",
+        "ano": 2025
+      },
+      {
+        "id": 2033,
+        "titulo": "O ácido fosfatídico aumenta a sinalização mTOR e a hipertrofia induzida por exercícios resistidos.",
+        "url": "https://youtube.com/watch?v=Rqjf2Q7YC3c",
+        "ano": 2014
+      },
+      {
         "id": 2028,
         "titulo": "Revisão Sistemática número 13 - O que 50 estudos dizem sobre Treino Concorrente: o cardio atrapalha a hipertrofia?",
         "url": "https://youtube.com/watch?v=xx9W1iQV_SU",
@@ -833,6 +947,12 @@
         "titulo": "A suplementação de proteínas após o exercício e antes do sono não aumenta ainda mais os ganhos de massa muscular e força durante o treinamento de exercícios de resistência em homens idosos ativos.",
         "url": "https://youtube.com/watch?v=wEs5oIAj1YA",
         "ano": 2018
+      },
+      {
+        "id": 1287,
+        "titulo": "Relação entre ingestão de proteínas e hipertrofia muscular induzida por treinamento de resistência em mulheres de meia idade: um estudo piloto.",
+        "url": "https://youtube.com/watch?v=pN_calAxdak",
+        "ano": 2022
       },
       {
         "id": 1101,
@@ -887,6 +1007,12 @@
         "titulo": "Padrões semelhantes de hipertrofia regional do tendão após restrição do fluxo sanguíneo de baixa carga e treinamento de resistência de alta carga.",
         "url": "https://youtube.com/watch?v=sN3qFCrKpgI",
         "ano": 2023
+      },
+      {
+        "id": 710,
+        "titulo": "Comparação dos efeitos do treinamento de resistência isotônica excêntrico, concêntrico e excêntrico-concêntrico em duas velocidades na força e na hipertrofia muscular.",
+        "url": "https://youtube.com/watch?v=Qf0Pc5xjtV0",
+        "ano": 2020
       },
       {
         "id": 707,
@@ -1171,6 +1297,12 @@
         "ano": null
       },
       {
+        "id": 231,
+        "titulo": "Quais ROMs levam a Roma? Uma revisão sistemática dos efeitos da amplitude de movimento na hipertrofia muscular.",
+        "url": "https://youtube.com/watch?v=G2JVJr_LcB4",
+        "ano": 2023
+      },
+      {
         "id": 230,
         "titulo": "O impacto do treinamento resistido na hipertrofia do glúteo máximo: uma revisão sistemática e metanálise.",
         "url": "https://youtube.com/watch?v=qjyI_fKA-O4",
@@ -1383,6 +1515,18 @@
     ],
     "Idosos e Sarcopenia": [
       {
+        "id": 2266,
+        "titulo": "Um suplemento nutricional de cinco ingredientes e exercícios de resistência feitos em casa melhoram a massa magra e a força em idosos de vida livre.",
+        "url": "https://youtube.com/watch?v=JCaXll64RJg",
+        "ano": 2020
+      },
+      {
+        "id": 2101,
+        "titulo": "Comprometimento cognitivo leve e sarcopenia: efeitos do treinamento com exercícios resistidos na neuroinflamação, desempenho cognitivo e alterações estruturais do cérebro.",
+        "url": "https://youtube.com/watch?v=5Cw9-Ba4B58",
+        "ano": 2025
+      },
+      {
         "id": 2010,
         "titulo": "Tecido Adiposo Intermuscular: Uma Breve Revisão da Etiologia, Associação com Função Física e Perda de Peso em Idosos.",
         "url": "https://youtube.com/watch?v=EquP5NsuuKI",
@@ -1416,6 +1560,18 @@
         "id": 1903,
         "titulo": "O exercício aeróbico suprime a secreção de CCN2 das células-tronco musculares senescentes e aumenta a regeneração muscular em camundongos idosos.",
         "url": "https://youtube.com/watch?v=tm0Zwvhs-QQ",
+        "ano": 2024
+      },
+      {
+        "id": 1819,
+        "titulo": "Suplementação nutricional oral enriquecida com proteína de soro de leite, leucina e vitamina D para o tratamento da sarcopenia.",
+        "url": "https://youtube.com/watch?v=rLLiQNtyXlo",
+        "ano": 2022
+      },
+      {
+        "id": 1783,
+        "titulo": "Fronteiras na sarcopenia: Avanços no diagnóstico, mecanismos moleculares e estratégias terapêuticas.",
+        "url": "https://youtube.com/watch?v=BJ1BechmcfQ",
         "ano": 2024
       },
       {
@@ -1497,6 +1653,12 @@
         "ano": 2021
       },
       {
+        "id": 874,
+        "titulo": "Eficácia dos exercícios aeróbicos e de resistência combinados na cognição, na saúde metabólica, na função física e na qualidade de vida relacionada à saúde em adultos de meia-idade e idosos com diabetes mellitus tipo 2: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=utqWJNI20Jc",
+        "ano": 2024
+      },
+      {
         "id": 863,
         "titulo": "Efeitos do treinamento simultâneo de força e resistência nas medidas de aptidão física em adultos saudáveis ​​de meia-idade e idosos: uma revisão sistemática com meta-análise.",
         "url": "https://youtube.com/watch?v=tlT6m2JeYcI",
@@ -1521,6 +1683,12 @@
         "ano": 2024
       },
       {
+        "id": 609,
+        "titulo": "O papel do treinamento resistido e da suplementação de creatina no estresse oxidativo, defesa antioxidante, força muscular e qualidade de vida em idosos.",
+        "url": "https://youtube.com/watch?v=hflboobth4A",
+        "ano": 2023
+      },
+      {
         "id": 548,
         "titulo": "Eficácia de um programa de treinamento de resistência com máquinas pneumáticas fornecido pela comunidade (Gym Tonic) para idosos em centros para idosos de bairro - um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=oLLK3h68MlM",
@@ -1531,6 +1699,18 @@
         "titulo": "Apresentando o programa de treinamento de força progressivo em ambientes de cuidados a idosos em Cingapura.",
         "url": "https://youtube.com/watch?v=TTm3dpA0aRc",
         "ano": 2021
+      },
+      {
+        "id": 525,
+        "titulo": "Eficácia do treinamento resistido de baixa carga com restrição do fluxo sanguíneo versus treinamento resistido convencional de alta intensidade em idosos com diagnóstico de sarcopenia: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=1TOA6xLjjyc",
+        "ano": 2024
+      },
+      {
+        "id": 446,
+        "titulo": "Efeitos do treinamento progressivo de exercícios com sacos de areia de 12 semanas no controle glicêmico e na força muscular em pacientes com diabetes mellitus tipo 2 combinado com possível sarcopenia.",
+        "url": "https://youtube.com/watch?v=_FTUOVJbkCk",
+        "ano": 2022
       },
       {
         "id": 397,
@@ -1887,6 +2067,12 @@
         "ano": 2016
       },
       {
+        "id": 1287,
+        "titulo": "Relação entre ingestão de proteínas e hipertrofia muscular induzida por treinamento de resistência em mulheres de meia idade: um estudo piloto.",
+        "url": "https://youtube.com/watch?v=pN_calAxdak",
+        "ano": 2022
+      },
+      {
         "id": 1282,
         "titulo": "Otimizando a resposta ao treinamento para mulheres em reabilitação cardíaca: um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=PgCnzKncmBI",
@@ -2021,6 +2207,12 @@
         "ano": 2020
       },
       {
+        "id": 874,
+        "titulo": "Eficácia dos exercícios aeróbicos e de resistência combinados na cognição, na saúde metabólica, na função física e na qualidade de vida relacionada à saúde em adultos de meia-idade e idosos com diabetes mellitus tipo 2: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=utqWJNI20Jc",
+        "ano": 2024
+      },
+      {
         "id": 872,
         "titulo": "Efeitos do exercício aeróbio combinado ao treinamento resistido na composição corporal e saúde metabólica em crianças e adolescentes com sobrepeso ou obesidade: revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=4W3B5sjrhLQ",
@@ -2061,6 +2253,12 @@
         "titulo": "O treinamento intervalado de alta intensidade melhora a remodelação óssea, o perfil lipídico e a função física em pacientes com esclerose múltipla.",
         "url": "https://youtube.com/watch?v=9k9qY_UwWCI",
         "ano": 2024
+      },
+      {
+        "id": 482,
+        "titulo": "Eficácia comparativa do treinamento aeróbico, de resistência e combinado sobre fatores de risco de doenças cardiovasculares: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=9nXL1OZUtZY",
+        "ano": 2019
       },
       {
         "id": 470,
@@ -2105,10 +2303,28 @@
         "ano": 2022
       },
       {
+        "id": 383,
+        "titulo": "Um ensaio randomizado e controlado de treinamento de resistência adicionado à restrição calórica mais treinamento de exercícios aeróbicos na insuficiência cardíaca obesa com fração de ejeção preservada.",
+        "url": "https://youtube.com/watch?v=GjNUsdczwcs",
+        "ano": 2023
+      },
+      {
         "id": 381,
         "titulo": "Comparação de treinamento concorrente, resistido ou aeróbico na perda de gordura corporal: uma revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=xs22zRJ3Vn8",
         "ano": 2025
+      },
+      {
+        "id": 273,
+        "titulo": "O treinamento de resistência de baixa intensidade com restrição moderada do fluxo sanguíneo parece seguro e aumenta a força e o tamanho do músculo esquelético em pacientes de cirurgia cardiovascular: um estudo piloto.",
+        "url": "https://youtube.com/watch?v=bVniHF6Z7oA",
+        "ano": 2021
+      },
+      {
+        "id": 192,
+        "titulo": "Compatibilidade do treinamento aeróbico e de força simultâneo para tamanho e função do músculo esquelético: uma revisão sistemática e meta-análise atualizadas.",
+        "url": "https://youtube.com/watch?v=kgYfbjVRq8U",
+        "ano": 2022
       },
       {
         "id": 123,
@@ -2118,6 +2334,24 @@
       }
     ],
     "Proteina e Dieta": [
+      {
+        "id": 2266,
+        "titulo": "Um suplemento nutricional de cinco ingredientes e exercícios de resistência feitos em casa melhoram a massa magra e a força em idosos de vida livre.",
+        "url": "https://youtube.com/watch?v=JCaXll64RJg",
+        "ano": 2020
+      },
+      {
+        "id": 2037,
+        "titulo": "Exercício resistido com ingestão de whey protein afeta a via de sinalização mTOR e a miostatina em homens.",
+        "url": "https://youtube.com/watch?v=k4ZGhbqxtAc",
+        "ano": 2009
+      },
+      {
+        "id": 1819,
+        "titulo": "Suplementação nutricional oral enriquecida com proteína de soro de leite, leucina e vitamina D para o tratamento da sarcopenia.",
+        "url": "https://youtube.com/watch?v=rLLiQNtyXlo",
+        "ano": 2022
+      },
       {
         "id": 1744,
         "titulo": "Eficácia da suplementação de proteína combinada com treinamento de resistência para neutralizar a perda desproporcional de massa livre de gordura após cirurgia bariátrica metabólica: justificativa e desenho do ensaio clínico randomizado ENRICHED.",
@@ -2153,6 +2387,12 @@
         "titulo": "A suplementação de proteínas após o exercício e antes do sono não aumenta ainda mais os ganhos de massa muscular e força durante o treinamento de exercícios de resistência em homens idosos ativos.",
         "url": "https://youtube.com/watch?v=wEs5oIAj1YA",
         "ano": 2018
+      },
+      {
+        "id": 1287,
+        "titulo": "Relação entre ingestão de proteínas e hipertrofia muscular induzida por treinamento de resistência em mulheres de meia idade: um estudo piloto.",
+        "url": "https://youtube.com/watch?v=pN_calAxdak",
+        "ano": 2022
       },
       {
         "id": 1258,
@@ -2369,6 +2609,12 @@
         "ano": 2023
       },
       {
+        "id": 383,
+        "titulo": "Um ensaio randomizado e controlado de treinamento de resistência adicionado à restrição calórica mais treinamento de exercícios aeróbicos na insuficiência cardíaca obesa com fração de ejeção preservada.",
+        "url": "https://youtube.com/watch?v=GjNUsdczwcs",
+        "ano": 2023
+      },
+      {
         "id": 364,
         "titulo": "Revisão Sistemática #4: O que 22 estudos e 1.500+ pessoas dizem sobre Treinar até a Falha Muscular",
         "url": "https://youtube.com/watch?v=BBZytQdW8R8",
@@ -2419,6 +2665,12 @@
     ],
     "Amplitude e ROM": [
       {
+        "id": 2220,
+        "titulo": "Os efeitos do treinamento isométrico de longo comprimento muscular versus treinamento isotônico de amplitude total de movimento na hipertrofia regional do quadríceps femoral em indivíduos treinados em resistência.",
+        "url": "https://youtube.com/watch?v=Vb4I3WDd6js",
+        "ano": 2025
+      },
+      {
         "id": 290,
         "titulo": "A hipertrofia dos isquiotibiais é específica para o exercício de treinamento: isquiotibiais nórdicos versus treinamento excêntrico de estado alongado.",
         "url": "https://youtube.com/watch?v=aRw1hHkmoMk",
@@ -2441,6 +2693,12 @@
         "titulo": "Revisão Sistemática #2: O que 47 estudos e 2.240 pessoas dizem sobre Amplitude de Movimento para Hipertrofia",
         "url": "https://youtube.com/watch?v=mY8MxJpw2O4",
         "ano": null
+      },
+      {
+        "id": 231,
+        "titulo": "Quais ROMs levam a Roma? Uma revisão sistemática dos efeitos da amplitude de movimento na hipertrofia muscular.",
+        "url": "https://youtube.com/watch?v=G2JVJr_LcB4",
+        "ano": 2023
       },
       {
         "id": 229,
@@ -2499,6 +2757,12 @@
         "ano": 2023
       },
       {
+        "id": 1869,
+        "titulo": "Treinamento físico e parâmetros neuromusculares em pacientes com diabetes tipo 1: revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=RL2n7DhId_Y",
+        "ano": 2021
+      },
+      {
         "id": 1812,
         "titulo": "Hormônio(s) de crescimento, testosterona, fatores de crescimento semelhantes à insulina e cortisol: funções e integração para o desenvolvimento e crescimento celular com exercícios.",
         "url": "https://youtube.com/watch?v=t-pvihjsuns",
@@ -2535,6 +2799,12 @@
         "ano": 2024
       },
       {
+        "id": 874,
+        "titulo": "Eficácia dos exercícios aeróbicos e de resistência combinados na cognição, na saúde metabólica, na função física e na qualidade de vida relacionada à saúde em adultos de meia-idade e idosos com diabetes mellitus tipo 2: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=utqWJNI20Jc",
+        "ano": 2024
+      },
+      {
         "id": 872,
         "titulo": "Efeitos do exercício aeróbio combinado ao treinamento resistido na composição corporal e saúde metabólica em crianças e adolescentes com sobrepeso ou obesidade: revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=4W3B5sjrhLQ",
@@ -2551,6 +2821,12 @@
         "titulo": "O efeito do treinamento físico resistido em casa em pessoas com diabetes tipo 2: um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=GJBXZ1FtL0U",
         "ano": 2023
+      },
+      {
+        "id": 446,
+        "titulo": "Efeitos do treinamento progressivo de exercícios com sacos de areia de 12 semanas no controle glicêmico e na força muscular em pacientes com diabetes mellitus tipo 2 combinado com possível sarcopenia.",
+        "url": "https://youtube.com/watch?v=_FTUOVJbkCk",
+        "ano": 2022
       },
       {
         "id": 445,
@@ -2639,6 +2915,12 @@
         "ano": 2025
       },
       {
+        "id": 819,
+        "titulo": "Os efeitos da hidroterapia e da crioterapia na recuperação de danos musculares induzidos pós-exercício agudos - uma meta-análise em rede.",
+        "url": "https://youtube.com/watch?v=QF3OKyKYGY0",
+        "ano": 2024
+      },
+      {
         "id": 745,
         "titulo": "A imersão em água fria pós-exercício atenua a sinalização anabólica aguda e as adaptações de longo prazo nos músculos ao treinamento de força.",
         "url": "https://youtube.com/watch?v=KbfAK1dk3dk",
@@ -2676,6 +2958,12 @@
       }
     ],
     "Lesao e Reabilitacao": [
+      {
+        "id": 2332,
+        "titulo": "Lesão Muscular ou do Sistema Fascial (Parte II): O Gastrocnêmio Medial e o Paradigma da \"Perna do Tênis\".",
+        "url": "https://youtube.com/watch?v=raX27s73Gn8",
+        "ano": 2025
+      },
       {
         "id": 1318,
         "titulo": "Treinamento de resistência da cadeia posterior comparado a programas de exercícios gerais e caminhada para o tratamento da dor lombar crônica na população em geral: uma revisão sistemática e meta-análise.",
@@ -2721,6 +3009,12 @@
     ],
     "Tendao e Colageno": [
       {
+        "id": 2186,
+        "titulo": "A suplementação específica de peptídeos de colágeno aumenta o conteúdo de colágeno tipo I no músculo esquelético após 12 semanas de treinamento de resistência de alta carga: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=EmdrA5BU7QM",
+        "ano": 2026
+      },
+      {
         "id": 1676,
         "titulo": "O treinamento com restrição do fluxo sanguíneo de baixa carga induz adaptações morfológicas e mecânicas semelhantes no tendão de Aquiles em comparação com o treinamento de resistência com alta carga.",
         "url": "https://youtube.com/watch?v=0R-tgxpJ5Xw",
@@ -2755,6 +3049,12 @@
         "titulo": "O treinamento de força central pode alterar os fatores de risco neuromusculares e biomecânicos para lesão do ligamento cruzado anterior.",
         "url": "https://youtube.com/watch?v=cjw2CWtgtd8",
         "ano": 2021
+      },
+      {
+        "id": 723,
+        "titulo": "Comparação do treinamento de restrição de fluxo sanguíneo versus treinamento não oclusivo em pacientes com reconstrução do ligamento cruzado anterior ou osteoartrite do joelho: uma revisão sistemática.",
+        "url": "https://youtube.com/watch?v=mpgIztJgans",
+        "ano": 2020
       },
       {
         "id": 722,
@@ -2795,7 +3095,35 @@
         "ano": 2024
       }
     ],
+    "Peptideos e Emergentes": [
+      {
+        "id": 2186,
+        "titulo": "A suplementação específica de peptídeos de colágeno aumenta o conteúdo de colágeno tipo I no músculo esquelético após 12 semanas de treinamento de resistência de alta carga: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=EmdrA5BU7QM",
+        "ano": 2026
+      }
+    ],
+    "Saude Mental": [
+      {
+        "id": 2101,
+        "titulo": "Comprometimento cognitivo leve e sarcopenia: efeitos do treinamento com exercícios resistidos na neuroinflamação, desempenho cognitivo e alterações estruturais do cérebro.",
+        "url": "https://youtube.com/watch?v=5Cw9-Ba4B58",
+        "ano": 2025
+      },
+      {
+        "id": 874,
+        "titulo": "Eficácia dos exercícios aeróbicos e de resistência combinados na cognição, na saúde metabólica, na função física e na qualidade de vida relacionada à saúde em adultos de meia-idade e idosos com diabetes mellitus tipo 2: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=utqWJNI20Jc",
+        "ano": 2024
+      }
+    ],
     "Outros": [
+      {
+        "id": 2215,
+        "titulo": "Adaptações da arquitetura muscular ao treinamento de alongamento estático: uma revisão sistemática com meta-análise.",
+        "url": "https://youtube.com/watch?v=mbV4t2y-zis",
+        "ano": 2023
+      },
       {
         "id": 1988,
         "titulo": "Impacto da qualidade do ar hipóxica no efeito do treinamento resistido em diferentes ambientes de hipóxia normobárica.",
@@ -2993,6 +3321,12 @@
         "titulo": "A suplementação de beta-alanina melhora as adaptações ao treinamento de resistência? Um estudo randomizado, controlado por placebo, duplo-cego.",
         "url": "https://youtube.com/watch?v=1jlytJLI4Zg",
         "ano": 2023
+      },
+      {
+        "id": 288,
+        "titulo": "Efeitos hipertróficos de ações musculares concêntricas vs. excêntricas: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=7eFXSxDw4B0",
+        "ano": 2017
       },
       {
         "id": 215,

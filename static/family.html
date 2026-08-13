@@ -84,6 +84,16 @@
   <div class="sec">
     <div class="titulo">QUER SE APROFUNDAR EM ALGUM TEMA?</div>
     <div class="sub" id="resumo">Carregando a biblioteca...</div>
+    <div id="destaque" style="display:none;margin:14px 0 18px;padding:14px;border:1px solid #B8B8C0;border-radius:14px;background:rgba(201,168,76,.07)">
+      <div style="font-family:'Bebas Neue';font-size:15px;letter-spacing:2px;color:var(--ouro2);margin-bottom:10px">🔬 MAIS RECENTE</div>
+      <a id="destaque-link" href="#" target="_blank" rel="noopener" style="display:flex;gap:12px;align-items:center;text-decoration:none;color:var(--cinza)">
+        <img id="destaque-thumb" src="" alt="" style="width:120px;height:68px;object-fit:cover;border-radius:8px;flex-shrink:0;border:1px solid var(--borda)">
+        <div>
+          <div style="font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;color:var(--ouro);margin-bottom:4px">CIÊNCIA DA HIPERTROFIA</div>
+          <div id="destaque-titulo" style="font-size:13px;line-height:1.45;color:#E8E8ED"></div>
+        </div>
+      </a>
+    </div>
     <input class="busca" id="busca" type="text" placeholder="🔍  Buscar tema ou assunto — ex: joelho, creatina, idoso...">
     <div class="temas" id="temas"></div>
     <div class="vermais" id="vermais" style="display:none">ver todos os temas ↓</div>
@@ -113,10 +123,24 @@ fetch('/static/ciencia_videos.json')
     document.getElementById('resumo').textContent =
       'Já são ' + d.total_videos + ' vídeos publicados em ' + d.total_temas + ' temas — de um banco com mais de 2.200 artigos científicos. Escolha o seu.';
     renderChips();
+    mostrarDestaque();
   })
   .catch(function(){
     document.getElementById('resumo').textContent = 'Biblioteca indisponível no momento.';
   });
+
+function mostrarDestaque(){
+  var todos = [];
+  Object.keys(DADOS.temas).forEach(function(t){ DADOS.temas[t].forEach(function(v){ todos.push(v); }); });
+  if(!todos.length) return;
+  var r = todos.reduce(function(a,b){ return b.id > a.id ? b : a; });
+  var vid = (r.url.split('v=')[1] || '').split('&')[0];
+  if(!vid) return;
+  document.getElementById('destaque-thumb').src = 'https://img.youtube.com/vi/'+vid+'/hqdefault.jpg';
+  document.getElementById('destaque-titulo').textContent = r.titulo;
+  document.getElementById('destaque-link').href = r.url;
+  document.getElementById('destaque').style.display = 'block';
+}
 
 function nomesOrdenados(){
   return Object.keys(DADOS.temas).sort(function(a,b){ return DADOS.temas[b].length - DADOS.temas[a].length; });

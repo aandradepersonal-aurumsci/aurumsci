@@ -1,6 +1,6 @@
 {
-  "atualizado_em": "2026-08-12 20:37",
-  "total_videos": 316,
+  "atualizado_em": "2026-08-14 22:28",
+  "total_videos": 320,
   "total_temas": 19,
   "temas": {
     "Forca e Carga": [
@@ -99,6 +99,12 @@
         "titulo": "Adaptações neuromusculares ao treinamento de força unilateral vs. bilateral em mulheres.",
         "url": "https://youtube.com/watch?v=0F30oLp9fIM",
         "ano": 2016
+      },
+      {
+        "id": 1501,
+        "titulo": "Efeitos do treinamento de força e equilíbrio de alta resistência no desempenho de força unilateral e bilateral nas pernas em idosos.",
+        "url": "https://youtube.com/watch?v=B-Kr0UZirrI",
+        "ano": 2015
       },
       {
         "id": 1488,
@@ -459,6 +465,12 @@
         "titulo": "Efeito de um suplemento dietético pós-treino com vários ingredientes na composição corporal e força muscular - um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=dRrSFftPPNA",
         "ano": 2025
+      },
+      {
+        "id": 544,
+        "titulo": "Adoção e manutenção de treinamento de força baseado em academia em ambiente comunitário em adultos com excesso de peso ou diabetes tipo 2: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=pp7fBuzcZng",
+        "ano": 2015
       },
       {
         "id": 538,
@@ -1593,6 +1605,12 @@
         "ano": 2025
       },
       {
+        "id": 1501,
+        "titulo": "Efeitos do treinamento de força e equilíbrio de alta resistência no desempenho de força unilateral e bilateral nas pernas em idosos.",
+        "url": "https://youtube.com/watch?v=B-Kr0UZirrI",
+        "ano": 2015
+      },
+      {
         "id": 1477,
         "titulo": "Treinamento de resistência com restrição de fluxo sanguíneo em idosos com risco de limitações de mobilidade.",
         "url": "https://youtube.com/watch?v=qylDQuRTlS0",
@@ -1699,6 +1717,12 @@
         "titulo": "Apresentando o programa de treinamento de força progressivo em ambientes de cuidados a idosos em Cingapura.",
         "url": "https://youtube.com/watch?v=TTm3dpA0aRc",
         "ano": 2021
+      },
+      {
+        "id": 531,
+        "titulo": "Exercício aeróbico ou de resistência, ou ambos, na dieta de idosos obesos.",
+        "url": "https://youtube.com/watch?v=8k-VXqamjwo",
+        "ano": 2017
       },
       {
         "id": 525,
@@ -2249,6 +2273,12 @@
         "ano": 2025
       },
       {
+        "id": 531,
+        "titulo": "Exercício aeróbico ou de resistência, ou ambos, na dieta de idosos obesos.",
+        "url": "https://youtube.com/watch?v=8k-VXqamjwo",
+        "ano": 2017
+      },
+      {
         "id": 506,
         "titulo": "O treinamento intervalado de alta intensidade melhora a remodelação óssea, o perfil lipídico e a função física em pacientes com esclerose múltipla.",
         "url": "https://youtube.com/watch?v=9k9qY_UwWCI",
@@ -2425,6 +2455,12 @@
         "ano": 2024
       },
       {
+        "id": 673,
+        "titulo": "A suplementação de proteínas aumenta a resposta adaptativa do músculo esquelético ao treinamento físico de resistência: uma meta-análise.",
+        "url": "https://youtube.com/watch?v=cHYWYSkOX0k",
+        "ano": 2012
+      },
+      {
         "id": 644,
         "titulo": "Meta-Análise Exclusiva #5 — Ciência da Hipertrofia: O que 30 estudos e 4.711 pessoas dizem sobre Suplementação de Proteína",
         "url": "https://youtube.com/watch?v=uAHiRbN_FvY",
@@ -2441,6 +2477,12 @@
         "titulo": "Efeitos do tempo e dos tipos de suplementação de proteínas na melhoria da massa muscular, força e desempenho físico em adultos submetidos a treinamento de resistência: uma meta-análise de rede.",
         "url": "https://youtube.com/watch?v=oaKiRYnaySA",
         "ano": 2024
+      },
+      {
+        "id": 531,
+        "titulo": "Exercício aeróbico ou de resistência, ou ambos, na dieta de idosos obesos.",
+        "url": "https://youtube.com/watch?v=8k-VXqamjwo",
+        "ano": 2017
       },
       {
         "id": 443,
@@ -2815,6 +2857,12 @@
         "titulo": "A eficácia do treinamento de resistência metabólica versus cardio tradicional no desempenho atlético: uma revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=513shFT1Ir0",
         "ano": 2025
+      },
+      {
+        "id": 544,
+        "titulo": "Adoção e manutenção de treinamento de força baseado em academia em ambiente comunitário em adultos com excesso de peso ou diabetes tipo 2: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=pp7fBuzcZng",
+        "ano": 2015
       },
       {
         "id": 452,

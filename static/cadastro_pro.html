@@ -34,6 +34,14 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 .login-link{text-align:center;font-size:13px;color:var(--cinza);margin-top:16px}
 .login-link a{color:var(--ouro);text-decoration:none}
 .plano-badge{text-align:center;background:rgba(75,159,255,.08);border:1px solid rgba(75,159,255,.2);border-radius:10px;padding:10px;font-size:12px;color:var(--azul);margin-bottom:20px;letter-spacing:1px;display:none}
+.planos-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+.plano-card{display:flex;justify-content:space-between;align-items:center;background:rgba(212,175,55,.05);border:1.5px solid rgba(212,175,55,.25);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s}
+.plano-card:hover{border-color:rgba(212,175,55,.55)}
+.plano-card.sel{background:rgba(212,175,55,.14);border-color:var(--ouro,#D4AF37);box-shadow:0 0 0 1px var(--ouro,#D4AF37)}
+.plano-card .pc-esq{display:flex;flex-direction:column;gap:2px}
+.plano-card .pc-nome{font-size:15px;font-weight:700;color:#f5e6b3;letter-spacing:.5px}
+.plano-card .pc-lim{font-size:12px;color:#9a9a9a}
+.plano-card .pc-preco{font-size:16px;font-weight:700;color:var(--ouro,#D4AF37);white-space:nowrap}
 .lang-bar{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
 .lang-btn-cad{background:transparent;border:1px solid var(--borda);color:var(--cinza);padding:6px 14px;border-radius:10px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:1px;transition:all .2s}
 .lang-btn-cad.active{background:rgba(201,168,76,.12);border-color:var(--ouro);color:var(--ouro)}
@@ -81,11 +89,30 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 
     <div class="trial-badge">
       <div data-i18n="seteDias">🎯 7 DIAS GRÁTIS</div>
-      <div data-i18n="semCobranca">Sem cobrança agora. Cancele quando quiser.</div>
+      <div data-i18n="semCobranca">Sem cobrança agora. Cancele quando quiser, direto na tela inicial do app — sem burocracia e sem ônus.</div>
     </div>
 
     <div class="card-titulo" data-i18n="crieSuaConta">Crie sua conta PRO</div>
-    <div class="card-sub" data-i18n="preenchaDados">Preencha seus dados e escolha o plano na próxima etapa.</div>
+    <div class="card-sub">Escolha seu plano e preencha seus dados.</div>
+
+    <div class="planos-wrap" id="planos-wrap">
+      <div class="plano-card sel" data-plano="bronze" onclick="selecionarPlano('bronze')">
+        <div class="pc-esq"><span class="pc-nome">🥉 Bronze</span><span class="pc-lim">Até 10 alunos</span></div>
+        <span class="pc-preco">R$189,90<span style="font-size:11px;color:#888">/mês</span></span>
+      </div>
+      <div class="plano-card" data-plano="prata" onclick="selecionarPlano('prata')">
+        <div class="pc-esq"><span class="pc-nome">🥈 Prata</span><span class="pc-lim">Até 20 alunos</span></div>
+        <span class="pc-preco">R$249,90<span style="font-size:11px;color:#888">/mês</span></span>
+      </div>
+      <div class="plano-card" data-plano="ouro" onclick="selecionarPlano('ouro')">
+        <div class="pc-esq"><span class="pc-nome">🥇 Ouro</span><span class="pc-lim">Até 50 alunos</span></div>
+        <span class="pc-preco">R$399,90<span style="font-size:11px;color:#888">/mês</span></span>
+      </div>
+      <div class="plano-card" data-plano="diamante" onclick="selecionarPlano('diamante')">
+        <div class="pc-esq"><span class="pc-nome">💎 Diamante</span><span class="pc-lim">Alunos ilimitados</span></div>
+        <span class="pc-preco">R$449,90<span style="font-size:11px;color:#888">/mês</span></span>
+      </div>
+    </div>
 
     <div class="field"><label data-i18n="lblNome">NOME COMPLETO</label><input type="text" id="nome" placeholder="André Andrade"></div>
     <div class="field"><label data-i18n="lblEmail">EMAIL</label><input type="email" id="email" placeholder="seu@email.com" data-i18n-ph="phEmail"></div>
@@ -136,7 +163,7 @@ var TX_CAD_PRO = {
   pt: {
     tagCadastro:'CADASTRO DO PERSONAL TRAINER',
     seteDias:'🎯 7 DIAS GRÁTIS',
-    semCobranca:'Sem cobrança agora. Cancele quando quiser.',
+    semCobranca:'Sem cobrança agora. Cancele quando quiser, direto na tela inicial do app — sem burocracia e sem ônus.',
     crieSuaConta:'Crie sua conta PRO',
     preenchaDados:'Preencha seus dados e escolha o plano na próxima etapa.',
     lblNome:'NOME COMPLETO', lblEmail:'EMAIL', lblCref:'CREF', lblTelefone:'TELEFONE',
@@ -246,10 +273,10 @@ function toggleTermoPro(el){
 }
 
 var planos = {
-  'bronze': {nome:'Bronze', valor:4990, label:'🥉 PLANO BRONZE — Até 10 alunos · R$49,90/mês'},
-  'prata': {nome:'Prata', valor:8990, label:'🥈 PLANO PRATA — Até 20 alunos · R$89,90/mês'},
-  'ouro': {nome:'Ouro', valor:14990, label:'🥇 PLANO OURO — Até 50 alunos · R$149,90/mês'},
-  'diamante': {nome:'Diamante', valor:24990, label:'💎 PLANO DIAMANTE — Ilimitado · R$249,90/mês'}
+  'bronze': {nome:'Bronze', valor:18990, label:'🥉 PLANO BRONZE — Até 10 alunos · R$189,90/mês'},
+  'prata': {nome:'Prata', valor:24990, label:'🥈 PLANO PRATA — Até 20 alunos · R$249,90/mês'},
+  'ouro': {nome:'Ouro', valor:39990, label:'🥇 PLANO OURO — Até 50 alunos · R$399,90/mês'},
+  'diamante': {nome:'Diamante', valor:44990, label:'💎 PLANO DIAMANTE — Ilimitado · R$449,90/mês'}
 };
 
 var planoSelecionado = 'bronze';
@@ -264,6 +291,16 @@ window.onload = function(){
     badge.style.display = 'block';
   }
 };
+
+function selecionarPlano(p){
+  if(!planos[p]) return;
+  planoSelecionado = p;
+  document.querySelectorAll('.plano-card').forEach(function(c){
+    c.classList.toggle('sel', c.getAttribute('data-plano')===p);
+  });
+  var btn = document.getElementById('btn-cadastrar');
+  if(btn) btn.textContent = 'COMEÇAR 7 DIAS GRÁTIS — ' + planos[p].nome.toUpperCase() + ' →';
+}
 
 function mascaraCPF(el){
   var v = el.value.replace(/\D/g,'');

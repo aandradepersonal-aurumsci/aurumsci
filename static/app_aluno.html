@@ -640,11 +640,6 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
       <div id="termo-status-doc"><div style="font-size:12px;color:var(--cinza)">Não assinado ainda</div></div>
     </div>
 
-    <div style="background:var(--bg2);border:1px solid rgba(0,229,160,.2);border-radius:14px;padding:16px">
-      <div style="font-family:\"Bebas Neue\";font-size:18px;color:var(--verde);margin-bottom:4px">📄 CONTRATO DE SERVIÇOS</div>
-      <div style="font-size:12px;color:var(--cinza);margin-bottom:8px">Prestação de serviços pessoal trainer</div>
-      <div id="contrato-servico-status"><div style="font-size:12px;color:var(--cinza)">Carregando...</div></div>
-    </div>
   </div>
 </div>
 
@@ -792,6 +787,31 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
     <div style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;line-height:1.7;color:var(--cinza)">
       <strong style="color:var(--azul)">📝 Por que isso é importante?</strong><br>
       Conhecer seu histórico de saúde nos ajuda a adaptar seu treino com segurança. Os dados básicos já estão preenchidos — complete o restante!
+    </div>
+
+    <!-- SEUS DADOS (sexo, idade, estatura, peso) -->
+    <div style="background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:14px;margin-bottom:16px">
+      <div style="font-size:11px;color:var(--ouro);font-weight:700;letter-spacing:1px;margin-bottom:12px">👤 SEUS DADOS</div>
+      <div style="font-size:10px;color:var(--cinza);letter-spacing:1px;margin-bottom:8px">SEXO</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button id="dado-sexo-M" onclick="selecionarSexo('M')" style="flex:1;padding:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--cinza);font-size:14px;cursor:pointer">Masculino</button>
+        <button id="dado-sexo-F" onclick="selecionarSexo('F')" style="flex:1;padding:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--cinza);font-size:14px;cursor:pointer">Feminino</button>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--cinza);letter-spacing:1px;margin-bottom:6px">IDADE</div>
+          <input id="dado-idade" type="number" inputmode="numeric" placeholder="anos" style="width:100%;padding:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);font-size:15px;box-sizing:border-box">
+        </div>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--cinza);letter-spacing:1px;margin-bottom:6px">ESTATURA (cm)</div>
+          <input id="dado-altura" type="number" inputmode="numeric" placeholder="cm" style="width:100%;padding:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);font-size:15px;box-sizing:border-box">
+        </div>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--cinza);letter-spacing:1px;margin-bottom:6px">PESO (kg)</div>
+          <input id="dado-peso" type="number" inputmode="decimal" placeholder="kg" style="width:100%;padding:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);font-size:15px;box-sizing:border-box">
+        </div>
+      </div>
+      <button onclick="salvarDadosBasicos()" class="btn-gold" style="width:100%">SALVAR MEUS DADOS</button>
     </div>
 
     <!-- OBJETIVO / NÍVEL / DIAS — EDITÁVEL -->
@@ -1468,12 +1488,6 @@ function avancarContrato(){
   }
 }
 
-function voltarParaAvaliacao(){
-  document.getElementById('screen-onboarding').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('tabs').style.display='flex';
-  localStorage.setItem('aurum_onb_done','1');
-}
 
 function avancarConsentimento(){
   if(consentimentosMarcados.length === 5){
@@ -2159,6 +2173,37 @@ function renderFinanceiro(){
 }
 
 // ── TREINO ────────────────────────────────────────────
+function carregarBannerTrial(_n){
+  _n = _n || 0;
+  var el = document.getElementById('trial-banner');
+  if(!el){ if(_n < 6){ setTimeout(function(){ carregarBannerTrial(_n+1); }, 400); } return; }
+  fetch(window.API_BASE + '/aluno-portal/assinatura', {headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var e2 = document.getElementById('trial-banner');
+    if(!e2) return;
+    if(d && d.is_trial){
+      e2.innerHTML = '<div onclick="cancelarTrial()" style="cursor:pointer;background:linear-gradient(135deg,#0f3d2e,#124a37);border:1px solid #1f9d63;border-radius:14px;padding:13px 16px;margin:14px 0 2px;text-align:center;box-shadow:0 2px 14px rgba(31,157,99,.28)"><span style="font-family:Bebas Neue;letter-spacing:1px;font-size:15px;color:var(--ouro2)">Cancelar o trial de 7 dias \u2014 sem \u00f4nus</span></div>';
+    } else {
+      e2.innerHTML = '';
+    }
+  }).catch(function(){});
+}
+
+function cancelarTrial(){
+  if(!confirm('Cancelar seu trial de 7 dias? Voce nao sera cobrado e mantem o acesso ate o fim do periodo gratis.')) return;
+  fetch(window.API_BASE + '/aluno-portal/cancelar-assinatura', {method:'POST', headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var el = document.getElementById('trial-banner');
+    if(d && d.ok){
+      if(el) el.innerHTML = '<div style="background:rgba(31,157,99,.12);border:1px solid #1f9d63;border-radius:14px;padding:12px 16px;margin:14px 0 2px;text-align:center;color:#22c55e;font-size:13px;font-weight:600">\u2705 Trial cancelado \u2014 voce nao sera cobrado. Acesso ativo ate o fim dos 7 dias.</div>';
+    } else {
+      alert((d && d.detail) || 'Nao consegui cancelar agora. Tente de novo.');
+    }
+  }).catch(function(){ alert('Erro de conexao. Tente de novo.'); });
+}
+
 function renderTreino(){
   var h = new Date().getHours();
   var sauda = h<12 ? T('bomDia') : h<18 ? T('boaTarde') : T('boaNoite');
@@ -2170,7 +2215,9 @@ function renderTreino(){
 
   var html = '<div style="margin-bottom:16px">' +
     '<div style="font-family:Bebas Neue;font-size:36px;letter-spacing:1px;line-height:1">' + sauda + ',<br><span style="color:var(--ouro2)">' + nome + '!</span></div>' +
+    '<div id="trial-banner"></div>' +
     '</div>';
+  carregarBannerTrial();
 
   // Streak
   html += '<div class="streak">' +
@@ -2474,6 +2521,14 @@ function verificarReavaliacao(){
       if(precisa || otPend){
         banner.dataset.precisaReavaliar = precisa ? '1' : '0';
         banner.dataset.overtrainingPendente = otPend ? '1' : '0';
+        if(d.primeira_avaliacao){
+          banner.innerHTML = banner.innerHTML
+            .replace('PRONTO PARA EVOLUIR?', 'VAMOS FAZER SUA AVALIAÇÃO?')
+            .replace('Você completou', 'Vamos fazer')
+            .replace('8 semanas de treino', 'sua avaliação')
+            .replace('É hora da ciência decidir seu próximo passo.', 'É o que ajusta seu treino, com exercícios posturais, e conta pra sua periodização — acompanhamento profissional.')
+            .replace('COMEÇAR REAVALIAÇÃO BIMESTRAL →', 'FAZER MINHA AVALIAÇÃO →');
+        }
         banner.style.display = 'flex';
       } else {
         banner.style.display = 'none';
@@ -4198,6 +4253,36 @@ function abrirModalNutri(){
 }
 
 // ── ANAMNESE ──────────────────────────────────────────
+function selecionarSexo(sx){
+  window._dadoSexo = sx;
+  var m = document.getElementById('dado-sexo-M');
+  var fem = document.getElementById('dado-sexo-F');
+  if(m && fem){
+    if(sx==='M'){ m.style.background='var(--ouro)'; m.style.color='#0A0A0F'; fem.style.background='var(--bg2)'; fem.style.color='var(--cinza)'; }
+    else { fem.style.background='var(--ouro)'; fem.style.color='#0A0A0F'; m.style.background='var(--bg2)'; m.style.color='var(--cinza)'; }
+  }
+}
+function salvarDadosBasicos(){
+  var idade = document.getElementById('dado-idade').value;
+  var altura = document.getElementById('dado-altura').value;
+  var peso = document.getElementById('dado-peso').value;
+  var sexo = window._dadoSexo || localStorage.getItem('aurum_sexo') || '';
+  if(sexo) localStorage.setItem('aurum_sexo', sexo);
+  if(idade) localStorage.setItem('aurum_idade', idade);
+  if(altura) localStorage.setItem('aurum_altura', altura);
+  if(peso) localStorage.setItem('aurum_peso', peso);
+  mostrarToast('✅ Dados salvos!');
+}
+function carregarDadosBasicos(){
+  var sexo = localStorage.getItem('aurum_sexo') || '';
+  var idade = localStorage.getItem('aurum_idade') || '';
+  var altura = localStorage.getItem('aurum_altura') || '';
+  var peso = localStorage.getItem('aurum_peso') || '';
+  if(sexo) selecionarSexo(sexo);
+  var eI = document.getElementById('dado-idade'); if(eI && idade) eI.value = idade;
+  var eA = document.getElementById('dado-altura'); if(eA && altura) eA.value = altura;
+  var eP = document.getElementById('dado-peso'); if(eP && peso) eP.value = peso;
+}
 function renderAnamnese(){
   var pats = [
     {key:'hipertensão',label:'Hipertensão'},
@@ -5018,8 +5103,8 @@ function carregarBannerAvaliacao(){
         '<div style="display:flex;gap:12px;align-items:flex-start">' +
         '<div style="font-size:28px;flex-shrink:0">🎯</div>' +
         '<div style="flex:1">' +
-        '<div style="font-family:\"Bebas Neue\";font-size:18px;letter-spacing:1.5px;color:var(--ouro);margin-bottom:6px">PRONTO PARA EVOLUIR?</div>' +
-        '<div style="font-size:12px;color:var(--texto);line-height:1.6;margin-bottom:10px">Você completou <strong style="color:var(--ouro)">8 semanas de treino</strong>. É hora da ciência decidir seu próximo passo.</div>' +
+        '<div style="font-family:\"Bebas Neue\";font-size:18px;letter-spacing:1.5px;color:var(--ouro);margin-bottom:6px">' + (d.primeira_avaliacao ? 'VAMOS FAZER SUA AVALIAÇÃO?' : 'PRONTO PARA EVOLUIR?') + '</div>' +
+        '<div style="font-size:12px;color:var(--texto);line-height:1.6;margin-bottom:10px">' + (d.primeira_avaliacao ? 'Com a avaliação, seu treino vem <strong style="color:var(--ouro)">ajustado pra você</strong> — com exercícios posturais e contando pra sua periodização. É o que torna o acompanhamento <strong style="color:var(--ouro)">profissional</strong>.' : 'Você completou <strong style="color:var(--ouro)">8 semanas de treino</strong>. É hora da ciência decidir seu próximo passo.') + '</div>' +
         '<div style="background:rgba(0,0,0,.25);border-radius:10px;padding:10px 12px;margin-bottom:10px">' +
         '<div style="font-size:11px;color:var(--cinza);line-height:1.7">' +
         '<div style="margin-bottom:4px"><strong style="color:var(--ouro2)">✓ Overtraining</strong> — seu corpo pode receber MAIS estímulo?</div>' +
@@ -5027,7 +5112,7 @@ function carregarBannerAvaliacao(){
         '</div></div>' +
         '<div style="font-size:11px;color:var(--cinza);line-height:1.5;font-style:italic">Sem esses dados, seu treino fica preso na mesma fase. 5 minutos agora = próximas 8 semanas com progressão segura.</div>' +
         '</div></div>' +
-        '<button onclick="iniciarReavaliacaoBimestral()" style="width:100%;padding:14px;background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#0A0A0F;border:none;border-radius:12px;font-family:\"Bebas Neue\";font-size:14px;letter-spacing:2px;font-weight:900;cursor:pointer">COMEÇAR REAVALIAÇÃO BIMESTRAL →</button>' +
+        '<button onclick="iniciarReavaliacaoBimestral()" style="width:100%;padding:14px;background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#0A0A0F;border:none;border-radius:12px;font-family:\"Bebas Neue\";font-size:14px;letter-spacing:2px;font-weight:900;cursor:pointer">' + (d.primeira_avaliacao ? 'FAZER MINHA AVALIAÇÃO →' : 'COMEÇAR REAVALIAÇÃO BIMESTRAL →') + '</button>' +
         '<div style="font-size:9px;color:var(--cinza);opacity:.6;text-align:center;letter-spacing:.5px">📚 ACSM (2022) · Schoenfeld (2017) · Meeusen et al. (2013)</div>' +
         '</div>';
     } else {

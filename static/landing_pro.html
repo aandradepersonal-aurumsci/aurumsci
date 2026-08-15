@@ -31,7 +31,8 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
 .btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px;margin:0 auto 40px}
 .btn-principal{display:block;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:20px;letter-spacing:3px;padding:18px;border-radius:14px;text-decoration:none;text-align:center;transition:transform .2s}
 .btn-principal:active{transform:scale(.98)}
-.btn-secundario{display:block;border:1px solid var(--borda);color:var(--cinza);font-size:14px;padding:14px;border-radius:14px;text-decoration:none;text-align:center}
+.btn-secundario{display:block;border:1.5px solid var(--ouro);color:var(--ouro);font-size:14px;font-weight:600;padding:14px;border-radius:14px;text-decoration:none;text-align:center;transition:all .2s;background:rgba(201,168,76,0.05)}
+.btn-secundario:hover{background:rgba(201,168,76,0.12)}
 
 /* STATS */
 .stats{display:flex;gap:24px;justify-content:center;margin-bottom:0}
@@ -100,7 +101,7 @@ footer a{color:#444;text-decoration:none}
     <link rel="apple-touch-icon-precomposed" href="/static/apple-touch-icon-precomposed.png">
     </head>
 <body>
-<img src="/static/banner-pro.png" alt="AurumSci PRO — ciência e tecnologia com cuidado humano" style="width:100%;max-width:720px;display:block;margin:0 auto 26px;border-radius:14px">
+<img src="/static/banner-pro.png?v=2" alt="AurumSci PRO — ciência e tecnologia com cuidado humano" style="width:100%;max-width:720px;display:block;margin:0 auto 26px;border-radius:14px">
   <div class="lang-row">
     <button class="lang-btn-lp active" onclick="setLangLP('pt',this)">🇧🇷 PT</button>
     <button class="lang-btn-lp" onclick="setLangLP('en',this)">🇺🇸 EN</button>
@@ -111,8 +112,8 @@ footer a{color:#444;text-decoration:none}
 <div class="hero">
   <div class="badge" data-i18n="badge">PARA PERSONAL TRAINERS</div>
 
-  <h1 class="hero-titulo" data-i18n="heroTitulo">A plataforma que<br><span>transforma seu negócio</span></h1>
-  <p class="hero-sub" data-i18n="heroSub">Aqui você encontra avaliação com base científica, análise postural com IA e o AURI, seu assistente 24 horas. Você monta o treino com autonomia, de acordo com o objetivo e as limitações de cada aluno. E o aluno registra a própria carga a cada treino e acompanha os resultados por score — o que desperta nele o desejo de evoluir.</p>
+  <h1 class="hero-titulo" data-i18n="heroTitulo">Cansado de ser tratado como<br><span>digitador de fichas?</span></h1>
+  <p class="hero-sub" data-i18n="heroSub">Diagnóstico postural com IA, avaliação física científica e prescrição de precisão. Você monta cada treino com autonomia total, baseado nos dados exatos do aluno — e acompanha a evolução por score, com o AURI te dando suporte 24 horas. A tecnologia faz o trabalho pesado; a autoridade científica é 100% sua.</p>
   <p class="hero-lema" data-i18n="heroLema">Aqui não existe achismo.<br>"Sem avaliação não há prescrição."</p>
 
   <div class="btns">
@@ -130,19 +131,6 @@ footer a{color:#444;text-decoration:none}
 
 <div class="divisor"></div>
 
-<section>
-  <div class="section-tag" data-i18n="quemEstaPorTras">QUEM ESTÁ POR TRÁS</div>
-  <h2 class="section-titulo" data-i18n="construidoPor">Construído por quem vive isso</h2>
-  <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:32px">
-    <img src="/static/andre-foto.jpg" alt="Andre Andrade - Personal Trainer CREF 62702-G/SP" style="width:120px;height:120px;border-radius:50%;object-fit:cover;object-position:center 22%;display:block;margin:0 auto 16px;border:2px solid #C9A84C;transform:scaleX(-1);box-shadow:0 4px 20px rgba(201,168,76,0.25)">
-    <div style="font-family:Georgia,serif;font-size:17px;font-style:italic;color:var(--texto);line-height:1.8;margin-bottom:20px;text-align:center"><span data-i18n="depoimentoAndre">"Ao longo de mais de 20 anos como personal trainer, percebi que a tecnologia existente não foi feita por quem entende de treino. Então decidi construir a minha."</span></div>
-    <div style="font-size:14px;color:var(--cinza);line-height:1.8;margin-bottom:20px"><span data-i18n="curriculo">Bacharel e Licenciado em Educação Física, com 4 especializações nas principais areas do treinamento. Atuou 7 anos em avaliação física antes de se dedicar exclusivamente ao personal trainer, levando atletas a competições.</span></div>
-    <div style="text-align:center">
-      <div style="font-size:14px;color:var(--ouro);letter-spacing:2px;font-weight:600">André Andrade · CREF 62702-G/SP</div>
-      <div style="font-size:12px;color:var(--cinza);margin-top:4px"><span data-i18n="ptDevFundador">Personal Trainer · Desenvolvedor · Fundador AurumSci</span></div>
-    </div>
-  </div>
-</section>
 
 <div class="divisor"></div>
 
@@ -154,8 +142,8 @@ footer a{color:#444;text-decoration:none}
 
   <div id="carrosselApp" style="display:flex;gap:16px;overflow-x:auto;padding-bottom:12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch">
     <div style="flex:0 0 240px;scroll-snap-align:center">
-      <img src="/static/pro-abertura.png" style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);display:block">
-      <div style="font-size:13px;color:#fff;margin-top:10px;text-align:center;font-weight:600" data-i18n="capProAbertura">Seu painel — tudo do aluno num lugar só</div>
+      <img src="/static/pro-cancelar.png?v=2" style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);display:block">
+      <div style="font-size:13px;color:#fff;margin-top:10px;text-align:center;font-weight:600">Cancele quando quiser, direto na tela inicial — sem ônus</div>
     </div>
     <div style="flex:0 0 240px;scroll-snap-align:center">
       <img src="/static/pro-convite.png" style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);display:block">
@@ -182,6 +170,10 @@ footer a{color:#444;text-decoration:none}
       <div style="font-size:13px;color:#fff;margin-top:10px;text-align:center;font-weight:600" data-i18n="capProPer">Periodização — 3 modelos à sua escolha</div>
     </div>
     <div style="flex:0 0 240px;scroll-snap-align:center">
+      <img src="/static/pro-auri2.png?v=2" style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);display:block">
+      <div style="font-size:13px;color:#fff;margin-top:10px;text-align:center;font-weight:600">AURI — nossa inteligência pra te assessorar 24 horas</div>
+    </div>
+    <div style="flex:0 0 240px;scroll-snap-align:center">
       <img src="/static/pro-aula.png" style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);display:block">
       <div style="font-size:13px;color:#fff;margin-top:10px;text-align:center;font-weight:600" data-i18n="capProAula">Lance as aulas do seu aluno</div>
     </div>
@@ -190,20 +182,73 @@ footer a{color:#444;text-decoration:none}
       <div style="font-size:13px;color:#fff;margin-top:10px;text-align:center;font-weight:600" data-i18n="capProCobr">Fechamento com relatório de aulas e serviços extras</div>
     </div>
     <div style="flex:0 0 240px;scroll-snap-align:center">
-      <img src="/static/pro-auri.png" style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);display:block">
-      <div style="font-size:13px;color:#fff;margin-top:10px;text-align:center;font-weight:600" data-i18n="capProAuri">AURI — sua assistente 24h</div>
+      <img src="/static/pro-ajuda.png?v=2" style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);display:block">
+      <div style="font-size:13px;color:#fff;margin-top:10px;text-align:center;font-weight:600">Central de ajuda — tudo por tópicos, simples e claro</div>
     </div>
     <div style="flex:0 0 240px;scroll-snap-align:center">
-      <img src="/static/pro-whitelabel.png" style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);display:block">
-      <div style="font-size:13px;color:#fff;margin-top:10px;text-align:center;font-weight:600" data-i18n="capProWl">White label — o app com a sua marca</div>
+      <img src="/static/pro-tema.png?v=2" style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);display:block">
+      <div style="font-size:13px;color:#fff;margin-top:10px;text-align:center;font-weight:600">Mude o cenário — você escolhe o tema do app</div>
     </div>
+    <div style="flex:0 0 240px;scroll-snap-align:center">
+      <img src="/static/pro-logo.png?v=2" style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);display:block">
+      <div style="font-size:13px;color:#fff;margin-top:10px;text-align:center;font-weight:600">White label — sua marca no topo do app</div>
+    </div>
+
   </div>
   <div style="text-align:center;color:#C9A84C;font-size:12px;margin-top:8px">← arraste para o lado →</div>
 </section>
 
 <div class="divisor"></div>
+<section>
+  <div style="background:linear-gradient(135deg,rgba(201,168,76,0.08),var(--bg2));border:1.5px solid var(--ouro);border-radius:24px;padding:40px 28px;position:relative;overflow:hidden;box-shadow:0 8px 40px rgba(201,168,76,0.15)">
+    <div style="position:absolute;top:14px;right:20px;font-size:20px;opacity:.5">&#10024;</div>
+    <div style="position:absolute;bottom:14px;left:20px;font-size:16px;opacity:.4">&#10024;</div>
+    <h2 data-i18n="bTitulo" style="font-family:'Bebas Neue';font-size:30px;letter-spacing:1px;color:var(--ouro);text-align:center;line-height:1.15;margin-bottom:18px">Por que o AurumSci PRO deixa os outros no chinelo?</h2>
+    <p style="font-size:15px;color:var(--texto);line-height:1.75;text-align:center;max-width:460px;margin:0 auto 28px" data-i18n="bTexto">Enquanto a maioria dos apps te trata como <strong style="color:var(--ouro2)">digitador de fichas</strong>, aqui voc&ecirc; avalia com ci&ecirc;ncia, prescreve com autoridade e cuida de verdade dos seus alunos. A tecnologia faz o trabalho pesado &mdash; a autoridade continua sendo <strong style="color:var(--ouro2)">100% sua</strong>.</p>
+    <div style="text-align:center;font-family:'Bebas Neue';font-size:22px;letter-spacing:1px;color:var(--ouro2);margin-bottom:20px" data-i18n="bMomento">&#11088; Qual &eacute; o seu momento? &#11088;</div>
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:420px;margin:0 auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(201,168,76,0.06);border:1px solid var(--borda);border-radius:14px;padding:14px 20px">
+        <span style="font-size:16px;font-weight:700;color:var(--texto)">&#129353; Bronze</span>
+        <span style="font-size:14px;color:var(--cinza)" data-i18n="bBronze">at&eacute; 10 alunos</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(201,168,76,0.06);border:1px solid var(--borda);border-radius:14px;padding:14px 20px">
+        <span style="font-size:16px;font-weight:700;color:var(--texto)">&#129352; Prata</span>
+        <span style="font-size:14px;color:var(--cinza)" data-i18n="bPrata">at&eacute; 20 alunos</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(201,168,76,0.06);border:1px solid var(--borda);border-radius:14px;padding:14px 20px">
+        <span style="font-size:16px;font-weight:700;color:var(--texto)">&#129351; Ouro</span>
+        <span style="font-size:14px;color:var(--cinza)" data-i18n="bOuro">at&eacute; 50 alunos</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(201,168,76,0.14),rgba(240,192,64,0.06));border:1.5px solid var(--ouro);border-radius:14px;padding:14px 20px">
+        <span style="font-size:16px;font-weight:700;color:var(--ouro2)">&#128142; Diamante</span>
+        <span style="font-size:14px;color:var(--ouro)" data-i18n="bDiamante">alunos ilimitados</span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--cinza);font-style:italic;text-align:center;margin-top:22px" data-i18n="bRodape">Todos com acesso completo a todas as funcionalidades.<br>A diferen&ccedil;a &eacute; s&oacute; o tamanho do seu neg&oacute;cio.</p>
+    <p style="font-size:14px;color:var(--texto);text-align:center;margin-top:20px" data-i18n="bEscolhe">Voc&ecirc; escolhe o seu plano ao come&ccedil;ar &mdash; sem compromisso.</p>
+    <a href="/cadastro-pro" style="display:block;max-width:340px;margin:16px auto 0;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;font-family:'Bebas Neue';font-size:19px;letter-spacing:2px;padding:16px;border-radius:14px;text-decoration:none;text-align:center;box-shadow:0 6px 24px rgba(201,168,76,0.3)" data-i18n="bCta">COME&Ccedil;AR 7 DIAS GR&Aacute;TIS &rarr;</a>
+  </div>
+</section>
+<div class="divisor"></div>
+<section>
+  <div class="section-tag" data-i18n="quemEstaPorTras">QUEM ESTÁ POR TRÁS</div>
+  <h2 class="section-titulo" data-i18n="construidoPor">Construído por quem vive isso</h2>
+  <div style="background:var(--bg2);border:1px solid var(--borda);border-radius:20px;padding:32px">
+    <img src="/static/andre-foto.jpg" alt="Andre Andrade - Personal Trainer CREF 62702-G/SP" style="width:120px;height:120px;border-radius:50%;object-fit:cover;object-position:center 22%;display:block;margin:0 auto 16px;border:2px solid #C9A84C;transform:scaleX(-1);box-shadow:0 4px 20px rgba(201,168,76,0.25)">
+    <div style="font-family:Georgia,serif;font-size:17px;font-style:italic;color:var(--texto);line-height:1.8;margin-bottom:20px;text-align:center"><span data-i18n="depoimentoAndre">"Ao longo de mais de 20 anos como personal trainer, percebi que a tecnologia existente não foi feita por quem entende de treino. Então decidi construir a minha."</span></div>
+    <div style="font-size:14px;color:var(--cinza);line-height:1.8;margin-bottom:20px"><span data-i18n="curriculo">Bacharel e Licenciado em Educação Física, com 4 especializações nas principais areas do treinamento. Atuou 7 anos em avaliação física antes de se dedicar exclusivamente ao personal trainer, levando atletas a competições.</span></div>
+    <div style="text-align:center">
+      <div style="font-size:14px;color:var(--ouro);letter-spacing:2px;font-weight:600">André Andrade · CREF 62702-G/SP</div>
+      <div style="font-size:12px;color:var(--cinza);margin-top:4px"><span data-i18n="ptDevFundador">Personal Trainer · Desenvolvedor · Fundador AurumSci</span></div>
+    </div>
+  </div>
+</section>
 
-<!-- PLANOS -->
+
+<div class="divisor"></div>
+
+<!-- PLANOS OCULTADO (15/ago): entrada única pelo COMEÇAR do topo; menção de planos vai no texto. Para voltar: descomentar.
+PLANOS
 <section>
   <div class="section-tag" data-i18n="planos">PLANOS</div>
   <h2 class="section-titulo" data-i18n="escolhaPlano">Escolha o seu plano</h2>
@@ -284,6 +329,7 @@ footer a{color:#444;text-decoration:none}
     </div>
   </div>
 </section>
+-->
 
 <div class="divisor"></div>
 
@@ -353,8 +399,15 @@ footer a{color:#444;text-decoration:none}
 var TX_LP_PRO = {
   pt: {
     badge:'PARA PERSONAL TRAINERS',
-    heroTitulo:'A plataforma que<br><span>transforma seu negócio</span>',
-    heroSub:'Aqui você encontra avaliação com base científica, análise postural com IA e o AURI, seu assistente 24 horas. Você monta o treino com autonomia, de acordo com o objetivo e as limitações de cada aluno. E o aluno registra a própria carga a cada treino e acompanha os resultados por score — o que desperta nele o desejo de evoluir.',
+    heroTitulo:'Cansado de ser tratado como<br><span>digitador de fichas?</span>',
+    heroSub:'Diagnóstico postural com IA, avaliação física científica e prescrição de precisão. Você monta cada treino com autonomia total, baseado nos dados exatos do aluno — e acompanha a evolução por score, com o AURI te dando suporte 24 horas. A tecnologia faz o trabalho pesado; a autoridade científica é 100% sua.',
+    bTitulo:'Por que o AurumSci PRO deixa os outros no chinelo?',
+    bTexto:'Enquanto a maioria dos apps te trata como <strong style="color:var(--ouro2)">digitador de fichas</strong>, aqui você avalia com ciência, prescreve com autoridade e cuida de verdade dos seus alunos. A tecnologia faz o trabalho pesado — a autoridade continua sendo <strong style="color:var(--ouro2)">100% sua</strong>.',
+    bMomento:'&#11088; Qual é o seu momento? &#11088;',
+    bBronze:'até 10 alunos', bPrata:'até 20 alunos', bOuro:'até 50 alunos', bDiamante:'alunos ilimitados',
+    bRodape:'Todos com acesso completo a todas as funcionalidades.<br>A diferença é só o tamanho do seu negócio.',
+    bEscolhe:'Você escolhe o seu plano ao começar — sem compromisso.',
+    bCta:'COMEÇAR 7 DIAS GRÁTIS &rarr;',
     heroLema:'Aqui não existe achismo.<br>"Sem avaliação não há prescrição."',
     btnComecar:'COMEÇAR 7 DIAS GRÁTIS →',
     btnLogin:'Já tenho conta — fazer login',
@@ -420,8 +473,15 @@ var TX_LP_PRO = {
   },
   en: {
     badge:'FOR PERSONAL TRAINERS',
-    heroTitulo:'The platform that<br><span>transforms your business</span>',
-    heroSub:'Here you get science-based assessment, AI posture analysis and AURI, your 24-hour assistant. You build the workout with full autonomy, following the goal and the limitations of each student. And the student logs their own load every session and tracks results through a score — which sparks the drive to progress.',
+    heroTitulo:'Tired of being treated like a<br><span>form-filling clerk?</span>',
+    heroSub:'Most apps give you just a calendar and a payment tool. AurumSci PRO was built by someone with 20 years on the gym floor: here you assess with science, prescribe with authority, and the technology does the heavy lifting — without ever taking your place.',
+    bTitulo:'Why does AurumSci PRO leave the others in the dust?',
+    bTexto:'While most apps treat you like a <strong style="color:var(--ouro2)">form-filling clerk</strong>, here you assess with science, prescribe with authority and truly care for your students. Technology does the heavy lifting — the authority stays <strong style="color:var(--ouro2)">100% yours</strong>.',
+    bMomento:'&#11088; What is your stage? &#11088;',
+    bBronze:'up to 10 students', bPrata:'up to 20 students', bOuro:'up to 50 students', bDiamante:'unlimited students',
+    bRodape:'All with full access to every feature.<br>The only difference is the size of your business.',
+    bEscolhe:'You choose your plan when you start — no commitment.',
+    bCta:'START 7 DAYS FREE &rarr;',
     heroLema:'There is no guesswork here.<br>"No assessment, no prescription."',
     btnComecar:'START 7-DAY FREE TRIAL →',
     btnLogin:'I already have an account — log in',
@@ -487,8 +547,15 @@ var TX_LP_PRO = {
   },
   es: {
     badge:'PARA PERSONAL TRAINERS',
-    heroTitulo:'La plataforma que<br><span>transforma tu negocio</span>',
-    heroSub:'Aquí encuentras evaluación con base científica, análisis postural con IA y AURI, tu asistente 24 horas. Armas el entrenamiento con autonomía, según el objetivo y las limitaciones de cada alumno. Y el alumno registra su propia carga en cada entrenamiento y sigue los resultados con un score — lo que despierta el deseo de evolucionar.',
+    heroTitulo:'¿Cansado de que te traten como un<br><span>llenador de fichas?</span>',
+    heroSub:'La mayoría de las apps te dan solo agenda y cobro. AurumSci PRO fue creado por quien tiene 20 años de cancha en el gimnasio: aquí evalúas con ciencia, prescribes con autoridad, y la tecnología hace el trabajo pesado — sin quitarte nunca tu lugar.',
+    bTitulo:'¿Por qué AurumSci PRO deja a los demás muy atrás?',
+    bTexto:'Mientras la mayoría de las apps te tratan como un <strong style="color:var(--ouro2)">llenador de fichas</strong>, aquí evalúas con ciencia, prescribes con autoridad y cuidas de verdad a tus alumnos. La tecnología hace el trabajo pesado — la autoridad sigue siendo <strong style="color:var(--ouro2)">100% tuya</strong>.',
+    bMomento:'&#11088; ¿Cuál es tu momento? &#11088;',
+    bBronze:'hasta 10 alumnos', bPrata:'hasta 20 alumnos', bOuro:'hasta 50 alumnos', bDiamante:'alumnos ilimitados',
+    bRodape:'Todos con acceso completo a todas las funciones.<br>La única diferencia es el tamaño de tu negocio.',
+    bEscolhe:'Eliges tu plan al empezar — sin compromiso.',
+    bCta:'EMPEZAR 7 DÍAS GRATIS &rarr;',
     heroLema:'Aquí no hay suposiciones.<br>"Sin evaluación no hay prescripción."',
     btnComecar:'COMENZAR 7 DÍAS GRATIS →',
     btnLogin:'Ya tengo cuenta — iniciar sesión',
@@ -608,7 +675,7 @@ function enviarContato(){
     <span id="audioTxt">Ouvir a apresentacao</span>
   </button>
 </div>
-<audio id="narracao" src="/static/narracao_app_pro_FINAL.mp3" preload="auto"></audio>
+<audio id="narracao" src="/static/tour_pro_bella.mp3" preload="auto"></audio>
 <script>
 var _carrosselCentrado = false;
 var _autoScroll = false, _scrollInicial = 0;

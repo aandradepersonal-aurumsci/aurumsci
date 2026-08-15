@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AurumSci — Ciência que vira resultado</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ouro:#C9A84C;--ouro2:#E8D08A;--bg:#0A0A0F;--bg2:#12121A;--borda:#2A2A3A;--cinza:#9A9AA5}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'DM Sans',-apple-system,sans-serif;background:linear-gradient(135deg,#0A0A0F 0%,#15151F 100%);color:#fff;min-height:100vh;padding:32px 20px 60px}
+  .wrap{max-width:720px;margin:0 auto}
+  .banner{width:100%;border-radius:14px;display:block;margin-bottom:26px}
+  .hero{font-style:italic;text-align:center;margin-bottom:34px;padding:0 4px}
+  .hero-t{font-size:27px;font-weight:700;color:#fff;line-height:1.35;margin-bottom:16px}
+  .hero-c{font-size:18px;color:#fff;line-height:1.7;margin-bottom:16px;opacity:.95}
+  .hero-f{font-size:17px;font-weight:600;color:var(--ouro);line-height:1.6}
+  .logo{font-family:Georgia,serif;font-size:38px;font-weight:900;letter-spacing:6px;text-align:center;background:linear-gradient(135deg,var(--ouro),var(--ouro2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .tag{text-align:center;font-size:10px;letter-spacing:4px;color:var(--cinza);margin:8px 0 34px}
+  .titulo{font-family:'Bebas Neue';font-size:26px;letter-spacing:2px;color:var(--ouro);text-align:center;margin-bottom:6px}
+  .sub{text-align:center;font-size:14px;color:var(--cinza);line-height:1.6;margin-bottom:28px}
+  .card{display:block;text-decoration:none;background:var(--bg2);border:1px solid var(--borda);border-radius:18px;padding:20px;margin-bottom:14px;transition:all .2s}
+  .card:active{transform:scale(.98)}
+  .card-foto{width:100%;height:160px;object-fit:cover;border-radius:12px;margin-bottom:12px;display:block}
+  .foto-wrap{margin-bottom:12px}
+  .foto-wrap .card-foto{margin-bottom:0;border-radius:0 0 12px 12px}
+  .foto-wrap .logo-sobre{display:block;width:100%;height:auto;border-radius:12px 12px 0 0}
+  .card-emoji{font-size:26px;margin-bottom:8px}
+  .card-nome{font-family:'Bebas Neue';font-size:20px;letter-spacing:1px;color:var(--ouro);margin-bottom:4px}
+  .card-desc{font-size:13px;color:var(--cinza);line-height:1.5}
+  .card-btn{display:block;margin-top:14px;padding:11px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;border-radius:12px;text-align:center;font-weight:700;font-size:13px;letter-spacing:1px}
+  .selo{display:inline-block;margin-top:8px;padding:4px 12px;border:1px solid rgba(201,168,76,.4);border-radius:20px;color:var(--ouro);font-size:10px;letter-spacing:1px}
+  .sec{margin-top:44px;padding-top:32px;border-top:1px solid var(--borda)}
+  .busca{width:100%;padding:16px 18px;border-radius:14px;background:linear-gradient(135deg,rgba(201,168,76,.08),var(--bg2));border:1.5px solid var(--ouro);color:#fff;font-size:15px;font-family:'DM Sans',sans-serif;margin-bottom:16px;box-shadow:0 4px 18px rgba(201,168,76,.18);transition:all .2s}
+  .busca::placeholder{color:#6a6a75}
+  .busca:focus{outline:none;border-color:var(--ouro2);box-shadow:0 6px 28px rgba(201,168,76,.38)}
+  .temas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+  .chip{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:7px 14px;color:var(--ouro);font-size:12px;cursor:pointer;transition:all .2s}
+  .chip:hover,.chip.on{background:var(--ouro);color:#0A0A0F;font-weight:600}
+  .chip .n{opacity:.65;font-size:10px;margin-left:4px}
+  .vermais{text-align:center;color:var(--ouro);font-size:12px;cursor:pointer;padding:8px;margin-bottom:16px}
+  .vid{display:block;text-decoration:none;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+  .vid-t{font-size:13px;color:#fff;line-height:1.45}
+  .vid-a{font-size:11px;color:var(--ouro);margin-top:4px}
+  .vazio{text-align:center;color:var(--cinza);font-size:13px;padding:20px}
+  .rodape{text-align:center;color:#555;font-size:11px;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <img class="banner" src="/static/banner-family.png" alt="AurumSci Family — ciência e tecnologia com cuidado humano">
+
+  <div class="hero">
+    <div class="hero-t">Bem-vindo à AurumSci Family.</div>
+    <div class="hero-c">A ciência descobre. O laboratório mede. O profissional prescreve. O app acompanha. Cada parte alimenta a outra — evidência que vira avaliação, avaliação que vira prescrição, prescrição que vira resultado.</div>
+    <div class="hero-f">Tudo conectado. Tudo baseado em evidências. Tudo pensado para a sua evolução.</div>
+  </div>
+
+  <a class="card" href="https://lab.aurumsc.com.br" target="_blank">
+    <div class="foto-wrap"><img class="logo-sobre" src="/static/logo-lab.png" alt=""><img class="card-foto" src="/static/family-lab.png" alt="AurumSci LAB"></div>
+    <div class="card-nome">AURUMSCI LAB</div>
+    <div class="card-desc">Avaliação física premium — composição corporal, VO2, testes e dinamometria.</div>
+    <div class="card-btn">CONHECER O LAB →</div>
+  </a>
+
+  <a class="card" href="https://aurumsc.com.br" target="_blank">
+    <div class="foto-wrap"><img class="logo-sobre" src="/static/logo-aluno.png" alt=""><img class="card-foto" src="/static/family-aluno.png" alt="App do Aluno"></div>
+    <div class="card-nome">APP DO ALUNO</div>
+    <div class="card-desc">Seu treino guiado por ciência, no bolso — com o AURI, seu assistente 24h.</div>
+    <div class="card-btn">CONHECER O APP →</div>
+  </a>
+
+  <a class="card" href="https://aurumsc.com.br/pro" target="_blank">
+    <div class="foto-wrap"><img class="logo-sobre" src="/static/logo-pro.png" alt=""><img class="card-foto" src="/static/family-pro.png" alt="AurumSci PRO"></div>
+    <div class="card-nome">AURUMSCI PRO</div>
+    <div class="card-desc">A plataforma do personal trainer — avaliação avançada, periodização e prescrição.</div>
+    <div class="card-btn">CONHECER O PRO →</div>
+  </a>
+
+  <a class="card" href="https://www.youtube.com/@andreandrade8248" target="_blank">
+    <div class="foto-wrap"><img class="logo-sobre" src="/static/logo-ciencia.png" alt=""><img class="card-foto" src="/static/family-ciencia.png" alt="Ciencia da Hipertrofia"></div>
+    <div class="card-nome">CIÊNCIA DA HIPERTROFIA</div>
+    <div class="card-desc">A evidência que embasa tudo. Estudos traduzidos em vídeos curtos, todo dia.</div>
+    <div class="card-btn">VER OS VÍDEOS →</div>
+  </a>
+
+  <div class="sec">
+    <div class="titulo">QUER SE APROFUNDAR EM ALGUM TEMA?</div>
+    <div class="sub" id="resumo">Carregando a biblioteca...</div>
+    <div id="destaque" style="display:none;margin:14px 0 18px;padding:14px;border:1px solid #B8B8C0;border-radius:14px;background:rgba(201,168,76,.07)">
+      <div style="font-family:'Bebas Neue';font-size:15px;letter-spacing:2px;color:var(--ouro2);margin-bottom:10px">🔬 TEMA ALEATÓRIO</div>
+      <a id="destaque-link" href="#" target="_blank" rel="noopener" style="display:flex;gap:12px;align-items:center;text-decoration:none;color:var(--cinza)">
+        <img id="destaque-thumb" src="" alt="" style="width:120px;height:68px;object-fit:cover;border-radius:8px;flex-shrink:0;border:1px solid var(--borda)">
+        <div>
+          <div style="font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;color:var(--ouro);margin-bottom:4px">CIÊNCIA DA HIPERTROFIA</div>
+          <div id="destaque-titulo" style="font-size:13px;line-height:1.45;color:#E8E8ED"></div>
+        </div>
+      </a>
+    </div>
+    <input class="busca" id="busca" type="text" placeholder="🔍  Buscar tema ou assunto — ex: joelho, creatina, idoso...">
+    <div class="temas" id="temas"></div>
+    <div class="vermais" id="vermais" style="display:none">ver todos os temas ↓</div>
+    <div id="lista"></div>
+  </div>
+
+  <div class="rodape">AurumSci — André Andrade · CREF 62702-G/SP</div>
+</div>
+
+<script>
+var DADOS = null, EXPANDIDO = false, TOP = 6;
+var ACENTO = {
+  "Forca e Carga":"Força e Carga",
+  "Volume e Series":"Volume e Séries",
+  "Avaliacao Fisica":"Avaliação Física",
+  "Proteina e Dieta":"Proteína e Dieta",
+  "Recuperacao e Sono":"Recuperação e Sono",
+  "Lesao e Reabilitacao":"Lesão e Reabilitação",
+  "Tendao e Colageno":"Tendão e Colágeno"
+};
+function bonito(n){ return ACENTO[n] || n; }
+
+fetch('/static/ciencia_videos.json')
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    DADOS = d;
+    document.getElementById('resumo').textContent =
+      'Já são ' + d.total_videos + ' vídeos publicados em ' + d.total_temas + ' temas — de um banco com mais de 2.200 artigos científicos. Escolha o seu.';
+    renderChips();
+    mostrarDestaque();
+  })
+  .catch(function(){
+    document.getElementById('resumo').textContent = 'Biblioteca indisponível no momento.';
+  });
+
+function mostrarDestaque(){
+  var todos = [];
+  Object.keys(DADOS.temas).forEach(function(t){ DADOS.temas[t].forEach(function(v){ todos.push(v); }); });
+  if(!todos.length) return;
+  var r = todos[Math.floor(Math.random() * todos.length)];
+  var vid = (r.url.split('v=')[1] || '').split('&')[0];
+  if(!vid) return;
+  document.getElementById('destaque-thumb').src = 'https://img.youtube.com/vi/'+vid+'/hqdefault.jpg';
+  document.getElementById('destaque-titulo').textContent = r.titulo;
+  document.getElementById('destaque-link').href = r.url;
+  document.getElementById('destaque').style.display = 'block';
+}
+
+function nomesOrdenados(){
+  return Object.keys(DADOS.temas).sort(function(a,b){ return DADOS.temas[b].length - DADOS.temas[a].length; });
+}
+
+function renderChips(){
+  var box = document.getElementById('temas');
+  box.innerHTML = '';
+  var nomes = nomesOrdenados();
+  var mostrar = EXPANDIDO ? nomes : nomes.slice(0, TOP);
+  mostrar.forEach(function(nome){
+    var c = document.createElement('div');
+    c.className = 'chip';
+    c.innerHTML = bonito(nome) + '<span class="n">' + DADOS.temas[nome].length + '</span>';
+    c.onclick = function(){ mostrarTema(nome, c); };
+    box.appendChild(c);
+  });
+  var vm = document.getElementById('vermais');
+  if(nomes.length > TOP){
+    vm.style.display = 'block';
+    vm.textContent = EXPANDIDO ? 'mostrar menos ↑' : 'ver todos os ' + nomes.length + ' temas ↓';
+    vm.onclick = function(){ EXPANDIDO = !EXPANDIDO; renderChips(); };
+  }
+}
+
+function mostrarTema(nome, chip){
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+  if(chip) chip.classList.add('on');
+  pintar(DADOS.temas[nome] || [], bonito(nome));
+}
+
+function pintar(vids, titulo){
+  var lista = document.getElementById('lista');
+  if(!vids.length){ lista.innerHTML = '<div class="vazio">Nada encontrado.</div>'; return; }
+  var html = '';
+  vids.forEach(function(v){
+    html += '<a class="vid" href="' + v.url + '" target="_blank">' +
+            '<div class="vid-t">' + v.titulo + '</div>' +
+            '<div class="vid-a">▶ assistir · ' + (v.ano || '') + '</div></a>';
+  });
+  lista.innerHTML = html;
+}
+
+document.getElementById('busca').addEventListener('input', function(e){
+  if(!DADOS) return;
+  var q = e.target.value.trim().toLowerCase();
+  if(q.length < 2){ document.getElementById('lista').innerHTML = ''; renderChips(); return; }
+  var achados = [];
+  nomesOrdenados().forEach(function(nome){
+    var temaBate = bonito(nome).toLowerCase().indexOf(q) >= 0 || nome.toLowerCase().indexOf(q) >= 0;
+    DADOS.temas[nome].forEach(function(v){
+      if(temaBate || v.titulo.toLowerCase().indexOf(q) >= 0) achados.push(v);
+    });
+  });
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+  pintar(achados.slice(0, 60), 'busca');
+});
+</script>
+<div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999">
+  <button id="btnAudio" onclick="tocarNarracao()" style="background:var(--ouro);color:#111;border:none;border-radius:999px;padding:14px 26px;font-size:15px;font-weight:700;letter-spacing:.5px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;box-shadow:0 6px 24px rgba(0,0,0,.4)">
+    <span id="audioIcon" style="font-size:18px">&#9654;</span>
+    <span id="audioTxt">Ouvir a apresentacao</span>
+  </button>
+</div>
+<audio id="narracao" src="/static/narracao_family_FINAL.mp3?v=3" preload="auto"></audio>
+<script>
+var _carrosselCentrado = false;
+var _autoScroll = false, _scrollInicial = 0;
+window.addEventListener('wheel', function(){ if(_autoScroll) _autoScroll = false; }, {passive:true});
+window.addEventListener('touchmove', function(){ if(_autoScroll) _autoScroll = false; }, {passive:true});
+function tocarNarracao(){
+  var a = document.getElementById('narracao');
+  var icon = document.getElementById('audioIcon');
+  var txt = document.getElementById('audioTxt');
+  if(a.paused){
+    a.play();
+    icon.innerHTML = '&#10074;&#10074;';
+    txt.textContent = 'Ouvindo... (toque para pausar)';
+    _scrollInicial = window.scrollY;
+    _carrosselCentrado = false;
+    _autoScroll = true;
+  } else {
+    a.pause();
+    icon.innerHTML = '&#9654;';
+    txt.textContent = 'Ouvir a apresentacao';
+    _autoScroll = false;
+    return;
+  }
+  function animarRolagem(){
+    if(a.paused || !_autoScroll) return;
+    if(!a.duration){ requestAnimationFrame(animarRolagem); return; }
+    var progresso = Math.min(a.currentTime / a.duration, 1);
+    var carrossel = document.getElementById('carrosselApp');
+    if(progresso < 0.8 || !carrossel){
+      var pv = progresso / 0.8;
+      var alvoFinal = document.body.scrollHeight - window.innerHeight;
+      window.scrollTo(0, _scrollInicial + (alvoFinal - _scrollInicial) * Math.min(pv,1));
+    } else {
+      if(!_carrosselCentrado){ carrossel.scrollIntoView({behavior:'smooth', block:'center'}); _carrosselCentrado = true; }
+      var ph = (progresso - 0.8) / 0.2;
+      carrossel.scrollLeft = (carrossel.scrollWidth - carrossel.clientWidth) * ph;
+    }
+    requestAnimationFrame(animarRolagem);
+  }
+  requestAnimationFrame(animarRolagem);
+  a.onended = function(){ icon.innerHTML = '&#9654;'; txt.textContent = 'Ouvir novamente'; _autoScroll = false; };
+}
+</script>
+</body>
+</html>

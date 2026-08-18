@@ -586,6 +586,8 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
             except Exception:
                 pass
         db.commit()
+        db.refresh(av)
+        print(f'[REPOUSO-POS] id={av.id} pas={av.pa_sistolica_repouso} peso={av.peso}', flush=True)
         return {"mensagem": f"Anamnese salva para {aluno.nome}!", "secao": secao, "data": str(date.today())}
 
     from app.routers.avaliacao import pegar_ou_criar_avaliacao_corrente

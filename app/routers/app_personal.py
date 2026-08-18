@@ -539,6 +539,7 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
 
     if secao == "anamnese" and dados.anamnese:
         an = dados.anamnese
+        print(f'[REPOUSO-DEBUG] pas={getattr(an,"pa_sistolica_repouso","SEM")} pad={getattr(an,"pa_diastolica_repouso","SEM")} fc={getattr(an,"fc_repouso","SEM")}', flush=True)
         # FIX 18/05/2026: salva nos campos estruturados do model (nao mais em obs concatenada)
         existente = db.query(Anamnese).filter(Anamnese.aluno_id == aluno_id).first()
         if existente:

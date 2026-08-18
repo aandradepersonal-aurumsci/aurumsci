@@ -2690,6 +2690,9 @@ function avalAba(aba){
       if(d.peso){ var e=document.getElementById('an-peso'); if(e) e.value=d.peso; }
       if(d.altura){ var e=document.getElementById('an-altura'); if(e) e.value=d.altura; }
       if(d.sexo){ var e=document.getElementById('an-sexo'); if(e){ var s=String(d.sexo).toUpperCase(); e.value = (s==='MASCULINO'||s==='M') ? 'M' : ((s==='FEMININO'||s==='F') ? 'F' : ''); } }
+      if(d.pa_sistolica_repouso!=null){ var e=document.getElementById('an-pa-sis'); if(e) e.value=d.pa_sistolica_repouso; }
+      if(d.pa_diastolica_repouso!=null){ var e=document.getElementById('an-pa-dia'); if(e) e.value=d.pa_diastolica_repouso; }
+      if(d.fc_repouso!=null){ var e=document.getElementById('an-fc-rep'); if(e) e.value=d.fc_repouso; }
       // FIX 18/05/2026 padronizar: renderiza botoes (igual app aluno) puxando do banco
       var nivelSalvo = d.nivel ? String(d.nivel).toLowerCase() : '';
       var objSalvo = d.objetivo ? String(d.objetivo).toLowerCase() : '';
@@ -3302,6 +3305,20 @@ function sincronizarHRRPro(){
   set('p-hrr-1min',      v('p-cooper-fc1') || v('p-milha-fc1')  || v('p-step-fc'));
   set('p-hrr-pa-pos-s',  v('p-cooper-pas') || v('p-milha-pas')  || v('p-step-pas'));
   set('p-hrr-pa-pos-d',  v('p-cooper-pad') || v('p-milha-pad')  || v('p-step-pad'));
+  try {
+    if(typeof avalAlunoId !== 'undefined' && avalAlunoId){
+      fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/anamnese', {headers:{'Authorization':'Bearer '+token}})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(!d) return;
+        var _rs = document.getElementById('p-hrr-pa-rep-s');
+        var _rd = document.getElementById('p-hrr-pa-rep-d');
+        var _fc = document.getElementById('p-hrr-1min');
+        if(_rs && !_rs.value && d.pa_sistolica_repouso!=null) _rs.value = d.pa_sistolica_repouso;
+        if(_rd && !_rd.value && d.pa_diastolica_repouso!=null) _rd.value = d.pa_diastolica_repouso;
+      }).catch(function(e){});
+    }
+  } catch(e) {}
 }
 function renderVO2Personal(){
   return '<div>' +

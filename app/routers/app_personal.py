@@ -539,7 +539,6 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
 
     if secao == "anamnese" and dados.anamnese:
         an = dados.anamnese
-        print(f'[REPOUSO-DEBUG] pas={getattr(an,"pa_sistolica_repouso","SEM")} pad={getattr(an,"pa_diastolica_repouso","SEM")} fc={getattr(an,"fc_repouso","SEM")}', flush=True)
         # FIX 18/05/2026: salva nos campos estruturados do model (nao mais em obs concatenada)
         existente = db.query(Anamnese).filter(Anamnese.aluno_id == aluno_id).first()
         if existente:
@@ -587,13 +586,6 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
                 pass
         db.commit()
         db.refresh(av)
-        try:
-            from sqlalchemy import text as _sqltext
-            db.execute(_sqltext("CREATE TABLE IF NOT EXISTS _debug_repouso (id SERIAL PRIMARY KEY, quando TIMESTAMP DEFAULT NOW(), url_aluno INTEGER, av_aluno INTEGER, av_id INTEGER, pas INTEGER, peso FLOAT)"))
-            db.execute(_sqltext("INSERT INTO _debug_repouso (url_aluno, av_aluno, av_id, pas, peso) VALUES (:u,:a,:i,:p,:pe)"), {"u": aluno_id, "a": av.aluno_id, "i": av.id, "p": av.pa_sistolica_repouso, "pe": av.peso})
-            db.commit()
-        except Exception as _e:
-            print(f'[REPOUSO-POS-ERR] {_e}', flush=True)
         return {"mensagem": f"Anamnese salva para {aluno.nome}!", "secao": secao, "data": str(date.today())}
 
     from app.routers.avaliacao import pegar_ou_criar_avaliacao_corrente
@@ -711,6 +703,9 @@ def get_anamnese_aluno(aluno_id: int, personal: Personal = Depends(get_personal_
         "nome": aluno.nome,
         "peso": av.peso if av else None,
         "altura": av.estatura if av else None,
+        "pa_sistolica_repouso": av.pa_sistolica_repouso if av else None,
+        "pa_diastolica_repouso": av.pa_diastolica_repouso if av else None,
+        "fc_repouso": av.fc_repouso if av else None,
         "sexo": aluno.sexo.value if aluno.sexo else None,
         "nivel": aluno.nivel_experiencia.value if aluno.nivel_experiencia else None,
         "objetivo": aluno.objetivo.value if aluno.objetivo else None,

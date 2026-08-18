@@ -2693,6 +2693,22 @@ function avalAba(aba){
       if(d.pa_sistolica_repouso!=null){ var e=document.getElementById('an-pa-sis'); if(e) e.value=d.pa_sistolica_repouso; }
       if(d.pa_diastolica_repouso!=null){ var e=document.getElementById('an-pa-dia'); if(e) e.value=d.pa_diastolica_repouso; }
       if(d.fc_repouso!=null){ var e=document.getElementById('an-fc-rep'); if(e) e.value=d.fc_repouso; }
+      (function(){
+        function _liga(idAtual, idProx, fnFim){
+          var el = document.getElementById(idAtual);
+          if(!el) return;
+          el.addEventListener('keydown', function(ev){
+            if(ev.key === 'Enter' || ev.keyCode === 13){
+              ev.preventDefault();
+              if(idProx){ var p = document.getElementById(idProx); if(p) p.focus(); }
+              else if(typeof fnFim === 'function'){ el.blur(); fnFim(); }
+            }
+          });
+        }
+        _liga('an-pa-sis','an-pa-dia',null);
+        _liga('an-pa-dia','an-fc-rep',null);
+        _liga('an-fc-rep',null,function(){ if(typeof salvarAnamnese==='function') salvarAnamnese(); });
+      })();
       // FIX 18/05/2026 padronizar: renderiza botoes (igual app aluno) puxando do banco
       var nivelSalvo = d.nivel ? String(d.nivel).toLowerCase() : '';
       var objSalvo = d.objetivo ? String(d.objetivo).toLowerCase() : '';

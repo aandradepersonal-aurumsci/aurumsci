@@ -17,6 +17,10 @@ class AvaliacaoFisica(Base):
     data_avaliacao = Column(Date, default=date.today)
     peso = Column(Float)
     estatura = Column(Float)
+    # PA e FC de repouso (anamnese) — alimentam o HRR
+    pa_sistolica_repouso = Column(Integer)
+    pa_diastolica_repouso = Column(Integer)
+    fc_repouso = Column(Integer)
     imc = Column(Float)
     classificacao_imc = Column(String(50))
     dc_peitoral = Column(Float)

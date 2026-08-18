@@ -440,6 +440,9 @@ class AnamnesesPayload(BaseModel):
     idade: Optional[int] = None
     peso: Optional[float] = None
     altura: Optional[float] = None
+    pa_sistolica_repouso: Optional[int] = None
+    pa_diastolica_repouso: Optional[int] = None
+    fc_repouso: Optional[int] = None
     sexo: Optional[str] = None
     nivel: Optional[str] = None
     objetivo: Optional[str] = None
@@ -561,11 +564,14 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
                 observacoes=an.observacoes
             ))
         # FIX 18/05/2026: peso/altura salvos em AvaliacaoFisica
-        if an.peso or (hasattr(an, 'altura') and an.altura):
+        if an.peso or (hasattr(an, 'altura') and an.altura) or getattr(an, 'pa_sistolica_repouso', None) or getattr(an, 'pa_diastolica_repouso', None) or getattr(an, 'fc_repouso', None):
             from app.routers.avaliacao import AvaliacaoFisica, pegar_ou_criar_avaliacao_corrente
             av = pegar_ou_criar_avaliacao_corrente(db, aluno_id)
             if an.peso: av.peso = an.peso
             if hasattr(an, 'altura') and an.altura: av.estatura = an.altura
+            if getattr(an, 'pa_sistolica_repouso', None): av.pa_sistolica_repouso = an.pa_sistolica_repouso
+            if getattr(an, 'pa_diastolica_repouso', None): av.pa_diastolica_repouso = an.pa_diastolica_repouso
+            if getattr(an, 'fc_repouso', None): av.fc_repouso = an.fc_repouso
         if hasattr(an, 'nivel') and an.nivel:
             try:
                 from app.models import NivelExperiencia
@@ -1746,6 +1752,13 @@ def gerar_link_pagamento(
     
     try:
         # Cria sessao Stripe
+        # Connect (11/ago): se o professor conectou a conta, o dinheiro vai pra ELE (destination charge);
+        # comissao AurumSci = 0 -> application_fee so cobre a taxa do Stripe (~3.99% + R$0,39), plataforma no zero-a-zero.
+        # Quem nao conectou (ex: a conta plataforma do Andre) segue recebendo direto, como hoje.
+        _pid = {"description": f"{descricao} - {aluno_nome}", "metadata": {"cobranca_id": str(cobranca_id)}}
+        if personal.stripe_account_id and getattr(personal, "stripe_charges_enabled", False):
+            _pid["transfer_data"] = {"destination": personal.stripe_account_id}
+            _pid["application_fee_amount"] = int(round(valor_centavos * 0.0399)) + 39
         session = stripe.checkout.Session.create(
             payment_method_types=["card", "boleto"],
             line_items=[{
@@ -1769,10 +1782,7 @@ def gerar_link_pagamento(
             },
             success_url=f"https://www.aurumsc.com.br/aluno?pagamento=sucesso&cobranca={cobranca_id}",
             cancel_url=f"https://www.aurumsc.com.br/aluno?pagamento=cancelado&cobranca={cobranca_id}",
-            payment_intent_data={
-                "description": f"{descricao} - {aluno_nome}",
-                "metadata": {"cobranca_id": str(cobranca_id)}
-            }
+            payment_intent_data=_pid
         )
         
         # Salva session_id na cobranca

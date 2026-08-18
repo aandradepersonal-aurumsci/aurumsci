@@ -1515,7 +1515,7 @@ function abrirPerfilAluno(id){
     var pl = d.plano || {};
     var po = d.postural || {};
     // Salva dados do aluno para TMB e outros cálculos
-    window._avalDados = {idade: a.idade||30, sexo: (a.sexo==='feminino'?'F':'M'), altura: av.altura||170, peso: av.peso||a.peso||''};
+    window._avalDados = {idade: a.idade||30, sexo: (a.sexo==='feminino'?'F':'M'), altura: av.altura||170, peso: av.peso||a.peso||'', pa_sis: av.pa_sistolica_repouso||av.pa_sis||'', pa_dia: av.pa_diastolica_repouso||av.pa_dia||'', fc_rep: av.fc_repouso||''};
     var html = '<div class="modal-titulo">' + (a.nome||'Aluno') + '</div>';
     html += '<div class="modal-sub">' + (a.objetivo||'—') + ' · ' + (a.nivel||'—') + '</div>';
 
@@ -2852,9 +2852,9 @@ function avalAba(aba){
           }
         }; }
       });
-      ativarEnter(['p-cooper-dist','p-cooper-fc'], function(){ calcVO2P('cooper'); });
-      ativarEnter(['p-milha-tempo','p-milha-fc','p-milha-peso','p-milha-idade'], function(){ calcVO2P('milha'); });
-      ativarEnter(['p-step-fc'], function(){ calcVO2P('step'); });
+      ativarEnter(['p-cooper-dist','p-cooper-fc','p-cooper-fc1','p-cooper-pas','p-cooper-pad'], function(){ calcVO2P('cooper'); });
+      ativarEnter(['p-milha-tempo','p-milha-fc','p-milha-peso','p-milha-idade','p-milha-fc1','p-milha-pas','p-milha-pad'], function(){ calcVO2P('milha'); });
+      ativarEnter(['p-step-fcfim','p-step-fc','p-step-pas','p-step-pad'], function(){ calcVO2P('step'); });
     }, 60);
     // FIX 19/05/2026: puxa idade/sexo do aluno pra calcular faixa etaria ACSM
     fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/perfil-vo2', {headers:{'Authorization':'Bearer '+token}})
@@ -2988,18 +2988,23 @@ function compAba(tipo){
 
   } else if(tipo==='us'){
     el.innerHTML =
-      '<div style="font-size:10px;color:var(--cinza);margin-bottom:4px;line-height:1.5">Ultrassom BodyMetrix — 9 pontos. Padrão ouro para composição corporal sem radiação.</div>' +
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">' +
-      '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:4px">SEXO</div><select id="us-sexo" style="width:100%;padding:8px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:13px"><option value="M">Masculino</option><option value="F">Feminino</option></select></div>' +
-      field('us-idade','IDADE','anos','30') + field('us-peso','PESO','kg','70') + field('us-altura','ALTURA','cm','175') +
+      '<div style="font-size:10px;color:var(--cinza);margin-bottom:8px;line-height:1.5">Ultrassom BodyMetrix — o aparelho calcula o percentual com fórmula própria, validada contra DEXA. Aqui você só registra o que ele mostrou.</div>' +
+      '<div style="margin-bottom:10px">' +
+      '<div style="font-size:10px;color:var(--cinza);margin-bottom:4px">PROTOCOLO UTILIZADO</div>' +
+      '<select id="us-protocolo" style="width:100%;padding:8px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:13px">' +
+      '<option value="Pollock 3 dobras">Pollock — 3 dobras</option>' +
+      '<option value="Jackson &amp; Pollock 3 dobras">Jackson &amp; Pollock — 3 dobras</option>' +
+      '<option value="Jackson &amp; Pollock 7 dobras">Jackson &amp; Pollock — 7 dobras</option>' +
+      '<option value="Parrillo 9 dobras">Parrillo — 9 dobras</option>' +
+      '</select>' +
       '</div>' +
-      '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin-bottom:8px">9 PONTOS (mm)</div>' +
-      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">' +
-      field('us-peit','PEITORAL','mm','5') + field('us-axil','AXILAR','mm','7') +
-      field('us-tric','TRÍCEPS','mm','8') + field('us-sube','SUBESCAP.','mm','10') +
-      field('us-abdo','ABDÔMEN','mm','12') + field('us-supr','SUPRA-IL.','mm','9') +
-      field('us-coxa','COXA','mm','14') + field('us-pant','PANTURRILHA','mm','6') +
-      field('us-bice','BÍCEPS','mm','5') +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">' +
+      field('us-peso','PESO','kg','70') + field('us-gord','% GORDURA (aparelho)','%','18') +
+      '</div>' +
+      '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;margin-bottom:8px">MEDIDAS DO APARELHO</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+      field('us-coxa-musc','ESPESSURA MUSCULAR COXA','mm','45') +
+      field('us-deepfat','DEEP FAT','mm','8') +
       '</div>' +
       '<button onclick="calcUltrassom()" style="width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,#9B59B6,#6C3483);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">CALCULAR — ULTRASSOM</button>' +
       '<div id="us-resultado" style="margin-top:12px"></div>';
@@ -3008,7 +3013,7 @@ function compAba(tipo){
     bio: [['bio-peso','bio-gord','bio-agua','bio-osseo'], calcBio],
     '3d': [['d3-idade','d3-d1','d3-d2','d3-d3'], calc3Dobras],
     '7d': [['d7-idade','d7-peit','d7-axil','d7-tric','d7-sube','d7-abdo','d7-supr','d7-coxa'], calc7Dobras],
-    us: [['us-idade','us-peso','us-altura','us-peit','us-axil','us-tric','us-sube','us-abdo','us-supr','us-coxa','us-pant','us-bice'], calcUltrassom]
+    us: [['us-peso','us-gord','us-coxa-musc','us-deepfat'], calcUltrassom]
   };
   if(mapaEnterComp[tipo]){ setTimeout(function(){ ativarEnter(mapaEnterComp[tipo][0], mapaEnterComp[tipo][1]); }, 90); }
   setTimeout(function(){ preencherIdadeTestes(); }, 500);
@@ -3198,35 +3203,60 @@ function salvarDobras7(){
 }
 
 function calcUltrassom(){
-  var sexo = document.getElementById('us-sexo').value;
-  var idade = parseFloat(document.getElementById('us-idade').value)||30;
-  var peso = parseFloat(document.getElementById('us-peso').value)||70;
-  var pontos = ['peit','axil','tric','sube','abdo','supr','coxa','pant','bice'];
-  var soma = 0;
-  pontos.forEach(function(p){ soma += parseFloat(document.getElementById('us-'+p).value)||0; });
-  if(!soma){ mostrarToast('Informe ao menos alguns pontos!'); return; }
-  // Fórmula baseada em 9 pontos — adaptação BodyMetrix/Jackson & Pollock
-  var dc, gord;
-  if(sexo==='M'){
-    dc = 1.112 - (0.00043499*soma) + (0.00000055*soma*soma) - (0.00028826*idade);
-  } else {
-    dc = 1.097 - (0.00046971*soma) + (0.00000056*soma*soma) - (0.00012828*idade);
-  }
-  gord = ((4.95/dc)-4.50)*100;
-  gord = Math.max(3, Math.round(gord*10)/10);
+  function _v(id){ var e = document.getElementById(id); return e && e.value ? e.value : ''; }
+  var sexo = _v('an-sexo') || window._alunoSexo || 'M';
+  var idade = parseFloat(_v('an-idade')) || window._alunoIdade || 30;
+  var peso = parseFloat(_v('us-peso')) || parseFloat(_v('an-peso')) || 0;
+  var gord = parseFloat(document.getElementById('us-gord').value)||0;
+  var coxaM = parseFloat(document.getElementById('us-coxa-musc').value)||0;
+  var protocolo = _v('us-protocolo');
+  var deepF = parseFloat(document.getElementById('us-deepfat').value)||0;
+  if(!gord){ mostrarToast('Informe o % de gordura do aparelho!'); return; }
+  if(!peso){ mostrarToast('Informe o peso!'); return; }
   var gordKg = peso*gord/100;
   var mmag = peso - gordKg;
   var corGord = gord<10?'var(--azul)':gord<20?'var(--verde)':gord<25?'var(--ouro)':'#FF6B6B';
-  window._ultrassomResultado = {gordura_pct: gord, massa_magra: parseFloat(mmag.toFixed(1)), peso: peso};
-  document.getElementById('us-resultado').innerHTML = resultBox('ULTRASSOM — RESULTADO','#9B59B6',[
-    {label:'% Gordura',val:gord+'%',cor:corGord},
+  var classif = '';
+  try { var c = classifGorduraACSM(gord, idade, sexo); if(c && c.txt) classif = c.txt + ' · Faixa ' + c.faixa + ' anos'; } catch(e){}
+  var linhas = [
+    {label:'% Gordura (BodyMetrix)',val:gord+'%',cor:corGord},
     {label:'Gordura (kg)',val:gordKg.toFixed(1)+' kg'},
     {label:'Massa Magra',val:mmag.toFixed(1)+' kg',cor:'var(--verde)'},
-    {label:'Soma 9 pontos',val:soma.toFixed(1)+' mm'},
-  ],'BodyMetrix™ · Jackson & Pollock (1978) · Siri (1956)') +
+  ];
+  if(classif) linhas.push({label:'Classificação ACSM',val:classif});
+  if(protocolo) linhas.push({label:'Protocolo',val:protocolo});
+  if(coxaM) linhas.push({label:'Espessura muscular coxa',val:coxaM+' mm'});
+  if(deepF) linhas.push({label:'Deep fat',val:deepF+' mm'});
+  window._ultrassomResultado = {gordura_pct: gord, massa_magra: parseFloat(mmag.toFixed(1)), peso: peso, coxa_musc: coxaM||null, deep_fat: deepF||null};
+  document.getElementById('us-resultado').innerHTML = resultBox('ULTRASSOM — RESULTADO','#9B59B6',
+    linhas,'BodyMetrix™ · fórmula proprietária validada contra DEXA · classificação ACSM (2022)') +
   '<button onclick="salvarUltrassom()" style="width:100%;margin-top:10px;padding:12px;background:linear-gradient(135deg,#9B59B6,#6C3483);border:none;border-radius:12px;color:#fff;font-family:Bebas Neue;font-size:16px;cursor:pointer">💾 SALVAR ULTRASSOM</button>';
 }
-
+function classifGorduraACSM(perc, idade, sexo){
+  if(!perc || !idade || !sexo) return null;
+  var ideal, txt, cor;
+  if(sexo === 'M'){
+    if(idade < 30) ideal = {atletico:'6-13%', fitness:'14-17%', aceitavel:'18-24%'};
+    else if(idade < 50) ideal = {atletico:'11-17%', fitness:'18-21%', aceitavel:'22-27%'};
+    else ideal = {atletico:'13-19%', fitness:'20-23%', aceitavel:'24-29%'};
+    if(perc < 6) { txt = 'Essencial (atleta extremo)'; cor = 'var(--azul)'; }
+    else if(perc < 14) { txt = 'Atlético'; cor = 'var(--verde)'; }
+    else if(perc < 18) { txt = 'Fitness'; cor = 'var(--verde)'; }
+    else if(perc < 28) { txt = 'Aceitável'; cor = 'var(--ouro)'; }
+    else { txt = 'Acima do ideal'; cor = 'var(--ouro)'; }
+  } else {
+    if(idade < 30) ideal = {atletico:'14-20%', fitness:'21-24%', aceitavel:'25-31%'};
+    else if(idade < 50) ideal = {atletico:'15-22%', fitness:'23-26%', aceitavel:'27-33%'};
+    else ideal = {atletico:'16-23%', fitness:'24-27%', aceitavel:'28-34%'};
+    if(perc < 14) { txt = 'Essencial (atleta extremo)'; cor = 'var(--azul)'; }
+    else if(perc < 21) { txt = 'Atlético'; cor = 'var(--verde)'; }
+    else if(perc < 25) { txt = 'Fitness'; cor = 'var(--verde)'; }
+    else if(perc < 34) { txt = 'Aceitável'; cor = 'var(--ouro)'; }
+    else { txt = 'Acima do ideal'; cor = 'var(--ouro)'; }
+  }
+  var faixa = idade < 30 ? '20-29' : idade < 50 ? '30-49' : '50+';
+  return {txt: txt, cor: cor, faixa: faixa, ideal: ideal};
+}
 function salvarUltrassom(){
   // FIX 21/05/2026: padrao card-abaixo + r.ok check.
   var d = window._ultrassomResultado;
@@ -3254,6 +3284,25 @@ function salvarUltrassom(){
   });
 }
 
+function puxarDadosMilha(){
+  function v(id){ var e = document.getElementById(id); return e && e.value ? e.value : ''; }
+  function set(id, val){ var e = document.getElementById(id); if(e && !e.value && val) e.value = val; }
+  set('p-milha-peso',  v('an-peso'));
+  set('p-milha-idade', v('an-idade'));
+  var sx = document.getElementById('an-sexo');
+  var alvo = document.getElementById('p-milha-sexo');
+  if(sx && alvo) alvo.value = sx.value;
+  var alvo2 = document.getElementById('p-step-sexo');
+  if(sx && alvo2) alvo2.value = sx.value;
+}
+function sincronizarHRRPro(){
+  function v(id){ var e = document.getElementById(id); return e && e.value ? e.value : ''; }
+  function set(id, val){ var e = document.getElementById(id); if(e && val) e.value = val; }
+  set('p-hrr-pico',      v('p-cooper-fc')  || v('p-milha-fc')   || v('p-step-fcfim'));
+  set('p-hrr-1min',      v('p-cooper-fc1') || v('p-milha-fc1')  || v('p-step-fc'));
+  set('p-hrr-pa-pos-s',  v('p-cooper-pas') || v('p-milha-pas')  || v('p-step-pas'));
+  set('p-hrr-pa-pos-d',  v('p-cooper-pad') || v('p-milha-pad')  || v('p-step-pad'));
+}
 function renderVO2Personal(){
   return '<div>' +
     // COOPER
@@ -3261,7 +3310,9 @@ function renderVO2Personal(){
     '<div style="font-size:11px;color:var(--verde);font-weight:700;margin-bottom:4px">🏃 COOPER — 12 MINUTOS</div>' +
     '<div style="font-size:11px;color:var(--cinza);margin-bottom:8px">Distância máxima em 12 minutos. Adultos ativos. Cooper (1968) JAMA.</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-    field('p-cooper-dist','DISTÂNCIA','m','2400') + field('p-cooper-fc','FC APÓS','bpm','165') + '</div>' +
+    field('p-cooper-dist','DISTÂNCIA','m','2400') + field('p-cooper-fc','FC AO TERMINAR','bpm','165') +
+    field('p-cooper-fc1','FC APÓS 1 MIN','bpm','145') + field('p-cooper-pas','PA SIST. ESFORÇO','mmHg','160') +
+    field('p-cooper-pad','PA DIAST. ESFORÇO','mmHg','90') + '</div>' +
     '<button onclick="calcVO2P(\'cooper\')" style="width:100%;margin-top:8px;padding:10px;background:linear-gradient(135deg,var(--verde),#00B37E);border:none;border-radius:10px;color:#fff;font-family:Bebas Neue;font-size:15px;cursor:pointer">CALCULAR VO2 — COOPER</button>' +
     '<div id="p-cooper-res" style="margin-top:8px"></div></div>' +
     // MILHA
@@ -3272,16 +3323,19 @@ function renderVO2Personal(){
     field('p-milha-tempo','TEMPO','min','15') + field('p-milha-fc','FC FINAL','bpm','120') + field('p-milha-peso','PESO','kg','70') + '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">' +
     '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">SEXO</div><select id="p-milha-sexo" style="width:100%;padding:8px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:13px"><option value="M">Masculino</option><option value="F">Feminino</option></select></div>' +
-    field('p-milha-idade','IDADE','anos','30') + '</div>' +
+    field('p-milha-idade','IDADE','anos','30') +
+    field('p-milha-fc1','FC APÓS 1 MIN','bpm','105') + field('p-milha-pas','PA SIST. ESFORÇO','mmHg','150') +
+    field('p-milha-pad','PA DIAST. ESFORÇO','mmHg','85') + '</div>' +
     '<button onclick="calcVO2P(\'milha\')" style="width:100%;margin-top:8px;padding:10px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:15px;cursor:pointer">CALCULAR VO2 — MILHA</button>' +
     '<div id="p-milha-res" style="margin-top:8px"></div></div>' +
     // STEP
     '<div style="background:rgba(75,159,255,.04);border:1px solid rgba(75,159,255,.15);border-radius:12px;padding:14px;margin-bottom:10px">' +
     '<div style="font-size:11px;color:var(--azul);font-weight:700;margin-bottom:4px">📦 STEP UP — BANCO</div>' +
-    '<div style="font-size:11px;color:var(--cinza);margin-bottom:8px">3 min banco 30cm, 24 ciclos/min. FC após 1 min. McArdle et al. (1972).</div>' +
+    '<div style="font-size:11px;color:var(--cinza);margin-bottom:8px;line-height:1.6">3 min de banco. Homens 24 ciclos/min (72 no total), mulheres 22 (66 no total). <b>1 ciclo = sobe com a direita, desce com a direita.</b> Protocolo original usa banco de 41cm. McArdle et al. (1972).</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
     '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">SEXO</div><select id="p-step-sexo" style="width:100%;padding:8px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-size:13px"><option value="M">Masculino</option><option value="F">Feminino</option></select></div>' +
-    field('p-step-fc','FC APÓS 1 MIN','bpm','100') + '</div>' +
+    field('p-step-fcfim','FC AO TERMINAR','bpm','150') + field('p-step-fc','FC APÓS 1 MIN','bpm','100') +
+    field('p-step-pas','PA SIST. ESFORÇO','mmHg','150') + field('p-step-pad','PA DIAST. ESFORÇO','mmHg','85') + '</div>' +
     '<button onclick="calcVO2P(\'step\')" style="width:100%;margin-top:8px;padding:10px;background:linear-gradient(135deg,var(--azul),#357ABD);border:none;border-radius:10px;color:#fff;font-family:Bebas Neue;font-size:15px;cursor:pointer">CALCULAR VO2 — STEP</button>' +
     '<div id="p-step-res" style="margin-top:8px"></div></div>' +
     // HRR
@@ -3313,6 +3367,7 @@ function classificarVO2(vo2, idade, sexo){
   return {txt:'Excelente', cor:'var(--verde)', faixa:faixa};
 }
 function calcVO2P(tipo){
+  setTimeout(sincronizarHRRPro, 50);
   var vo2, res;
   if(tipo==='cooper'){
     var dist = parseFloat(document.getElementById('p-cooper-dist').value)||0;
@@ -3433,7 +3488,7 @@ function preencherIdadeTestes(){
   var idadeEl = document.getElementById('an-idade');
   var idade = (idadeEl && idadeEl.value) ? idadeEl.value : (dados.idade || '');
   if(idade){
-    var campos = ['pren-idade','d3-idade','d7-idade','us-idade','p-milha-idade','p-wells-idade','p-forca-idade','p-mmii-idade'];
+    var campos = ['pren-idade','d3-idade','d7-idade','p-milha-idade','p-wells-idade','p-forca-idade','p-mmii-idade'];
     campos.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = idade; });
   }
   // PESO
@@ -3443,6 +3498,14 @@ function preencherIdadeTestes(){
     var camposPeso = ['us-peso','bio-peso','p-milha-peso'];
     camposPeso.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = peso; });
   }
+  // PA e FC de repouso -> campos da anamnese e do HRR
+  function _pa(id, val){ var el = document.getElementById(id); if(el && !el.value && val) el.value = val; }
+  var paS = (document.getElementById('an-pa-sis')||{}).value || dados.pa_sis || '';
+  var paD = (document.getElementById('an-pa-dia')||{}).value || dados.pa_dia || '';
+  var fcR = (document.getElementById('an-fc-rep')||{}).value || dados.fc_rep || '';
+  _pa('an-pa-sis', paS); _pa('an-pa-dia', paD); _pa('an-fc-rep', fcR);
+  _pa('p-hrr-pa-rep-s', paS); _pa('p-hrr-pa-rep-d', paD);
+
   // SEXO: _avalDados.sexo ja vem como 'M' ou 'F' (convertido na linha do fetch)
   var sexoEl = document.getElementById('an-sexo');
   var sexoRaw = (sexoEl && sexoEl.value) ? sexoEl.value : (dados.sexo || '');
@@ -4586,6 +4649,12 @@ function renderAnamnese(){
     aField('an-peso','PESO','number','70') +
     aField('an-altura','ALTURA (cm)','number','175') +
     '</div>' +
+    '<div style="font-size:10px;color:var(--cinza);letter-spacing:1px;margin:4px 0 6px">EM REPOUSO (sentado, 5 min parado)</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">' +
+    aField('an-pa-sis','PA SISTÓLICA','number','120') +
+    aField('an-pa-dia','PA DIASTÓLICA','number','80') +
+    aField('an-fc-rep','FC REPOUSO','number','70') +
+    '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">' +
     '<div><div style="font-size:10px;color:var(--cinza);margin-bottom:3px">SEXO</div>' +
     '<select id="an-sexo" style="width:100%;padding:8px;border-radius:8px;background:var(--bg);border:1px solid var(--borda);color:var(--texto);font-size:13px">' +
@@ -4722,7 +4791,10 @@ function salvarAnamnese(){
       dores: get('an-dores'),
       cirurgias: get('an-cirurgias'),
       medicamentos: get('an-meds'),
-      observacoes: get('an-obs')
+      observacoes: get('an-obs'),
+      pa_sistolica_repouso: parseInt(get('an-pa-sis')) || null,
+      pa_diastolica_repouso: parseInt(get('an-pa-dia')) || null,
+      fc_repouso: parseInt(get('an-fc-rep')) || null
     }
   };
   

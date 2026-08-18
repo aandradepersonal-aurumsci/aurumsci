@@ -74,6 +74,10 @@ def auto_migrate():
         "ALTER TABLE personals ADD COLUMN IF NOT EXISTS contrato_aceito_em TIMESTAMP",
         "ALTER TABLE personals ADD COLUMN IF NOT EXISTS contrato_aceito_ip VARCHAR(45)",
         # Stripe + Assinatura no Aluno (02/05/2026)
+        "ALTER TABLE avaliacoes_fisicas ADD COLUMN IF NOT EXISTS pa_sistolica_repouso INTEGER",
+        "ALTER TABLE avaliacoes_fisicas ADD COLUMN IF NOT EXISTS pa_diastolica_repouso INTEGER",
+        "ALTER TABLE avaliacoes_fisicas ADD COLUMN IF NOT EXISTS fc_repouso INTEGER",
+        "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS altura INTEGER",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS tipo_nf VARCHAR(10) DEFAULT 'cpf'",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS cnpj VARCHAR(20)",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS stripe_customer_id VARCHAR(100)",
@@ -81,6 +85,8 @@ def auto_migrate():
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS assinatura_status VARCHAR(20) DEFAULT 'sem_assinatura'",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS data_inicio_trial TIMESTAMP",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS data_fim_trial TIMESTAMP",
+        "ALTER TABLE personals ADD COLUMN IF NOT EXISTS data_inicio_trial TIMESTAMP",
+        "ALTER TABLE personals ADD COLUMN IF NOT EXISTS data_fim_trial TIMESTAMP",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS data_proxima_cobranca TIMESTAMP",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS valor_assinatura INTEGER DEFAULT 4990",
         "ALTER TABLE alunos ADD COLUMN IF NOT EXISTS data_cancelamento TIMESTAMP",
@@ -249,9 +255,8 @@ app.include_router(iap_router)  # Apple In-App Purchase
 # ── App do Aluno ──────────────────────────────────────────────
 @app.get("/cadastro", response_class=HTMLResponse, include_in_schema=False)
 def cadastro_page():
-    # VENDA ALUNO PAUSADA (21/jul/2026): servindo em-breve enquanto o funil e blindado.
-    # Para REATIVAR: trocar landing_aluno_em_breve.html de volta por cadastro.html.
-    with open("static/cadastro.html", "r", encoding="utf-8") as f:
+    # LOJA ALUNO FECHADA (16/ago): em-breve. Para ABRIR: voltar cadastro.html.
+    with open("static/landing_aluno_em_breve.html", "r", encoding="utf-8") as f:
         return f.read()
 
 @app.get("/aluno", response_class=HTMLResponse, include_in_schema=False)
@@ -266,7 +271,7 @@ def landing():
 
 @app.get("/cadastro-pro", response_class=HTMLResponse, include_in_schema=False)
 def cadastro_pro_page():
-    # VENDA PRO PAUSADA (25/jul): serve o em-breve. Para REATIVAR: voltar cadastro_pro.html.
+    # LOJA PRO FECHADA (15/ago): em-breve. Para ABRIR: voltar cadastro_pro.html.
     with open("static/landing_pro_em_breve.html", "r", encoding="utf-8") as f:
         return f.read()
 

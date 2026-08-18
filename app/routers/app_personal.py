@@ -587,7 +587,13 @@ def salvar_avaliacao_aluno(aluno_id: int, dados: SalvarAvaliacaoSchema, personal
                 pass
         db.commit()
         db.refresh(av)
-        print(f'[REPOUSO-POS] url_aluno={aluno_id} av_aluno={av.aluno_id} av_id={av.id} pas={av.pa_sistolica_repouso} peso={av.peso}', flush=True)
+        try:
+            from sqlalchemy import text as _sqltext
+            db.execute(_sqltext("CREATE TABLE IF NOT EXISTS _debug_repouso (id SERIAL PRIMARY KEY, quando TIMESTAMP DEFAULT NOW(), url_aluno INTEGER, av_aluno INTEGER, av_id INTEGER, pas INTEGER, peso FLOAT)"))
+            db.execute(_sqltext("INSERT INTO _debug_repouso (url_aluno, av_aluno, av_id, pas, peso) VALUES (:u,:a,:i,:p,:pe)"), {"u": aluno_id, "a": av.aluno_id, "i": av.id, "p": av.pa_sistolica_repouso, "pe": av.peso})
+            db.commit()
+        except Exception as _e:
+            print(f'[REPOUSO-POS-ERR] {_e}', flush=True)
         return {"mensagem": f"Anamnese salva para {aluno.nome}!", "secao": secao, "data": str(date.today())}
 
     from app.routers.avaliacao import pegar_ou_criar_avaliacao_corrente

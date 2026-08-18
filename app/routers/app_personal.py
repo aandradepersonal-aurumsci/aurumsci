@@ -722,6 +722,23 @@ def get_anamnese_aluno(aluno_id: int, personal: Personal = Depends(get_personal_
     }
 
 
+@router.post("/aluno/{aluno_id}/nova-avaliacao")
+def nova_avaliacao_aluno(aluno_id: int, personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    """Cria uma avaliacao NOVA (reavaliacao) com data de hoje, SEMPRE — ignora a janela de reuso.
+    Serve pra primeira avaliacao e pra reavaliacoes; o historico anterior fica intacto."""
+    from app.models import Aluno
+    from app.routers.avaliacao import AvaliacaoFisica
+    from app.routers.avaliacao import hoje_brasil
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id, Aluno.personal_id == personal.id).first()
+    if not aluno:
+        raise HTTPException(status_code=404, detail="Aluno nao encontrado")
+    nova = AvaliacaoFisica(aluno_id=aluno_id, data_avaliacao=hoje_brasil())
+    db.add(nova)
+    db.commit()
+    db.refresh(nova)
+    return {"mensagem": f"Nova avaliacao iniciada para {aluno.nome}!", "avaliacao_id": nova.id, "data": str(nova.data_avaliacao)}
+
+
 @router.post("/aluno/{aluno_id}/postural")
 async def postural_aluno(
     aluno_id: int,

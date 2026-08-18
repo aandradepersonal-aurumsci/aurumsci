@@ -2662,10 +2662,24 @@ function renderAvalTabs(id, nome){
   html += '<button onclick="avalAba(\'resultados\')" class="btn-aval-tab" id="aval-tab-resultados" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📈 RESULT.</button>';
   html += '</div>';
   html += '<div id="aval-aba-content"></div>';
+  html += '<button onclick="iniciarNovaAvaliacao()" style="width:100%;margin-top:14px;padding:12px;background:transparent;border:1.5px solid var(--ouro);border-radius:10px;color:var(--ouro);font-family:Bebas Neue;font-size:15px;letter-spacing:2px;cursor:pointer">🔄 NOVA AVALIACAO</button>';
   html += '</div>';
   var container = document.getElementById('aval-content');
   if(container) container.innerHTML = html;
   avalAba('anamnese');
+}
+
+function iniciarNovaAvaliacao(){
+  if(!avalAlunoId){ mostrarToast('Selecione um aluno primeiro'); return; }
+  var nome = avalAlunoNome || 'este aluno';
+  if(!confirm('Iniciar nova avaliacao de ' + nome + ' agora? A avaliacao atual sera mantida no historico.')) return;
+  fetch(window.API_BASE + '/app-personal/aluno/' + avalAlunoId + '/nova-avaliacao', {method:'POST', headers:{'Authorization':'Bearer '+token}})
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d && d.avaliacao_id){ mostrarToast('Nova avaliacao iniciada! Preencha a anamnese.'); avalAba('anamnese'); }
+    else { mostrarToast('Nao foi possivel iniciar. Tente de novo.'); }
+  })
+  .catch(function(e){ mostrarToast('Erro ao iniciar avaliacao.'); });
 }
 
 function avalAba(aba){

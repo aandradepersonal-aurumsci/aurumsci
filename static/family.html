@@ -36,6 +36,7 @@
   .prices-cap{cursor:pointer}
   .prices-box{display:none;border-radius:18px;margin-bottom:14px;background-image:linear-gradient(rgba(10,10,15,.62),rgba(10,10,15,.80)),url('/static/prices-fundo.jpg?v=1');background-size:cover;background-position:center;padding:26px 14px 30px;border:1px solid var(--ouro)}
   .prices-tit{font-family:'Bebas Neue';font-size:26px;letter-spacing:2px;color:var(--ouro);text-align:center;margin-bottom:4px}
+  .audio-cat{display:flex;align-items:center;gap:10px;justify-content:center;margin:0 auto 20px;max-width:330px;padding:10px 14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border-radius:26px;cursor:pointer;color:#0A0A0F;font-weight:700;font-size:13px;letter-spacing:.5px}
   .prices-sub{text-align:center;font-size:12px;color:var(--cinza);margin-bottom:22px}
   .grupo{margin-bottom:24px}
   .grupo-tit{font-family:'Bebas Neue';font-size:26px;letter-spacing:2.5px;background:linear-gradient(135deg,#F2F2F7,#9A9AA5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px;padding-left:2px}
@@ -112,6 +113,21 @@
   <div class="prices-box" id="precos-box">
     <div class="prices-tit">PLANOS DO ECOSSISTEMA</div>
     <div class="prices-sub">Deslize cada linha &rarr;</div>
+    <div class="audio-cat" onclick="tocarCat()"><span id="cat-ico">&#9654;</span><span id="cat-txt">Ouvir os planos</span></div>
+    <audio id="cat-audio" src="/static/catalogo_bill.mp3?v=1" preload="none"></audio>
+    <script>
+    function tocarCat(){
+      var a=document.getElementById('cat-audio');
+      document.querySelectorAll('audio').forEach(function(o){if(o!==a){o.pause();}});
+      if(a.paused){a.play();document.getElementById('cat-ico').innerHTML='&#10074;&#10074;';document.getElementById('cat-txt').innerHTML='Pausar';}
+      else{a.pause();document.getElementById('cat-ico').innerHTML='&#9654;';document.getElementById('cat-txt').innerHTML='Ouvir os planos';}
+    }
+    document.addEventListener('DOMContentLoaded',function(){
+      var a=document.getElementById('cat-audio');
+      if(a){a.addEventListener('ended',function(){document.getElementById('cat-ico').innerHTML='&#9654;';document.getElementById('cat-txt').innerHTML='Ouvir os planos';});
+      a.addEventListener('play',function(){document.querySelectorAll('audio').forEach(function(o){if(o!==a)o.pause();});});}
+    });
+    </script>
     <div class="grupo">
       <div class="grupo-tit">APP DO ALUNO</div>
       <div class="grupo-sub">Para quem treina sozinho</div>

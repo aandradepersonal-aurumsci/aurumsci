@@ -1,9 +1,21 @@
 {
-  "atualizado_em": "2026-08-14 22:28",
-  "total_videos": 320,
+  "atualizado_em": "2026-08-19 19:45",
+  "total_videos": 330,
   "total_temas": 19,
   "temas": {
     "Forca e Carga": [
+      {
+        "id": 2302,
+        "titulo": "Por que o exercício constrói músculos: a mecanodetecção de titina controla o crescimento do músculo esquelético sob carga.",
+        "url": "https://youtube.com/watch?v=ozqwQPjX21o",
+        "ano": 2021
+      },
+      {
+        "id": 2289,
+        "titulo": "Os efeitos do treinamento muscular inspiratório na espessura do diafragma, força muscular respiratória, equilíbrio e estabilidade central em dançarinos profissionais: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=-7NG-cpNB5A",
+        "ano": 2026
+      },
       {
         "id": 2266,
         "titulo": "Um suplemento nutricional de cinco ingredientes e exercícios de resistência feitos em casa melhoram a massa magra e a força em idosos de vida livre.",
@@ -453,6 +465,12 @@
         "titulo": "Efeitos do tempo e dos tipos de suplementação de proteínas na melhoria da massa muscular, força e desempenho físico em adultos submetidos a treinamento de resistência: uma meta-análise de rede.",
         "url": "https://youtube.com/watch?v=oaKiRYnaySA",
         "ano": 2024
+      },
+      {
+        "id": 588,
+        "titulo": "Efeito de um programa de treinamento de força de 10 semanas e bebida de recuperação na composição corporal, força e resistência muscular e potência e capacidade anaeróbica.",
+        "url": "https://youtube.com/watch?v=YmfTJHlKfkI",
+        "ano": 2004
       },
       {
         "id": 586,
@@ -1527,6 +1545,12 @@
     ],
     "Idosos e Sarcopenia": [
       {
+        "id": 2322,
+        "titulo": "Treinamento de exercícios resistidos pesados ​​em homens idosos: uma resposta e uma análise de variabilidade interindividual.",
+        "url": "https://youtube.com/watch?v=sGmmkqy2DnQ",
+        "ano": 2026
+      },
+      {
         "id": 2266,
         "titulo": "Um suplemento nutricional de cinco ingredientes e exercícios de resistência feitos em casa melhoram a massa magra e a força em idosos de vida livre.",
         "url": "https://youtube.com/watch?v=JCaXll64RJg",
@@ -1969,6 +1993,12 @@
         "ano": 2023
       },
       {
+        "id": 588,
+        "titulo": "Efeito de um programa de treinamento de força de 10 semanas e bebida de recuperação na composição corporal, força e resistência muscular e potência e capacidade anaeróbica.",
+        "url": "https://youtube.com/watch?v=YmfTJHlKfkI",
+        "ano": 2004
+      },
+      {
         "id": 586,
         "titulo": "Efeitos do treinamento resistido com e sem atividade aeróbica pós-exercício na força e composição corporal de acordo com objetivos individuais.",
         "url": "https://youtube.com/watch?v=BaMO0PRIW-c",
@@ -2073,6 +2103,12 @@
         "ano": 2023
       },
       {
+        "id": 1598,
+        "titulo": "Treinamento físico e densidade mineral óssea em mulheres na pós-menopausa: uma revisão sistemática atualizada e meta-análise de estudos de intervenção com ênfase em potenciais moderadores.",
+        "url": "https://youtube.com/watch?v=uhHwcsRt7iQ",
+        "ano": 2023
+      },
+      {
         "id": 1592,
         "titulo": "Efeitos do treinamento resistido em mulheres saudáveis ​​na pós-menopausa: uma revisão sistemática com meta-análise.",
         "url": "https://youtube.com/watch?v=-SflinWbKRs",
@@ -2145,6 +2181,12 @@
         "ano": 2023
       },
       {
+        "id": 517,
+        "titulo": "Efeitos do treinamento físico nos fatores de risco da síndrome metabólica em mulheres na pós-menopausa - Uma revisão sistemática e meta-análise de ensaios clínicos randomizados.",
+        "url": "https://youtube.com/watch?v=g5MxCgEy5mE",
+        "ano": 2023
+      },
+      {
         "id": 414,
         "titulo": "Treinamento contínuo de intensidade moderada ou treinamento intervalado de alta intensidade com ou sem treinamento de resistência para alteração da composição corporal em mulheres na pós-menopausa.",
         "url": "https://youtube.com/watch?v=Zoa_CQcTm9o",
@@ -2213,6 +2255,12 @@
         "ano": 2016
       },
       {
+        "id": 1000,
+        "titulo": "Exercício aeróbico domiciliar e treinamento de resistência para doença renal crônica grave: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=S_mKuV6CXaQ",
+        "ano": 2021
+      },
+      {
         "id": 941,
         "titulo": "Treinamento combinado aeróbico e de resistência para pico de captação de oxigênio, força muscular e hipertrofia após doença arterial coronariana: uma revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=WdVpCm0Bnis",
@@ -2265,6 +2313,12 @@
         "titulo": "Adaptações na função muscular mecânica, morfologia muscular e potência aeróbica ao treinamento de resistência de alta intensidade combinado com treinamento de força tradicional ou de potência em idosos: um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=wLukVb30AUo",
         "ano": 2020
+      },
+      {
+        "id": 588,
+        "titulo": "Efeito de um programa de treinamento de força de 10 semanas e bebida de recuperação na composição corporal, força e resistência muscular e potência e capacidade anaeróbica.",
+        "url": "https://youtube.com/watch?v=YmfTJHlKfkI",
+        "ano": 2004
       },
       {
         "id": 586,
@@ -2823,6 +2877,12 @@
         "ano": 2026
       },
       {
+        "id": 1636,
+        "titulo": "Estudo experimental sobre exercício físico no diabetes: fisiopatologia e efeitos terapêuticos.",
+        "url": "https://youtube.com/watch?v=O4bPcc3aS00",
+        "ano": 2023
+      },
+      {
         "id": 1619,
         "titulo": "Efeitos da dieta cetogênica na massa muscular, força, capacidade metabólica aeróbica e resistência em adultos: uma revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=8f1BEZ5Rn2s",
@@ -2859,10 +2919,22 @@
         "ano": 2025
       },
       {
+        "id": 550,
+        "titulo": "Efeitos do treinamento resistido em casa e na academia sobre o controle glicêmico em pacientes com diabetes mellitus tipo 2 - uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=rQNsOhg4vmQ",
+        "ano": 2025
+      },
+      {
         "id": 544,
         "titulo": "Adoção e manutenção de treinamento de força baseado em academia em ambiente comunitário em adultos com excesso de peso ou diabetes tipo 2: um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=pp7fBuzcZng",
         "ano": 2015
+      },
+      {
+        "id": 517,
+        "titulo": "Efeitos do treinamento físico nos fatores de risco da síndrome metabólica em mulheres na pós-menopausa - Uma revisão sistemática e meta-análise de ensaios clínicos randomizados.",
+        "url": "https://youtube.com/watch?v=g5MxCgEy5mE",
+        "ano": 2023
       },
       {
         "id": 452,
@@ -2973,6 +3045,12 @@
         "titulo": "A imersão em água fria pós-exercício atenua a sinalização anabólica aguda e as adaptações de longo prazo nos músculos ao treinamento de força.",
         "url": "https://youtube.com/watch?v=KbfAK1dk3dk",
         "ano": 2015
+      },
+      {
+        "id": 588,
+        "titulo": "Efeito de um programa de treinamento de força de 10 semanas e bebida de recuperação na composição corporal, força e resistência muscular e potência e capacidade anaeróbica.",
+        "url": "https://youtube.com/watch?v=YmfTJHlKfkI",
+        "ano": 2004
       },
       {
         "id": 251,
@@ -3159,6 +3237,12 @@
         "ano": 2025
       },
       {
+        "id": 1636,
+        "titulo": "Estudo experimental sobre exercício físico no diabetes: fisiopatologia e efeitos terapêuticos.",
+        "url": "https://youtube.com/watch?v=O4bPcc3aS00",
+        "ano": 2023
+      },
+      {
         "id": 874,
         "titulo": "Eficácia dos exercícios aeróbicos e de resistência combinados na cognição, na saúde metabólica, na função física e na qualidade de vida relacionada à saúde em adultos de meia-idade e idosos com diabetes mellitus tipo 2: uma revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=utqWJNI20Jc",
@@ -3166,6 +3250,12 @@
       }
     ],
     "Outros": [
+      {
+        "id": 2319,
+        "titulo": "Biocircuitos multidimensionais de adaptação ao exercício: integrando fenômica in vivo e ex vivo com mapeamento de miRNA.",
+        "url": "https://youtube.com/watch?v=T-ZKhH43z9k",
+        "ano": 2025
+      },
       {
         "id": 2215,
         "titulo": "Adaptações da arquitetura muscular ao treinamento de alongamento estático: uma revisão sistemática com meta-análise.",

@@ -112,6 +112,10 @@
   <div class="prices-box" id="precos-box">
     <div class="prices-tit">PLANOS DO ECOSSISTEMA</div>
     <div class="prices-sub">Deslize cada linha &rarr;</div>
+    <div style="text-align:center;margin:0 0 22px">
+      <span onclick="var a=document.getElementById('audio-planos'); if(a.paused){a.play(); this.querySelector('span').innerHTML='&#10074;&#10074;';}else{a.pause(); this.querySelector('span').innerHTML='&#9654;';}" style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;border-radius:999px;padding:13px 26px;font-weight:700;font-size:14px;letter-spacing:.5px;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.4)"><span style="font-size:17px">&#9654;</span>Ouvir os planos</span>
+      <audio id="audio-planos" src="/static/catalogo_bill.mp3?v=1" preload="none"></audio>
+    </div>
     <div class="grupo">
       <div class="grupo-tit">APP DO ALUNO</div>
       <div class="grupo-sub">Para quem treina sozinho</div>

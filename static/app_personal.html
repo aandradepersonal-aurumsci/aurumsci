@@ -3492,7 +3492,9 @@ function salvarVO2(){
 
 function concluirAvaliacao(){
   mostrarToast('Avaliacao concluida!');
-  if(typeof voltarInicio === 'function'){ voltarInicio(); }
+  var m = document.getElementById('modal-perfil-aluno');
+  if(m){ m.classList.remove('show'); }
+  window.scrollTo(0,0);
 }
 
 function calcHRRP(){

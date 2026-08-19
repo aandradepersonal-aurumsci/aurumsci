@@ -49,8 +49,16 @@
   .plano-mini{font-size:11.5px;color:#c8c8d0;line-height:1.4;margin-bottom:10px}
   .plano-preco{font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--ouro);border-top:1px solid var(--borda);padding-top:8px}
   .plano-ver{font-size:9px;color:var(--ouro);letter-spacing:1px;margin-top:5px;opacity:.85}
-  .nuvem{display:none;position:absolute;left:6px;right:6px;top:6px;bottom:6px;background:rgba(8,8,12,.97);border:1px solid var(--ouro);border-radius:12px;padding:12px;font-size:10.5px;color:#e2e2e8;line-height:1.45;overflow-y:auto;z-index:5}
-  .plano.aberto .nuvem{display:block}
+  .nuvem{display:none}
+  #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:900;align-items:center;justify-content:center;padding:20px}
+  #overlay.on{display:flex}
+  #overlay-box{background:#0C0C12;border:1.5px solid var(--ouro);border-radius:18px;padding:24px 20px 20px;max-width:430px;width:100%;max-height:82vh;overflow-y:auto;position:relative;box-shadow:0 16px 60px rgba(0,0,0,.8)}
+  #overlay-box b{color:var(--ouro2);font-family:'Bebas Neue';font-size:23px;letter-spacing:1px;display:block;margin-bottom:12px;padding-right:30px}
+  #overlay-box{font-size:13.5px;color:#dcdce4;line-height:1.6}
+  #overlay-box .val{display:block;margin-top:18px;padding-top:14px;border-top:1px solid var(--borda);font-family:'Bebas Neue';font-size:28px;letter-spacing:1px;color:var(--ouro)}
+  #overlay-box .ag{display:block;margin-top:14px;padding:13px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;border-radius:12px;text-align:center;font-weight:700;font-size:14px;letter-spacing:1px;text-decoration:none}
+  #overlay-box .fechar{display:none}
+  #overlay-x{position:absolute;top:12px;right:16px;font-size:26px;color:var(--ouro);cursor:pointer;line-height:1}
   .busca:focus{outline:none;border-color:var(--ouro2);box-shadow:0 6px 28px rgba(201,168,76,.38)}
   .temas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
   .chip{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:7px 14px;color:var(--ouro);font-size:12px;cursor:pointer;transition:all .2s}
@@ -108,17 +116,16 @@
       <div class="grupo-tit">APP DO ALUNO</div>
       <div class="grupo-sub">Para quem treina sozinho</div>
       <div class="carrossel">
-        <div class="plano" onclick="this.classList.toggle('aberto')">
+        <div class="plano" onclick="abrirNuvem(this)">
           <div>
             <div class="plano-nome">APP DO ALUNO</div>
             <div class="plano-tipo">Mensal &middot; 7 dias grátis</div>
             <div class="plano-mini">Método em vez de achismo.</div>
           </div>
           <div>
-            <div class="plano-preco">&mdash;&mdash;&mdash;</div>
             <div class="plano-ver">TOQUE PARA VER +</div>
           </div>
-          <div class="nuvem">Avaliação guiada passo a passo pelo app, treino individualizado com periodização, sugestões nutricionais baseadas em evidências, análise postural por IA e o AURI, sua IA 24h. Sua evolução no AURUM Score.</div>
+          <div class="nuvem"><b>App do Aluno</b>Avaliação guiada passo a passo pelo próprio app. Treino individualizado com periodização. Análise postural por inteligência artificial com exercícios corretivos. Sugestões nutricionais baseadas em evidências. AURI, seu assistente de inteligência artificial 24 horas por dia. Acompanhamento da evolução pelo AURUM Score. Vídeo demonstrativo em cada exercício.<span class='val'>&mdash;&mdash;&mdash;</span><span class="fechar">toque fora para fechar</span></div>
         </div>
       </div>
     </div>
@@ -126,53 +133,49 @@
       <div class="grupo-tit">APP DO PROFISSIONAL</div>
       <div class="grupo-sub">Planos</div>
       <div class="carrossel">
-        <div class="plano" onclick="this.classList.toggle('aberto')">
+        <div class="plano" onclick="abrirNuvem(this)">
           <div>
             <div class="plano-nome">BRONZE</div>
             <div class="plano-tipo">Até 10 alunos</div>
             <div class="plano-mini">A plataforma completa.</div>
           </div>
           <div>
-            <div class="plano-preco">&mdash;&mdash;&mdash;</div>
             <div class="plano-ver">TOQUE PARA VER +</div>
           </div>
-          <div class="nuvem">Avaliação completa (3 protocolos de VO2, 3 métodos de composição corporal, dinamometria), diagnóstico postural por IA com corretivos, mais de 150 exercícios, periodização em 3 modelos, controle financeiro, relatório para o contador, AURI 24h e app com a sua marca.</div>
+          <div class="nuvem"><b>PRO Bronze &middot; até 10 alunos</b>Convite do aluno por link. Avaliação completa: 3 protocolos de avaliação cardiorrespiratória, 3 métodos de composição corporal, dinamometria e testes físicos. Análise postural por IA com corretivos automáticos. Banco com mais de 150 exercícios. Periodização em 3 modelos. Treino no celular do aluno com vídeo e cronômetro. Controle financeiro e fechamento do mês. Relatório para o contador. AURI 24h. App com a sua marca.<span class='val'>&mdash;&mdash;&mdash;</span><span class="fechar">toque fora para fechar</span></div>
         </div>
-        <div class="plano" onclick="this.classList.toggle('aberto')">
+        <div class="plano" onclick="abrirNuvem(this)">
           <div>
             <div class="plano-nome">PRATA</div>
             <div class="plano-tipo">Até 20 alunos</div>
-            <div class="plano-mini">Tudo do Bronze.</div>
+            <div class="plano-mini">Mesma plataforma, mais alunos.</div>
           </div>
           <div>
-            <div class="plano-preco">&mdash;&mdash;&mdash;</div>
             <div class="plano-ver">TOQUE PARA VER +</div>
           </div>
-          <div class="nuvem">Todos os recursos do Bronze, com capacidade para até vinte alunos ativos na sua carteira.</div>
+          <div class="nuvem"><b>PRO Prata &middot; até 20 alunos</b>Convite do aluno por link. Avaliação completa: 3 protocolos de avaliação cardiorrespiratória, 3 métodos de composição corporal, dinamometria e testes físicos. Análise postural por IA com corretivos automáticos. Banco com mais de 150 exercícios. Periodização em 3 modelos. Treino no celular do aluno com vídeo e cronômetro. Controle financeiro e fechamento do mês. Relatório para o contador. AURI 24h. App com a sua marca.<span class='val'>&mdash;&mdash;&mdash;</span><span class="fechar">toque fora para fechar</span></div>
         </div>
-        <div class="plano" onclick="this.classList.toggle('aberto')">
+        <div class="plano" onclick="abrirNuvem(this)">
           <div>
             <div class="plano-nome">OURO</div>
             <div class="plano-tipo">Até 50 alunos</div>
             <div class="plano-mini">Para quem tem volume.</div>
           </div>
           <div>
-            <div class="plano-preco">&mdash;&mdash;&mdash;</div>
             <div class="plano-ver">TOQUE PARA VER +</div>
           </div>
-          <div class="nuvem">Todos os recursos do Prata, com capacidade para até cinquenta alunos ativos na sua carteira.</div>
+          <div class="nuvem"><b>PRO Ouro &middot; até 50 alunos</b>Convite do aluno por link. Avaliação completa: 3 protocolos de avaliação cardiorrespiratória, 3 métodos de composição corporal, dinamometria e testes físicos. Análise postural por IA com corretivos automáticos. Banco com mais de 150 exercícios. Periodização em 3 modelos. Treino no celular do aluno com vídeo e cronômetro. Controle financeiro e fechamento do mês. Relatório para o contador. AURI 24h. App com a sua marca.<span class='val'>&mdash;&mdash;&mdash;</span><span class="fechar">toque fora para fechar</span></div>
         </div>
-        <div class="plano" onclick="this.classList.toggle('aberto')">
+        <div class="plano" onclick="abrirNuvem(this)">
           <div>
             <div class="plano-nome">DIAMANTE</div>
-            <div class="plano-tipo">Ilimitado</div>
-            <div class="plano-mini">Sem travas para escalar.</div>
+            <div class="plano-tipo">Alunos ilimitados</div>
+            <div class="plano-mini">Sem teto para crescer.</div>
           </div>
           <div>
-            <div class="plano-preco">&mdash;&mdash;&mdash;</div>
             <div class="plano-ver">TOQUE PARA VER +</div>
           </div>
-          <div class="nuvem">Todos os recursos do Ouro, sem limite de alunos. Para o personal que quer crescer sem teto.</div>
+          <div class="nuvem"><b>PRO Diamante &middot; ilimitado</b>Convite do aluno por link. Avaliação completa: 3 protocolos de avaliação cardiorrespiratória, 3 métodos de composição corporal, dinamometria e testes físicos. Análise postural por IA com corretivos automáticos. Banco com mais de 150 exercícios. Periodização em 3 modelos. Treino no celular do aluno com vídeo e cronômetro. Controle financeiro e fechamento do mês. Relatório para o contador. AURI 24h. App com a sua marca. Sem limite de alunos.<span class='val'>&mdash;&mdash;&mdash;</span><span class="fechar">toque fora para fechar</span></div>
         </div>
       </div>
     </div>
@@ -180,41 +183,38 @@
       <div class="grupo-tit">AVALIAÇÃO DO LAB</div>
       <div class="grupo-sub">Planos</div>
       <div class="carrossel">
-        <div class="plano" onclick="this.classList.toggle('aberto')">
+        <div class="plano" onclick="abrirNuvem(this)">
           <div>
             <div class="plano-nome">BRONZE</div>
             <div class="plano-tipo">1 hora</div>
             <div class="plano-mini">Seu ponto de partida.</div>
           </div>
           <div>
-            <div class="plano-preco">&mdash;&mdash;&mdash;</div>
             <div class="plano-ver">TOQUE PARA VER +</div>
           </div>
-          <div class="nuvem">Anamnese completa, circunferências, análise postural com IA, dinamometria (força de preensão), teste de sentar-e-levantar, bateria de testes físicos, VO2 e composição corporal por bioimpedância e dobras. Laudo completo em formato revista.</div>
+          <div class="nuvem"><b>Avaliação Bronze &middot; 1h</b>Anamnese completa, circunferências, análise postural com IA, dinamometria (força de preensão), teste de sentar-e-levantar, bateria de testes físicos, avaliação cardiorrespiratória e composição corporal por bioimpedância e dobras. Laudo completo em formato revista.<span class='val'>R$ 150</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
         </div>
-        <div class="plano" onclick="this.classList.toggle('aberto')">
+        <div class="plano" onclick="abrirNuvem(this)">
           <div>
             <div class="plano-nome">PRATA</div>
             <div class="plano-tipo">2 horas</div>
-            <div class="plano-mini">Bronze + força e potência.</div>
+            <div class="plano-mini">Força, mobilidade e potência.</div>
           </div>
           <div>
-            <div class="plano-preco">&mdash;&mdash;&mdash;</div>
             <div class="plano-ver">TOQUE PARA VER +</div>
           </div>
-          <div class="nuvem">Tudo do Bronze, mais análise de mobilidade com IA, teste de força máxima (1RM) e pliometria na plataforma de saltos. Laudo completo em formato revista.</div>
+          <div class="nuvem"><b>Avaliação Prata &middot; 2h</b>Anamnese completa, circunferências, análise postural com IA, dinamometria (força de preensão), teste de sentar-e-levantar, bateria de testes físicos, avaliação cardiorrespiratória e composição corporal por bioimpedância e dobras. Análise de mobilidade com IA. Teste de força máxima (1RM). Pliometria na plataforma de saltos. Laudo completo em formato revista.<span class='val'>R$ 350</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
         </div>
-        <div class="plano" onclick="this.classList.toggle('aberto')">
+        <div class="plano" onclick="abrirNuvem(this)">
           <div>
             <div class="plano-nome">OURO</div>
             <div class="plano-tipo">2 horas</div>
             <div class="plano-mini">A mais completa do Lab.</div>
           </div>
           <div>
-            <div class="plano-preco">&mdash;&mdash;&mdash;</div>
             <div class="plano-ver">TOQUE PARA VER +</div>
           </div>
-          <div class="nuvem">Tudo do Prata, mais composição corporal por ultrassom (BodyMetrix) e ventilometria. A avaliação mais completa do Lab, com laudo completo em formato revista.</div>
+          <div class="nuvem"><b>Avaliação Ouro &middot; 2h</b>Anamnese completa, circunferências, análise postural com IA, dinamometria (força de preensão), teste de sentar-e-levantar, bateria de testes físicos, avaliação cardiorrespiratória e composição corporal por bioimpedância e dobras. Análise de mobilidade com IA. Teste de força máxima (1RM). Pliometria na plataforma de saltos. Composição corporal por ultrassom (BodyMetrix). Ventilometria. Laudo completo em formato revista.<span class='val'>R$ 750</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
         </div>
       </div>
     </div>
@@ -222,41 +222,38 @@
       <div class="grupo-tit">TESTES AVULSOS</div>
       <div class="grupo-sub">Exame isolado</div>
       <div class="carrossel">
-        <div class="plano" onclick="this.classList.toggle('aberto')">
+        <div class="plano" onclick="abrirNuvem(this)">
           <div>
             <div class="plano-nome">ULTRASSOM</div>
             <div class="plano-tipo">1 hora</div>
             <div class="plano-mini">Seu corpo por dentro.</div>
           </div>
           <div>
-            <div class="plano-preco">&mdash;&mdash;&mdash;</div>
             <div class="plano-ver">TOQUE PARA VER +</div>
           </div>
-          <div class="nuvem">Percentual de gordura, espessura de gordura subcutânea, espessura muscular e gordura abdominal profunda (deep fat), por ultrassom BodyMetrix. Inclui anamnese, circunferências e bateria de testes físicos. Você recebe o laudo completo em formato revista.</div>
+          <div class="nuvem"><b>Ultrassom &middot; 1h</b>Percentual de gordura, espessura de gordura subcutânea, espessura muscular e gordura abdominal profunda (deep fat), medidos por ultrassom BodyMetrix. Inclui anamnese, circunferências e bateria de testes físicos. Você recebe o laudo completo em formato revista.<span class='val'>R$ 350</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
         </div>
-        <div class="plano" onclick="this.classList.toggle('aberto')">
+        <div class="plano" onclick="abrirNuvem(this)">
           <div>
             <div class="plano-nome">PLIOMETRIA</div>
             <div class="plano-tipo">1 hora</div>
             <div class="plano-mini">Potência e explosão.</div>
           </div>
           <div>
-            <div class="plano-preco">&mdash;&mdash;&mdash;</div>
             <div class="plano-ver">TOQUE PARA VER +</div>
           </div>
-          <div class="nuvem">Avaliação da potência e explosão dos membros inferiores na plataforma de saltos. Inclui anamnese, circunferências e bateria de testes físicos. Você recebe o laudo completo em formato revista. Composição corporal por compasso (dobras).</div>
+          <div class="nuvem"><b>Pliometria &middot; 1h</b>Avaliação da potência e explosão dos membros inferiores na plataforma de saltos. Inclui anamnese, circunferências, composição corporal por compasso (dobras) e bateria de testes físicos. Você recebe o laudo completo em formato revista.<span class='val'>R$ 250</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
         </div>
-        <div class="plano" onclick="this.classList.toggle('aberto')">
+        <div class="plano" onclick="abrirNuvem(this)">
           <div>
             <div class="plano-nome">VENTILOMETRIA</div>
             <div class="plano-tipo">1 hora</div>
             <div class="plano-mini">Como você respira no esforço.</div>
           </div>
           <div>
-            <div class="plano-preco">&mdash;&mdash;&mdash;</div>
             <div class="plano-ver">TOQUE PARA VER +</div>
           </div>
-          <div class="nuvem">Resposta ventilatória ao exercício: limiares ventilatórios, capacidade respiratória real e VO2 medido pelo ventilômetro. Inclui anamnese, circunferências e bateria de testes físicos. Você recebe o laudo completo em formato revista. Composição corporal por compasso (dobras).</div>
+          <div class="nuvem"><b>Ventilometria &middot; 1h</b>Resposta ventilatória ao exercício: limiares ventilatórios, capacidade respiratória real e VO2 medido pelo ventilômetro. Inclui anamnese, circunferências, composição corporal por compasso (dobras) e bateria de testes físicos. Você recebe o laudo completo em formato revista.<span class='val'>R$ 300</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
         </div>
       </div>
     </div>
@@ -264,32 +261,40 @@
       <div class="grupo-tit">SERVIÇOS</div>
       <div class="grupo-sub">Acompanhamento</div>
       <div class="carrossel">
-        <div class="plano" onclick="this.classList.toggle('aberto')">
+        <div class="plano" onclick="abrirNuvem(this)">
           <div>
             <div class="plano-nome">ASSESSORIA ESPORTIVA</div>
             <div class="plano-tipo">Mensal</div>
             <div class="plano-mini">Ciência + acompanhamento.</div>
           </div>
           <div>
-            <div class="plano-preco">&mdash;&mdash;&mdash;</div>
             <div class="plano-ver">TOQUE PARA VER +</div>
           </div>
-          <div class="nuvem">Avaliação presencial no Lab + treino individualizado no app + periodização + acompanhamento contínuo com o personal. Reavaliação a cada 2 meses.</div>
+          <div class="nuvem"><b>Assessoria Esportiva &middot; mensal</b>Avaliação presencial no Lab. Treino individualizado no app com periodização. Acompanhamento contínuo com o personal. Reavaliação a cada 2 meses.<span class='val'>R$ 399 <span style='font-size:14px'>/mês</span></span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
         </div>
-        <div class="plano" onclick="this.classList.toggle('aberto')">
+        <div class="plano" onclick="abrirNuvem(this)">
           <div>
             <div class="plano-nome">AULA PERSONAL ONLINE</div>
             <div class="plano-tipo">1 hora</div>
             <div class="plano-mini">Treino guiado ao vivo.</div>
           </div>
           <div>
-            <div class="plano-preco">&mdash;&mdash;&mdash;</div>
             <div class="plano-ver">TOQUE PARA VER +</div>
           </div>
-          <div class="nuvem">Sessão individual de treino guiada por chamada de vídeo, com correção de execução em tempo real.</div>
+          <div class="nuvem"><b>Aula Personal Online &middot; 1h</b>Sessão individual de treino guiada por chamada de vídeo, com correção de execução em tempo real.<span class='val'>R$ 150</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
         </div>
       </div>
     </div>
+    <div id="overlay" onclick="if(event.target.id==='overlay')this.classList.remove('on')">
+      <div id="overlay-box"><span id="overlay-x" onclick="document.getElementById('overlay').classList.remove('on')">&times;</span><div id="overlay-txt"></div></div>
+    </div>
+    <script>
+    function abrirNuvem(el){
+      var n = el.querySelector('.nuvem');
+      document.getElementById('overlay-txt').innerHTML = n ? n.innerHTML : '';
+      document.getElementById('overlay').classList.add('on');
+    }
+    </script>
     <div class="card-btn" style="cursor:pointer" onclick="document.getElementById('precos-box').style.display='none';document.getElementById('precos-capa').style.display='block';document.getElementById('precos-capa').scrollIntoView({behavior:'smooth'});">&larr; VOLTAR</div>
   </div>
 

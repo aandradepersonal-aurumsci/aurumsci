@@ -3484,10 +3484,15 @@ function salvarVO2(){
       var msg = '✅ Salvo! VO2 ' + resp.vo2max + ' ml/kg/min - ' + (resp.classificacao_vo2||'');
       mostrarToast(msg);
       var statusEl = document.getElementById('p-vo2-status');
-      if(statusEl) statusEl.innerHTML = '<div style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.3);border-radius:8px;padding:10px;font-size:13px;color:var(--verde);text-align:center">' + msg + '</div>';
+      if(statusEl) statusEl.innerHTML = '<div style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.3);border-radius:8px;padding:10px;font-size:13px;color:var(--verde);text-align:center">' + msg + '</div>' + '<button onclick="concluirAvaliacao()" style="width:100%;margin-top:12px;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;letter-spacing:2px;font-weight:700;cursor:pointer">CONCLUIR A AVALIACAO</button>';
     } else { mostrarToast('Erro ao salvar (resposta invalida)'); }
   })
   .catch(function(e){ mostrarToast('Erro ao salvar: ' + e.message); });
+}
+
+function concluirAvaliacao(){
+  mostrarToast('Avaliacao concluida!');
+  if(typeof voltarInicio === 'function'){ voltarInicio(); }
 }
 
 function calcHRRP(){

@@ -2644,7 +2644,7 @@ function renderAvalTabsContent(id, nome){
   html += '<button onclick="avalAba(\'vo2\')" id="aval-tab-vo2" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">🫁 VO2</button>';
 
   html += '</div>';
-  html += '<div style="text-align:right;margin-bottom:12px"><button onclick="iniciarNovaAvaliacao()" style="padding:10px 22px;background:transparent;border:2px solid var(--ouro);border-radius:10px;color:var(--ouro);font-family:Bebas Neue;font-size:16px;letter-spacing:2px;font-weight:700;cursor:pointer">NOVA AVALIACAO</button></div>';
+  html += '<div style="text-align:right;margin-bottom:12px"><button onclick="iniciarNovaAvaliacao()" style="padding:10px 22px;background:transparent;border:2px solid var(--ouro);border-radius:10px;color:var(--ouro);font-family:Bebas Neue;font-size:16px;letter-spacing:2px;font-weight:700;cursor:pointer">NOVA AVALIAÇÃO</button></div>';
   html += '<div id="aval-aba-content"></div>';
   html += '</div>';
   return html;
@@ -2662,7 +2662,7 @@ function renderAvalTabs(id, nome){
   html += '<button onclick="avalAba(\'vo2\')" class="btn-aval-tab" id="aval-tab-vo2" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">🫁 VO2+HRR</button>';
   html += '<button onclick="avalAba(\'resultados\')" class="btn-aval-tab" id="aval-tab-resultados" style="padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--borda);color:var(--texto);font-family:Bebas Neue;font-size:12px;cursor:pointer;flex-shrink:0">📈 RESULT.</button>';
   html += '</div>';
-  html += '<button onclick="iniciarNovaAvaliacao()" style="width:100%;margin-top:10px;margin-bottom:6px;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:15px;letter-spacing:2px;cursor:pointer">🔄 NOVA AVALIACAO</button>';
+  html += '<button onclick="iniciarNovaAvaliacao()" style="width:100%;margin-top:10px;margin-bottom:6px;padding:12px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:10px;color:#0A0A0F;font-family:Bebas Neue;font-size:15px;letter-spacing:2px;cursor:pointer">🔄 NOVA AVALIAÇÃO</button>';
   html += '<div id="aval-aba-content"></div>';
   html += '</div>';
   var container = document.getElementById('aval-content');
@@ -3484,14 +3484,14 @@ function salvarVO2(){
       var msg = '✅ Salvo! VO2 ' + resp.vo2max + ' ml/kg/min - ' + (resp.classificacao_vo2||'');
       mostrarToast(msg);
       var statusEl = document.getElementById('p-vo2-status');
-      if(statusEl) statusEl.innerHTML = '<div style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.3);border-radius:8px;padding:10px;font-size:13px;color:var(--verde);text-align:center">' + msg + '</div>' + '<button onclick="concluirAvaliacao()" style="width:100%;margin-top:12px;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;letter-spacing:2px;font-weight:700;cursor:pointer">CONCLUIR A AVALIACAO</button>';
+      if(statusEl) statusEl.innerHTML = '<div style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.3);border-radius:8px;padding:10px;font-size:13px;color:var(--verde);text-align:center">' + msg + '</div>' + '<button onclick="concluirAvaliacao()" style="width:100%;margin-top:12px;padding:14px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));border:none;border-radius:12px;color:#0A0A0F;font-family:Bebas Neue;font-size:16px;letter-spacing:2px;font-weight:700;cursor:pointer">CONCLUIR A AVALIAÇÃO</button>';
     } else { mostrarToast('Erro ao salvar (resposta invalida)'); }
   })
   .catch(function(e){ mostrarToast('Erro ao salvar: ' + e.message); });
 }
 
 function concluirAvaliacao(){
-  mostrarToast('Avaliacao concluida!');
+  mostrarToast('Avaliação concluída!');
   var m = document.getElementById('modal-perfil-aluno');
   if(m){ m.classList.remove('show'); }
   window.scrollTo(0,0);

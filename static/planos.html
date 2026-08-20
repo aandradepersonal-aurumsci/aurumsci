@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planos e Servicos &mdash; AurumSci</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ouro:#C9A84C;--ouro2:#E8D08A;--bg:#0A0A0F;--bg2:#12121A;--borda:#2A2A3A;--cinza:#9A9AA5}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'DM Sans',-apple-system,sans-serif;background:linear-gradient(135deg,#0A0A0F 0%,#15151F 100%);color:#fff;min-height:100vh;padding:32px 20px 60px}
+  .wrap{max-width:720px;margin:0 auto}
+  .banner{width:100%;border-radius:14px;display:block;margin-bottom:46px}
+  .hero{font-style:normal;text-align:center;margin-bottom:34px;padding:0 4px}
+  .hero-t{font-size:27px;font-weight:700;color:#fff;line-height:1.35;margin-bottom:16px}
+  .hero-c{font-size:18px;color:#fff;line-height:1.7;margin-bottom:16px;opacity:.95}
+  .hero-f{font-size:17px;font-weight:600;color:var(--ouro);line-height:1.6}
+  .logo{font-family:Georgia,serif;font-size:38px;font-weight:900;letter-spacing:6px;text-align:center;background:linear-gradient(135deg,var(--ouro),var(--ouro2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .tag{text-align:center;font-size:10px;letter-spacing:4px;color:var(--cinza);margin:8px 0 34px}
+  .titulo{font-family:'Bebas Neue';font-size:26px;letter-spacing:2px;color:var(--ouro);text-align:center;margin-bottom:6px}
+  .sub{text-align:center;font-size:14px;color:var(--cinza);line-height:1.6;margin-bottom:28px}
+  .card{display:block;text-decoration:none;background:var(--bg2);border:1px solid var(--borda);border-radius:18px;padding:20px;margin-bottom:14px;transition:all .2s}
+  .card:active{transform:scale(.98)}
+  .card-foto{width:100%;height:160px;object-fit:cover;border-radius:12px;margin-bottom:12px;display:block}
+  .foto-wrap{margin-bottom:12px}
+  .foto-wrap .card-foto{margin-bottom:0;border-radius:0 0 12px 12px}
+  .foto-wrap .logo-sobre{display:block;width:100%;height:auto;border-radius:12px 12px 0 0}
+  .card-emoji{font-size:26px;margin-bottom:8px}
+  .card-nome{font-family:'Bebas Neue';font-size:20px;letter-spacing:1px;color:var(--ouro);margin-bottom:4px}
+  .card-desc{font-size:13px;color:var(--cinza);line-height:1.5}
+  .card-btn{display:block;margin-top:14px;padding:11px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;border-radius:12px;text-align:center;font-weight:700;font-size:13px;letter-spacing:1px}
+  .selo{display:inline-block;margin-top:8px;padding:4px 12px;border:1px solid rgba(201,168,76,.4);border-radius:20px;color:var(--ouro);font-size:10px;letter-spacing:1px}
+  .sec{margin-top:44px;padding-top:32px;border-top:1px solid var(--borda)}
+  .busca{width:100%;padding:16px 18px;border-radius:14px;background:linear-gradient(135deg,rgba(201,168,76,.08),var(--bg2));border:1.5px solid var(--ouro);color:#fff;font-size:15px;font-family:'DM Sans',sans-serif;margin-bottom:16px;box-shadow:0 4px 18px rgba(201,168,76,.18);transition:all .2s}
+  .busca::placeholder{color:#6a6a75}
+  .prices-cap{cursor:pointer}
+  .prices-box{display:none;border-radius:18px;margin-bottom:14px;background-image:linear-gradient(rgba(10,10,15,.62),rgba(10,10,15,.80)),url('/static/prices-fundo.jpg?v=1');background-size:cover;background-position:center;padding:26px 14px 30px;border:1px solid var(--ouro)}
+  .prices-tit{font-family:'Bebas Neue';font-size:34px;letter-spacing:2.5px;color:var(--ouro);text-align:center;margin-bottom:6px}
+  .prices-sub{text-align:center;font-size:12px;color:var(--cinza);margin-bottom:22px}
+  .grupo{margin-bottom:18px}
+  .grupo-tit{font-family:'Bebas Neue';font-size:26px;letter-spacing:2.5px;background:linear-gradient(135deg,#F2F2F7,#9A9AA5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px;padding-left:2px}
+  .grupo-sub{font-size:10px;color:var(--cinza);letter-spacing:1px;margin-bottom:10px;padding-left:2px;text-transform:uppercase}
+  .carrossel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
+  .carrossel::-webkit-scrollbar{height:4px}
+  .carrossel::-webkit-scrollbar-thumb{background:var(--ouro);border-radius:10px}
+  .plano{flex:0 0 31%;scroll-snap-align:center;background:linear-gradient(145deg,rgba(35,30,18,.55),rgba(15,15,22,.62));backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);border:1px solid var(--ouro);border-radius:14px;padding:12px 11px;position:relative;cursor:pointer;min-height:112px;display:flex;flex-direction:column;justify-content:space-between}
+  .plano-nome{font-family:'Bebas Neue';font-size:23px;letter-spacing:1px;color:var(--ouro2);line-height:1.05;margin-bottom:4px}
+  .plano-tipo{font-size:10px;color:var(--cinza);letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase}
+  .plano-mini{font-size:11.5px;color:#c8c8d0;line-height:1.35;margin-bottom:6px}
+  .plano-preco{font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--ouro);border-top:1px solid var(--borda);padding-top:8px}
+  .plano-ver{font-size:9px;color:var(--ouro);letter-spacing:1px;margin-top:5px;opacity:.85}
+  .nuvem{display:none}
+  #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:900;align-items:center;justify-content:center;padding:20px}
+  #overlay.on{display:flex}
+  #overlay-box{background:#0C0C12;border:1.5px solid var(--ouro);border-radius:18px;padding:24px 20px 20px;max-width:430px;width:100%;max-height:82vh;overflow-y:auto;position:relative;box-shadow:0 16px 60px rgba(0,0,0,.8)}
+  #overlay-box b{color:var(--ouro2);font-family:'Bebas Neue';font-size:23px;letter-spacing:1px;display:block;margin-bottom:12px;padding-right:30px}
+  #overlay-box{font-size:13.5px;color:#dcdce4;line-height:1.6}
+  #overlay-box .val{display:block;margin-top:18px;padding-top:14px;border-top:1px solid var(--borda);font-family:'Bebas Neue';font-size:28px;letter-spacing:1px;color:var(--ouro)}
+  #overlay-box .ag{display:block;margin-top:14px;padding:13px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;border-radius:12px;text-align:center;font-weight:700;font-size:14px;letter-spacing:1px;text-decoration:none}
+  #overlay-box .fechar{display:none}
+  #overlay-x{position:absolute;top:12px;right:16px;font-size:26px;color:var(--ouro);cursor:pointer;line-height:1}
+  .busca:focus{outline:none;border-color:var(--ouro2);box-shadow:0 6px 28px rgba(201,168,76,.38)}
+  .temas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+  .chip{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:7px 14px;color:var(--ouro);font-size:12px;cursor:pointer;transition:all .2s}
+  .chip:hover,.chip.on{background:var(--ouro);color:#0A0A0F;font-weight:600}
+  .chip .n{opacity:.65;font-size:10px;margin-left:4px}
+  .vermais{text-align:center;color:var(--ouro);font-size:12px;cursor:pointer;padding:8px;margin-bottom:16px}
+  .vid{display:block;text-decoration:none;background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+  .vid-t{font-size:13px;color:#fff;line-height:1.45}
+  .vid-a{font-size:11px;color:var(--ouro);margin-top:4px}
+  .vazio{text-align:center;color:var(--cinza);font-size:13px;padding:20px}
+  .rodape{text-align:center;color:#555;font-size:11px;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <img class="banner" src="/static/prices-capa.jpg?v=1" alt="AurumSci - Planos e Servicos">
+  <div class="prices-box" id="precos-box" style="display:block">
+    <div class="prices-tit">PLANOS DO ECOSSISTEMA</div>
+    <div class="prices-sub">Deslize cada linha &rarr;</div>
+    <div style="text-align:center;margin:0 0 22px">
+      <span onclick="var a=document.getElementById('audio-planos'); if(a.paused){a.play(); this.querySelector('span').innerHTML='&#10074;&#10074;';}else{a.pause(); this.querySelector('span').innerHTML='&#9654;';}" style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;border-radius:999px;padding:13px 26px;font-weight:700;font-size:14px;letter-spacing:.5px;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.4)"><span style="font-size:17px">&#9654;</span>Ouvir os planos</span>
+      <audio id="audio-planos" src="/static/catalogo_bill.mp3?v=1" preload="auto"></audio>
+    </div>
+    <div class="grupo">
+      <div class="grupo-tit">APP DO ALUNO</div>
+      <div class="grupo-sub">Para quem treina sozinho</div>
+      <div class="carrossel">
+        <div class="plano" onclick="abrirNuvem(this)">
+          <div>
+            <div class="plano-nome">APP DO ALUNO</div>
+            <div class="plano-tipo">Mensal &middot; 7 dias grátis</div>
+            <div class="plano-mini">Método em vez de achismo.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>App do Aluno</b>Avaliação guiada passo a passo pelo próprio app. Treino individualizado com periodização. Análise postural por inteligência artificial com exercícios corretivos. Sugestões nutricionais baseadas em evidências. AURI, seu assistente de inteligência artificial 24 horas por dia. Acompanhamento da evolução pelo AURUM Score. Vídeo demonstrativo em cada exercício.<span class='val'>R$ 149,90 <span style="font-size:14px">/m&ecirc;s</span></span><span class="fechar">toque fora para fechar</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="grupo">
+      <div class="grupo-tit">APP DO PROFISSIONAL</div>
+      <div class="grupo-sub">Planos</div>
+      <div class="carrossel">
+        <div class="plano" onclick="abrirNuvem(this)">
+          <div>
+            <div class="plano-nome">BRONZE</div>
+            <div class="plano-tipo">Até 10 alunos</div>
+            <div class="plano-mini">A plataforma completa.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>PRO Bronze &middot; até 10 alunos</b>Convite do aluno por link. Avaliação completa: 3 protocolos de avaliação cardiorrespiratória, 3 métodos de composição corporal, dinamometria e testes físicos. Análise postural por IA com corretivos automáticos. Banco com mais de 150 exercícios. Periodização em 3 modelos. Treino no celular do aluno com vídeo e cronômetro. Controle financeiro e fechamento do mês. Relatório para o contador. AURI 24h. App com a sua marca.<span class='val'>R$ 189,90 <span style="font-size:14px">/m&ecirc;s</span></span><span class="fechar">toque fora para fechar</span></div>
+        </div>
+        <div class="plano" onclick="abrirNuvem(this)">
+          <div>
+            <div class="plano-nome">PRATA</div>
+            <div class="plano-tipo">Até 20 alunos</div>
+            <div class="plano-mini">Mesma plataforma, mais alunos.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>PRO Prata &middot; até 20 alunos</b>Convite do aluno por link. Avaliação completa: 3 protocolos de avaliação cardiorrespiratória, 3 métodos de composição corporal, dinamometria e testes físicos. Análise postural por IA com corretivos automáticos. Banco com mais de 150 exercícios. Periodização em 3 modelos. Treino no celular do aluno com vídeo e cronômetro. Controle financeiro e fechamento do mês. Relatório para o contador. AURI 24h. App com a sua marca.<span class='val'>R$ 249,90 <span style="font-size:14px">/m&ecirc;s</span></span><span class="fechar">toque fora para fechar</span></div>
+        </div>
+        <div class="plano" onclick="abrirNuvem(this)">
+          <div>
+            <div class="plano-nome">OURO</div>
+            <div class="plano-tipo">Até 50 alunos</div>
+            <div class="plano-mini">Para quem tem volume.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>PRO Ouro &middot; até 50 alunos</b>Convite do aluno por link. Avaliação completa: 3 protocolos de avaliação cardiorrespiratória, 3 métodos de composição corporal, dinamometria e testes físicos. Análise postural por IA com corretivos automáticos. Banco com mais de 150 exercícios. Periodização em 3 modelos. Treino no celular do aluno com vídeo e cronômetro. Controle financeiro e fechamento do mês. Relatório para o contador. AURI 24h. App com a sua marca.<span class='val'>R$ 399,90 <span style="font-size:14px">/m&ecirc;s</span></span><span class="fechar">toque fora para fechar</span></div>
+        </div>
+        <div class="plano" onclick="abrirNuvem(this)">
+          <div>
+            <div class="plano-nome">DIAMANTE</div>
+            <div class="plano-tipo">Alunos ilimitados</div>
+            <div class="plano-mini">Sem teto para crescer.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>PRO Diamante &middot; ilimitado</b>Convite do aluno por link. Avaliação completa: 3 protocolos de avaliação cardiorrespiratória, 3 métodos de composição corporal, dinamometria e testes físicos. Análise postural por IA com corretivos automáticos. Banco com mais de 150 exercícios. Periodização em 3 modelos. Treino no celular do aluno com vídeo e cronômetro. Controle financeiro e fechamento do mês. Relatório para o contador. AURI 24h. App com a sua marca. Sem limite de alunos.<span class='val'>R$ 449,90 <span style="font-size:14px">/m&ecirc;s</span></span><span class="fechar">toque fora para fechar</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="grupo">
+      <div class="grupo-tit">AVALIAÇÃO DO LAB</div>
+      <div class="grupo-sub">Planos &middot; <span style="color:var(--ouro)">agendamento em breve</span></div>
+      <div class="carrossel">
+        <div class="plano" onclick="abrirNuvem(this)">
+          <div>
+            <div class="plano-nome">BRONZE</div>
+            <div class="plano-tipo">1 hora</div>
+            <div class="plano-mini">Seu ponto de partida.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>Avaliação Bronze &middot; 1h</b>Anamnese completa, circunferências, análise postural com inteligência artificial a partir de 4 fotos, dinamometria (força de preensão), teste de sentar-e-levantar, bateria de testes físicos, avaliação cardiorrespiratória e composição corporal por bioimpedância e dobras. Laudo completo em formato revista.<span class='val'>R$ 150</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
+        </div>
+        <div class="plano" onclick="abrirNuvem(this)">
+          <div>
+            <div class="plano-nome">PRATA</div>
+            <div class="plano-tipo">2 horas</div>
+            <div class="plano-mini">Força, mobilidade e potência.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>Avaliação Prata &middot; 2h</b>Anamnese completa, circunferências, análise postural com inteligência artificial a partir de 4 fotos, dinamometria (força de preensão), teste de sentar-e-levantar, bateria de testes físicos, avaliação cardiorrespiratória e composição corporal por bioimpedância e dobras. Análise de mobilidade com inteligência artificial a partir de 4 fotos. Teste de força máxima (1RM). Pliometria na plataforma de saltos. Laudo completo em formato revista.<span class='val'>R$ 350</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
+        </div>
+        <div class="plano" onclick="abrirNuvem(this)">
+          <div>
+            <div class="plano-nome">OURO</div>
+            <div class="plano-tipo">2 horas</div>
+            <div class="plano-mini">A mais completa do Lab.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>Avaliação Ouro &middot; 2h</b>Anamnese completa, circunferências, análise postural com inteligência artificial a partir de 4 fotos, dinamometria (força de preensão), teste de sentar-e-levantar, bateria de testes físicos, avaliação cardiorrespiratória, análise de mobilidade com inteligência artificial a partir de 4 fotos, teste de força máxima (1RM), pliometria na plataforma de saltos, composição corporal por ultrassom (BodyMetrix) e ventilometria. Laudo completo em formato revista.<span class='val'>R$ 750</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="grupo">
+      <div class="grupo-tit">TESTES AVULSOS E ESPORTES</div>
+      <div class="grupo-sub">Exame isolado</div>
+      <div class="carrossel">
+        <div class="plano" onclick="abrirNuvem(this)">
+          <div>
+            <div class="plano-nome">ULTRASSOM</div>
+            <div class="plano-tipo">1 hora</div>
+            <div class="plano-mini">Seu corpo por dentro.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>Ultrassom &middot; 1h</b>Percentual de gordura, espessura de gordura subcutânea, espessura muscular e gordura abdominal profunda (deep fat), medidos por ultrassom BodyMetrix. Inclui anamnese, circunferências e bateria de testes físicos. Você recebe o laudo completo em formato revista.<span class='val'>R$ 350</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
+        </div>
+        <div class="plano" onclick="abrirNuvem(this)">
+          <div>
+            <div class="plano-nome">PLIOMETRIA</div>
+            <div class="plano-tipo">1 hora</div>
+            <div class="plano-mini">Potência e explosão.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>Pliometria &middot; 1h</b>Avaliação da potência e explosão dos membros inferiores na plataforma de saltos. Inclui anamnese, circunferências, composição corporal por compasso (dobras) e bateria de testes físicos. Você recebe o laudo completo em formato revista.<span class='val'>R$ 250</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
+        </div>
+        <div class="plano" onclick="abrirNuvem(this)">
+          <div>
+            <div class="plano-nome">VENTILOMETRIA</div>
+            <div class="plano-tipo">1 hora</div>
+            <div class="plano-mini">Como você respira no esforço.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>Ventilometria &middot; 1h</b>Resposta ventilatória ao exercício: limiares ventilatórios, capacidade respiratória real e VO2 medido pelo ventilômetro. O teste é feito na esteira ou na bike, e você recebe os limiares para corrida, ciclismo e natação &mdash; os dois primeiros medidos diretamente e a natação estimada por equações validadas. Inclui anamnese, circunferências, composição corporal por compasso (dobras) e bateria de testes físicos. Você recebe o laudo completo em formato revista.<span class='val'>R$ 300</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
+        </div>
+        <div class="plano" onclick="abrirNuvem(this)" style="border-color:#F2F2F7;box-shadow:0 0 18px rgba(242,242,247,.22)">
+          <div>
+            <div class="plano-nome">TRIATLO E AEROMAN</div>
+            <div class="plano-tipo">2 ventilometrias &middot; 2 horas</div>
+            <div class="plano-mini">Corrida, bike e nata&ccedil;&atilde;o medidas.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>Triatlo e Aeroman &middot; 2 ventilometrias &middot; 2h</b>Duas ventilometrias em sess&otilde;es separadas, uma na esteira e uma na bike, porque a resposta ventilat&oacute;ria muda entre correr e pedalar. Para a nata&ccedil;&atilde;o, os limiares s&atilde;o estimados a partir dos seus dados reais por equa&ccedil;&otilde;es validadas. Voc&ecirc; recebe as zonas de treino de cada modalidade em um laudo completo em formato revista. Inclui anamnese, circunfer&ecirc;ncias, composi&ccedil;&atilde;o corporal por compasso (dobras) e bateria de testes f&iacute;sicos.<span class='val'>R$ 499</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
+        </div>
+        <div class="plano" onclick="abrirNuvem(this)" style="border-color:#F2F2F7;box-shadow:0 0 18px rgba(242,242,247,.22)">
+          <div>
+            <div class="plano-nome">ESPORTES</div>
+            <div class="plano-tipo">Ventilometria + pliometria &middot; 2 horas</div>
+            <div class="plano-mini">F&uacute;tebol, v&ocirc;lei, basquete, crossfit, Hyrox.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>Avalia&ccedil;&atilde;o Esportes &middot; 2h</b>Para quem precisa de motor aer&oacute;bio E explos&atilde;o: futebol, v&ocirc;lei, basquete, t&ecirc;nis, crossfit, Hyrox. Uma ventilometria na modalidade que voc&ecirc; escolher (esteira ou bike), com limiares e VO2 medidos pelo ventil&ocirc;metro, mais pliometria na plataforma de saltos para medir pot&ecirc;ncia e explos&atilde;o dos membros inferiores. Inclui anamnese, circunfer&ecirc;ncias, composi&ccedil;&atilde;o corporal por compasso (dobras) e bateria de testes f&iacute;sicos, com laudo completo em formato revista.<span class='val'>R$ 449</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="grupo">
+      <div class="grupo-tit">SERVIÇOS</div>
+      <div class="grupo-sub">Acompanhamento</div>
+      <div class="carrossel">
+        <div class="plano" onclick="abrirNuvem(this)">
+          <div>
+            <div class="plano-nome">ASSESSORIA ESPORTIVA</div>
+            <div class="plano-tipo">Mensal</div>
+            <div class="plano-mini">Ciência + acompanhamento.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>Assessoria Esportiva &middot; mensal</b>Avaliação presencial no Lab. Treino individualizado no app com periodização. Acompanhamento contínuo com o personal. Reavaliação a cada 2 meses.<span class='val'>R$ 399 <span style='font-size:14px'>/mês</span></span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
+        </div>
+        <div class="plano" onclick="abrirNuvem(this)">
+          <div>
+            <div class="plano-nome">AULA PERSONAL ONLINE</div>
+            <div class="plano-tipo">1 hora</div>
+            <div class="plano-mini">Treino guiado ao vivo.</div>
+          </div>
+          <div>
+            <div class="plano-ver">TOQUE PARA VER +</div>
+          </div>
+          <div class="nuvem"><b>Aula Personal Online &middot; 1h</b>Sessão individual de treino guiada por chamada de vídeo, com correção de execução em tempo real.<span class='val'>R$ 150</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
+        </div>
+      </div>
+    </div>
+    <div id="overlay" onclick="if(event.target.id==='overlay')this.classList.remove('on')">
+      <div id="overlay-box"><span id="overlay-x" onclick="document.getElementById('overlay').classList.remove('on')">&times;</span><div id="overlay-txt"></div></div>
+    </div>
+    <script>
+    function abrirNuvem(el){
+      var n = el.querySelector('.nuvem');
+      document.getElementById('overlay-txt').innerHTML = n ? n.innerHTML : '';
+      document.getElementById('overlay').classList.add('on');
+    }
+    </script>
+    <a class="card-btn" href="/family" style="display:block;text-decoration:none">&larr; VOLTAR PARA A FAMILY</a>
+
+  </div>
+
+</div>
+
+
+<script>
+var _autoScroll = false, _scrollInicial = 0;
+window.addEventListener('wheel', function(){ if(_autoScroll) _autoScroll = false; }, {passive:true});
+window.addEventListener('touchmove', function(){ if(_autoScroll) _autoScroll = false; }, {passive:true});
+document.addEventListener('DOMContentLoaded', function(){
+  var a = document.getElementById('audio-planos');
+  if(!a) return;
+  a.addEventListener('play', function(){ _scrollInicial = window.scrollY; _autoScroll = true; requestAnimationFrame(animarRolagem); });
+  a.addEventListener('pause', function(){ _autoScroll = false; });
+  a.addEventListener('ended', function(){ _autoScroll = false; });
+  function animarRolagem(){
+    if(a.paused || !_autoScroll) return;
+    if(!a.duration){ requestAnimationFrame(animarRolagem); return; }
+    var progresso = Math.min((a.currentTime / a.duration) * 1.25, 1);
+    var alvoFinal = document.body.scrollHeight - window.innerHeight;
+    window.scrollTo(0, _scrollInicial + (alvoFinal - _scrollInicial) * progresso);
+    requestAnimationFrame(animarRolagem);
+  }
+});
+</script>
+</body>
+</html>

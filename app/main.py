@@ -335,6 +335,12 @@ def landing_family():
     """Casa-mae do ecossistema AurumSci — apresenta os 4 projetos + busca de ciencia."""
     with open("static/family.html", "r", encoding="utf-8") as f:
         return f.read()
+@app.get("/planos", response_class=HTMLResponse, include_in_schema=False)
+def landing_planos():
+    """Catalogo de planos e servicos do ecossistema AurumSci."""
+    with open("static/planos.html", "r", encoding="utf-8") as f:
+        return f.read()
+
 @app.get("/pro", response_class=HTMLResponse, include_in_schema=False)
 def landing_pro():
     # VITRINE ABERTA (25/jul): landing sem preco e sem checkout; os botoes caem no em-breve via /cadastro-pro.

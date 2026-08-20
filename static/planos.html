@@ -40,10 +40,10 @@
   .grupo{margin-bottom:18px}
   .grupo-tit{font-family:'Bebas Neue';font-size:26px;letter-spacing:2.5px;background:linear-gradient(135deg,#F2F2F7,#9A9AA5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px;padding-left:2px}
   .grupo-sub{font-size:10px;color:var(--cinza);letter-spacing:1px;margin-bottom:10px;padding-left:2px;text-transform:uppercase}
-  .carrossel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
+  .carrossel{display:flex;flex-wrap:wrap;gap:10px;padding-bottom:4px}
   .carrossel::-webkit-scrollbar{height:4px}
   .carrossel::-webkit-scrollbar-thumb{background:var(--ouro);border-radius:10px}
-  .plano{flex:0 0 31%;scroll-snap-align:center;background:linear-gradient(145deg,rgba(35,30,18,.55),rgba(15,15,22,.62));backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);border:1px solid var(--ouro);border-radius:14px;padding:12px 11px;position:relative;cursor:pointer;min-height:112px;display:flex;flex-direction:column;justify-content:space-between}
+  .plano{flex:0 1 47%;max-width:47%;scroll-snap-align:center;background:linear-gradient(145deg,rgba(35,30,18,.55),rgba(15,15,22,.62));backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);border:1px solid var(--ouro);border-radius:14px;padding:12px 11px;position:relative;cursor:pointer;min-height:112px;display:flex;flex-direction:column;justify-content:space-between}
   .plano-nome{font-family:'Bebas Neue';font-size:23px;letter-spacing:1px;color:var(--ouro2);line-height:1.05;margin-bottom:4px}
   .plano-tipo{font-size:10px;color:var(--cinza);letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase}
   .plano-mini{font-size:11.5px;color:#c8c8d0;line-height:1.35;margin-bottom:6px}
@@ -77,7 +77,7 @@
   <img class="banner" src="/static/prices-capa.jpg?v=1" alt="AurumSci - Planos e Servicos">
   <div class="prices-box" id="precos-box" style="display:block">
     <div class="prices-tit">PLANOS DO ECOSSISTEMA</div>
-    <div class="prices-sub">Deslize cada linha &rarr;</div>
+    <div class="prices-sub">Toque em cada card para ver o que inclui</div>
     <div style="text-align:center;margin:0 0 22px">
       <span onclick="var a=document.getElementById('audio-planos'); if(a.paused){a.play(); this.querySelector('span').innerHTML='&#10074;&#10074;';}else{a.pause(); this.querySelector('span').innerHTML='&#9654;';}" style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--ouro),var(--ouro2));color:#0A0A0F;border-radius:999px;padding:13px 26px;font-weight:700;font-size:14px;letter-spacing:.5px;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.4)"><span style="font-size:17px">&#9654;</span>Ouvir os planos</span>
       <audio id="audio-planos" src="/static/catalogo_bill.mp3?v=1" preload="auto"></audio>
@@ -189,7 +189,7 @@
       </div>
     </div>
     <div class="grupo">
-      <div class="grupo-tit">TESTES AVULSOS E ESPORTES</div>
+      <div class="grupo-tit">TESTES AVULSOS</div>
       <div class="grupo-sub">Exame isolado</div>
       <div class="carrossel">
         <div class="plano" onclick="abrirNuvem(this)">
@@ -225,6 +225,12 @@
           </div>
           <div class="nuvem"><b>Ventilometria &middot; 1h</b>Resposta ventilatória ao exercício: limiares ventilatórios, capacidade respiratória real e VO2 medido pelo ventilômetro. O teste é feito na esteira ou na bike, e você recebe os limiares para corrida, ciclismo e natação &mdash; os dois primeiros medidos diretamente e a natação estimada por equações validadas. Inclui anamnese, circunferências, composição corporal por compasso (dobras) e bateria de testes físicos. Você recebe o laudo completo em formato revista.<span class='val'>R$ 300</span><a class="ag" href="https://lab.aurumsc.com.br/agendar" target="_blank" onclick="event.stopPropagation()">AGENDAR &rarr;</a><span class="fechar">toque fora para fechar</span></div>
         </div>
+      </div>
+    </div>
+    <div class="grupo">
+      <div class="grupo-tit">ESPORTES</div>
+      <div class="grupo-sub">Avalia&ccedil;&atilde;o para quem compete</div>
+      <div class="carrossel">
         <div class="plano" onclick="abrirNuvem(this)" style="border-color:#F2F2F7;box-shadow:0 0 18px rgba(242,242,247,.22)">
           <div>
             <div class="plano-nome">TRIATLO E AEROMAN</div>

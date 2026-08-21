@@ -811,6 +811,21 @@ body{background:var(--bg);color:var(--texto);font-family:'DM Sans',sans-serif;mi
           <input id="dado-peso" type="number" inputmode="decimal" placeholder="kg" style="width:100%;padding:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);font-size:15px;box-sizing:border-box">
         </div>
       </div>
+      <div style="font-size:10px;color:var(--cinza);letter-spacing:1px;margin:4px 0 8px">EM REPOUSO (sentado, 5 minutos parado)</div>
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--cinza);margin-bottom:6px">PA SISTÓLICA</div>
+          <input id="dado-pa-sis" type="number" inputmode="numeric" placeholder="120" style="width:100%;padding:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);font-size:15px;box-sizing:border-box">
+        </div>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--cinza);margin-bottom:6px">PA DIASTÓLICA</div>
+          <input id="dado-pa-dia" type="number" inputmode="numeric" placeholder="80" style="width:100%;padding:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);font-size:15px;box-sizing:border-box">
+        </div>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--cinza);margin-bottom:6px">FC REPOUSO</div>
+          <input id="dado-fc-rep" type="number" inputmode="numeric" placeholder="70" style="width:100%;padding:12px;background:var(--bg2);border:1px solid var(--borda);border-radius:10px;color:var(--texto);font-size:15px;box-sizing:border-box">
+        </div>
+      </div>
       <button onclick="salvarDadosBasicos()" class="btn-gold" style="width:100%">SALVAR MEUS DADOS</button>
     </div>
 
@@ -2781,7 +2796,7 @@ function renderEvolucao(){
     if(d.percentual_gordura){
       var idade=parseInt(localStorage.getItem('aurum_idade')||'30');
       var sexo=localStorage.getItem('aurum_sexo')||'M';
-      var cg=classificarGordura(d.percentual_gordura,idade,sexo);
+      var cg=classificarGorduraTabela(d.percentual_gordura,idade,sexo);
       html += '<div class="metric-big"><div class="metric-label">' + T('gorduraLabel') + '</div><div class="metric-val" style="color:'+cg.cor+'">' + d.percentual_gordura + '<span class="metric-unit"> %</span></div>';
       html += '<div style="font-size:11px;color:'+cg.cor+';margin-top:4px;font-weight:700">'+cg.txt+'</div>';
       html += '<div style="font-size:10px;color:var(--cinza);margin-top:2px">' + T('faixaLabel') + ' '+cg.faixa+' · ACSM 2022</div>';
@@ -3533,7 +3548,7 @@ function salvarMedidas(){
     method: 'POST',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
     body: JSON.stringify(dados)
-  }).then(function(){ mostrarToast('✅ Medidas salvas!'); fecharModal('modal-medidas'); })
+  }).then(function(){ mostrarToast('✅ Medidas salvas!'); fecharModal('modal-medidas'); if(typeof renderEvolucao === 'function') renderEvolucao(); })
   .catch(function(){ mostrarToast('Erro ao salvar'); });
 }
 
@@ -3555,18 +3570,19 @@ function classificarGordura(perc, idade, sexo){
     if(perc < 6) { classif = 'Essencial (atleta extremo)'; cor = 'var(--azul)'; }
     else if(perc < 14) { classif = 'Atlético'; cor = 'var(--verde)'; }
     else if(perc < 18) { classif = 'Fitness'; cor = 'var(--verde)'; }
-    else if(perc < 25) { classif = 'Aceitável'; cor = 'var(--ouro2)'; }
-    else { classif = 'Acima do ideal'; cor = 'var(--vermelho)'; }
+    else if(perc < 28) { classif = 'Aceitável'; cor = 'var(--ouro2)'; }
+    else { classif = 'Acima do ideal'; cor = 'var(--ouro)'; }
   } else {
     if(perc < 14) { classif = 'Essencial (atleta extremo)'; cor = 'var(--azul)'; }
     else if(perc < 21) { classif = 'Atlético'; cor = 'var(--verde)'; }
     else if(perc < 25) { classif = 'Fitness'; cor = 'var(--verde)'; }
-    else if(perc < 32) { classif = 'Aceitável'; cor = 'var(--ouro2)'; }
-    else { classif = 'Acima do ideal'; cor = 'var(--vermelho)'; }
+    else if(perc < 34) { classif = 'Aceitável'; cor = 'var(--ouro2)'; }
+    else { classif = 'Acima do ideal'; cor = 'var(--ouro)'; }
   }
   return {classif: classif, cor: cor, ideal: ideal};
 }
 function renderModalComposicao(){
+  setTimeout(function(){ ativarEnterAluno(['comp-peso','comp-gord'], salvarComposicao); }, 120);
   var idade = parseInt(localStorage.getItem('aurum_idade') || '0');
   var sexo = localStorage.getItem('aurum_sexo') || '';
   var peso_salvo = localStorage.getItem('aurum_peso') || '';
@@ -3588,7 +3604,13 @@ function renderModalComposicao(){
   }).catch(function(){});
   var info_perfil = (idade && sexo) ? '<div style="background:rgba(75,159,255,.08);border:1px solid rgba(75,159,255,.2);border-radius:10px;padding:10px;margin-bottom:12px;font-size:12px;color:var(--azul)">👤 Análise para: <b>'+(sexo==='M'?'Masculino':'Feminino')+', '+idade+' anos</b></div>' : '';
   document.getElementById('body-composicao').innerHTML =
-    '<div class="onb-dica">Informe os dados da sua bioimpedância ou dobras cutâneas.</div>' +
+    '<div class="onb-dica" style="line-height:1.8">' +
+    'Seu peso e seu percentual de gordura. <i>A massa magra o app calcula sozinho.</i><br><br>' +
+    '<b>1.</b> Pese-se descalço e com pouca roupa<br>' +
+    '<b>2.</b> Informe o percentual de gordura que a balança mostrou<br>' +
+    '<b>3.</b> Na próxima vez, repita no mesmo horário e nas mesmas condições — é assim que a comparação faz sentido<br><br>' +
+    'Não tem balança de bioimpedância? Tem indicação na <b>Loja</b>, aqui no app.' +
+    '</div>' +
     info_perfil +
     '<div class="bio-row"><div class="bio-icon">⚖️</div><div class="bio-info"><div class="bio-label">Peso</div></div><input class="bio-input-val" type="number" id="comp-peso" placeholder="70" value="'+peso_salvo+'" oninput="calcMassaMagra()"><div class="bio-un">kg</div></div>' +
     '<div class="bio-row"><div class="bio-icon">📊</div><div class="bio-info"><div class="bio-label">% Gordura</div></div><input class="bio-input-val" type="number" id="comp-gord" placeholder="18" value="'+gord_salvo+'" oninput="calcMassaMagra()"><div class="bio-un">%</div></div>' +
@@ -3739,15 +3761,58 @@ function abrirTeste(tipo){
 }
 
 function renderTesteVO2(area){
+  setTimeout(function(){
+    ativarEnterAluno(['vo2-dist','cooper-fc-fim','cooper-fc-1min','cooper-pa-s','cooper-pa-d'], calcularVO2);
+    ativarEnterAluno(['milha-tempo','milha-fc','milha-fc-1min','milha-peso','milha-pa-s','milha-pa-d'], calcularMilha);
+    ativarEnterAluno(['step-fc-fim','step-fc','step-pa-s','step-pa-d'], calcularStep);
+    ativarEnterAluno(['vo2-hrr-pico','vo2-hrr-1min','vo2-pa-rep','vo2-pa-rep-d','vo2-pa-pos','vo2-pa-pos-d'], calcularVO2comHRR);
+  }, 80);
   area.innerHTML = '<div class="card"><div class="card-line verde"></div>' +
     '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2);margin-bottom:8px">TESTE DE VO2 MÁX</div>' +
     '<div style="font-size:10px;color:var(--cinza);letter-spacing:1px;margin-bottom:12px">Escolha o protocolo mais adequado ao seu perfil</div>' +
 
+    // ABERTURA DO TUTORIAL
+    '<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.25);border-radius:12px;padding:14px;margin-bottom:12px">' +
+    '<div style="font-size:12px;color:var(--ouro);font-weight:700;line-height:1.5;margin-bottom:6px">Calma, é mais simples do que parece.</div>' +
+    '<div style="font-size:11px;color:var(--cinza);line-height:1.7">Cada teste tem o passo a passo aqui embaixo. Faça no seu ritmo, um de cada vez — e se travar em algo, chame a <b style="color:var(--texto)">AURI</b>.</div>' +
+    '</div>' +
+
+    // QUAL TESTE É O SEU
+    '<div style="background:rgba(75,159,255,.06);border:1px solid rgba(75,159,255,.2);border-radius:12px;padding:14px;margin-bottom:12px">' +
+    '<div style="font-size:11px;color:var(--azul);font-weight:700;letter-spacing:1px;margin-bottom:8px">QUAL TESTE É O SEU</div>' +
+    '<div style="font-size:11px;color:var(--cinza);line-height:1.8">' +
+    '<b style="color:var(--texto)">Cooper 12min</b> — pra quem corre: adulto ativo<br>' +
+    '<b style="color:var(--texto)">1 milha</b> — pra idosos e iniciantes: é só caminhar<br>' +
+    '<b style="color:var(--texto)">Step 3min</b> — pra adolescentes até 16 anos' +
+    '</div></div>' +
+
+    // COMO MEDIR FC E PA
+    '<div style="background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:12px">' +
+    '<div style="font-size:11px;color:var(--ouro);font-weight:700;letter-spacing:1px;margin-bottom:8px">ANTES DE COMEÇAR — COMO MEDIR</div>' +
+    '<div style="font-size:11px;color:var(--cinza);line-height:1.7;margin-bottom:8px">' +
+    '<b style="color:var(--texto)">Batimentos (FC):</b> dois dedos (indicador e médio) no pulso, do lado do polegar. Nunca use o polegar pra medir. Conte as batidas por 15 segundos e multiplique por 4. <i>Ex: 18 batidas em 15s = 72 bpm.</i>' +
+    '</div>' +
+    '<div style="font-size:11px;color:var(--cinza);line-height:1.7">' +
+    '<b style="color:var(--texto)">Pressão (PA):</b> sentado, braço apoiado na mesa, manguito na altura do ombro. Aparelho digital de braço é o recomendado — tem indicação na Loja.' +
+    '</div></div>' +
+
+
     // COOPER
     '<div style="background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);border-radius:12px;padding:14px;margin-bottom:10px">' +
     '<div style="font-size:11px;color:var(--verde);font-weight:700;letter-spacing:1px;margin-bottom:4px">🏃 COOPER — 12 MINUTOS</div>' +
-    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.6">Corra o máximo possível em 12 minutos e registre a distância percorrida. Indicado para adultos ativos.</div>' +
+    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.8">' +
+    'Mede seu condicionamento pela distância percorrida em 12 minutos. <i>Indicado para adultos ativos.</i><br><br>' +
+    '<b style="color:var(--texto)">1.</b> Corra, ou caminhe o mais rápido que conseguir, por 12 minutos<br>' +
+    '<b style="color:var(--texto)">2.</b> No minuto 12, anote a distância em metros<br>' +
+    '<b style="color:var(--texto)">3.</b> Meça os batimentos assim que parar<br>' +
+    '<b style="color:var(--texto)">4.</b> Meça a pressão logo em seguida — é pressão de esforço, tem que ser na hora<br>' +
+    '<b style="color:var(--texto)">5.</b> No minuto 13, um minuto parado, meça os batimentos de novo' +
+    '</div>' +
     '<div class="result-input-row"><div class="result-input-label">Distância percorrida</div><input class="result-input-val" type="number" id="vo2-dist" placeholder="2400"><div class="result-input-un">m</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">FC ao terminar</div><input class="result-input-val" type="number" id="cooper-fc-fim" placeholder="160" oninput="sincronizarHRR()"><div class="result-input-un">bpm</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">FC após 1 minuto</div><input class="result-input-val" type="number" id="cooper-fc-1min" placeholder="145" oninput="sincronizarHRR()"><div class="result-input-un">bpm</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">PA sistólica (esforço)</div><input class="result-input-val" type="number" id="cooper-pa-s" placeholder="160" oninput="sincronizarHRR()"><div class="result-input-un">mmHg</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">PA diastólica (esforço)</div><input class="result-input-val" type="number" id="cooper-pa-d" placeholder="90" oninput="sincronizarHRR()"><div class="result-input-un">mmHg</div></div>' +
     '<button class="btn-gold" style="margin-top:8px" onclick="calcularVO2()">CALCULAR VO2 — COOPER</button>' +
     '<div id="vo2-resultado" style="margin-top:10px"></div>' +
     '</div>' +
@@ -3755,10 +3820,20 @@ function renderTesteVO2(area){
     // MILHA
     '<div style="background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.15);border-radius:12px;padding:14px;margin-bottom:10px">' +
     '<div style="font-size:11px;color:var(--ouro);font-weight:700;letter-spacing:1px;margin-bottom:4px">🚶 TESTE DA MILHA — CAMINHADA</div>' +
-    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.6">Caminhe 1 milha (1.609m) o mais rápido possível. Indicado para idosos e iniciantes. Registre o tempo e a FC ao final.</div>' +
+    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.8">' +
+    'Mede seu condicionamento pelo tempo que você leva pra caminhar 1.610m. <i>Indicado para idosos e iniciantes — é só caminhar, sem correr.</i><br><br>' +
+    '<b style="color:var(--texto)">1.</b> Caminhe 1.610m no passo mais rápido que sustentar<br>' +
+    '<b style="color:var(--texto)">2.</b> Anote quanto tempo levou<br>' +
+    '<b style="color:var(--texto)">3.</b> Meça os batimentos assim que parar<br>' +
+    '<b style="color:var(--texto)">4.</b> Meça a pressão logo em seguida — é pressão de esforço, tem que ser na hora<br>' +
+    '<b style="color:var(--texto)">5.</b> Um minuto parado, meça os batimentos de novo (esse valor vai no HRR, aqui embaixo)' +
+    '</div>' +
     '<div class="result-input-row"><div class="result-input-label">Tempo (minutos)</div><input class="result-input-val" type="number" id="milha-tempo" placeholder="15" step="0.1"><div class="result-input-un">min</div></div>' +
-    '<div class="result-input-row"><div class="result-input-label">FC ao final</div><input class="result-input-val" type="number" id="milha-fc" placeholder="120"><div class="result-input-un">bpm</div></div>' +
-    '<div class="result-input-row"><div class="result-input-label">Peso corporal</div><input class="result-input-val" type="number" id="milha-peso" placeholder="70"><div class="result-input-un">kg</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">FC ao terminar</div><input class="result-input-val" type="number" id="milha-fc" placeholder="120" oninput="sincronizarHRR()"><div class="result-input-un">bpm</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">FC após 1 minuto</div><input class="result-input-val" type="number" id="milha-fc-1min" placeholder="105" oninput="sincronizarHRR()"><div class="result-input-un">bpm</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">PA sistólica (esforço)</div><input class="result-input-val" type="number" id="milha-pa-s" placeholder="150" oninput="sincronizarHRR()"><div class="result-input-un">mmHg</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">PA diastólica (esforço)</div><input class="result-input-val" type="number" id="milha-pa-d" placeholder="85" oninput="sincronizarHRR()"><div class="result-input-un">mmHg</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">Peso corporal</div><input class="result-input-val" type="number" id="milha-peso" placeholder="70" value="' + (localStorage.getItem('aurum_peso') || '') + '"><div class="result-input-un">kg</div></div>' +
     '<button class="btn-gold" style="margin-top:8px;background:linear-gradient(135deg,var(--ouro),var(--ouro2))" onclick="calcularMilha()">CALCULAR VO2 — MILHA</button>' +
     '<div id="milha-resultado" style="margin-top:10px"></div>' +
     '</div>' +
@@ -3766,16 +3841,30 @@ function renderTesteVO2(area){
     // STEP UP
     '<div style="background:rgba(75,159,255,.04);border:1px solid rgba(75,159,255,.15);border-radius:12px;padding:14px;margin-bottom:14px">' +
     '<div style="font-size:11px;color:var(--azul);font-weight:700;letter-spacing:1px;margin-bottom:4px">📦 STEP UP — BANCO</div>' +
-    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.6">Suba e desça de um banco de 30cm por 3 minutos (24 ciclos/min). Meça a FC 1 minuto após. Indicado para adolescentes e populações especiais.</div>' +
-    '<div class="result-input-row"><div class="result-input-label">FC após 1 minuto</div><input class="result-input-val" type="number" id="step-fc" placeholder="100"><div class="result-input-un">bpm</div></div>' +
+    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.8">' +
+    'Mede seu condicionamento pela rapidez com que seu coração se recupera. <i>Indicado para adolescentes até 16 anos. Não precisa de esteira — só um banco.</i><br><br>' +
+    '<b style="color:var(--texto)">1.</b> Em 3 minutos, faça <b style="color:var(--texto)">72 ciclos</b> (homens) ou <b style="color:var(--texto)">66 ciclos</b> (mulheres)<br>' +
+    '<b style="color:var(--texto)">2.</b> Um ciclo = sobe com a direita, desce com a direita<br>' +
+    '<b style="color:var(--texto)">3.</b> Mantenha ritmo constante: cerca de 24 ciclos por minuto (homens) ou 22 (mulheres)<br>' +
+    '<b style="color:var(--texto)">4.</b> Ao terminar, meça os batimentos na hora — a FC cai rápido<br>' +
+    '<b style="color:var(--texto)">5.</b> Sente, apoie o braço na mesa e meça a pressão<br>' +
+    '<b style="color:var(--texto)">6.</b> Um minuto depois de parar, meça os batimentos de novo — <b style="color:var(--texto)">é esse valor que vai no campo abaixo</b><br><br>' +
+    '<i style="opacity:.85">O protocolo original (Queens College) usa banco de 41cm. Se o seu tiver 30cm, como os de academia, o resultado sai um pouco otimista — o que vale é usar sempre o mesmo banco pra comparar sua evolução.</i>' +
+    '</div>' +
+    '<div class="result-input-row"><div class="result-input-label">FC ao terminar</div><input class="result-input-val" type="number" id="step-fc-fim" placeholder="150" oninput="sincronizarHRR()"><div class="result-input-un">bpm</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">FC após 1 minuto</div><input class="result-input-val" type="number" id="step-fc" placeholder="100" oninput="sincronizarHRR()"><div class="result-input-un">bpm</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">PA sistólica (esforço)</div><input class="result-input-val" type="number" id="step-pa-s" placeholder="150" oninput="sincronizarHRR()"><div class="result-input-un">mmHg</div></div>' +
+    '<div class="result-input-row"><div class="result-input-label">PA diastólica (esforço)</div><input class="result-input-val" type="number" id="step-pa-d" placeholder="85" oninput="sincronizarHRR()"><div class="result-input-un">mmHg</div></div>' +
     '<button class="btn-gold" style="margin-top:8px;background:linear-gradient(135deg,var(--azul),#357ABD)" onclick="calcularStep()">CALCULAR VO2 — STEP</button>' +
     '<div id="step-resultado" style="margin-top:10px"></div>' +
-    '</div>' +
 
     // HRR
     '<div style="background:rgba(255,75,75,.04);border:1px solid rgba(255,75,75,.2);border-radius:12px;padding:14px">' +
     '<div style="font-size:11px;color:#FF6B6B;font-weight:700;letter-spacing:1px;margin-bottom:4px">❤️ FC DE RECUPERAÇÃO (HRR)</div>' +
-    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.6">Faça logo após qualquer teste acima. Pare, meça a FC imediatamente e após 1 minuto. A queda avalia seu músculo cardíaco. Cole et al. (1999) NEJM.</div>' +
+    '<div style="font-size:11px;color:var(--cinza);margin-bottom:10px;line-height:1.8">' +
+    'Não é um teste novo — <b style="color:var(--texto)">já está tudo preenchido</b>. Os números vieram do teste que você acabou de fazer, e a pressão de repouso veio da sua anamnese. Quanto mais rápido seu coração desce, melhor seu condicionamento.<br><br>' +
+    'Confira se está tudo certo e toque em <b style="color:var(--texto)">CALCULAR HRR</b>. Depois, <b style="color:var(--texto)">SALVAR AVALIAÇÃO COMPLETA</b> pra guardar tudo.' +
+    '</div>' +
     '<div class="result-input-row"><div class="result-input-label">FC pico (fim do teste)</div><input class="result-input-val" type="number" id="vo2-hrr-pico" placeholder="165"><div class="result-input-un">bpm</div></div>' +
     '<div class="result-input-row"><div class="result-input-label">FC após 1 minuto</div><input class="result-input-val" type="number" id="vo2-hrr-1min" placeholder="140"><div class="result-input-un">bpm</div></div>' +
     '<div class="result-input-row"><div class="result-input-label">PA repouso sistólica</div><input class="result-input-val" type="number" id="vo2-pa-rep" placeholder="120"><div class="result-input-un">mmHg</div></div>' +
@@ -3808,6 +3897,43 @@ function calcularMilha(){
     '<div style="margin-top:8px;font-size:10px;color:var(--cinza);opacity:.8">📚 Kline et al. (1987) Med Sci Sports Exerc · ACSM 2022</div>' +
     '</div>';
 }
+function ativarEnterAluno(seq, acaoFinal){
+  seq.forEach(function(id, i){
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.onkeydown = function(ev){
+      if(ev.key === 'Enter'){
+        ev.preventDefault();
+        var prox = null;
+        for(var j = i+1; j < seq.length; j++){
+          var c = document.getElementById(seq[j]);
+          if(c){ prox = c; break; }
+        }
+        if(prox) prox.focus();
+        else if(typeof acaoFinal === 'function') acaoFinal();
+      }
+    };
+  });
+}
+function sincronizarHRR(){
+  function v(id){ var e = document.getElementById(id); return e && e.value ? e.value : ''; }
+  var fim  = v('cooper-fc-fim')  || v('milha-fc')      || v('step-fc-fim');
+  var min1 = v('cooper-fc-1min') || v('milha-fc-1min') || v('step-fc');
+  var p = document.getElementById('vo2-hrr-pico');
+  var m = document.getElementById('vo2-hrr-1min');
+  if(p && fim)  p.value = fim;
+  if(m && min1) m.value = min1;
+  var rs = document.getElementById('vo2-pa-rep');
+  var rd = document.getElementById('vo2-pa-rep-d');
+  if(rs && !rs.value) rs.value = localStorage.getItem('aurum_pa_sis') || '';
+  if(rd && !rd.value) rd.value = localStorage.getItem('aurum_pa_dia') || '';
+  var pS = v('cooper-pa-s') || v('milha-pa-s') || v('step-pa-s');
+  var pD = v('cooper-pa-d') || v('milha-pa-d') || v('step-pa-d');
+  var ps_el = document.getElementById('vo2-pa-pos');
+  var pd_el = document.getElementById('vo2-pa-pos-d');
+  if(ps_el && pS) ps_el.value = pS;
+  if(pd_el && pD) pd_el.value = pD;
+}
 function calcularStep(){
   var fc = parseFloat(document.getElementById('step-fc').value)||0;
   var idade = parseInt(localStorage.getItem('aurum_idade')||'16');
@@ -3833,7 +3959,7 @@ function classificarVO2(vo2, idade, sexo){
   for(var i=0;i<tab.length;i++){if(vo2<=tab[i].l)return{txt:tab[i].t,cor:tab[i].c,faixa:f};}
   return{txt:'Excelente',cor:'var(--verde)',faixa:f};
 }
-function classificarGordura(gord, idade, sexo){
+function classificarGorduraTabela(gord, idade, sexo){
   var tM={'20-29':[{l:11,t:'Muito Magro'},{l:16,t:'Excelente'},{l:20,t:'Bom'},{l:24,t:'Regular'},{l:28,t:'Acima do ideal'},{l:999,t:'Muito Alto'}],'30-39':[{l:12,t:'Muito Magro'},{l:17,t:'Excelente'},{l:21,t:'Bom'},{l:25,t:'Regular'},{l:29,t:'Acima do ideal'},{l:999,t:'Muito Alto'}],'40-49':[{l:14,t:'Muito Magro'},{l:19,t:'Excelente'},{l:23,t:'Bom'},{l:27,t:'Regular'},{l:31,t:'Acima do ideal'},{l:999,t:'Muito Alto'}],'50+':[{l:15,t:'Muito Magro'},{l:20,t:'Excelente'},{l:24,t:'Bom'},{l:28,t:'Regular'},{l:32,t:'Acima do ideal'},{l:999,t:'Muito Alto'}]};
   var tF={'20-29':[{l:16,t:'Muito Magra'},{l:21,t:'Excelente'},{l:25,t:'Bom'},{l:29,t:'Regular'},{l:33,t:'Acima do ideal'},{l:999,t:'Muito Alto'}],'30-39':[{l:17,t:'Muito Magra'},{l:22,t:'Excelente'},{l:26,t:'Bom'},{l:30,t:'Regular'},{l:34,t:'Acima do ideal'},{l:999,t:'Muito Alto'}],'40-49':[{l:19,t:'Muito Magra'},{l:24,t:'Excelente'},{l:28,t:'Bom'},{l:32,t:'Regular'},{l:36,t:'Acima do ideal'},{l:999,t:'Muito Alto'}],'50+':[{l:20,t:'Muito Magra'},{l:25,t:'Excelente'},{l:29,t:'Bom'},{l:33,t:'Regular'},{l:37,t:'Acima do ideal'},{l:999,t:'Muito Alto'}]};
   var f=idade<30?'20-29':idade<40?'30-39':idade<50?'40-49':'50+';
@@ -3984,6 +4110,7 @@ function salvarVo2Completo(){
       if(status) status.innerHTML = '<span style="color:var(--verde)">✅ Salvo! VO2 ' + d.vo2max + ' ml/kg/min - ' + (d.classificacao_vo2 || '') + '</span>';
       localStorage.setItem('aurum_hrr_feito', '1');
       if(typeof mostrarToast === 'function') mostrarToast('Avaliação salva com sucesso! ✅');
+      if(typeof renderEvolucao === 'function') renderEvolucao();
     } else {
       if(status) status.innerHTML = '<span style="color:var(--vermelho)">❌ Erro inesperado ao salvar</span>';
     }
@@ -3995,9 +4122,22 @@ function salvarVo2Completo(){
 }
 
 function renderTesteForca(area){
+  setTimeout(function(){ ativarEnterAluno(['f-flexao','f-barra','f-abdom'], salvarForca); }, 120);
   area.innerHTML = '<div class="card"><div class="card-line ouro"></div>' +
     '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2);margin-bottom:6px">TESTES DE FORÇA</div>' +
-    '<div style="font-size:11px;color:var(--cinza);margin-bottom:14px;line-height:1.6">Execute com a forma correta. Máximo de repetições em 1 minuto para cada teste.</div>' +
+    '<div style="font-size:11px;color:var(--cinza);margin-bottom:12px;line-height:1.7">Máximo de repetições em 1 minuto, com a forma correta. <b style="color:var(--texto)">Melhor 2 certas do que 12 erradas</b> — só conte as que você fechou o movimento.</div>' +
+
+    // COMO FAZER — FORCA
+    '<div style="background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:14px;font-size:11px;color:var(--cinza);line-height:1.8">' +
+    '<div style="color:var(--ouro);font-weight:700;letter-spacing:1px;margin-bottom:8px">COMO FAZER CADA UM</div>' +
+    '<b style="color:var(--texto)">Flexão de braço</b> — homens apoiam nas pontas dos pés, mulheres nos dois joelhos. Desça até o peito ficar a dois dedos do chão e suba até estender os braços.<br>' +
+    '<i>Ainda não faz nenhuma? Segure na posição de apoio o máximo que aguentar. Marque zero por enquanto — sua meta é o dia em que aparecer o número 1 aqui.</i><br><br>' +
+    '<b style="color:var(--texto)">Abdominal remador</b> — deitado, corpo estendido. Suba trazendo os joelhos e abrace as pernas sentado. Volte e repita.<br>' +
+    '<i>Ainda não sobe todo? Tire as escápulas do chão e segure a contração. Marque zero — logo vem a primeira.</i><br><br>' +
+    '<b style="color:var(--texto)">Barra fixa</b> — suba até passar o queixo da barra e desça até estender os braços por completo.<br>' +
+    '<i>Ainda não faz nenhuma? Fique pendurado segurando o máximo de tempo. Marque zero — a primeira barra é uma das melhores conquistas do treino.</i>' +
+    '</div>' +
+
 
     '<div style="font-size:10px;color:var(--ouro);letter-spacing:1px;font-weight:700;margin-bottom:8px">MEMBROS SUPERIORES</div>' +
     '<div class="result-input-row"><div class="result-input-label">Flexão de braço (1 min)</div><input class="result-input-val" type="number" id="f-flexao" placeholder="20"><div class="result-input-un">reps</div></div>' +
@@ -4065,14 +4205,22 @@ function salvarForca(){
   .then(function(r){ return r.ok ? r.json() : Promise.reject('HTTP ' + r.status); })
   .then(function(d){
     if(d && d.ok) mostrarToast('💪 Força calculada e SALVA!');
+    if(typeof renderEvolucao === 'function') renderEvolucao();
   })
   .catch(function(e){ console.warn('Erro salvar Forca:', e); });
 }
 
 function renderTesteMMII(area){
+  setTimeout(function(){ ativarEnterAluno(['mmii-reps'], calcularMMII); }, 120);
   area.innerHTML = '<div class="card"><div class="card-line verde"></div>' +
     '<div style="font-family:Bebas Neue;font-size:22px;color:var(--ouro2);margin-bottom:8px">POTÊNCIA DE MEMBROS INFERIORES</div>' +
-    '<div class="onb-dica" style="margin-bottom:14px">Sente e levante de uma cadeira sem apoio das mãos, joelho a 90°, o máximo de vezes em <strong>30 segundos</strong>. Avalia força funcional de pernas e risco de quedas.</div>' +
+    '<div class="onb-dica" style="margin-bottom:14px;line-height:1.8">' +
+    'Mede a força funcional das suas pernas e o risco de quedas. <i>É o teste mais simples de todos — só precisa de um banco.</i><br><br>' +
+    '<b>1.</b> Use um banco ou cadeira firme, na altura em que seu joelho fique a 90 graus quando sentado<br>' +
+    '<b>2.</b> Braços cruzados no peito, sem apoiar as mãos<br>' +
+    '<b>3.</b> Sente e levante o mais rápido que conseguir em 30 segundos<br>' +
+    '<b>4.</b> Conte quantas vezes você levantou por completo' +
+    '</div>' +
     '<div class="result-input-row"><div class="result-input-label">Sentar e levantar (30s)</div><input class="result-input-val" type="number" id="mmii-reps" placeholder="12"><div class="result-input-un">reps</div></div>' +
     '<br><button class="btn-gold" onclick="calcularMMII()">CALCULAR POTÊNCIA</button>' +
     '<div id="mmii-resultado" style="margin-top:16px"></div>' +
@@ -4106,6 +4254,7 @@ function calcularMMII(){
   .then(function(r){ return r.ok ? r.json() : Promise.reject('HTTP ' + r.status); })
   .then(function(d){
     if(d && d.ok) mostrarToast('🦵 Potência calculada e SALVA!');
+    if(typeof renderEvolucao === 'function') renderEvolucao();
   })
   .catch(function(e){ console.warn('Erro salvar Potencia:', e); });
 }
@@ -4246,7 +4395,7 @@ function abrirModalNutri(){
   .then(function(r){ return r.json(); })
   .then(function(d){
     if(d && d.peso_atual){
-      document.getElementById('nutri-peso').value = d.peso_atual;
+      document.getElementById('nutri-peso').value = d.peso_atual || localStorage.getItem('aurum_peso') || '';
       calcularNutri();
     }
   }).catch(function(){});
@@ -4271,6 +4420,12 @@ function salvarDadosBasicos(){
   if(idade) localStorage.setItem('aurum_idade', idade);
   if(altura) localStorage.setItem('aurum_altura', altura);
   if(peso) localStorage.setItem('aurum_peso', peso);
+  var paS = (document.getElementById('dado-pa-sis')||{}).value;
+  var paD = (document.getElementById('dado-pa-dia')||{}).value;
+  var fcR = (document.getElementById('dado-fc-rep')||{}).value;
+  if(paS) localStorage.setItem('aurum_pa_sis', paS);
+  if(paD) localStorage.setItem('aurum_pa_dia', paD);
+  if(fcR) localStorage.setItem('aurum_fc_rep', fcR);
   mostrarToast('✅ Dados salvos!');
 }
 function carregarDadosBasicos(){
@@ -4282,8 +4437,12 @@ function carregarDadosBasicos(){
   var eI = document.getElementById('dado-idade'); if(eI && idade) eI.value = idade;
   var eA = document.getElementById('dado-altura'); if(eA && altura) eA.value = altura;
   var eP = document.getElementById('dado-peso'); if(eP && peso) eP.value = peso;
+  var eS = document.getElementById('dado-pa-sis'); if(eS) eS.value = localStorage.getItem('aurum_pa_sis') || '';
+  var eD = document.getElementById('dado-pa-dia'); if(eD) eD.value = localStorage.getItem('aurum_pa_dia') || '';
+  var eF = document.getElementById('dado-fc-rep'); if(eF) eF.value = localStorage.getItem('aurum_fc_rep') || '';
 }
 function renderAnamnese(){
+  setTimeout(function(){ ativarEnterAluno(['dado-idade','dado-altura','dado-peso','dado-pa-sis','dado-pa-dia','dado-fc-rep'], salvarDadosBasicos); }, 150);
   var pats = [
     {key:'hipertensão',label:'Hipertensão'},
     {key:'diabetes',label:'Diabetes'},
@@ -4338,6 +4497,11 @@ function renderAnamnese(){
   fetch(window.API_BASE + '/app-aluno/anamnese', {headers:{Authorization:'Bearer '+token}})
   .then(function(r){ return r.ok ? r.json() : {}; })
   .then(function(d){
+    // dados basicos vindos do backend (valem em qualquer aparelho)
+    if(d.sexo)   localStorage.setItem('aurum_sexo', d.sexo);
+    if(d.idade)  localStorage.setItem('aurum_idade', d.idade);
+    if(d.altura) localStorage.setItem('aurum_altura', d.altura);
+    if(typeof carregarDadosBasicos === 'function') carregarDadosBasicos();
     var salvos = d.patologias_marcadas || d.patologias || [];
     var html = '';
     pats.forEach(function(p){
@@ -4412,7 +4576,10 @@ function salvarAnamnese(){
   var p1 = fetch(window.API_BASE + '/app-aluno/anamnese', {
     method: 'POST',
     headers: {'Authorization':'Bearer '+token, 'Content-Type':'application/json'},
-    body: JSON.stringify({patologias: pats, outras_condicoes: outras, medicacoes: med})
+    body: JSON.stringify({patologias: pats, outras_condicoes: outras, medicacoes: med,
+      sexo: localStorage.getItem('aurum_sexo') || undefined,
+      idade: localStorage.getItem('aurum_idade') || undefined,
+      altura: localStorage.getItem('aurum_altura') || undefined})
   }).then(function(r){ return r.ok ? r.json() : Promise.reject('anamnese'); });
 
   // Chamada 2: atualiza objetivo/nivel/dias (regera plano de treino no backend)

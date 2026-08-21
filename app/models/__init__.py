@@ -68,6 +68,8 @@ class Aluno(Base):
     email = Column(String(200))
     telefone = Column(String(20))
     cpf = Column(String(14), unique=True)
+    tipo_nf = Column(String(10), default='cpf')   # cpf | cnpj — preferencia de nota fiscal
+    cnpj = Column(String(20))
     data_nascimento = Column(Date)
     sexo = Column(Enum(Sexo))
     objetivo = Column(Enum(ObjetivoAluno))

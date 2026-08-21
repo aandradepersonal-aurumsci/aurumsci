@@ -454,6 +454,17 @@ def excluir_conta_aluno(
     
     # Apaga SO a credencial (login). 
     # O aluno do personal continua no banco com historico.
+    # Cancela a assinatura no Stripe pra o aluno sair SEM onus (nao continuar cobrado apos excluir)
+    try:
+        _sub_id = getattr(aluno, "stripe_subscription_id", None)
+        if _sub_id:
+            import stripe as _stripe
+            from app.config import settings as _settings
+            _stripe.api_key = (_settings.STRIPE_SECRET_KEY or "").strip()
+            _stripe.Subscription.delete(_sub_id)
+    except Exception as _e:
+        print(f"[EXCLUIR ALUNO] falha ao cancelar assinatura Stripe: {_e}")
+
     db.delete(credencial)
     db.commit()
     
@@ -461,3 +472,32 @@ def excluir_conta_aluno(
         "ok": True,
         "mensagem": "Sua conta foi removida. Voce nao tem mais acesso ao app. Seu personal mantem o historico para continuidade do acompanhamento."
     }
+
+
+# ============================================================
+# ASSINATURA DO ALUNO — status + cancelar (sem onus no trial)
+# ============================================================
+@router.get("/assinatura")
+def status_assinatura_aluno(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    """Devolve o status da assinatura pro app decidir o banner do trial."""
+    _st = getattr(aluno, "assinatura_status", None)
+    return {
+        "status": _st,
+        "is_trial": _st == "trialing",
+        "tem_assinatura": bool(getattr(aluno, "stripe_subscription_id", None)),
+    }
+
+
+@router.post("/cancelar-assinatura")
+def cancelar_assinatura_aluno(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends(get_db)):
+    """Cancela no fim do periodo (nao cobra de novo). No trial = sai sem onus."""
+    if not getattr(aluno, "stripe_subscription_id", None):
+        raise HTTPException(status_code=400, detail="Voce nao tem assinatura ativa.")
+    try:
+        import stripe as _stripe
+        from app.config import settings as _settings
+        _stripe.api_key = (_settings.STRIPE_SECRET_KEY or "").strip()
+        _stripe.Subscription.modify(aluno.stripe_subscription_id, cancel_at_period_end=True)
+    except Exception as _e:
+        raise HTTPException(status_code=400, detail=f"Nao foi possivel cancelar agora: {_e}")
+    return {"ok": True, "mensagem": "Trial cancelado. Voce nao sera cobrado; o acesso segue ate o fim dos 7 dias."}

@@ -949,7 +949,8 @@ async def verificar_reavaliacao(
     if not ultima:
         return {
             "precisa_reavaliar": True,
-            "overtraining_pendente": True,
+            "overtraining_pendente": False,
+            "primeira_avaliacao": True,
             "mensagem": "Faça sua primeira avaliação!"
         }
 
@@ -1328,6 +1329,9 @@ def get_anamnese(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends
     anam = db.query(Anamnese).filter(Anamnese.aluno_id == aluno.id).order_by(Anamnese.id.desc()).first()
     if not anam:
         return {
+            "sexo": ('F' if (aluno.sexo or '').upper().startswith('F') else ('M' if aluno.sexo else None)),
+            "idade": (__import__('datetime').date.today().year - aluno.data_nascimento.year) if aluno.data_nascimento else None,
+            "altura": getattr(aluno, 'altura', None),
             "patologias_marcadas": [],
             "doencas_cronicas": "",
             "outras_condicoes": "",
@@ -1348,7 +1352,16 @@ def get_anamnese(aluno: Aluno = Depends(get_aluno_logado), db: Session = Depends
     if patologias_raw:
         patologias = [p.strip() for p in patologias_raw.split(",") if p.strip()]
     
+    sexo_ab = 'F' if (aluno.sexo or '').upper().startswith('F') else ('M' if aluno.sexo else None)
+    idade_calc = None
+    if aluno.data_nascimento:
+        from datetime import date as _dh
+        idade_calc = _dh.today().year - aluno.data_nascimento.year
+
     return {
+        "sexo": sexo_ab,
+        "idade": idade_calc,
+        "altura": getattr(aluno, 'altura', None),
         "patologias_marcadas": patologias,
         "patologias": patologias,
         "doencas_cronicas": doencas,
@@ -1395,6 +1408,24 @@ def post_anamnese(
             medicamentos_uso=medicacoes
         )
         db.add(anam)
+    
+    # Salva dados basicos do aluno (sexo, idade->data_nascimento, altura)
+    sexo = dados.get("sexo")
+    idade = dados.get("idade")
+    altura = dados.get("altura")
+    if sexo in ("M", "F"):
+        aluno.sexo = "MASCULINO" if sexo == "M" else "FEMININO"
+    if idade and not aluno.data_nascimento:
+        try:
+            from datetime import date as _d2
+            aluno.data_nascimento = _d2(_d2.today().year - int(idade), 1, 1)
+        except (ValueError, TypeError):
+            pass
+    if altura:
+        try:
+            aluno.altura = int(float(altura))
+        except (ValueError, TypeError):
+            pass
     
     db.commit()
     db.refresh(anam)

@@ -81,15 +81,16 @@ class CheckoutSchema(BaseModel):
 
 def enviar_email_boas_vindas(nome, email, link_onboarding=None):
     # FIX 16/05/2026: aceita link_onboarding opcional pra aluno autonomo completar cadastro
-    bloco_link = ""
-    if link_onboarding:
-        bloco_link = f"""
+    bloco_link = """
     <div style="background:#12121A;border:1px solid #C9A84C;border-radius:16px;padding:24px;margin-bottom:20px;text-align:center;">
-      <div style="font-size:18px;font-weight:700;color:#C9A84C;margin-bottom:8px;">📋 PRIMEIRO PASSO</div>
-      <p style="color:#ccc;line-height:1.7;font-size:14px;margin:0 0 16px 0;">
-        Preencha seu cadastro em <strong style="color:#C9A84C;">3 minutos</strong> e abra o app com seu <strong style="color:#C9A84C;">treino pronto pra começar</strong>!
+      <div style="font-size:18px;font-weight:700;color:#C9A84C;margin-bottom:14px;">📲 SALVE O APP NO SEU CELULAR</div>
+      <p style="color:#ccc;line-height:1.7;font-size:14px;margin:0 0 12px 0;">
+        <strong style="color:#C9A84C;">iPhone:</strong> abra no Safari, toque em Compartilhar (o quadrado com a seta pra cima) e escolha “Adicionar à Tela de Início”.
       </p>
-      <a href="{link_onboarding}" style="display:inline-block;background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#0A0A0F;padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:900;font-size:14px;letter-spacing:2px;">COMPLETAR CADASTRO →</a>
+      <p style="color:#ccc;line-height:1.7;font-size:14px;margin:0;">
+        <strong style="color:#C9A84C;">Android:</strong> abra no Chrome, toque no menu (os 3 pontinhos) e escolha “Adicionar à tela inicial”.
+      </p>
+      <p style="color:#888;line-height:1.6;font-size:13px;margin:14px 0 0 0;">Pronto: seu treino a um toque, direto na tela do celular. 💪</p>
     </div>
     """
     html = f"""<!DOCTYPE html>
@@ -98,13 +99,13 @@ def enviar_email_boas_vindas(nome, email, link_onboarding=None):
   <div style="max-width:600px;margin:0 auto;padding:40px 24px;">
     <div style="text-align:center;margin-bottom:32px;">
       <div style="font-family:Georgia,serif;font-size:36px;font-weight:900;color:#C9A84C;letter-spacing:8px;">AURUMSCI</div>
-      <div style="font-size:11px;color:#666;letter-spacing:4px;margin-top:6px;">CIENCIA QUE VIRA RESULTADO</div>
+      <div style="font-size:11px;color:#666;letter-spacing:4px;margin-top:6px;">CIÊNCIA QUE VIRA RESULTADO</div>
     </div>
     <div style="height:2px;background:linear-gradient(90deg,transparent,#C9A84C,transparent);margin-bottom:32px;"></div>
     <div style="background:#12121A;border:1px solid #2A2A3A;border-radius:16px;padding:28px;margin-bottom:20px;">
-      <div style="font-size:22px;font-weight:700;color:#C9A84C;margin-bottom:12px;">Bem-vindo a familia, {nome}! 🏆</div>
+      <div style="font-size:22px;font-weight:700;color:#C9A84C;margin-bottom:12px;">Bem-vindo à família, {nome}! 🏆</div>
       <p style="color:#ccc;line-height:1.9;font-size:15px;margin:0;">
-        A partir de agora voce esta treinando com <strong style="color:#C9A84C;">ciencia, metodo e inteligencia artificial.</strong>
+        A partir de agora você está treinando com <strong style="color:#C9A84C;">ciência, método e inteligência artificial.</strong>
       </p>
     </div>
     {bloco_link}
@@ -112,9 +113,9 @@ def enviar_email_boas_vindas(nome, email, link_onboarding=None):
       <a href="https://www.aurumsc.com.br/aluno" style="display:inline-block;background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#0A0A0F;padding:16px 40px;border-radius:12px;text-decoration:none;font-weight:900;font-size:16px;letter-spacing:2px;">COMECAR AGORA →</a>
     </div>
     <div style="text-align:center;">
-      <p style="color:#555;font-size:12px;">Trial de 7 dias gratis. Apos esse periodo, R$149,90/mes sera cobrado automaticamente.<br>
+      <p style="color:#555;font-size:12px;">Trial de 7 dias grátis. Após esse período, R$149,90/mes será cobrado automaticamente.<br>
       Cancele quando quiser, sem burocracia.<br><br>
-      <strong style="color:#C9A84C;">Equipe AurumSci</strong> — Ciencia que vira resultado.</p>
+      <strong style="color:#C9A84C;">Equipe AurumSci</strong> — Ciência que vira resultado.</p>
     </div>
   </div>
 </body></html>"""
@@ -227,7 +228,7 @@ def enviar_email_boas_vindas_personal(nome, email, plano="bronze"):
       <a href="https://aurumsc.com.br/personal" style="display:inline-block;background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#0A0A0F;padding:16px 40px;border-radius:12px;text-decoration:none;font-weight:900;font-size:16px;letter-spacing:2px;">ACESSAR O PRO →</a>
     </div>
     <div style="text-align:center;">
-      <p style="color:#555;font-size:12px;">7 dias gratis. Apos esse periodo, R${info['valor']/100:.2f}/mes sera cobrado automaticamente.<br>
+      <p style="color:#555;font-size:12px;">7 dias gratis. Apos esse periodo, R${info['valor']/100:.2f}/mes será cobrado automaticamente.<br>
       <strong style="color:#C9A84C;">Equipe AurumSci</strong></p>
     </div>
   </div>
@@ -290,7 +291,7 @@ def enviar_email_mudanca_plano(nome, email, novo_plano):
     <div style="text-align:center;">
       <p style="color:#555;font-size:12px;line-height:1.8;">A cobranca proporcional sera aplicada na proxima fatura.<br>
       Voce pode mudar ou cancelar quando quiser, direto pelo app.<br><br>
-      <strong style="color:#C9A84C;">Equipe AurumSci</strong> — Ciencia que vira resultado.</p>
+      <strong style="color:#C9A84C;">Equipe AurumSci</strong> — Ciência que vira resultado.</p>
     </div>
   </div>
 </body></html>"""
@@ -463,6 +464,20 @@ def meu_plano(
         raise
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+# ============================================================
+# GET /pagamento/status-assinatura (enxuto, so pro banner do trial)
+# ============================================================
+@router.get("/status-assinatura")
+def status_assinatura_pro(personal: Personal = Depends(get_personal_atual), db: Session = Depends(get_db)):
+    """Molde do aluno: devolve o status pro app decidir o banner do trial. Nunca quebra."""
+    _st = getattr(personal, "assinatura_status", None)
+    return {
+        "status": _st,
+        "is_trial": _st == "trialing",
+        "tem_assinatura": bool(getattr(personal, "stripe_subscription_id", None)),
+    }
 
 
 # ============================================================
@@ -814,18 +829,34 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                 enviar_email_boas_vindas(aluno.nome, aluno.email, link_onboarding=link_onboarding)
 
         personal_id = None
-        plano = "bronze"
+        plano = None
         try:
             personal_id = session["metadata"]["personal_id"]
-            plano = session["metadata"].get("plano", "bronze")
         except Exception:
             pass
+        try:
+            plano = session["metadata"].get("plano")
+        except Exception:
+            pass
+        # Fonte da verdade: price_id real da assinatura no Stripe (metadata pode falhar)
+        if not plano:
+            try:
+                _sub = stripe.Subscription.retrieve(session["subscription"])
+                _pid = _sub["items"]["data"][0]["price"]["id"]
+                for _k, _v in PLANOS_PRO.items():
+                    if _v["price_id"] == _pid:
+                        plano = _k
+                        break
+            except Exception:
+                pass
+        if not plano:
+            plano = "bronze"
         if personal_id:
             personal = db.query(Personal).filter(Personal.id == int(personal_id)).first()
             if personal:
                 personal.ativo = True
                 personal.plano = plano
-                personal.assinatura_status = "ativa"
+                personal.assinatura_status = "trialing"
                 try:
                     if session["subscription"]:
                         personal.stripe_subscription_id = session["subscription"]
@@ -866,7 +897,15 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
                             personal.plano = plano_key
                             break
                     if not sub.cancel_at_period_end:
-                        personal.assinatura_status = "ativa"
+                        from datetime import datetime as _dt
+                        personal.assinatura_status = sub["status"]
+                        if sub["status"] == "trialing":
+                            _ts = sub.get("trial_start")
+                            _te = sub.get("trial_end")
+                            if _ts:
+                                personal.data_inicio_trial = _dt.fromtimestamp(_ts)
+                            if _te:
+                                personal.data_fim_trial = _dt.fromtimestamp(_te)
                     db.commit()
                 except Exception:
                     pass

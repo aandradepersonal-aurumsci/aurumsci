@@ -150,7 +150,7 @@ def dashboard(personal: Personal = Depends(get_personal_atual), db: Session = De
     } for a in alunos[:5]]
 
     # Limite de alunos por plano
-    LIMITES_PLANO = {'bronze': 10, 'prata': 20, 'ouro': 50, 'diamante': 999999}
+    LIMITES_PLANO = {'bronze': 10, 'prata': 20, 'ouro': 50, 'diamante': 120}
     plano_atual = personal.plano or 'bronze'
     limite_alunos = LIMITES_PLANO.get(plano_atual, 10)
     return {

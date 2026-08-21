@@ -563,7 +563,7 @@ PRODUTO_PARA_PLANO = {
     "com.aurumsc.pro.bronze": {"plano": "bronze", "tipo": "personal", "limite_alunos": 10},
     "com.aurumsc.pro.prata": {"plano": "prata", "tipo": "personal", "limite_alunos": 20},
     "com.aurumsc.pro.ouro": {"plano": "ouro", "tipo": "personal", "limite_alunos": 50},
-    "com.aurumsc.pro.diamante": {"plano": "diamante", "tipo": "personal", "limite_alunos": 999999},
+    "com.aurumsc.pro.diamante": {"plano": "diamante", "tipo": "personal", "limite_alunos": 120},
     "com.aurumsc.aluno.mensal": {"plano": "aluno_mensal", "tipo": "aluno", "limite_alunos": 0},
     "com.aurumsc.aluno.anual": {"plano": "aluno_anual", "tipo": "aluno", "limite_alunos": 0},
 }
@@ -1075,7 +1075,7 @@ async def meu_plano_personal(personal_id: int, db=Depends(get_db)):
         'bronze': 10,
         'prata': 20,
         'ouro': 50,
-        'diamante': 999999
+        'diamante': 120
     }
     
     PRECOS_PLANO = {

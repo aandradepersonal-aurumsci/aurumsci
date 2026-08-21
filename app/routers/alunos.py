@@ -10,7 +10,7 @@ from app.utils.auth import get_personal_atual
 from app.config import settings
 
 
-LIMITES_PLANO = {'bronze': 10, 'prata': 20, 'ouro': 50, 'diamante': 999999}
+LIMITES_PLANO = {'bronze': 10, 'prata': 20, 'ouro': 50, 'diamante': 120}
 
 router = APIRouter(prefix="/alunos", tags=["Alunos"])
 

@@ -569,24 +569,24 @@ def cancelar_assinatura(
         except stripe.error.InvalidRequestError as e:
             raise HTTPException(status_code=404, detail=f"Erro no Stripe: {str(e)}")
 
-        personal.assinatura_status = "cancelada"
+        personal.assinatura_status = "cancel_agendado"
         db.commit()
 
         try:
             primeiro_nome = personal.nome.split()[0] if personal.nome else "Personal"
             html_cancel = f"""<html><body style='background:#0A0A0F;font-family:Arial;padding:40px'>
-            <h2 style='color:#C9A84C'>Assinatura cancelada, {primeiro_nome}</h2>
-            <p style='color:#ccc;font-size:15px'>Sua assinatura foi cancelada e o acesso foi encerrado.</p>
-            <p style='color:#ccc;font-size:14px'>Mudou de ideia? Reative quando quiser.</p>
+            <h2 style='color:#C9A84C'>Cancelamento agendado, {primeiro_nome}</h2>
+            <p style='color:#ccc;font-size:15px'>Sua assinatura sera cancelada ao fim do periodo. Voce mantem o acesso ate la.</p>
+            <p style='color:#ccc;font-size:14px'>Mudou de ideia? E so voltar ao app.</p>
             <a href='https://aurumsc.com.br/personal' style='display:inline-block;background:#C9A84C;color:#000;padding:14px 24px;border-radius:10px;text-decoration:none;font-weight:900;margin-top:16px'>VOLTAR AO APP</a>
             </body></html>"""
-            enviar_email(para=personal.email, assunto="Assinatura cancelada — AurumSci PRO", html=html_cancel)
+            enviar_email(para=personal.email, assunto="Cancelamento agendado — AurumSci PRO", html=html_cancel)
         except Exception:
             pass
 
         return {
             "status": "ok",
-            "mensagem": "Assinatura cancelada. O acesso foi encerrado.",
+            "mensagem": "Cancelamento agendado. Voce mantem acesso ate o fim do periodo.",
             "cancelamento_agendado": True
         }
     except HTTPException:

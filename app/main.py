@@ -259,6 +259,12 @@ def cadastro_page():
     with open("static/landing_aluno_em_breve.html", "r", encoding="utf-8") as f:
         return f.read()
 
+@app.get("/cadastro-teste", response_class=HTMLResponse, include_in_schema=False)
+def cadastro_teste_preview():
+    """PREVIEW do cadastro do aluno (nao publica). /cadastro segue servindo o em-breve."""
+    with open("static/cadastro.html", "r", encoding="utf-8") as f:
+        return f.read()
+
 @app.get("/aluno", response_class=HTMLResponse, include_in_schema=False)
 def app_aluno():
     with open("static/app_aluno.html", "r", encoding="utf-8") as f:

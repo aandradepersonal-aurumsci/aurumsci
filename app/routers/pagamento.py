@@ -69,7 +69,7 @@ PLANOS_PRO = {
     "bronze":   {"price_id": settings.STRIPE_PRICE_BRONZE,   "valor": 18990,  "limite_alunos": 10,   "nome": "Bronze",   "icone": "🥉", "cor": "#CD7F32", "frase": "Voce comecou. Agora e ritmo."},
     "prata":    {"price_id": settings.STRIPE_PRICE_PRATA,    "valor": 24990,  "limite_alunos": 20,   "nome": "Prata",    "icone": "🥈", "cor": "#C0C0C0", "frase": "Voce cresceu. O movimento comecou."},
     "ouro":     {"price_id": settings.STRIPE_PRICE_OURO,     "valor": 39990, "limite_alunos": 50,   "nome": "Ouro",     "icone": "🥇", "cor": "#C9A84C", "frase": "Voce esta na elite. 50 alunos te esperam."},
-    "diamante": {"price_id": settings.STRIPE_PRICE_DIAMANTE, "valor": 44990, "limite_alunos": 9999, "nome": "Diamante", "icone": "💎", "cor": "#B9F2FF", "frase": "Voce e ELITE. Sem limites. Bem-vindo ao topo."},
+    "diamante": {"price_id": settings.STRIPE_PRICE_DIAMANTE, "valor": 44990, "limite_alunos": 120, "nome": "Diamante", "icone": "💎", "cor": "#B9F2FF", "frase": "Voce e ELITE. Ate 120 alunos. Bem-vindo ao topo."},
 }
 
 
@@ -429,7 +429,7 @@ def meu_plano(
                 stripe_info = {
                     "status": sub.status,
                     "cancel_at_period_end": sub.cancel_at_period_end,
-                    "current_period_end": sub.current_period_end,
+                    "current_period_end": (sub["items"]["data"][0]["current_period_end"] if sub.get("items") and sub["items"]["data"] else None),
                 }
             except stripe.error.InvalidRequestError:
                 stripe_info = {"status": "nao_encontrada"}

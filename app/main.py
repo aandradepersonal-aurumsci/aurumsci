@@ -277,8 +277,8 @@ def landing():
 
 @app.get("/cadastro-pro", response_class=HTMLResponse, include_in_schema=False)
 def cadastro_pro_page():
-    # LOJA PRO FECHADA (25/ago): em-breve. Para ABRIR: voltar cadastro_pro.html.
-    with open("static/landing_pro_em_breve.html", "r", encoding="utf-8") as f:
+    # LOJA PRO ABERTA (temporario p/ teste). Para FECHAR: voltar landing_pro_em_breve.html.
+    with open("static/cadastro_pro.html", "r", encoding="utf-8") as f:
         return f.read()
 
 @app.get("/pro-preview", response_class=HTMLResponse, include_in_schema=False)

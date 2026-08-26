@@ -520,7 +520,7 @@ def mudar_plano(
             raise HTTPException(status_code=404, detail="Assinatura nao encontrada no Stripe. Refaca o checkout.")
 
         item_id = sub["items"]["data"][0]["id"]
-        stripe.Subscription.modify(
+        sub_atualizada = stripe.Subscription.modify(
             personal.stripe_subscription_id,
             items=[{
                 "id": item_id,
@@ -530,7 +530,8 @@ def mudar_plano(
         )
 
         personal.plano = novo_plano
-        personal.assinatura_status = "ativa"
+        # status real do Stripe (trialing se em teste, active se pagando) em vez de "ativa" fixo
+        personal.assinatura_status = getattr(sub_atualizada, "status", "ativa")
         db.commit()
 
         enviar_email_mudanca_plano(personal.nome, personal.email, novo_plano)

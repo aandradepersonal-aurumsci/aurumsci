@@ -429,7 +429,7 @@ def meu_plano(
                 stripe_info = {
                     "status": sub.status,
                     "cancel_at_period_end": sub.cancel_at_period_end,
-                    "current_period_end": (sub["items"]["data"][0]["current_period_end"] if sub.get("items") and sub["items"]["data"] else None),
+                    "current_period_end": (sub["items"]["data"][0]["current_period_end"] if sub["items"]["data"] else None),
                 }
             except stripe.error.InvalidRequestError:
                 stripe_info = {"status": "nao_encontrada"}

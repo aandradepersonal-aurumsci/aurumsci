@@ -78,7 +78,7 @@
 
   <div class="hero">
     <div class="hero-t">CHEGA DE ACHISMO NO SEU TREINO.</div>
-    <div class="hero-c">Aqui, treino é ciência, não opinião. O Canal da Ciência destila mais de 2.200 artigos em vídeos diários. O Lab mede sua realidade física com precisão. O App do Profissional prescreve com critério. E o App do Aluno guia sua execução, treino a treino.</div>
+    <div class="hero-c">Aqui, treino é ciência, não opinião. O Canal da Ciência destila mais de 2.400 artigos em vídeos diários. O Lab mede sua realidade física com precisão. O App do Profissional prescreve com critério. E o App do Aluno guia sua execução, treino a treino.</div>
     <div class="hero-f">Tudo conectado. Tudo baseado em evidências. Tudo pensado para a sua evolução.</div>
   </div>
 
@@ -157,7 +157,7 @@ fetch('/static/ciencia_videos.json')
   .then(function(d){
     DADOS = d;
     document.getElementById('resumo').textContent =
-      'Já são ' + d.total_videos + ' vídeos publicados em ' + d.total_temas + ' temas — de um banco com mais de 2.200 artigos científicos. Escolha o seu.';
+      'Já são ' + d.total_videos + ' vídeos publicados em ' + d.total_temas + ' temas — de um banco com mais de 2.400 artigos científicos. Escolha o seu.';
     renderChips();
     mostrarDestaque();
   })

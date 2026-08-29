@@ -1,9 +1,21 @@
 {
-  "atualizado_em": "2026-08-19 19:45",
-  "total_videos": 330,
+  "atualizado_em": "2026-08-29 14:42",
+  "total_videos": 351,
   "total_temas": 19,
   "temas": {
     "Forca e Carga": [
+      {
+        "id": 2468,
+        "titulo": "O efeito do treinamento complexo volante com sobrecarga excêntrica na adaptação muscular em jogadoras de voleibol feminino de elite.",
+        "url": "https://youtube.com/watch?v=KdxFi7YGBME",
+        "ano": 2024
+      },
+      {
+        "id": 2400,
+        "titulo": "Efeito do β-hidroxi-β-metilbutirato (HMB) na força muscular na população idosa: uma meta-análise.",
+        "url": "https://youtube.com/watch?v=VdDs5rgIttg",
+        "ano": 2022
+      },
       {
         "id": 2302,
         "titulo": "Por que o exercício constrói músculos: a mecanodetecção de titina controla o crescimento do músculo esquelético sob carga.",
@@ -147,6 +159,12 @@
         "titulo": "Impacto do treinamento com restrição de fluxo sanguíneo de baixa carga na dor e na força muscular da osteoartrite do joelho: uma revisão sistemática e meta-análise de ensaios clínicos randomizados.",
         "url": "https://youtube.com/watch?v=4E5tk0MhR0E",
         "ano": 2025
+      },
+      {
+        "id": 1145,
+        "titulo": "Efeito do treinamento de força de alta intensidade na dor no joelho e nas forças compressivas da articulação do joelho entre adultos com osteoartrite do joelho: o ensaio clínico randomizado START.",
+        "url": "https://youtube.com/watch?v=Tv-D37NlPlw",
+        "ano": 2021
       },
       {
         "id": 1104,
@@ -407,6 +425,12 @@
         "ano": 2022
       },
       {
+        "id": 675,
+        "titulo": "Comparação do crescimento muscular e adaptações dinâmicas de força induzidas por treinamento de resistência unilateral e bilateral: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=pEX1_s7YKac",
+        "ano": 2025
+      },
+      {
         "id": 670,
         "titulo": "Efeito de diferentes frequências de treinamento no desempenho de força máxima e hipertrofia muscular em indivíduos treinados - um desenho dentro do sujeito.",
         "url": "https://youtube.com/watch?v=ukr2VB29wBg",
@@ -512,6 +536,12 @@
         "id": 506,
         "titulo": "O treinamento intervalado de alta intensidade melhora a remodelação óssea, o perfil lipídico e a função física em pacientes com esclerose múltipla.",
         "url": "https://youtube.com/watch?v=9k9qY_UwWCI",
+        "ano": 2024
+      },
+      {
+        "id": 496,
+        "titulo": "O treinamento intervalado de alta intensidade melhora a saúde cardiovascular e física em pacientes com artrite reumatóide: um ensaio multicêntrico randomizado e controlado.",
+        "url": "https://youtube.com/watch?v=6tcDUxIiKv8",
         "ano": 2024
       },
       {
@@ -627,6 +657,12 @@
         "titulo": "Remodelação do músculo esquelético em resposta à carga excêntrica vs. concêntrica: adaptações morfológicas, moleculares e metabólicas.",
         "url": "https://youtube.com/watch?v=A4wPECCpMt0",
         "ano": 2017
+      },
+      {
+        "id": 283,
+        "titulo": "Efeito do treinamento de resistência com restrição de fluxo sanguíneo versus treinamento de resistência com carga pesada na força, potência e velocidade para voluntários saudáveis: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=yLOBXtz7gnM",
+        "ano": 2025
       },
       {
         "id": 277,
@@ -773,6 +809,12 @@
         "ano": 2024
       },
       {
+        "id": 174,
+        "titulo": "Estratégias de suplementação para atletas de força e potência: ingestão de carboidratos, proteínas e aminoácidos.",
+        "url": "https://youtube.com/watch?v=vkPQ-C7Odb8",
+        "ano": 2024
+      },
+      {
         "id": 168,
         "titulo": "Uma revisão sistemática, meta-análise e meta-regressão do efeito da suplementação protéica nos ganhos de massa e força muscular induzidos pelo treinamento de resistência em adultos saudáveis.",
         "url": "https://youtube.com/watch?v=X1rIL7efqBk",
@@ -900,6 +942,18 @@
       }
     ],
     "Hipertrofia e Massa": [
+      {
+        "id": 2474,
+        "titulo": "[Exercício excêntrico em esteira promove hipertrofia adaptativa do gastrocnêmio em ratos].",
+        "url": "https://youtube.com/watch?v=sTEjOavHQBA",
+        "ano": 2025
+      },
+      {
+        "id": 2276,
+        "titulo": "Biogênese do ribossomo como um gargalo putativo para a hipertrofia do músculo esquelético: mecanismos, evidências humanas e moduladores práticos.",
+        "url": "https://youtube.com/watch?v=tkWdLwokVCY",
+        "ano": 2026
+      },
       {
         "id": 2220,
         "titulo": "Os efeitos do treinamento isométrico de longo comprimento muscular versus treinamento isotônico de amplitude total de movimento na hipertrofia regional do quadríceps femoral em indivíduos treinados em resistência.",
@@ -1381,6 +1435,12 @@
         "ano": 2022
       },
       {
+        "id": 197,
+        "titulo": "Efeito da duração das repetições durante o treinamento resistido na hipertrofia muscular: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=IGeGFOGjO9M",
+        "ano": 2015
+      },
+      {
         "id": 189,
         "titulo": "O momento da suplementação de creatina não influencia os ganhos de hipertrofia muscular unilateral ou força do treinamento de resistência em adultos jovens: um desenho dentro do sujeito.",
         "url": "https://youtube.com/watch?v=4lvv1Sv-WRY",
@@ -1544,6 +1604,12 @@
       }
     ],
     "Idosos e Sarcopenia": [
+      {
+        "id": 2403,
+        "titulo": "Efeitos da suplementação de beta-hidroxi-beta-metilbutirato em idosos com sarcopenia: um estudo randomizado, duplo-cego e controlado por placebo.",
+        "url": "https://youtube.com/watch?v=NqtnIx15uq0",
+        "ano": 2023
+      },
       {
         "id": 2322,
         "titulo": "Treinamento de exercícios resistidos pesados ​​em homens idosos: uma resposta e uma análise de variabilidade interindividual.",
@@ -2059,6 +2125,12 @@
         "ano": 2023
       },
       {
+        "id": 389,
+        "titulo": "Farmacoterapia para perda de peso à base de incretina: os exercícios resistidos podem otimizar as mudanças na composição corporal?",
+        "url": "https://youtube.com/watch?v=fx-PUtSL2a8",
+        "ano": 2024
+      },
+      {
         "id": 387,
         "titulo": "Efeitos do exercício de resistência elástica na composição corporal e capacidade física em mulheres idosas com obesidade sarcopênica: um estudo prospectivo randomizado controlado compatível com CONSORT.",
         "url": "https://youtube.com/watch?v=phAHwjvMUSM",
@@ -2084,6 +2156,12 @@
       }
     ],
     "Mulheres": [
+      {
+        "id": 2244,
+        "titulo": "Crosstalk músculo adiposo durante a transição da menopausa: ligações mecanísticas à obesidade sarcopênica em mulheres de meia-idade.",
+        "url": "https://youtube.com/watch?v=CRZ1GDF9L7w",
+        "ano": 2026
+      },
       {
         "id": 1875,
         "titulo": "Revisão Sistemática número 12 - O que 66 estudos dizem sobre Treino de Força para Mulheres em todas as fases da vida",
@@ -2333,9 +2411,21 @@
         "ano": 2017
       },
       {
+        "id": 508,
+        "titulo": "Um ensaio clínico randomizado para determinar o impacto do treinamento de resistência versus treinamento aeróbico no tratamento do FGF-21 e variáveis ​​​​fisiológicas relacionadas em homens obesos com diabetes mellitus tipo 2.",
+        "url": "https://youtube.com/watch?v=MYRUD0oN-BQ",
+        "ano": 2024
+      },
+      {
         "id": 506,
         "titulo": "O treinamento intervalado de alta intensidade melhora a remodelação óssea, o perfil lipídico e a função física em pacientes com esclerose múltipla.",
         "url": "https://youtube.com/watch?v=9k9qY_UwWCI",
+        "ano": 2024
+      },
+      {
+        "id": 496,
+        "titulo": "O treinamento intervalado de alta intensidade melhora a saúde cardiovascular e física em pacientes com artrite reumatóide: um ensaio multicêntrico randomizado e controlado.",
+        "url": "https://youtube.com/watch?v=6tcDUxIiKv8",
         "ano": 2024
       },
       {
@@ -2418,6 +2508,12 @@
       }
     ],
     "Proteina e Dieta": [
+      {
+        "id": 2399,
+        "titulo": "Posição da sociedade internacional de nutrição esportiva: β-hidroxi-β-metilbutirato (HMB).",
+        "url": "https://youtube.com/watch?v=H9HcuJs6jj8",
+        "ano": 2025
+      },
       {
         "id": 2266,
         "titulo": "Um suplemento nutricional de cinco ingredientes e exercícios de resistência feitos em casa melhoram a massa magra e a força em idosos de vida livre.",
@@ -2575,6 +2671,12 @@
         "ano": 2025
       },
       {
+        "id": 174,
+        "titulo": "Estratégias de suplementação para atletas de força e potência: ingestão de carboidratos, proteínas e aminoácidos.",
+        "url": "https://youtube.com/watch?v=vkPQ-C7Odb8",
+        "ano": 2024
+      },
+      {
         "id": 137,
         "titulo": "A ingestão de proteínas antes do sono aumenta os ganhos de massa muscular e força durante o treinamento prolongado do tipo resistência em homens jovens saudáveis.",
         "url": "https://youtube.com/watch?v=dyOmBOBTrFk",
@@ -2588,6 +2690,12 @@
       }
     ],
     "Obesidade e Emagrecimento": [
+      {
+        "id": 2244,
+        "titulo": "Crosstalk músculo adiposo durante a transição da menopausa: ligações mecanísticas à obesidade sarcopênica em mulheres de meia-idade.",
+        "url": "https://youtube.com/watch?v=CRZ1GDF9L7w",
+        "ano": 2026
+      },
       {
         "id": 2010,
         "titulo": "Tecido Adiposo Intermuscular: Uma Breve Revisão da Etiologia, Associação com Função Física e Perda de Peso em Idosos.",
@@ -2659,6 +2767,12 @@
         "titulo": "O treinamento de resistência e impacto durante a perda de peso melhora a função física e a composição corporal em idosos com obesidade.",
         "url": "https://youtube.com/watch?v=-3mPd7gJGEA",
         "ano": 2025
+      },
+      {
+        "id": 389,
+        "titulo": "Farmacoterapia para perda de peso à base de incretina: os exercícios resistidos podem otimizar as mudanças na composição corporal?",
+        "url": "https://youtube.com/watch?v=fx-PUtSL2a8",
+        "ano": 2024
       },
       {
         "id": 387,
@@ -2835,6 +2949,12 @@
     ],
     "Diabetes e Glicemia": [
       {
+        "id": 2447,
+        "titulo": "Adaptações anabólicas não hipertróficas dependentes da modalidade de exercício no músculo esquelético de ratos com diabetes tipo 2.",
+        "url": "https://youtube.com/watch?v=Bo6GEEQhhFw",
+        "ano": 2026
+      },
+      {
         "id": 2154,
         "titulo": "Revisão Sistemática número 14 - O que 45 estudos dizem sobre Musculação, Diabetes e Controle da Glicemia",
         "url": "https://youtube.com/watch?v=7erNSHIedoo",
@@ -2935,6 +3055,12 @@
         "titulo": "Efeitos do treinamento físico nos fatores de risco da síndrome metabólica em mulheres na pós-menopausa - Uma revisão sistemática e meta-análise de ensaios clínicos randomizados.",
         "url": "https://youtube.com/watch?v=g5MxCgEy5mE",
         "ano": 2023
+      },
+      {
+        "id": 508,
+        "titulo": "Um ensaio clínico randomizado para determinar o impacto do treinamento de resistência versus treinamento aeróbico no tratamento do FGF-21 e variáveis ​​​​fisiológicas relacionadas em homens obesos com diabetes mellitus tipo 2.",
+        "url": "https://youtube.com/watch?v=MYRUD0oN-BQ",
+        "ano": 2024
       },
       {
         "id": 452,
@@ -3251,6 +3377,12 @@
     ],
     "Outros": [
       {
+        "id": 2505,
+        "titulo": "A suplementação lipídica estruturada com ácido eicosapentaenóico e triacilglicerol de cadeia média melhora o desempenho dos exercícios de resistência muscular e reduz a fadiga muscular em homens jovens e saudáveis.",
+        "url": "https://youtube.com/watch?v=n5JvaLOrFWo",
+        "ano": 2025
+      },
+      {
         "id": 2319,
         "titulo": "Biocircuitos multidimensionais de adaptação ao exercício: integrando fenômica in vivo e ex vivo com mapeamento de miRNA.",
         "url": "https://youtube.com/watch?v=T-ZKhH43z9k",
@@ -3293,6 +3425,12 @@
         "ano": 1999
       },
       {
+        "id": 1802,
+        "titulo": "Estilo de vida em mudança: urbanização, mudanças alimentares e saúde endócrina na idade adulta emergente.",
+        "url": "https://youtube.com/watch?v=Qp6_cVnzYlg",
+        "ano": 2025
+      },
+      {
         "id": 1667,
         "titulo": "Efeitos de diferentes modalidades de exercícios de longo prazo na rigidez dos tecidos.",
         "url": "https://youtube.com/watch?v=aEb4dPk6WWc",
@@ -3323,10 +3461,22 @@
         "ano": 2020
       },
       {
+        "id": 1549,
+        "titulo": "Exercício físico na prevenção e tratamento da doença de Alzheimer.",
+        "url": "https://youtube.com/watch?v=I24Lg3CSlqo",
+        "ano": 2020
+      },
+      {
         "id": 1511,
         "titulo": "A bebida de chá verde Matcha modera a fadiga e apoia a adaptação induzida pelo treinamento de resistência.",
         "url": "https://youtube.com/watch?v=45eDsDInJRU",
         "ano": 2023
+      },
+      {
+        "id": 1504,
+        "titulo": "Proteção mitocondrial induzida por exercício no músculo esquelético de camundongos ovariectomizados: um mecanismo miogênico independente da síntese de E<sub>2</sub>.",
+        "url": "https://youtube.com/watch?v=caCszYnOoUo",
+        "ano": 2025
       },
       {
         "id": 1349,
@@ -3423,6 +3573,12 @@
         "titulo": "Uma revisão sistemática com meta-análise do efeito do treinamento de resistência no crescimento muscular de todo o corpo em homens adultos saudáveis.",
         "url": "https://youtube.com/watch?v=Fm66RxtoDL0",
         "ano": 2020
+      },
+      {
+        "id": 654,
+        "titulo": "Revisão sistemática e meta-análise sobre o efeito do treinamento pliométrico versus treinamento de resistência na potência e velocidade explosiva dos membros inferiores.",
+        "url": "https://youtube.com/watch?v=-zYlNzTMkYg",
+        "ano": 2025
       },
       {
         "id": 638,

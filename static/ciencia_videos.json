@@ -1,9 +1,21 @@
 {
-  "atualizado_em": "2026-08-29 14:42",
-  "total_videos": 351,
+  "atualizado_em": "2026-09-02 19:59",
+  "total_videos": 359,
   "total_temas": 19,
   "temas": {
     "Forca e Carga": [
+      {
+        "id": 2552,
+        "titulo": "O treinamento de resistência de intensidade moderada com amplitude de movimento parcial em comprimentos musculares longos provoca hipertrofia e adaptações arquitetônicas semelhantes ao treinamento de resistência de alta intensidade usando amplitude de movimento total.",
+        "url": "https://youtube.com/watch?v=u_jZw87hE80",
+        "ano": 2026
+      },
+      {
+        "id": 2542,
+        "titulo": "Perda de velocidade como variável crítica que determina as adaptações ao treinamento de força.",
+        "url": "https://youtube.com/watch?v=YE9-KD2rxd4",
+        "ano": 2020
+      },
       {
         "id": 2468,
         "titulo": "O efeito do treinamento complexo volante com sobrecarga excêntrica na adaptação muscular em jogadoras de voleibol feminino de elite.",
@@ -943,6 +955,12 @@
     ],
     "Hipertrofia e Massa": [
       {
+        "id": 2552,
+        "titulo": "O treinamento de resistência de intensidade moderada com amplitude de movimento parcial em comprimentos musculares longos provoca hipertrofia e adaptações arquitetônicas semelhantes ao treinamento de resistência de alta intensidade usando amplitude de movimento total.",
+        "url": "https://youtube.com/watch?v=u_jZw87hE80",
+        "ano": 2026
+      },
+      {
         "id": 2474,
         "titulo": "[Exercício excêntrico em esteira promove hipertrofia adaptativa do gastrocnêmio em ratos].",
         "url": "https://youtube.com/watch?v=sTEjOavHQBA",
@@ -1073,6 +1091,12 @@
         "titulo": "O treinamento simultâneo com HIIT de longo intervalo não prejudica a síntese ou hipertrofia de proteínas musculares esqueléticas: poucas evidências de um “efeito de interferência”.",
         "url": "https://youtube.com/watch?v=a0KoZBpJ0H8",
         "ano": 2026
+      },
+      {
+        "id": 931,
+        "titulo": "Hipertrofia muscular dos membros inferiores em resposta ao treinamento de resistência em idosos: revisão sistemática, meta-análise e meta-regressão de ensaios clínicos randomizados.",
+        "url": "https://youtube.com/watch?v=hChoiAF22NA",
+        "ano": 2024
       },
       {
         "id": 925,
@@ -1605,6 +1629,12 @@
     ],
     "Idosos e Sarcopenia": [
       {
+        "id": 2532,
+        "titulo": "Agonistas do receptor semelhante ao peptídeo 1 do glucagon para sarcopenia e distúrbios de perda muscular: uma revisão sistemática de eficácia e mecanismos.",
+        "url": "https://youtube.com/watch?v=BopiIWecMSI",
+        "ano": 2025
+      },
+      {
         "id": 2403,
         "titulo": "Efeitos da suplementação de beta-hidroxi-beta-metilbutirato em idosos com sarcopenia: um estudo randomizado, duplo-cego e controlado por placebo.",
         "url": "https://youtube.com/watch?v=NqtnIx15uq0",
@@ -1753,6 +1783,12 @@
         "titulo": "Aumento da força muscular e da massa da coxa em idosos com o método de treinamento híbrido de estimulação elétrica e contração volitiva.",
         "url": "https://youtube.com/watch?v=jHsEOffrNSA",
         "ano": 2010
+      },
+      {
+        "id": 931,
+        "titulo": "Hipertrofia muscular dos membros inferiores em resposta ao treinamento de resistência em idosos: revisão sistemática, meta-análise e meta-regressão de ensaios clínicos randomizados.",
+        "url": "https://youtube.com/watch?v=hChoiAF22NA",
+        "ano": 2024
       },
       {
         "id": 928,
@@ -2875,6 +2911,12 @@
     ],
     "Amplitude e ROM": [
       {
+        "id": 2552,
+        "titulo": "O treinamento de resistência de intensidade moderada com amplitude de movimento parcial em comprimentos musculares longos provoca hipertrofia e adaptações arquitetônicas semelhantes ao treinamento de resistência de alta intensidade usando amplitude de movimento total.",
+        "url": "https://youtube.com/watch?v=u_jZw87hE80",
+        "ano": 2026
+      },
+      {
         "id": 2220,
         "titulo": "Os efeitos do treinamento isométrico de longo comprimento muscular versus treinamento isotônico de amplitude total de movimento na hipertrofia regional do quadríceps femoral em indivíduos treinados em resistência.",
         "url": "https://youtube.com/watch?v=Vb4I3WDd6js",
@@ -3349,6 +3391,12 @@
     ],
     "Peptideos e Emergentes": [
       {
+        "id": 2532,
+        "titulo": "Agonistas do receptor semelhante ao peptídeo 1 do glucagon para sarcopenia e distúrbios de perda muscular: uma revisão sistemática de eficácia e mecanismos.",
+        "url": "https://youtube.com/watch?v=BopiIWecMSI",
+        "ano": 2025
+      },
+      {
         "id": 2186,
         "titulo": "A suplementação específica de peptídeos de colágeno aumenta o conteúdo de colágeno tipo I no músculo esquelético após 12 semanas de treinamento de resistência de alta carga: um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=EmdrA5BU7QM",
@@ -3376,6 +3424,18 @@
       }
     ],
     "Outros": [
+      {
+        "id": 2566,
+        "titulo": "Revisao Sistematica numero 16 - O que 32 estudos dizem sobre Creatina",
+        "url": "https://youtube.com/watch?v=-YRI__Ys0XQ",
+        "ano": null
+      },
+      {
+        "id": 2565,
+        "titulo": "A inibição da miostatina previne a fisiopatologia do músculo esquelético em camundongos com doença de Huntington.",
+        "url": "https://youtube.com/watch?v=SpJ8UxrGKF8",
+        "ano": 2017
+      },
       {
         "id": 2505,
         "titulo": "A suplementação lipídica estruturada com ácido eicosapentaenóico e triacilglicerol de cadeia média melhora o desempenho dos exercícios de resistência muscular e reduz a fadiga muscular em homens jovens e saudáveis.",
@@ -3515,10 +3575,22 @@
         "ano": 2020
       },
       {
+        "id": 990,
+        "titulo": "A conexão entre treinamento de resistência, desempenho de escalada e prevenção de lesões.",
+        "url": "https://youtube.com/watch?v=4sQNr-tiZUI",
+        "ano": 2024
+      },
+      {
         "id": 965,
         "titulo": "Remodelação muscular esquelética em resposta ao treinamento de esqui alpino em indivíduos mais velhos.",
         "url": "https://youtube.com/watch?v=vV1JID38abk",
         "ano": 2011
+      },
+      {
+        "id": 762,
+        "titulo": "Os efeitos do treinamento de restrição do fluxo sanguíneo na potencialização pós-ativação e na ativação muscular dos membros superiores: uma meta-análise.",
+        "url": "https://youtube.com/watch?v=OpKva4XwElw",
+        "ano": 2024
       },
       {
         "id": 734,

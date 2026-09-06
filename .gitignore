@@ -77,3 +77,9 @@ test_*.py
 
 # Backups locais dos routers (nao versionar)
 app/routers/_backups/
+*.bak
+*.bak_*
+*.bkp
+*.bkp_*
+static/IMG_*.jpg
+ROTEIRO_ALUNO_AMANHA.txt

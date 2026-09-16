@@ -1,9 +1,15 @@
 {
-  "atualizado_em": "2026-09-02 19:59",
-  "total_videos": 359,
+  "atualizado_em": "2026-09-16 19:05",
+  "total_videos": 388,
   "total_temas": 19,
   "temas": {
     "Forca e Carga": [
+      {
+        "id": 2604,
+        "titulo": "Efeitos do treinamento intervalado de alta intensidade e do treinamento isoinercial na função muscular, estrutura e tecido adiposo intermuscular dos extensores das pernas em idosos.",
+        "url": "https://youtube.com/watch?v=i0D43K4grIg",
+        "ano": 2019
+      },
       {
         "id": 2552,
         "titulo": "O treinamento de resistência de intensidade moderada com amplitude de movimento parcial em comprimentos musculares longos provoca hipertrofia e adaptações arquitetônicas semelhantes ao treinamento de resistência de alta intensidade usando amplitude de movimento total.",
@@ -41,6 +47,12 @@
         "ano": 2026
       },
       {
+        "id": 2271,
+        "titulo": "Mecanismos de hipertrofia muscular esquelética induzida por sobrecarga mecânica: compreensão atual e direções futuras.",
+        "url": "https://youtube.com/watch?v=_enBwqBDWig",
+        "ano": 2023
+      },
+      {
         "id": 2266,
         "titulo": "Um suplemento nutricional de cinco ingredientes e exercícios de resistência feitos em casa melhoram a massa magra e a força em idosos de vida livre.",
         "url": "https://youtube.com/watch?v=JCaXll64RJg",
@@ -57,6 +69,12 @@
         "titulo": "A suplementação específica de peptídeos de colágeno aumenta o conteúdo de colágeno tipo I no músculo esquelético após 12 semanas de treinamento de resistência de alta carga: um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=EmdrA5BU7QM",
         "ano": 2026
+      },
+      {
+        "id": 2128,
+        "titulo": "Efeitos do treinamento volante com sobrecarga excêntrica no equilíbrio em pé, mobilidade, função física, espessura muscular e qualidade muscular em idosos.",
+        "url": "https://youtube.com/watch?v=4fBhKRQiFKI",
+        "ano": 2022
       },
       {
         "id": 1989,
@@ -147,6 +165,12 @@
         "titulo": "Adaptações musculares a métodos de treinamento de resistência com carga pesada e restrição de fluxo sanguíneo.",
         "url": "https://youtube.com/watch?v=NrGJ19vEuyM",
         "ano": 2022
+      },
+      {
+        "id": 1478,
+        "titulo": "Efeitos do treinamento com restrição de fluxo sanguíneo na capacidade aeróbica, força e massa muscular dos membros inferiores em adultos saudáveis: uma meta-análise.",
+        "url": "https://youtube.com/watch?v=IlMNNgUtGBs",
+        "ano": 2024
       },
       {
         "id": 1387,
@@ -269,6 +293,12 @@
         "ano": null
       },
       {
+        "id": 936,
+        "titulo": "Adaptações do músculo esquelético e resultados de desempenho após uma etapa e redução exponencial em atletas de força.",
+        "url": "https://youtube.com/watch?v=E8MLXxydjiw",
+        "ano": 2021
+      },
+      {
         "id": 934,
         "titulo": "Aumento da força muscular e da massa da coxa em idosos com o método de treinamento híbrido de estimulação elétrica e contração volitiva.",
         "url": "https://youtube.com/watch?v=jHsEOffrNSA",
@@ -359,6 +389,12 @@
         "ano": 2020
       },
       {
+        "id": 749,
+        "titulo": "Estimulação elétrica e ganhos de força muscular em adultos saudáveis: uma revisão sistemática.",
+        "url": "https://youtube.com/watch?v=b05QvsawJXM",
+        "ano": 2023
+      },
+      {
         "id": 748,
         "titulo": "Efeitos do treinamento de força nas adaptações neuromusculares no desenvolvimento da força máxima: uma revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=PFoptPkabGo",
@@ -387,6 +423,12 @@
         "titulo": "Padrões semelhantes de hipertrofia regional do tendão após restrição do fluxo sanguíneo de baixa carga e treinamento de resistência de alta carga.",
         "url": "https://youtube.com/watch?v=sN3qFCrKpgI",
         "ano": 2023
+      },
+      {
+        "id": 720,
+        "titulo": "Efeitos do treinamento de resistência com restrição de fluxo sanguíneo de baixa carga na força muscular e hipertrofia em comparação com o treinamento de resistência tradicional em adultos saudáveis ​​com mais de 60 anos: revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=sMaV7au-2bM",
+        "ano": 2022
       },
       {
         "id": 714,
@@ -441,6 +483,12 @@
         "titulo": "Comparação do crescimento muscular e adaptações dinâmicas de força induzidas por treinamento de resistência unilateral e bilateral: uma revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=pEX1_s7YKac",
         "ano": 2025
+      },
+      {
+        "id": 672,
+        "titulo": "Qual a influência da ordem dos exercícios resistidos no ganho de força muscular e na hipertrofia muscular? Uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=EkWJfLNFMUg",
+        "ano": 2021
       },
       {
         "id": 670,
@@ -815,6 +863,12 @@
         "ano": 2021
       },
       {
+        "id": 184,
+        "titulo": "Meta-análise que examina a importância das estratégias de ingestão de creatina na massa e força do tecido magro em adultos mais velhos.",
+        "url": "https://youtube.com/watch?v=rtI__lHSfo8",
+        "ano": 2021
+      },
+      {
         "id": 179,
         "titulo": "A suplementação com qual forma de creatina (cloridrato ou monohidrato) junto com o treinamento de resistência pode ter mais impacto nos hormônios anabólicos/catabólicos, na força e na composição corporal?",
         "url": "https://youtube.com/watch?v=2VYzhWZT_Ag",
@@ -955,6 +1009,12 @@
     ],
     "Hipertrofia e Massa": [
       {
+        "id": 2629,
+        "titulo": "O músculo esquelético humano possui uma memória epigenética de hipertrofia.",
+        "url": "https://youtube.com/watch?v=MkrbL9skQH4",
+        "ano": 2018
+      },
+      {
         "id": 2552,
         "titulo": "O treinamento de resistência de intensidade moderada com amplitude de movimento parcial em comprimentos musculares longos provoca hipertrofia e adaptações arquitetônicas semelhantes ao treinamento de resistência de alta intensidade usando amplitude de movimento total.",
         "url": "https://youtube.com/watch?v=u_jZw87hE80",
@@ -971,6 +1031,12 @@
         "titulo": "Biogênese do ribossomo como um gargalo putativo para a hipertrofia do músculo esquelético: mecanismos, evidências humanas e moduladores práticos.",
         "url": "https://youtube.com/watch?v=tkWdLwokVCY",
         "ano": 2026
+      },
+      {
+        "id": 2271,
+        "titulo": "Mecanismos de hipertrofia muscular esquelética induzida por sobrecarga mecânica: compreensão atual e direções futuras.",
+        "url": "https://youtube.com/watch?v=_enBwqBDWig",
+        "ano": 2023
       },
       {
         "id": 2220,
@@ -1045,6 +1111,12 @@
         "ano": 2025
       },
       {
+        "id": 1478,
+        "titulo": "Efeitos do treinamento com restrição de fluxo sanguíneo na capacidade aeróbica, força e massa muscular dos membros inferiores em adultos saudáveis: uma meta-análise.",
+        "url": "https://youtube.com/watch?v=IlMNNgUtGBs",
+        "ano": 2024
+      },
+      {
         "id": 1288,
         "titulo": "A suplementação de proteínas após o exercício e antes do sono não aumenta ainda mais os ganhos de massa muscular e força durante o treinamento de exercícios de resistência em homens idosos ativos.",
         "url": "https://youtube.com/watch?v=wEs5oIAj1YA",
@@ -1117,6 +1189,12 @@
         "ano": 2023
       },
       {
+        "id": 720,
+        "titulo": "Efeitos do treinamento de resistência com restrição de fluxo sanguíneo de baixa carga na força muscular e hipertrofia em comparação com o treinamento de resistência tradicional em adultos saudáveis ​​com mais de 60 anos: revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=sMaV7au-2bM",
+        "ano": 2022
+      },
+      {
         "id": 710,
         "titulo": "Comparação dos efeitos do treinamento de resistência isotônica excêntrico, concêntrico e excêntrico-concêntrico em duas velocidades na força e na hipertrofia muscular.",
         "url": "https://youtube.com/watch?v=Qf0Pc5xjtV0",
@@ -1151,6 +1229,12 @@
         "titulo": "Maior volume de treinamento de resistência compensa a falta de resposta à hipertrofia muscular em indivíduos mais velhos.",
         "url": "https://youtube.com/watch?v=DA3tXB5ulYA",
         "ano": 2024
+      },
+      {
+        "id": 672,
+        "titulo": "Qual a influência da ordem dos exercícios resistidos no ganho de força muscular e na hipertrofia muscular? Uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=EkWJfLNFMUg",
+        "ano": 2021
       },
       {
         "id": 670,
@@ -1629,6 +1713,18 @@
     ],
     "Idosos e Sarcopenia": [
       {
+        "id": 2664,
+        "titulo": "Além da perda de gordura: Enfrentando o desafio da sarcopenia das terapias baseadas em incretina.",
+        "url": "https://youtube.com/watch?v=dyIqRNvLf1g",
+        "ano": 2026
+      },
+      {
+        "id": 2604,
+        "titulo": "Efeitos do treinamento intervalado de alta intensidade e do treinamento isoinercial na função muscular, estrutura e tecido adiposo intermuscular dos extensores das pernas em idosos.",
+        "url": "https://youtube.com/watch?v=i0D43K4grIg",
+        "ano": 2019
+      },
+      {
         "id": 2532,
         "titulo": "Agonistas do receptor semelhante ao peptídeo 1 do glucagon para sarcopenia e distúrbios de perda muscular: uma revisão sistemática de eficácia e mecanismos.",
         "url": "https://youtube.com/watch?v=BopiIWecMSI",
@@ -1653,6 +1749,12 @@
         "ano": 2020
       },
       {
+        "id": 2128,
+        "titulo": "Efeitos do treinamento volante com sobrecarga excêntrica no equilíbrio em pé, mobilidade, função física, espessura muscular e qualidade muscular em idosos.",
+        "url": "https://youtube.com/watch?v=4fBhKRQiFKI",
+        "ano": 2022
+      },
+      {
         "id": 2101,
         "titulo": "Comprometimento cognitivo leve e sarcopenia: efeitos do treinamento com exercícios resistidos na neuroinflamação, desempenho cognitivo e alterações estruturais do cérebro.",
         "url": "https://youtube.com/watch?v=5Cw9-Ba4B58",
@@ -1665,10 +1767,22 @@
         "ano": 2019
       },
       {
+        "id": 2008,
+        "titulo": "O treinamento resistido moderado reduz o tecido adiposo intermuscular e os fatores de risco de doença cardiovascular aterosclerótica em pacientes idosos com diabetes tipo 2.",
+        "url": "https://youtube.com/watch?v=qvphc9lFzu4",
+        "ano": 2024
+      },
+      {
         "id": 2007,
         "titulo": "Tecido adiposo intermuscular no envelhecimento humano saudável - efeitos do treinamento físico e implicações para a saúde metabólica.",
         "url": "https://youtube.com/watch?v=mJF5qpCS_uw",
         "ano": 2025
+      },
+      {
+        "id": 1982,
+        "titulo": "A suplementação de probióticos atenua a sarcopenia relacionada à idade através do eixo intestino-músculo em camundongos SAMP8.",
+        "url": "https://youtube.com/watch?v=n9vt7FxPUbc",
+        "ano": 2022
       },
       {
         "id": 1938,
@@ -1741,6 +1855,12 @@
         "titulo": "Esforço percebido, ativação neuromuscular e volume de treinamento em idosos: validando RPE-1 em treinamento de resistência com banda elástica de velocidade moderada.",
         "url": "https://youtube.com/watch?v=IBas7l4JKLo",
         "ano": 2026
+      },
+      {
+        "id": 1410,
+        "titulo": "A associação entre o índice triglicérides-glicose e a sarcopenia: dados do NHANES 2011-2018.",
+        "url": "https://youtube.com/watch?v=RFnYHLzZb1o",
+        "ano": 2024
       },
       {
         "id": 1288,
@@ -1882,6 +2002,12 @@
       }
     ],
     "Volume e Series": [
+      {
+        "id": 2647,
+        "titulo": "Índice de qualidade muscular e respostas do ângulo de fase ao treinamento de resistência de volume correspondente em diferentes frequências em mulheres idosas.",
+        "url": "https://youtube.com/watch?v=kE2f4Nazjdo",
+        "ano": 2026
+      },
       {
         "id": 1423,
         "titulo": "Esforço percebido, ativação neuromuscular e volume de treinamento em idosos: validando RPE-1 em treinamento de resistência com banda elástica de velocidade moderada.",
@@ -2034,6 +2160,12 @@
       }
     ],
     "Avaliacao Fisica": [
+      {
+        "id": 2648,
+        "titulo": "Musculacao apos os 60 muda a composicao corporal? O que dizem os estudos",
+        "url": "https://youtube.com/watch?v=97WXKCNlX8g",
+        "ano": 2023
+      },
       {
         "id": 1540,
         "titulo": "Efeitos do treinamento de força na composição corporal, desempenho físico e ingestão de proteínas ou cálcio em idosos com osteossarcopenia: uma meta-análise.",
@@ -2193,6 +2325,18 @@
     ],
     "Mulheres": [
       {
+        "id": 2668,
+        "titulo": "Efeito do treinamento muscular inspiratório no diafragma e na espessura da parede abdominal com densidade de gordura no fígado em mulheres idosas: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=p7wXMNFm9O4",
+        "ano": 2025
+      },
+      {
+        "id": 2647,
+        "titulo": "Índice de qualidade muscular e respostas do ângulo de fase ao treinamento de resistência de volume correspondente em diferentes frequências em mulheres idosas.",
+        "url": "https://youtube.com/watch?v=kE2f4Nazjdo",
+        "ano": 2026
+      },
+      {
         "id": 2244,
         "titulo": "Crosstalk músculo adiposo durante a transição da menopausa: ligações mecanísticas à obesidade sarcopênica em mulheres de meia-idade.",
         "url": "https://youtube.com/watch?v=CRZ1GDF9L7w",
@@ -2203,6 +2347,12 @@
         "titulo": "Revisão Sistemática número 12 - O que 66 estudos dizem sobre Treino de Força para Mulheres em todas as fases da vida",
         "url": "https://youtube.com/watch?v=LBzqNYO1FcA",
         "ano": null
+      },
+      {
+        "id": 1815,
+        "titulo": "A baixa disponibilidade de energia reduz a síntese de proteínas musculares miofibrilares e sarcoplasmáticas em mulheres treinadas.",
+        "url": "https://youtube.com/watch?v=rjG_H_frHVc",
+        "ano": 2023
       },
       {
         "id": 1628,
@@ -2345,10 +2495,22 @@
     ],
     "Treino Concorrente e Cardio": [
       {
+        "id": 2604,
+        "titulo": "Efeitos do treinamento intervalado de alta intensidade e do treinamento isoinercial na função muscular, estrutura e tecido adiposo intermuscular dos extensores das pernas em idosos.",
+        "url": "https://youtube.com/watch?v=i0D43K4grIg",
+        "ano": 2019
+      },
+      {
         "id": 2028,
         "titulo": "Revisão Sistemática número 13 - O que 50 estudos dizem sobre Treino Concorrente: o cardio atrapalha a hipertrofia?",
         "url": "https://youtube.com/watch?v=xx9W1iQV_SU",
         "ano": null
+      },
+      {
+        "id": 2008,
+        "titulo": "O treinamento resistido moderado reduz o tecido adiposo intermuscular e os fatores de risco de doença cardiovascular aterosclerótica em pacientes idosos com diabetes tipo 2.",
+        "url": "https://youtube.com/watch?v=qvphc9lFzu4",
+        "ano": 2024
       },
       {
         "id": 1903,
@@ -2361,6 +2523,12 @@
         "titulo": "Efeitos da dieta cetogênica na massa muscular, força, capacidade metabólica aeróbica e resistência em adultos: uma revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=8f1BEZ5Rn2s",
         "ano": 2025
+      },
+      {
+        "id": 1478,
+        "titulo": "Efeitos do treinamento com restrição de fluxo sanguíneo na capacidade aeróbica, força e massa muscular dos membros inferiores em adultos saudáveis: uma meta-análise.",
+        "url": "https://youtube.com/watch?v=IlMNNgUtGBs",
+        "ano": 2024
       },
       {
         "id": 1078,
@@ -2569,6 +2737,12 @@
         "ano": 2022
       },
       {
+        "id": 1815,
+        "titulo": "A baixa disponibilidade de energia reduz a síntese de proteínas musculares miofibrilares e sarcoplasmáticas em mulheres treinadas.",
+        "url": "https://youtube.com/watch?v=rjG_H_frHVc",
+        "ano": 2023
+      },
+      {
         "id": 1744,
         "titulo": "Eficácia da suplementação de proteína combinada com treinamento de resistência para neutralizar a perda desproporcional de massa livre de gordura após cirurgia bariátrica metabólica: justificativa e desenho do ensaio clínico randomizado ENRICHED.",
         "url": "https://youtube.com/watch?v=RjkcV1BeyOk",
@@ -2727,6 +2901,12 @@
     ],
     "Obesidade e Emagrecimento": [
       {
+        "id": 2674,
+        "titulo": "Revisao Sistematica numero 17 - O que 92 estudos dizem sobre Canetas de Emagrecimento, Musculo e Osso",
+        "url": "https://youtube.com/watch?v=vTUJVSVr7uY",
+        "ano": null
+      },
+      {
         "id": 2244,
         "titulo": "Crosstalk músculo adiposo durante a transição da menopausa: ligações mecanísticas à obesidade sarcopênica em mulheres de meia-idade.",
         "url": "https://youtube.com/watch?v=CRZ1GDF9L7w",
@@ -2773,6 +2953,12 @@
         "titulo": "Efeito de regimes 5: 2: dieta com restrição energética ou treinamento intervalado de baixo volume e alta intensidade combinado com exercícios de resistência no controle glicêmico e na saúde cardiometabólica em adultos com sobrepeso/obesidade e diabetes tipo 2: um ensaio clínico randomizado controlado de três braços.",
         "url": "https://youtube.com/watch?v=6mPLWbeQtEA",
         "ano": 2024
+      },
+      {
+        "id": 430,
+        "titulo": "A melatonina e o exercício neutralizam a obesidade sarcopênica por meio da preservação da função das células satélites.",
+        "url": "https://youtube.com/watch?v=ieHPhvPCdrI",
+        "ano": 2023
       },
       {
         "id": 422,
@@ -2852,6 +3038,12 @@
         "id": 669,
         "titulo": "Os efeitos do treinamento resistido até quase a falha na força, hipertrofia e adaptações da unidade motora em adultos previamente treinados.",
         "url": "https://youtube.com/watch?v=_lM_VXhP2Ps",
+        "ano": 2023
+      },
+      {
+        "id": 430,
+        "titulo": "A melatonina e o exercício neutralizam a obesidade sarcopênica por meio da preservação da função das células satélites.",
+        "url": "https://youtube.com/watch?v=ieHPhvPCdrI",
         "ano": 2023
       },
       {
@@ -3003,6 +3195,12 @@
         "ano": null
       },
       {
+        "id": 2008,
+        "titulo": "O treinamento resistido moderado reduz o tecido adiposo intermuscular e os fatores de risco de doença cardiovascular aterosclerótica em pacientes idosos com diabetes tipo 2.",
+        "url": "https://youtube.com/watch?v=qvphc9lFzu4",
+        "ano": 2024
+      },
+      {
         "id": 2007,
         "titulo": "Tecido adiposo intermuscular no envelhecimento humano saudável - efeitos do treinamento físico e implicações para a saúde metabólica.",
         "url": "https://youtube.com/watch?v=mJF5qpCS_uw",
@@ -3055,6 +3253,12 @@
         "titulo": "Associação do Índice de Massa Muscular Esquelética Apendicular e Resistência à Insulina com Mortalidade em Coortes Multinacionais.",
         "url": "https://youtube.com/watch?v=pBlhIu0nHfQ",
         "ano": 2025
+      },
+      {
+        "id": 1410,
+        "titulo": "A associação entre o índice triglicérides-glicose e a sarcopenia: dados do NHANES 2011-2018.",
+        "url": "https://youtube.com/watch?v=RFnYHLzZb1o",
+        "ano": 2024
       },
       {
         "id": 1245,
@@ -3359,6 +3563,18 @@
     ],
     "GLP-1 e Ozempic": [
       {
+        "id": 2572,
+        "titulo": "Os efeitos dos agonistas do GLP-1 na saúde musculoesquelética e nos cuidados ortopédicos.",
+        "url": "https://youtube.com/watch?v=W0ale_MPRwo",
+        "ano": 2025
+      },
+      {
+        "id": 2567,
+        "titulo": "Saúde óssea após exercício sozinho, tratamento com agonista do receptor GLP-1 ou tratamento combinado: uma análise secundária de um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=Na4Y-lSYhPs",
+        "ano": 2024
+      },
+      {
         "id": 1272,
         "titulo": "Revisão Sistemática número 7 ATUALIZADA - O que 37 estudos dizem sobre Ozempic, GLP-1 e Treino",
         "url": "https://youtube.com/watch?v=r5XiJPNqLiU",
@@ -3397,6 +3613,12 @@
         "ano": 2025
       },
       {
+        "id": 2525,
+        "titulo": "Economizando músculos enquanto perde peso: uma estratégia vital para resultados sustentáveis ​​durante o uso de medicamentos relacionados ao peptídeo 1 semelhante ao glucagon.",
+        "url": "https://youtube.com/watch?v=8qZ3gfcWMmo",
+        "ano": 2025
+      },
+      {
         "id": 2186,
         "titulo": "A suplementação específica de peptídeos de colágeno aumenta o conteúdo de colágeno tipo I no músculo esquelético após 12 semanas de treinamento de resistência de alta carga: um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=EmdrA5BU7QM",
@@ -3425,6 +3647,12 @@
     ],
     "Outros": [
       {
+        "id": 2670,
+        "titulo": "O treinamento de resistência do volante promove adaptações arquitetônicas musculares únicas e relacionadas ao desempenho em adultos jovens.",
+        "url": "https://youtube.com/watch?v=n6WJgPsJwRA",
+        "ano": 2024
+      },
+      {
         "id": 2566,
         "titulo": "Revisao Sistematica numero 16 - O que 32 estudos dizem sobre Creatina",
         "url": "https://youtube.com/watch?v=-YRI__Ys0XQ",
@@ -3443,6 +3671,12 @@
         "ano": 2025
       },
       {
+        "id": 2452,
+        "titulo": "Arquitetura muscular do gastrocnêmio medial durante o crescimento.",
+        "url": "https://youtube.com/watch?v=9VZ1oUQWAYg",
+        "ano": 2024
+      },
+      {
         "id": 2319,
         "titulo": "Biocircuitos multidimensionais de adaptação ao exercício: integrando fenômica in vivo e ex vivo com mapeamento de miRNA.",
         "url": "https://youtube.com/watch?v=T-ZKhH43z9k",
@@ -3459,6 +3693,12 @@
         "titulo": "Impacto da qualidade do ar hipóxica no efeito do treinamento resistido em diferentes ambientes de hipóxia normobárica.",
         "url": "https://youtube.com/watch?v=p98e5Ps-LrU",
         "ano": 2026
+      },
+      {
+        "id": 1987,
+        "titulo": "O treinamento pliométrico na hipóxia normobárica melhora o desempenho do salto.",
+        "url": "https://youtube.com/watch?v=MxLQvcdqswM",
+        "ano": 2022
       },
       {
         "id": 1958,
@@ -3515,6 +3755,12 @@
         "ano": 2025
       },
       {
+        "id": 1565,
+        "titulo": "Dose ideal e tipo de exercício para melhorar a função cognitiva em adultos mais velhos: uma revisão sistemática e meta-análise de rede baseada em modelo bayesiano de ECRs.",
+        "url": "https://youtube.com/watch?v=4RZ29ZH7TMU",
+        "ano": 2022
+      },
+      {
         "id": 1554,
         "titulo": "A plasticidade do hipocampo sustenta os ganhos cognitivos de longo prazo do exercício resistido no CCL.",
         "url": "https://youtube.com/watch?v=uLD_BvRUHUc",
@@ -3561,6 +3807,12 @@
         "titulo": "A alimentação com restrição de tempo e o treinamento físico simultâneo reduzem a massa gorda e aumentam a massa magra em adultos com sobrepeso e obesos.",
         "url": "https://youtube.com/watch?v=N_dOVTBDbRY",
         "ano": 2021
+      },
+      {
+        "id": 1056,
+        "titulo": "Treinamento de restrição de fluxo sanguíneo em pacientes com tendinopatia do manguito rotador: um ensaio randomizado, cego para avaliador e controlado.",
+        "url": "https://youtube.com/watch?v=a_OUOf314Vo",
+        "ano": 2024
       },
       {
         "id": 1046,
@@ -3645,6 +3897,12 @@
         "titulo": "Uma revisão sistemática com meta-análise do efeito do treinamento de resistência no crescimento muscular de todo o corpo em homens adultos saudáveis.",
         "url": "https://youtube.com/watch?v=Fm66RxtoDL0",
         "ano": 2020
+      },
+      {
+        "id": 671,
+        "titulo": "Efeitos do treinamento físico no crescimento mitocondrial e capilar no músculo esquelético humano: uma revisão sistemática e meta-regressão.",
+        "url": "https://youtube.com/watch?v=Tcix3jqOZVc",
+        "ano": 2025
       },
       {
         "id": 654,

@@ -1,9 +1,15 @@
 {
-  "atualizado_em": "2026-09-16 19:05",
-  "total_videos": 388,
+  "atualizado_em": "2026-09-26 19:28",
+  "total_videos": 406,
   "total_temas": 19,
   "temas": {
     "Forca e Carga": [
+      {
+        "id": 2738,
+        "titulo": "Revisao Sistematica numero 18 - O que 14 estudos dizem sobre Incontinencia Urinaria no Treino de Forca",
+        "url": "https://youtube.com/watch?v=-IKSJbycULo",
+        "ano": null
+      },
       {
         "id": 2604,
         "titulo": "Efeitos do treinamento intervalado de alta intensidade e do treinamento isoinercial na função muscular, estrutura e tecido adiposo intermuscular dos extensores das pernas em idosos.",
@@ -143,6 +149,12 @@
         "ano": 2025
       },
       {
+        "id": 1618,
+        "titulo": "Efeitos da combinação de uma dieta cetogênica com treinamento de resistência na composição corporal, força e potência mecânica em indivíduos treinados: uma revisão narrativa.",
+        "url": "https://youtube.com/watch?v=OvCZ4rEv7Hw",
+        "ano": 2021
+      },
+      {
         "id": 1540,
         "titulo": "Efeitos do treinamento de força na composição corporal, desempenho físico e ingestão de proteínas ou cálcio em idosos com osteossarcopenia: uma meta-análise.",
         "url": "https://youtube.com/watch?v=bigKLpai1jY",
@@ -200,6 +212,12 @@
         "id": 1145,
         "titulo": "Efeito do treinamento de força de alta intensidade na dor no joelho e nas forças compressivas da articulação do joelho entre adultos com osteoartrite do joelho: o ensaio clínico randomizado START.",
         "url": "https://youtube.com/watch?v=Tv-D37NlPlw",
+        "ano": 2021
+      },
+      {
+        "id": 1140,
+        "titulo": "Exercícios de resistência progressiva mais terapia manual são eficazes na melhoria da força isométrica em atletas com síndrome do impacto no ombro: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=L-uXmzc_ChM",
         "ano": 2021
       },
       {
@@ -443,6 +461,12 @@
         "ano": 2020
       },
       {
+        "id": 708,
+        "titulo": "As adaptações ao treinamento de força: contribuições morfológicas e neurológicas para o aumento da força.",
+        "url": "https://youtube.com/watch?v=efsIVu66HVg",
+        "ano": 2007
+      },
+      {
         "id": 707,
         "titulo": "Hipertrofia específica do tipo de fibra com o uso de treinamento de resistência com restrição de fluxo sanguíneo de baixa carga: uma revisão sistemática.",
         "url": "https://youtube.com/watch?v=XHlCH1tUt64",
@@ -501,6 +525,18 @@
         "titulo": "Os efeitos do treinamento resistido até quase a falha na força, hipertrofia e adaptações da unidade motora em adultos previamente treinados.",
         "url": "https://youtube.com/watch?v=_lM_VXhP2Ps",
         "ano": 2023
+      },
+      {
+        "id": 668,
+        "titulo": "Efeitos da perda de velocidade durante o treinamento de resistência no desempenho atlético, ganhos de força e adaptações musculares.",
+        "url": "https://youtube.com/watch?v=mT3SDjRURnY",
+        "ano": 2017
+      },
+      {
+        "id": 667,
+        "titulo": "Efeitos do treinamento de resistência no tamanho e força muscular em adultos muito idosos: uma revisão sistemática e meta-análise de ensaios clínicos randomizados.",
+        "url": "https://youtube.com/watch?v=g2twkOFzXgU",
+        "ano": 2020
       },
       {
         "id": 666,
@@ -683,6 +719,12 @@
         "ano": 2000
       },
       {
+        "id": 314,
+        "titulo": "Maiores ganhos de força após treinamento com cargas excêntricas acentuadas do que com cargas isoinerciais tradicionais em homens já treinados em força.",
+        "url": "https://youtube.com/watch?v=xOq9u6MkChY",
+        "ano": 2016
+      },
+      {
         "id": 311,
         "titulo": "Os efeitos do treinamento com sobrecarga excêntrica unilateral e bilateral na hipertrofia, potência muscular e desempenho de COD, e seus determinantes, em jogadores de esportes coletivos.",
         "url": "https://youtube.com/watch?v=ERoHZPkh438",
@@ -693,6 +735,12 @@
         "titulo": "A variação do ritmo de repetição em um exercício uniarticular da parte inferior do corpo aumenta o tamanho e a força muscular em homens treinados em resistência?",
         "url": "https://youtube.com/watch?v=yMnTBrI4qtY",
         "ano": 2022
+      },
+      {
+        "id": 299,
+        "titulo": "Adaptações funcionais e estruturais do músculo esquelético após treinamento de resistência com volante de sobrecarga excêntrica: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=AhFNpdm1-Z4",
+        "ano": 2017
       },
       {
         "id": 294,
@@ -849,6 +897,12 @@
         "titulo": "Efeitos de diferentes estratégias de carga de treinamento de resistência com volume equacionado nas adaptações musculares em homens bem treinados.",
         "url": "https://youtube.com/watch?v=iKpw9nOL0UI",
         "ano": 2014
+      },
+      {
+        "id": 193,
+        "titulo": "A influência da frequência, intensidade, volume e modo de treinamento de força em toda a área transversal do músculo em humanos.",
+        "url": "https://youtube.com/watch?v=N5RzCk_EFo0",
+        "ano": 2007
       },
       {
         "id": 192,
@@ -1555,6 +1609,12 @@
         "ano": 2021
       },
       {
+        "id": 170,
+        "titulo": "Efeitos do whey isolado, creatina e treinamento de resistência na hipertrofia muscular.",
+        "url": "https://youtube.com/watch?v=YnpRrcWbYA0",
+        "ano": 2007
+      },
+      {
         "id": 137,
         "titulo": "A ingestão de proteínas antes do sono aumenta os ganhos de massa muscular e força durante o treinamento prolongado do tipo resistência em homens jovens saudáveis.",
         "url": "https://youtube.com/watch?v=dyOmBOBTrFk",
@@ -1947,6 +2007,12 @@
         "ano": 2024
       },
       {
+        "id": 667,
+        "titulo": "Efeitos do treinamento de resistência no tamanho e força muscular em adultos muito idosos: uma revisão sistemática e meta-análise de ensaios clínicos randomizados.",
+        "url": "https://youtube.com/watch?v=g2twkOFzXgU",
+        "ano": 2020
+      },
+      {
         "id": 609,
         "titulo": "O papel do treinamento resistido e da suplementação de creatina no estresse oxidativo, defesa antioxidante, força muscular e qualidade de vida em idosos.",
         "url": "https://youtube.com/watch?v=hflboobth4A",
@@ -1995,6 +2061,12 @@
         "ano": 2022
       },
       {
+        "id": 351,
+        "titulo": "Otimizando a resposta anabólica do músculo esquelético ao treinamento de resistência no envelhecimento.",
+        "url": "https://youtube.com/watch?v=xXnsSSDzOh8",
+        "ano": 2020
+      },
+      {
         "id": 125,
         "titulo": "O declínio da massa muscular esquelética com o envelhecimento é atribuído principalmente a uma redução no tamanho das fibras musculares do tipo II.",
         "url": "https://youtube.com/watch?v=ztt-pI86H38",
@@ -2007,6 +2079,12 @@
         "titulo": "Índice de qualidade muscular e respostas do ângulo de fase ao treinamento de resistência de volume correspondente em diferentes frequências em mulheres idosas.",
         "url": "https://youtube.com/watch?v=kE2f4Nazjdo",
         "ano": 2026
+      },
+      {
+        "id": 1508,
+        "titulo": "A alta frequência de treinamento de resistência aumenta a espessura muscular em homens treinados em resistência.",
+        "url": "https://youtube.com/watch?v=0fBZowzZeOU",
+        "ano": 2019
       },
       {
         "id": 1423,
@@ -2117,6 +2195,12 @@
         "ano": 2022
       },
       {
+        "id": 193,
+        "titulo": "A influência da frequência, intensidade, volume e modo de treinamento de força em toda a área transversal do músculo em humanos.",
+        "url": "https://youtube.com/watch?v=N5RzCk_EFo0",
+        "ano": 2007
+      },
+      {
         "id": 122,
         "titulo": "Efeitos do volume do treinamento de resistência na função física, massa corporal magra e hipertrofia e força muscular da parte inferior do corpo em adultos mais velhos: uma revisão sistemática e meta-análise de rede de 151 ensaios randomizados.",
         "url": "https://youtube.com/watch?v=wKYr_jWS8aU",
@@ -2165,6 +2249,12 @@
         "titulo": "Musculacao apos os 60 muda a composicao corporal? O que dizem os estudos",
         "url": "https://youtube.com/watch?v=97WXKCNlX8g",
         "ano": 2023
+      },
+      {
+        "id": 1618,
+        "titulo": "Efeitos da combinação de uma dieta cetogênica com treinamento de resistência na composição corporal, força e potência mecânica em indivíduos treinados: uma revisão narrativa.",
+        "url": "https://youtube.com/watch?v=OvCZ4rEv7Hw",
+        "ano": 2021
       },
       {
         "id": 1540,
@@ -2531,6 +2621,12 @@
         "ano": 2024
       },
       {
+        "id": 1079,
+        "titulo": "Doze meses de alimentação com restrição de tempo e treinamento de resistência melhoram os marcadores inflamatórios e os fatores de risco cardiometabólico.",
+        "url": "https://youtube.com/watch?v=mNnl2BlNdGA",
+        "ano": 2021
+      },
+      {
         "id": 1078,
         "titulo": "Efeitos de oito semanas de alimentação com restrição de tempo (16/8) no metabolismo basal, força máxima, composição corporal, inflamação e fatores de risco cardiovascular em homens treinados em resistência.",
         "url": "https://youtube.com/watch?v=eYjdbvPT-hQ",
@@ -2767,6 +2863,12 @@
         "ano": 2025
       },
       {
+        "id": 1618,
+        "titulo": "Efeitos da combinação de uma dieta cetogênica com treinamento de resistência na composição corporal, força e potência mecânica em indivíduos treinados: uma revisão narrativa.",
+        "url": "https://youtube.com/watch?v=OvCZ4rEv7Hw",
+        "ano": 2021
+      },
+      {
         "id": 1540,
         "titulo": "Efeitos do treinamento de força na composição corporal, desempenho físico e ingestão de proteínas ou cálcio em idosos com osteossarcopenia: uma meta-análise.",
         "url": "https://youtube.com/watch?v=bigKLpai1jY",
@@ -2885,6 +2987,12 @@
         "titulo": "Estratégias de suplementação para atletas de força e potência: ingestão de carboidratos, proteínas e aminoácidos.",
         "url": "https://youtube.com/watch?v=vkPQ-C7Odb8",
         "ano": 2024
+      },
+      {
+        "id": 170,
+        "titulo": "Efeitos do whey isolado, creatina e treinamento de resistência na hipertrofia muscular.",
+        "url": "https://youtube.com/watch?v=YnpRrcWbYA0",
+        "ano": 2007
       },
       {
         "id": 137,
@@ -3267,6 +3375,12 @@
         "ano": 2024
       },
       {
+        "id": 1079,
+        "titulo": "Doze meses de alimentação com restrição de tempo e treinamento de resistência melhoram os marcadores inflamatórios e os fatores de risco cardiometabólico.",
+        "url": "https://youtube.com/watch?v=mNnl2BlNdGA",
+        "ano": 2021
+      },
+      {
         "id": 874,
         "titulo": "Eficácia dos exercícios aeróbicos e de resistência combinados na cognição, na saúde metabólica, na função física e na qualidade de vida relacionada à saúde em adultos de meia-idade e idosos com diabetes mellitus tipo 2: uma revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=utqWJNI20Jc",
@@ -3307,6 +3421,12 @@
         "titulo": "Um ensaio clínico randomizado para determinar o impacto do treinamento de resistência versus treinamento aeróbico no tratamento do FGF-21 e variáveis ​​​​fisiológicas relacionadas em homens obesos com diabetes mellitus tipo 2.",
         "url": "https://youtube.com/watch?v=MYRUD0oN-BQ",
         "ano": 2024
+      },
+      {
+        "id": 465,
+        "titulo": "A metformina diminui a sensibilidade vascular à insulina após treinamento físico em adultos com risco de síndrome metabólica.",
+        "url": "https://youtube.com/watch?v=JIcTDoPJQ-Q",
+        "ano": 2026
       },
       {
         "id": 452,
@@ -3599,6 +3719,12 @@
         "ano": null
       },
       {
+        "id": 659,
+        "titulo": "Efeitos do undecanoato de testosterona como terapia complementar em homens obesos com hipogonadal que respondem tardiamente à tirzepatida: um estudo piloto.",
+        "url": "https://youtube.com/watch?v=aL9EDOZY6iU",
+        "ano": 2026
+      },
+      {
         "id": 457,
         "titulo": "Tirzepatida e treinamento físico na obesidade.",
         "url": "https://youtube.com/watch?v=z6FHmQ2o1O8",
@@ -3681,6 +3807,12 @@
         "titulo": "Biocircuitos multidimensionais de adaptação ao exercício: integrando fenômica in vivo e ex vivo com mapeamento de miRNA.",
         "url": "https://youtube.com/watch?v=T-ZKhH43z9k",
         "ano": 2025
+      },
+      {
+        "id": 2253,
+        "titulo": "CREG1 melhora a capacidade de resposta do músculo esquelético à resistência ao exercício através da modulação da mitofagia.",
+        "url": "https://youtube.com/watch?v=3aH-sRWXALQ",
+        "ano": 2021
       },
       {
         "id": 2215,
@@ -3785,6 +3917,12 @@
         "ano": 2025
       },
       {
+        "id": 1424,
+        "titulo": "Métodos para regular e monitorar o treinamento de resistência.",
+        "url": "https://youtube.com/watch?v=7PfmPfZQUtU",
+        "ano": 2020
+      },
+      {
         "id": 1349,
         "titulo": "Incidência de lesões nos isquiotibiais, fatores de risco e prevenção em jogadores da Rugby Union: uma revisão sistemática.",
         "url": "https://youtube.com/watch?v=UO4CsHAbV2E",
@@ -3795,6 +3933,12 @@
         "titulo": "Impacto do treinamento de resistência pesado nos resultados de saúde na gravidez e no pós-parto.",
         "url": "https://youtube.com/watch?v=qheemFY6cuE",
         "ano": 2023
+      },
+      {
+        "id": 1135,
+        "titulo": "Impacto dos exercícios nórdicos de isquiotibiais e extensão de quadril na arquitetura e morfologia dos isquiotibiais: implicações para a prevenção de lesões.",
+        "url": "https://youtube.com/watch?v=vFiHSJtBlP0",
+        "ano": 2017
       },
       {
         "id": 1086,

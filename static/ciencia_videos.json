@@ -1,6 +1,6 @@
 {
-  "atualizado_em": "2026-09-26 19:28",
-  "total_videos": 406,
+  "atualizado_em": "2026-10-02 11:13",
+  "total_videos": 418,
   "total_temas": 19,
   "temas": {
     "Forca e Carga": [
@@ -137,6 +137,12 @@
         "ano": 2018
       },
       {
+        "id": 1630,
+        "titulo": "O exercício de resistência crônica combinado com o tempo de nutrientes aumenta a massa e a força do músculo esquelético enquanto modula pequenos perfis de miRNA de vesículas extracelulares.",
+        "url": "https://youtube.com/watch?v=yE5ZZY7Nnac",
+        "ano": 2026
+      },
+      {
         "id": 1628,
         "titulo": "O tempo de proteína não tem efeito nos ganhos de massa magra, força e capacidade funcional induzidos por exercícios resistidos em mulheres na pós-menopausa: um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=9cv3RMg12hs",
@@ -219,6 +225,12 @@
         "titulo": "Exercícios de resistência progressiva mais terapia manual são eficazes na melhoria da força isométrica em atletas com síndrome do impacto no ombro: um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=L-uXmzc_ChM",
         "ano": 2021
+      },
+      {
+        "id": 1133,
+        "titulo": "Impacto do treinamento isolado de força de extensão lombar na redução da dor lombar inespecífica, incapacidade e melhoria da função: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=Y7sQ4xWwy6Y",
+        "ano": 2025
       },
       {
         "id": 1104,
@@ -429,6 +441,12 @@
         "titulo": "Relações de força e tamanho muscular com treinamento de resistência progressiva unilateral.",
         "url": "https://youtube.com/watch?v=ZbcrDY6r3ZU",
         "ano": 2025
+      },
+      {
+        "id": 727,
+        "titulo": "Efeitos do treinamento de restrição de fluxo sanguíneo de baixa carga na força e hipertrofia do manguito rotador: série de casos.",
+        "url": "https://youtube.com/watch?v=p8Rj7ueNIHM",
+        "ano": 2024
       },
       {
         "id": 726,
@@ -857,6 +875,12 @@
         "ano": 2024
       },
       {
+        "id": 221,
+        "titulo": "Quais são os mecanismos potenciais de hipertrofia do músculo esquelético induzida pela fadiga com treinamento físico resistido de baixa carga?",
+        "url": "https://youtube.com/watch?v=eRnAa-4EYdo",
+        "ano": 2025
+      },
+      {
         "id": 219,
         "titulo": "A falha muscular promove maior hipertrofia muscular no treinamento de resistência com carga baixa, mas não no treinamento de resistência com carga alta.",
         "url": "https://youtube.com/watch?v=5MOP_GCVMFc",
@@ -1075,6 +1099,12 @@
         "ano": 2026
       },
       {
+        "id": 2531,
+        "titulo": "Otimizando a perda de peso na era GLP-1: preservando a massa muscular, a função e a saúde metabólica por meio de nutrição de precisão e treinamento de resistência.",
+        "url": "https://youtube.com/watch?v=-C_kCMNsHtg",
+        "ano": 2026
+      },
+      {
         "id": 2474,
         "titulo": "[Exercício excêntrico em esteira promove hipertrofia adaptativa do gastrocnêmio em ratos].",
         "url": "https://youtube.com/watch?v=sTEjOavHQBA",
@@ -1229,6 +1259,12 @@
         "titulo": "Efeitos do treinamento simultâneo de resistência e resistência usando protocolos contínuos ou intermitentes na hipertrofia muscular: revisão sistemática com meta-análise.",
         "url": "https://youtube.com/watch?v=5ql5uq-gBH4",
         "ano": 2023
+      },
+      {
+        "id": 727,
+        "titulo": "Efeitos do treinamento de restrição de fluxo sanguíneo de baixa carga na força e hipertrofia do manguito rotador: série de casos.",
+        "url": "https://youtube.com/watch?v=p8Rj7ueNIHM",
+        "ano": 2024
       },
       {
         "id": 726,
@@ -1565,6 +1601,12 @@
         "titulo": "A hipertrofia do tríceps braquial é substancialmente maior após o treinamento de extensão do cotovelo realizado na posição acima da cabeça versus posição neutra do braço.",
         "url": "https://youtube.com/watch?v=j59PeuhctG0",
         "ano": 2023
+      },
+      {
+        "id": 221,
+        "titulo": "Quais são os mecanismos potenciais de hipertrofia do músculo esquelético induzida pela fadiga com treinamento físico resistido de baixa carga?",
+        "url": "https://youtube.com/watch?v=eRnAa-4EYdo",
+        "ano": 2025
       },
       {
         "id": 220,
@@ -2269,6 +2311,12 @@
         "ano": null
       },
       {
+        "id": 1250,
+        "titulo": "Tirzepatida e alterações na composição muscular em pessoas com diabetes tipo 2 (SURPASS-3 MRI): uma análise post-hoc de um estudo randomizado, aberto, de grupos paralelos, de fase 3.",
+        "url": "https://youtube.com/watch?v=1EdqLyzvwSI",
+        "ano": 2025
+      },
+      {
         "id": 1245,
         "titulo": "Transformando a composição corporal com semaglutida em adultos com obesidade e diabetes mellitus tipo 2.",
         "url": "https://youtube.com/watch?v=Pl19Bpg55hQ",
@@ -2789,6 +2837,12 @@
         "ano": 2025
       },
       {
+        "id": 378,
+        "titulo": "Exercício aeróbico e perda de peso em adultos: uma revisão sistemática e meta-análise dose-resposta.",
+        "url": "https://youtube.com/watch?v=u9N6c0Sf9Gg",
+        "ano": 2024
+      },
+      {
         "id": 273,
         "titulo": "O treinamento de resistência de baixa intensidade com restrição moderada do fluxo sanguíneo parece seguro e aumenta a força e o tamanho do músculo esquelético em pacientes de cirurgia cardiovascular: um estudo piloto.",
         "url": "https://youtube.com/watch?v=bVniHF6Z7oA",
@@ -2808,6 +2862,12 @@
       }
     ],
     "Proteina e Dieta": [
+      {
+        "id": 2531,
+        "titulo": "Otimizando a perda de peso na era GLP-1: preservando a massa muscular, a função e a saúde metabólica por meio de nutrição de precisão e treinamento de resistência.",
+        "url": "https://youtube.com/watch?v=-C_kCMNsHtg",
+        "ano": 2026
+      },
       {
         "id": 2399,
         "titulo": "Posição da sociedade internacional de nutrição esportiva: β-hidroxi-β-metilbutirato (HMB).",
@@ -2885,6 +2945,12 @@
         "titulo": "Relação entre ingestão de proteínas e hipertrofia muscular induzida por treinamento de resistência em mulheres de meia idade: um estudo piloto.",
         "url": "https://youtube.com/watch?v=pN_calAxdak",
         "ano": 2022
+      },
+      {
+        "id": 1262,
+        "titulo": "Deficiências nutricionais e de micronutrientes associadas à terapia com agonistas do receptor GLP-1: uma revisão narrativa.",
+        "url": "https://youtube.com/watch?v=-WiKlDPO9XM",
+        "ano": 2026
       },
       {
         "id": 1258,
@@ -3015,6 +3081,12 @@
         "ano": null
       },
       {
+        "id": 2531,
+        "titulo": "Otimizando a perda de peso na era GLP-1: preservando a massa muscular, a função e a saúde metabólica por meio de nutrição de precisão e treinamento de resistência.",
+        "url": "https://youtube.com/watch?v=-C_kCMNsHtg",
+        "ano": 2026
+      },
+      {
         "id": 2244,
         "titulo": "Crosstalk músculo adiposo durante a transição da menopausa: ligações mecanísticas à obesidade sarcopênica em mulheres de meia-idade.",
         "url": "https://youtube.com/watch?v=CRZ1GDF9L7w",
@@ -3121,9 +3193,21 @@
         "titulo": "Comparação de treinamento concorrente, resistido ou aeróbico na perda de gordura corporal: uma revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=xs22zRJ3Vn8",
         "ano": 2025
+      },
+      {
+        "id": 378,
+        "titulo": "Exercício aeróbico e perda de peso em adultos: uma revisão sistemática e meta-análise dose-resposta.",
+        "url": "https://youtube.com/watch?v=u9N6c0Sf9Gg",
+        "ano": 2024
       }
     ],
     "Falha Muscular": [
+      {
+        "id": 2531,
+        "titulo": "Otimizando a perda de peso na era GLP-1: preservando a massa muscular, a função e a saúde metabólica por meio de nutrição de precisão e treinamento de resistência.",
+        "url": "https://youtube.com/watch?v=-C_kCMNsHtg",
+        "ano": 2026
+      },
       {
         "id": 1423,
         "titulo": "Esforço percebido, ativação neuromuscular e volume de treinamento em idosos: validando RPE-1 em treinamento de resistência com banda elástica de velocidade moderada.",
@@ -3223,6 +3307,12 @@
         "ano": 2025
       },
       {
+        "id": 768,
+        "titulo": "O treinamento de resistência induz melhorias na amplitude de movimento: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=MmxkiLEAkJ4",
+        "ano": 2023
+      },
+      {
         "id": 290,
         "titulo": "A hipertrofia dos isquiotibiais é específica para o exercício de treinamento: isquiotibiais nórdicos versus treinamento excêntrico de estado alongado.",
         "url": "https://youtube.com/watch?v=aRw1hHkmoMk",
@@ -3290,6 +3380,12 @@
       }
     ],
     "Diabetes e Glicemia": [
+      {
+        "id": 2531,
+        "titulo": "Otimizando a perda de peso na era GLP-1: preservando a massa muscular, a função e a saúde metabólica por meio de nutrição de precisão e treinamento de resistência.",
+        "url": "https://youtube.com/watch?v=-C_kCMNsHtg",
+        "ano": 2026
+      },
       {
         "id": 2447,
         "titulo": "Adaptações anabólicas não hipertróficas dependentes da modalidade de exercício no músculo esquelético de ratos com diabetes tipo 2.",
@@ -3367,6 +3463,12 @@
         "titulo": "A associação entre o índice triglicérides-glicose e a sarcopenia: dados do NHANES 2011-2018.",
         "url": "https://youtube.com/watch?v=RFnYHLzZb1o",
         "ano": 2024
+      },
+      {
+        "id": 1250,
+        "titulo": "Tirzepatida e alterações na composição muscular em pessoas com diabetes tipo 2 (SURPASS-3 MRI): uma análise post-hoc de um estudo randomizado, aberto, de grupos paralelos, de fase 3.",
+        "url": "https://youtube.com/watch?v=1EdqLyzvwSI",
+        "ano": 2025
       },
       {
         "id": 1245,
@@ -3583,6 +3685,12 @@
         "ano": 2025
       },
       {
+        "id": 1319,
+        "titulo": "Efeitos de diferentes tipos de treinamento básico na dor e no estado funcional em pacientes com dor lombar crônica inespecífica: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=vo-FPB6IDqU",
+        "ano": 2025
+      },
+      {
         "id": 1318,
         "titulo": "Treinamento de resistência da cadeia posterior comparado a programas de exercícios gerais e caminhada para o tratamento da dor lombar crônica na população em geral: uma revisão sistemática e meta-análise.",
         "url": "https://youtube.com/watch?v=HZl-Le378wQ",
@@ -3593,6 +3701,18 @@
         "titulo": "Otimizando a resposta ao treinamento para mulheres em reabilitação cardíaca: um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=PgCnzKncmBI",
         "ano": 2022
+      },
+      {
+        "id": 1133,
+        "titulo": "Impacto do treinamento isolado de força de extensão lombar na redução da dor lombar inespecífica, incapacidade e melhoria da função: uma revisão sistemática e meta-análise.",
+        "url": "https://youtube.com/watch?v=Y7sQ4xWwy6Y",
+        "ano": 2025
+      },
+      {
+        "id": 1130,
+        "titulo": "Controle neuromuscular e treinamento de resistência para pessoas com dor lombar crônica: um ensaio clínico randomizado.",
+        "url": "https://youtube.com/watch?v=mEsq4HacuEU",
+        "ano": 2024
       },
       {
         "id": 1007,
@@ -3695,16 +3815,34 @@
         "ano": 2024
       },
       {
+        "id": 2531,
+        "titulo": "Otimizando a perda de peso na era GLP-1: preservando a massa muscular, a função e a saúde metabólica por meio de nutrição de precisão e treinamento de resistência.",
+        "url": "https://youtube.com/watch?v=-C_kCMNsHtg",
+        "ano": 2026
+      },
+      {
         "id": 1272,
         "titulo": "Revisão Sistemática número 7 ATUALIZADA - O que 37 estudos dizem sobre Ozempic, GLP-1 e Treino",
         "url": "https://youtube.com/watch?v=r5XiJPNqLiU",
         "ano": null
       },
       {
+        "id": 1262,
+        "titulo": "Deficiências nutricionais e de micronutrientes associadas à terapia com agonistas do receptor GLP-1: uma revisão narrativa.",
+        "url": "https://youtube.com/watch?v=-WiKlDPO9XM",
+        "ano": 2026
+      },
+      {
         "id": 1258,
         "titulo": "Preservação de massa LEAN com exercícios de resistência e proteínas durante terapia com semaglutida e tirzepatida (estudo LEAN-PREP): um protocolo para um ensaio clínico randomizado.",
         "url": "https://youtube.com/watch?v=L-gT-7dM-fs",
         "ano": 2026
+      },
+      {
+        "id": 1250,
+        "titulo": "Tirzepatida e alterações na composição muscular em pessoas com diabetes tipo 2 (SURPASS-3 MRI): uma análise post-hoc de um estudo randomizado, aberto, de grupos paralelos, de fase 3.",
+        "url": "https://youtube.com/watch?v=1EdqLyzvwSI",
+        "ano": 2025
       },
       {
         "id": 1245,
@@ -3819,6 +3957,12 @@
         "titulo": "Adaptações da arquitetura muscular ao treinamento de alongamento estático: uma revisão sistemática com meta-análise.",
         "url": "https://youtube.com/watch?v=mbV4t2y-zis",
         "ano": 2023
+      },
+      {
+        "id": 2055,
+        "titulo": "Adaptações induzidas pelo treinamento resistido no sistema neuromuscular: Mecanismos fisiológicos e implicações para o desempenho humano.",
+        "url": "https://youtube.com/watch?v=uIfasq0TER0",
+        "ano": 2026
       },
       {
         "id": 1988,

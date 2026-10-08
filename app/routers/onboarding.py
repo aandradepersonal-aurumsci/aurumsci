@@ -379,9 +379,17 @@ def responder_questionario(
     db.commit()
     db.refresh(novo_aluno)
     
-    # 8. Gera treino base (se PAR-Q ok)
+    # 8. Gera treino base - SEMPRE gera (treino-ponte leve se tem risco)
     treino_gerado = False
-    if not tem_risco:
+    if tem_risco:
+        _nivel_treino = "iniciante"
+        _dias_treino = 2
+        _nome_plano = "Treino Inicial - Aguardando Avaliacao Fisica"
+    else:
+        _nivel_treino = dados.nivel
+        _dias_treino = dados.dias_semana
+        _nome_plano = f"Plano {dados.objetivo.capitalize()} - {dados.nivel.capitalize()}"
+    if True:
         try:
             from app.motor.periodizacao import gerar_periodizacao, periodizacao_to_dict
             from app.routers.treino import PlanoTreino, SessaoTreino, Exercicio
@@ -390,8 +398,8 @@ def responder_questionario(
             
             periodizacao = gerar_periodizacao(
                 objetivo=dados.objetivo if dados.objetivo else None,
-                nivel=dados.nivel,
-                dias_semana=dados.dias_semana,
+                nivel=_nivel_treino,
+                dias_semana=_dias_treino,
                 semanas_total=12,
                 data_inicio=date.today(),
                 tipo_periodizacao="ondulatoria"
@@ -401,10 +409,10 @@ def responder_questionario(
             plano = PlanoTreino(
                 aluno_id=novo_aluno.id,
                 personal_id=personal_id_aluno,
-                nome=f"Plano {dados.objetivo.capitalize()} - {dados.nivel.capitalize()}",
+                nome=_nome_plano,
                 objetivo=dados.objetivo.upper() if dados.objetivo else None,
-                nivel=dados.nivel,
-                dias_semana=dados.dias_semana,
+                nivel=_nivel_treino,
+                dias_semana=_dias_treino,
                 semanas_total=12,
                 data_inicio=date.today(),
                 ativo=True,
@@ -474,7 +482,7 @@ def responder_questionario(
             <p>— Equipe AurumSci</p>
             """
         else:
-            assunto_aluno = "Cadastro recebido - Aguardando avaliação"
+            assunto_aluno = "Bem-vindo à família AurumSci! Seu treino inicial já está no app"
             contato_aluno = (
                 f"<b>{nome_quem_contata} entrará em contato em até 24h</b>"
                 if tem_personal else
@@ -482,8 +490,8 @@ def responder_questionario(
             )
             corpo_aluno = f"""
             <h2>Olá, {dados.nome}! 👋</h2>
-            <p>Recebemos seu cadastro com sucesso!</p>
-            <p>Como você indicou alguma condição de saúde, {contato_aluno} para uma avaliação personalizada antes de iniciar os treinos.</p>
+            <p>Seu cadastro foi feito com sucesso e <b>seu treino básico inicial já está disponível no app</b>!</p>
+            <p>É um treino introdutório, pensado para você começar com segurança. <b>Após sua avaliação física, ele se torna totalmente específico para as suas capacidades e objetivos.</b></p>
             <p>📱 <b>Seu acesso:</b> https://www.aurumsc.com.br/aluno</p>
             <p>📧 <b>Email:</b> {dados.email}</p>
             <p>🔑 <b>Senha:</b> {senha_inicial}</p>
@@ -508,7 +516,7 @@ def responder_questionario(
                     {f'<li>Dor articular</li>' if dados.par_q_dor_articular else ''}
                     {f'<li>Medicação contínua: {dados.medicacao_qual or "não especificada"}</li>' if dados.par_q_medicacao else ''}
                 </ul>
-                <p><b>Treino NÃO foi gerado automaticamente.</b> Recomendamos avaliação presencial antes de iniciar.</p>
+                <p><b>Foi gerado um treino inicial leve (nível iniciante, full body 2x) para o aluno não ficar sem acesso.</b> Recomendamos avaliação presencial para liberar e refinar o treino definitivo.</p>
                 """
             else:
                 assunto_personal = f"🎉 Novo aluno: {dados.nome}"

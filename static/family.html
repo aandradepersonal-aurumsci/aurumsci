@@ -123,7 +123,7 @@
     <div class="card-btn">VER OS VÍDEOS →</div>
   </a>
   <div class="card" style="display:flex;gap:16px;align-items:stretch">
-    <img src="/static/livro_capa.jpg" alt="Livro Ciencia da Hipertrofia" style="width:38%;border-radius:10px;object-fit:cover;align-self:flex-start">
+    <img src="/static/livro_capa.jpg" onclick="abrirLivro('lv1')" alt="Livro Ciencia da Hipertrofia" style="cursor:pointer;width:38%;border-radius:10px;object-fit:cover;align-self:flex-start">
     <div style="flex:1;display:flex;flex-direction:column">
       <div class="card-nome" style="margin-bottom:6px">CI&Ecirc;NCIA DA HIPERTROFIA</div>
       <div class="card-desc" style="flex:1">&ldquo;Ci&ecirc;ncia da Hipertrofia &mdash; Da Experi&ecirc;ncia &agrave; Evid&ecirc;ncia&rdquo;<br><br><b>Ci&ecirc;ncia presa em artigos t&eacute;cnicos e em outras l&iacute;nguas.</b> O canal nasceu para democratizar esses estudos em portugu&ecirc;s, de gra&ccedil;a e com linguagem f&aacute;cil &mdash; a hist&oacute;ria dessa travessia, da experi&ecirc;ncia &agrave; evid&ecirc;ncia.</div>
@@ -131,7 +131,7 @@
     </div>
   </div>
   <div class="card" style="display:flex;gap:16px;align-items:stretch">
-    <img src="/static/livro2_capa.jpg" alt="Livro Personal Trainer Da Faculdade ao Primeiro Aluno" style="width:38%;border-radius:10px;object-fit:cover;align-self:flex-start">
+    <img src="/static/livro2_capa.jpg" onclick="abrirLivro('lv2')" alt="Livro Personal Trainer" style="cursor:pointer;width:38%;border-radius:10px;object-fit:cover;align-self:flex-start">
     <div style="flex:1;display:flex;flex-direction:column">
       <div class="card-nome" style="margin-bottom:6px">PERSONAL TRAINER</div>
       <div class="card-desc" style="flex:1">&ldquo;Personal Trainer &mdash; Da Faculdade ao Primeiro Aluno&rdquo;<br><br><b>&ldquo;Estou formado. E agora?&rdquo;</b> A travessia da faculdade ao primeiro aluno: a academia como vitrine, network, &eacute;tica e a avalia&ccedil;&atilde;o f&iacute;sica que guia o treino &mdash; muito al&eacute;m de contar repeti&ccedil;&otilde;es.</div>
@@ -139,7 +139,7 @@
     </div>
   </div>
   <div class="card" style="display:flex;gap:16px;align-items:stretch">
-    <img src="/static/livro3_capa.jpg" alt="Livro Avaliacao Fisica Do Simples ao Padrao Ouro" style="width:38%;border-radius:10px;object-fit:cover;align-self:flex-start">
+    <img src="/static/livro3_capa.jpg" onclick="abrirLivro('lv3')" alt="Livro Avaliacao Fisica" style="cursor:pointer;width:38%;border-radius:10px;object-fit:cover;align-self:flex-start">
     <div style="flex:1;display:flex;flex-direction:column">
       <div class="card-nome" style="margin-bottom:6px">AVALIA&Ccedil;&Atilde;O F&Iacute;SICA</div>
       <div class="card-desc" style="flex:1"><b>Avalia&ccedil;&atilde;o F&iacute;sica: Do Simples ao Padr&atilde;o Ouro.</b> A evolu&ccedil;&atilde;o da avalia&ccedil;&atilde;o at&eacute; as tecnologias atuais &mdash; imagens, protocolos, f&oacute;rmulas e um passo a passo no Excel para medir, interpretar e montar sua forma de avaliar, sem perder o olhar humano.</div>
@@ -147,7 +147,7 @@
     </div>
   </div>
   <div class="card" style="display:flex;gap:16px;align-items:stretch">
-    <img src="/static/livro4_capa.jpg" alt="Livro Fisiologia do Exercicio e Prescricao" style="width:38%;border-radius:10px;object-fit:cover;align-self:flex-start">
+    <img src="/static/livro4_capa.jpg" onclick="abrirLivro('lv4')" alt="Livro Fisiologia" style="cursor:pointer;width:38%;border-radius:10px;object-fit:cover;align-self:flex-start">
     <div style="flex:1;display:flex;flex-direction:column">
       <div class="card-nome" style="margin-bottom:6px">FISIOLOGIA DO EXERC&Iacute;CIO</div>
       <div class="card-desc" style="flex:1"><b>Do comando do sistema nervoso &agrave; contra&ccedil;&atilde;o muscular.</b> Recrutamento de fibras, ATP, respostas do cora&ccedil;&atilde;o e pulm&otilde;es ao esfor&ccedil;o &mdash; com Mariana (treino resistido) e Rafael (ciclismo) ilustrando. Conecta a fisiologia &agrave;s decis&otilde;es do profissional.</div>
@@ -155,7 +155,7 @@
     </div>
   </div>
   <div class="card" style="display:flex;gap:16px;align-items:stretch">
-    <img src="/static/livro5_capa.jpg" alt="Livro EIXO mTOR A Engenharia da Hipertrofia" style="width:38%;border-radius:10px;object-fit:cover;align-self:flex-start">
+    <img src="/static/livro5_capa.jpg" onclick="abrirLivro('lv5')" alt="Livro EIXO mTOR" style="cursor:pointer;width:38%;border-radius:10px;object-fit:cover;align-self:flex-start">
     <div style="flex:1;display:flex;flex-direction:column">
       <div class="card-nome" style="margin-bottom:6px">EIXO mTOR</div>
       <div class="card-desc" style="flex:1"><b>Voc&ecirc; ainda faz tr&ecirc;s s&eacute;ries de doze?</b> Fisiologia, biomec&acirc;nica, nutri&ccedil;&atilde;o e periodiza&ccedil;&atilde;o conectadas a 50 m&eacute;todos de treinamento &mdash; com exemplos pr&aacute;ticos para escolher, aplicar e ajustar cada um com prop&oacute;sito.</div>
@@ -330,6 +330,30 @@ function tocarNarracao(){
   requestAnimationFrame(animarRolagem);
   a.onended = function(){ icon.innerHTML = '&#9654;'; txt.textContent = 'Ouvir novamente'; _autoScroll = false; };
 }
+</script>
+
+<div id="livroOv" onclick="if(event.target==this)fecharLivro()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:950;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#0C0C12;border:1.5px solid var(--ouro);border-radius:18px;padding:26px 22px 22px;max-width:440px;width:100%;max-height:84vh;overflow-y:auto;position:relative;box-shadow:0 16px 60px rgba(0,0,0,.8)">
+    <span onclick="fecharLivro()" style="position:absolute;top:12px;right:16px;font-size:28px;color:var(--ouro);cursor:pointer;line-height:1">&times;</span>
+    <div id="livroTit" style="color:var(--ouro);font-family:'Bebas Neue';font-size:22px;letter-spacing:1px;margin-bottom:14px;padding-right:30px"></div>
+    <div id="livroTxt" style="font-size:13.5px;color:#dcdce4;line-height:1.65;white-space:pre-line"></div>
+  </div>
+</div>
+<script>
+var LIVROS = {
+  lv1: {t:"Ciência da Hipertrofia — Da Experiência à Evidência", s:"Como mais de 30 anos de treino se transformaram em uma missão científica?\n\nEste livro conta a trajetória de André Luiz de Moura Andrade e o nascimento do canal Ciência da Hipertrofia. A inquietação que deu origem ao projeto era simples: como fazer descobertas importantes saírem dos artigos científicos e chegarem, em linguagem clara, a quem treina e trabalha com exercício?\n\nO leitor acompanha a construção de um acervo com mais de 2.600 artigos, organizados em mais de 19 temas. Conhece o processo de transformar estudos em vídeos curtos e de reunir pesquisas relacionadas em revisões temáticas, sempre olhando para métodos, resultados e limitações.\n\nÉ a história de uma ponte entre experiência, pesquisa e comunicação. Dessa missão de ampliar o acesso à ciência nasce também a conexão com a Aurum Sci."},
+  lv2: {t:"Personal Trainer — Da Faculdade ao Primeiro Aluno", s:"O diploma chegou. Como transformar tudo o que você estudou em decisões diante do primeiro aluno?\n\nEsta obra foi escrita para ajudar estudantes e profissionais de Educação Física a atravessar a distância entre a faculdade e a prática. André retoma conhecimentos de anatomia, fisiologia, biomecânica, avaliação e treinamento para mostrar onde eles entram no atendimento de uma pessoa real.\n\nO percurso vai da observação e da avaliação à prescrição, ao acompanhamento e aos ajustes do treino. Também aborda comunicação, inclusão, recuperação e decisões responsáveis, incluindo a importância de reconhecer quando é preciso encaminhar o aluno.\n\nPara quem está começando, apresenta caminhos acessíveis para organizar avaliações em planilhas e conhecer o apoio de aplicativos. A proposta é construir competência e confiança sem perder o cuidado humano."},
+  lv3: {t:"Avaliação Física — Do Simples ao Padrão Ouro", s:"Você avaliou seu aluno. E agora: o que os resultados mudam no treino?\n\nO livro percorre a evolução da avaliação física, das medidas e observações mais simples aos recursos atuais de tecnologia. Com figuras, procedimentos e fórmulas, explica como investigar medidas corporais, composição corporal, postura, mobilidade, força, potência e capacidade cardiorrespiratória.\n\nO objetivo é ajudar o profissional a ir além da coleta: interpretar os resultados, definir prioridades, acompanhar a evolução e usar essas informações para orientar suas decisões.\n\nTambém ensina os primeiros passos para montar um protocolo próprio no Excel. No capítulo sobre tecnologia, apresenta a inteligência artificial e o Aurum Sci Lab. Do simples ao padrão ouro, o instrumento pode mudar; o critério e o cuidado com a pessoa continuam no centro."},
+  lv4: {t:"Fisiologia do Exercício e Prescrição — Do Estudo à Prática", s:"O que acontece no corpo desde o comando para se mover até a adaptação ao treinamento?\n\nEsta obra acompanha o movimento desde o sistema nervoso até a contração muscular. O leitor entende como neurônios e músculos se comunicam, como as unidades motoras são recrutadas e por que o corpo precisa produzir energia continuamente para sustentar o exercício.\n\nA jornada passa pelos sistemas energéticos, pela glicólise, pelo ciclo de Krebs e pelas mitocôndrias. Mostra ainda as respostas do coração, dos pulmões e da circulação, além do papel da fadiga e da recuperação.\n\nMariana, no agachamento, e Rafael, na bicicleta, tornam esses processos mais fáceis de visualizar. O propósito é dar uma base fisiológica para compreender respostas individuais e fundamentar melhor a prescrição."},
+  lv5: {t:"EIXO mTOR — A Engenharia da Hipertrofia", s:"Você ainda faz três séries de doze? Mais importante: sabe por quê?\n\nO livro começa pelos fundamentos que ajudam a explicar a adaptação muscular: fisiologia, biomecânica, nutrição, recuperação e organização do treino. Recrutamento muscular, produção de força, amplitude, alavancas, volume, frequência, esforço e progressão aparecem sempre ligados a uma questão prática: o que cada informação muda na hora de treinar ou prescrever?\n\nCom essa base, apresenta 50 métodos e estratégias de treinamento, com exemplos de aplicação. João e Maria mostram como a escolha de um método depende da experiência, da técnica, da disponibilidade e da resposta de cada pessoa.\n\nA periodização completa o percurso. A resposta à pergunta da capa não é abandonar o 3 × 12: é saber quando ele faz sentido e conseguir explicar cada decisão do programa."}
+};
+function abrirLivro(id){
+  var l = LIVROS[id]; if(!l) return;
+  document.getElementById('livroTit').textContent = l.t;
+  document.getElementById('livroTxt').textContent = l.s;
+  document.getElementById('livroOv').style.display = 'flex';
+}
+function fecharLivro(){ document.getElementById('livroOv').style.display = 'none'; }
 </script>
 </body>
 </html>

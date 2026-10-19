@@ -308,7 +308,7 @@ document.getElementById('busca').addEventListener('input', function(e){
 <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999">
   <button id="btnAudio" onclick="tocarNarracao()" style="background:var(--ouro);color:#111;border:none;border-radius:999px;padding:14px 26px;font-size:15px;font-weight:700;letter-spacing:.5px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;box-shadow:0 6px 24px rgba(0,0,0,.4)">
     <span id="audioIcon" style="font-size:18px">&#9654;</span>
-    <span id="audioTxt">Ouvir a apresentacao</span>
+    <span id="audioTxt">Ouvir a apresentação</span>
   </button>
 </div>
 <audio id="narracao" src="/static/narracao_family_FINAL.mp3?v=3" preload="auto"></audio>
@@ -331,7 +331,7 @@ function tocarNarracao(){
   } else {
     a.pause();
     icon.innerHTML = '&#9654;';
-    txt.textContent = 'Ouvir a apresentacao';
+    txt.textContent = 'Ouvir a apresentação';
     _autoScroll = false;
     return;
   }

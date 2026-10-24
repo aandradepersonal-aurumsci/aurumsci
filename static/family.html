@@ -332,13 +332,13 @@ document.getElementById('busca').addEventListener('input', function(e){
   pintar(achados.slice(0, 60), 'busca');
 });
 </script>
-<div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999">
-  <button id="btnAudio" onclick="tocarNarracao()" style="background:var(--ouro);color:#111;border:none;border-radius:999px;padding:14px 26px;font-size:15px;font-weight:700;letter-spacing:.5px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;box-shadow:0 6px 24px rgba(0,0,0,.4)">
+<div style="position:fixed;bottom:16px;right:16px;z-index:9999">
+  <button id="btnAudio" onclick="tocarNarracao()" title="Ouvir a apresentação" aria-label="Ouvir a apresentação" style="background:var(--ouro);color:#111;border:none;border-radius:50%;width:46px;height:46px;font-size:16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35);opacity:.9">
     <span id="audioIcon" style="font-size:18px">&#9654;</span>
-    <span id="audioTxt">Ouvir a apresentação</span>
+    <span id="audioTxt" style="display:none">Ouvir a apresentação</span>
   </button>
 </div>
-<audio id="narracao" src="/static/narracao_family_FINAL.mp3?v=4" preload="auto"></audio>
+<audio id="narracao" src="/static/narracao_family_FINAL.mp3?v=5" preload="auto"></audio>
 <script>
 var _carrosselCentrado = false;
 var _autoScroll = false, _scrollInicial = 0;
